@@ -1,0 +1,276 @@
+<div class="product{{ layout_mobile }} animate{% if forloop.last %} last{% endif %}{% if settings.borders_enable %} borders{% endif %} {{ block_width }} animate-loop-{{ forloop_index0 }} brands{% if settings.quick_collection_hover and product.object_type == 'product' %} hover{% endif %}">
+  <div class="product-border{% if settings.borders_enable and section.settings.include_color != 'color-none' %} product-border-background{% endif %} {% if section.settings.sub_text_alignment %}{{ section.settings.sub_text_alignment }}{% else %}{{ settings.text_alignment }}{% endif %} relative">
+        
+    {%- liquid
+      if settings.swatch_color != blank
+        assign var_color = settings.swatch_color | handleize
+        assign swatch_color = settings.swatch_color
+      else
+        assign var_color = 'products.general.color' | t | handleize
+        assign swatch_color = 'products.general.color' | t
+      endif      
+      if settings.single_swatch
+        assign single_swatch = 0
+      else
+        assign single_swatch = 1
+      endif
+      if product.object_type == 'product'      
+        if request.page_type == 'collection' and canon      
+          assign prod_opt_1 = product.options[0] | handleize
+          assign prod_opt_2 = product.options[1] | handleize
+          assign prod_opt_3 = product.options[2] | handleize
+          for variant in product.variants      
+            if prod_opt_1 contains var_color and canon contains prod_opt_1
+              assign var_opt = variant.option1 | handleize
+            elsif prod_opt_2 contains var_color and canon contains prod_opt_2
+              assign var_opt = variant.option2 | handleize
+            elsif prod_opt_3 contains var_color and canon contains prod_opt_
+              assign var_opt = variant.option3 | handleize
+            else
+              assign var_opt = 'Default'
+            endif
+            if canon contains var_opt
+              if variant.image
+                assign img_src = variant.featured_media.preview_image
+              else
+                assign img_src = product.featured_media.preview_image
+              endif
+              break
+            else
+              assign img_src = product.featured_media.preview_image
+            endif
+          endfor      
+        else
+          assign img_src = product.featured_media.preview_image
+        endif
+      else
+        assign img_src = product.image
+        assign size = 600
+      endif
+      if lazy_total != blank
+        if forloop_index0 <= lazy_total
+          assign lazy = lazy
+        else
+          assign lazy = 'lazy'
+        endif
+      endif
+    -%}
+    
+    {% if product.media.size > 0 or settings.badge_enable and product.compare_at_price > product.price or product.image.size > 0 or settings.compare_enable and product.object_type == 'product' %} 
+    <div class="product-thumb-container">
+      <div class="relative">
+        {%- render 'product.saleBadge', product: product -%}
+        {% if product.media.size > 0 or product.image.size > 0 %} 
+        <div class="product-thumb text-center{% if settings.image_hover and product.media.size > 1 %} enable-thumb-hover{% endif %}{% if settings.title_align %}{% unless product.object_type != 'product'%} title-align{% endunless %}{% endif %}">
+          <div class="relative lazycontainer{% if settings.img_align %} image-align{% endif %}">
+            {% if settings.title_align %}{% unless product.object_type != 'product'%}{% assign nopad = settings.title_align %}{% endunless %}{% endif %}
+            <a href="{{ product.url | within: collection }}" title="{{ 'layout.general.buy' | t | escape }} {{ product.title | escape }}" class="img-align product-thumb-main{% unless settings.title_align %} product-thumb-align{% endunless %}{% if settings.image_hover and product.media.size > 1 %} product-thumb-load{% endif %} keyed" data-group="{{ product.id }}{{ section.id }}">
+              {%- liquid
+                capture alt
+                  if img_src.alt != blank
+                    echo img_src.alt
+                  else
+                    echo product.title
+                  endif
+                endcapture
+                render 'image.load', img_src: img_src, size: size, alt: alt, nopad: nopad, lazy: lazy, sizes: sizes
+              -%}
+            </a>
+            {% if settings.image_hover and product.media.size > 1 %} 
+            <a href="{{ product.url | within: collection }}" title="{{ 'layout.general.buy' | t | escape }} {{ product.title | escape }}" class="img-align product-thumb-hover">
+              {%- liquid
+                capture alt
+                  if product.media[1].preview_image.alt != blank
+                    echo product.media[1].preview_image.alt
+                  else
+                    echo product.title
+                    echo ' - 0'
+                  endif
+                endcapture
+                render 'image.load', img_src: product.media[1].preview_image, size: size, alt: alt, nopad: nopad, lazy: lazy, sizes: sizes
+              -%}
+            </a>
+            {% endif %}
+            {%- liquid
+              if settings.variant_color_enable != 'none' and product.options_by_name[swatch_color].values.size > single_swatch
+                render 'product.swatches' with swatch_color as swatch, var_color: var_color, swatch_color: swatch_color, product: product, block: true, ignore: true, img_size: size, lazy: lazy, sizes: sizes
+              endif
+            -%}
+          </div>
+        </div>  
+        {% endif %}    
+        {% if settings.compare_enable and product.object_type == 'product' %}
+        <p class="comparison-p{% unless product.media.size > 0 or product.image.size > 0 %} no-image center{% endunless %}">
+          <label for="compare-{{ product.id }}{{ section.id }}{{ block.id }}" class="visually-hidden">{{ 'products.general.compare_add' | t }}</label>
+          <input id="compare-{{ product.id }}{{ section.id }}{{ block.id }}" type="checkbox" class="comparison" name="comparison" title="{{ 'products.general.compare_add' | t }}" value="{{ product.id }}">
+          <button class="compare-modal" title="{{ 'products.general.compare_total' | t: total: '5' }}">{{ 'products.general.compare' | t }}</button>
+        </p>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+    <div class="product-details">
+      
+      <div class="product-title">        
+        <h4><a href="{{ product.url | within: collection }}" title="{{ product.title | escape }}">{{ product.title }}</a></h4>
+        {%- liquid
+          if product.object_type != 'product'
+            echo '<p class="product-logistics'
+            if product.object_type == 'product'
+              unless settings.quick_collection_hover == false
+                echo ' no-pad'
+              endunless
+            endif
+            echo '"><span class="vendors">'
+            if product.metafields.global.description_tag != blank
+              echo product.metafields.global.description_tag | highlight: search_terms
+            elsif product.content != blank
+              echo product.content | strip_html | truncatewords: 40 | highlight: search_terms
+            endif
+            echo '</span></p>'
+          endif
+        -%}
+      </div> 
+        
+      {% if product.object_type == 'product' %}
+
+      {% if settings.vendor_enable %}
+      <p id="product-logistics-{{ product.id }}-{{ section.id }}{{ block.id }}" class="product-logistics">
+        <span class="vendors">
+          {%- liquid
+            assign product_vendor_handle = product.vendor | handle
+            if collections[product_vendor_handle].handle == product_vendor_handle
+              assign vendor_url = collections[product_vendor_handle].url
+            else
+              assign vendor_url = product.vendor | url_for_vendor
+            endif
+            echo product.vendor | link_to: vendor_url
+          -%}
+        </span>
+      </p>
+      {% endif %}
+
+      {%- liquid
+        if settings.reviews_enable
+          render 'product.rating', product: product
+        endif
+      -%}
+
+      {%- liquid
+        if settings.variant_color_enable != 'none' and product.options_by_name[swatch_color].values.size > single_swatch
+          assign variant_color_enable = settings.variant_color_enable
+          if variant_color_enable == 'var-img-zoom-block'
+          	assign img_size = 100
+          else
+           	assign img_size = 52
+          endif
+          render 'product.swatches' with swatch_color as swatch, var_color: var_color, swatch_color: swatch_color, product: product, block_width: 'clearfix ', grid: true, hide: true, block: true, variant_color_enable: variant_color_enable, img_size: img_size, lazy: lazy
+        endif
+      -%}
+
+      {% if settings.meta_enable %}
+        <div class="product-meta">
+        {{ product.metafields.custom.display_data | metafield_tag }}
+        </div>
+      {% endif %}
+      
+      <div class="product-variants purchase-section{% if product.variants.size > 1 %} multiple{% endif %}">
+
+        {%- liquid
+          if product.price_min > 0
+            assign variant = product.variants | sort: 'price' | first
+          else
+            if product.price_varies
+              assign variant = product.variants | sort: 'price' | last
+            endif
+          endif
+          if settings.product_availability_enable and product.available == false and variant.incoming
+            echo '<p class="error-text"><small><span class="icon icon-bell"></span>'
+            assign today_date = 'now' | date: '%s'
+            assign delivery_date = variant.next_incoming_date | date: '%s'
+            if variant.next_incoming_date != blank and delivery_date > today_date
+              echo 'products.product.stock_in' | t 
+              echo ' '
+              echo variant.next_incoming_date | date: '%b %e'
+            else
+              echo 'products.product.stock_soon' | t
+            endif
+            echo '</small></p>'
+          endif
+        -%}
+        
+        <div class="product-price">
+          {%- liquid
+            if product.price_min > 0
+              if product.price_varies
+                echo 'products.product.from' | t
+              endif
+              echo '<h6'
+              unless settings.quick_collection_hover == false
+                echo ' class="no-pad"'
+              endunless
+              echo '>'            
+              if settings.currency_enable
+                echo product.price | money_with_currency
+              else
+                echo product.price | money
+              endif            
+              if product.compare_at_price > product.price
+                echo ' | <del>'              
+                if settings.currency_enable
+                  echo product.compare_at_price | money_with_currency
+                else
+                  echo product.compare_at_price | money
+                endif              
+                echo '</del>'
+              endif
+              render 'product.unitPrice', variant: product.selected_or_first_available_variant, variant_free: false, variant_slash: 'true'
+              echo '</h6>'
+            else
+              if product.price_varies
+                echo '<h6'
+                unless settings.quick_collection_hover == false
+                  echo ' class="no-pad"'
+                endunless
+                echo '>'
+                echo 'products.product.free' | t
+                echo ' - '              
+                if settings.currency_enable
+                  echo product.price_max | money_with_currency
+                else
+                  echo product.price_max | money
+                endif              
+                assign variant_free = true
+                render 'product.unitPrice', variant: product.selected_or_first_available_variant, variant_free: false, variant_slash: 'true'
+                echo '</h6>'
+              else
+                echo '<h6 style="display:none">'
+                if settings.currency_enable
+                  echo product.price | money_with_currency
+                else
+                  echo product.price | money
+                endif
+                echo '</h6><h6'
+                unless settings.quick_collection_hover == false
+                  echo ' class="no-pad"'
+                endunless
+                echo '>'
+                echo 'products.product.free' | t
+                echo '</h6>'
+              endif
+            endif
+          -%}
+        </div>
+
+        {%- render 'product.loop.buttons', product: product, block: block -%}
+
+      </div>
+      
+      {% else %}
+      <span><a class="btn auto-width" href="{{ product.url }}" title="{{ product.title | escape }}">{{ 'general.search.read_more' | t }}</a></span>
+      {% endif %}
+
+    </div>
+
+  </div>
+</div>

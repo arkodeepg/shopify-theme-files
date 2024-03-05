@@ -1,0 +1,68 @@
+{% comment %} <style>
+  .ssw-faveiticon {
+    top: 4px;
+    position: absolute;
+    font-size: 20px;
+    z-index:4
+}
+</style>
+
+ 
+  <script>
+    window.addEventListener('sswhelperload', () => { 
+      sswRun(function(){
+        var waitForContaier = setInterval(function() {
+          if(ssw('.wizzy-result-product').length) {
+            function addWidgets() {
+              window.ssw_widgets_products = [];
+              ssw('.wizzy-result-product').each(function(index, element) {
+                if(!ssw(element).find(ssw('.ssw-faveicon-custom')).length) {
+                  var getUrl = ssw(element).find('.wizzy-result-product-item').attr('href');
+                  var sswFaveIcon = `<div class="ssw-faveicon-custom" data-product-id="${getUrl}"></div>`;
+                  window.ssw_widgets_products.push(getUrl);
+                  ssw(element).prepend(ssw(sswFaveIcon));
+                }
+              });
+              function ssw_widgets(handles) {
+                handles.forEach((handle) => {
+                  ssw.get(handle, {view: 'ssw-metafield'}, function(res) {
+                    let tmp = ssw('<div>', {html: res});
+                    tmp.find('.ssw-faveiticon').each(function(e,i) {
+                      ssw(`.ssw-faveicon-custom[data-product-id="${handle}"]`).html(i);
+                    });
+                  });
+                });
+                window.ssw_widgets_products = [];
+              }
+              ssw_widgets(window.ssw_widgets_products);
+            }
+            addWidgets()
+            const observer = new MutationObserver(function(mutations){
+              for (let mutation of mutations) {
+                if (mutation.type === 'childList') {
+                  addWidgets()
+                } 
+              }
+            })
+            observer.observe(ssw('.wizzy-search-results-list').get(0), {childList: true})
+            clearInterval(waitForContaier)
+          }
+        }, 1000)
+        });
+    } );
+  </script>
+   {% endcomment %}
+
+   <style>
+.thumb-cont .swiper-slide div#widget-fave-html {
+    display: none !important;
+}
+     .swiper-slide.swiper-slide-active div#widget-fave-html {
+    display: block;
+}
+
+     .related-products-content .swiper-slide .ssw-faveiticon {
+    right: 3px;
+    top: 23px;
+}
+   </style>

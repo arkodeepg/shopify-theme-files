@@ -1,0 +1,99 @@
+{% comment %} collection collapsable = colc {% endcomment %}
+{% if collection.metafields.custom.collapsable %}
+<style>
+.colc-outer-cont{
+    background: #F7F4ED80;
+    /* padding-block: 12px; */
+}
+.colc-outer{
+    max-width: 1200px;
+    margin: 0 auto;
+    /* margin-top: 20px; */
+    padding-bottom: 40px;
+    margin-bottom: 0;
+}
+.colc-body h1, .colc-body h2 {
+    font-weight: normal;
+    font-size: var(--x_large);
+    line-height: var(--x_large);
+    color: #96865d;
+    text-align: left;
+    font-family: var(--headline_font);
+    margin-bottom: 12px;
+}
+
+.colc-body h3 {
+    color: #96865d;
+    font-family: var(--headline_font);
+    /* line-height: calc(var(--large)*1.25); */
+    font-size: var(--large);
+    margin: 0 0 var(--master_spacing);
+    /* font-family: var(--headline_font); */
+}
+
+.colc-body p {
+    font-weight: 400;
+    line-height: 1.6;
+}
+
+.colc-body_hide {
+    height: 90px;
+    overflow: hidden;
+}
+
+.colc-btn {
+    display: inline;
+    /* text-decoration: underline; */
+    border-bottom: 1px solid;
+    padding-bottom: 2px;
+    color: black;
+    cursor: pointer;
+    /* padding-top: 12px; */
+}
+@media screen and (max-width:800px){
+  .colc-outer {
+      padding: 0 25px;
+  }
+  .colc-body h1 {
+      font-size: var(--large);
+      line-height: calc(var(--large)*1.25);
+  }
+}
+</style>
+<div class="colc-outer-cont">
+    <div class="colc-outer">
+        <div class="colc-inner">
+            <div class="colc-body colc-body_hide">{{ collection.metafields.custom.collapsable | metafield_tag }}</div>
+            <div class="colc-btn">Read More</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('.colc-btn').click(() => {
+        $('.colc-body').toggleClass('colc-body_hide')
+
+        if($('.colc-btn').text() == 'Read More') $('.colc-btn').text('Read Less')
+        else $('.colc-btn').text('Read More')
+    })
+</script>
+{% endif %}
+{% schema %}
+{
+  "name": "collection collapsable",
+  "tag": "section",
+  "settings": [],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "collection collapsable"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

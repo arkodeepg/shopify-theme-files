@@ -1,0 +1,177 @@
+   <!-- snippest/account-sidebar -->
+
+   {% comment %}
+   <div class="menu_bar">
+  
+
+      
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:svgjs="http://svgjs.com/svgjs" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="30"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" version="1.0" viewBox="0 0 512 512"><path fill="#b39d6f" d="M2435 5114 c-16 -2 -65 -9 -109 -15 -246 -33 -541 -172 -741 -349-253 -223 -432 -545 -486 -875 -20 -120 -17 -390 5 -500 71 -361 275 -695 550
+  -903 l68 -52 -28 -10 c-121 -46 -173 -69 -276 -120 -444 -223 -805 -560 -1062
+  -990 -210 -352 -328 -745 -352 -1180 l-7 -120 201 0 202 0 0 49 c0 339 141
+  807 330 1095 291 445 681 750 1156 905 452 148 896 148 1348 0 475 -155 865
+  -460 1156 -905 189 -288 330 -756 330 -1095 l0 -49 202 0 201 0 -7 120 c-24
+  435 -142 828 -352 1180 -257 430 -618 767 -1062 990 -103 51 -155 74 -276 120
+  l-28 10 68 52 c275 208 479 542 550 903 22 110 25 380 5 500 -43 263 -176 542
+  -352 742 -219 247 -527 421 -848 479 -77 14 -332 26 -386 18z m294 -409 c588
+  -96 990 -650 896 -1234 -96 -588 -650 -990 -1234 -896 -588 96 -990 650 -896
+  1234 96 588 650 990 1234 896z" class="color000 svgShape" transform="matrix(.1 0 0 -.1 0 512)"/></svg></svg>
+
+   </div>
+{% endcomment %}
+<style>
+  .account-page-main-wrapper .account-sidebar-wrapper {
+    border-radius: 2px;
+    padding: 0;
+    margin: 0;
+    margin-bottom: 10px;
+}
+  .account-page-main-wrapper .account-sidebar-wrapper .list-item {
+    padding: 0;
+    margin-bottom: 5px;
+}
+  .account-page-main-wrapper .account-sidebar-wrapper .list-item .link {
+    display: block;
+    padding: 16px 15px;
+    transition: all ease-in-out .2s;
+    text-decoration: none;
+    background: #fff;
+}
+  .account-page-main-wrapper .account-sidebar-wrapper .list-item .link .icon {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 10px;
+    width: 16px;
+    max-height: 16px;
+}
+  .account-page-main-wrapper .account-sidebar-wrapper .list-item.active .link, .account-page-main-wrapper .account-sidebar-wrapper .list-item:hover .link {
+    color: #000;
+    background: #ece4cf;
+}
+  @media (max-width: 640px){
+.account-page-main-wrapper .account-sidebar-wrapper .list-item .link span:not(.icon) {
+    text-wrap: nowrap;
+}
+.account-page-main-wrapper .account-sidebar-wrapper {
+    box-shadow: none;
+    display: flex;
+    gap: 8px;
+}
+
+  .account-page-main-wrapper .account-sidebar-wrapper .list-item {
+    border: none;
+    width: 100%;
+    border: 2px solid #f7f4ed;
+    border-radius: 4px;
+}
+    .account-page-main-wrapper .account-sidebar-wrapper .list-item .link {
+    padding: 5px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    color: #575757;
+    font-size: 13px;
+}
+    .account-page-main-wrapper .account-sidebar-wrapper .list-item .link .icon {
+    width: 14px;
+    max-height: 14px;
+    margin-bottom: 4px;
+    margin-right: 0;
+    }
+    .account-page-main-wrapper .account-sidebar-wrapper .list-item .link {
+    padding: 5px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    color: #575757;
+    font-size: 13px;
+}
+    .account-page-main-wrapper .account-sidebar-wrap, .account-page-main-wrapper .main-content-wrapper {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    background: white;
+}
+.account-page-main-wrapper .account-sidebar-wrapper .list-item.active .link, .account-page-main-wrapper .account-sidebar-wrapper .list-item:hover .link {
+    background: #f7f4ed;
+}
+      }
+</style>
+<div class="user-left-nav">
+  <ul class="account-sidebar-wrapper">
+    <li class="list-item{% if request.path contains '/pages/my-profile' %} active{% endif %}">
+      <a class="link" href="/pages/my-profile" tabindex="-1" title="My Profile">
+        <span class="icon">
+          {%- render 'svg-icons', icon : 'profile-icon_sm' -%}
+        </span>
+        <span>Profile</span>
+      </a>
+    </li>
+
+     <li class="list-item{% if request.path contains '/account/addresses' %} active{% endif %}">
+      <a class="link" href="/account/addresses" tabindex="-1" title="My Addresses">
+        <span class="icon">
+<svg xmlns="http://www.w3.org/2000/svg" width="11" height="14" viewBox="0 0 11 14" fill="none">
+<path d="M5.61621 0.555664C8.03643 0.555664 10 2.42456 10 4.72635C10 7.37489 7.07747 11.5721 6.00436 13.0218C5.95981 13.083 5.90143 13.1328 5.83397 13.1671C5.76652 13.2014 5.6919 13.2193 5.61621 13.2193C5.54052 13.2193 5.4659 13.2014 5.39844 13.1671C5.33099 13.1328 5.27261 13.083 5.22806 13.0218C4.15495 11.5727 1.23242 7.37702 1.23242 4.72635C1.23242 2.42456 3.19599 0.555664 5.61621 0.555664Z" stroke="#4C4C4C" stroke-width="0.974176" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M5.61686 6.4008C4.80983 6.4008 4.1556 5.74657 4.1556 4.93954C4.1556 4.1325 4.80983 3.47827 5.61686 3.47827C6.4239 3.47827 7.07812 4.1325 7.07812 4.93954C7.07812 5.74657 6.4239 6.4008 5.61686 6.4008Z" stroke="#4C4C4C" stroke-width="0.974176" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+        </span>
+        <span>Addresses</span>
+      </a>
+    </li>
+
+    <li class="list-item{% if request.path contains '/pages/reward' %} active{% endif %}">
+      <a class="link" href="/pages/reward" tabindex="-1" title="My Rewards">
+        <span class="icon">
+          {%- render 'svg-icons', icon : 'reward-icon' -%}
+        </span>
+        <span>Rewards</span>
+      </a>
+    </li>
+  
+    <li class="list-item{% if template contains 'account' or request.path contains '/account/orders' %} active{% endif %}">
+      <a class="link" href="/account" tabindex="-1" title="My Orders">
+        <span class="icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
+<path d="M13.753 6.97254C13.753 8.06621 13.753 9.18725 13.753 10.2809C13.753 10.5817 13.6436 10.7457 13.3702 10.8824C11.2649 11.8941 9.18691 12.9058 7.08157 13.8901C6.9722 13.9448 6.7808 13.9448 6.6441 13.8901C4.56611 12.9058 2.48812 11.8941 0.410129 10.9098C0.109368 10.7731 0 10.5817 0 10.2536C0 8.01154 0 5.79683 0 3.55478C0 3.36339 0.0546838 3.22668 0.218736 3.14466C2.18736 2.21503 4.15597 1.25805 6.09725 0.328424C7.08157 -0.0817062 6.67143 -0.13639 7.65575 0.328424C9.56968 1.25805 11.511 2.18769 13.4249 3.08997C13.6436 3.19933 13.753 3.33605 13.753 3.60947C13.753 4.73049 13.753 5.85151 13.753 6.97254ZM13.0421 4.07429C12.9601 4.10162 12.9054 4.12896 12.8507 4.15631C11.0188 5.03125 9.21423 5.9062 7.38232 6.78114C7.24561 6.83583 7.21828 6.91785 7.21828 7.08191C7.21828 9.02319 7.21828 10.9371 7.21828 12.8784C7.21828 12.9331 7.21828 13.0151 7.21828 13.0971C9.13221 12.1675 11.0188 11.2652 12.9054 10.363C12.9601 10.3356 13.0148 10.1989 13.0148 10.0895C13.0148 9.32394 13.0148 8.55837 13.0148 7.82013C13.0421 6.5624 13.0421 5.33202 13.0421 4.07429ZM0.738232 4.07429C0.738232 4.12896 0.710891 4.18366 0.710891 4.21098C0.710891 6.17961 0.710891 8.1209 0.710891 10.0895C0.710891 10.2809 0.792917 10.3083 0.929627 10.3903C2.70685 11.2379 4.48409 12.1128 6.26131 12.9604C6.34333 12.9878 6.42537 13.0425 6.53473 13.0698C6.53473 12.9604 6.53473 12.8784 6.53473 12.7964C6.53473 10.9098 6.53473 9.02319 6.53473 7.13658C6.53473 6.9452 6.48004 6.83583 6.28865 6.75381C4.51142 5.9062 2.7342 5.03125 0.956968 4.18366C0.874942 4.12896 0.820258 4.10162 0.738232 4.07429ZM9.3236 1.91426C8.53069 1.53147 7.81979 1.17603 7.08157 0.820581C6.94486 0.738555 6.83549 0.738555 6.67143 0.820581C5.49574 1.39476 4.34738 1.9416 3.17167 2.51579C2.51547 2.81654 1.85925 3.14466 1.1757 3.47276C1.94128 3.82821 2.67951 4.18366 3.3904 4.56643C3.52711 4.64847 3.66383 4.64847 3.80054 4.56643C5.0856 3.93758 6.34333 3.33605 7.6284 2.73452C8.20259 2.46109 8.74942 2.18769 9.3236 1.91426ZM4.45674 5.03125C5.27701 5.41404 6.04257 5.79683 6.80814 6.15228C6.89018 6.17961 6.99955 6.15228 7.08157 6.09759C8.83146 5.24998 10.5813 4.42974 12.3039 3.58213C12.3859 3.55478 12.4406 3.50011 12.55 3.44541C11.7844 3.08997 11.0735 2.73452 10.3626 2.37907C10.1986 2.29705 10.0892 2.29705 9.92513 2.37907C8.77677 2.95325 7.6284 3.50011 6.45269 4.04694C5.79649 4.37504 5.14029 4.70314 4.45674 5.03125Z" fill="#4C4C4C"/>
+<path d="M4.34746 9.16L2.32417 8.20304C2.16011 8.121 2.07809 7.92961 2.16011 7.76555C2.24215 7.60151 2.43353 7.51949 2.59759 7.60151L4.62089 8.55849C4.78493 8.64051 4.86697 8.8319 4.78493 8.99596C4.70291 9.16 4.51152 9.24204 4.34746 9.16Z" fill="#4C4C4C"/>
+</svg>
+        </span>
+        <span>Orders</span>
+      </a>
+    </li>  
+
+
+    <li class="list-item{% if request.path contains '/pages/wishlist' %} active{% endif %}">
+      <a class="link" href="/pages/wishlist" tabindex="-1" title="My Wishlist">
+        <span class="icon">
+          {%- render 'svg-icons', icon : 'wishlist-icon' -%}
+        </span>
+        <span>Wishlist</span>
+      </a>
+    </li>
+
+
+
+  {% comment %}
+    <li class="list-item">
+      <a class="link" href="/account/logout" tabindex="-1" title="Logout">
+        <span class="icon">
+          {%- render 'svg-icons', icon : 'logged-out-icon' -%}
+        </span>
+        <span>Logout</span>
+      </a>
+    </li>
+  {% endcomment %}
+  </ul>
+</div>
+
+
+<script defer>
+  $(document).ready(function(){
+    $(".menu_bar svg").click(function(){
+      $(".user-left-nav").slideToggle();
+    });
+  });
+</script>

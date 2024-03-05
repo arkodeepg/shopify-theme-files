@@ -1,0 +1,72 @@
+<style>
+    div#product-related-collection {
+    padding-top: 80px;
+    padding-bottom: 10px;
+}
+#product-related-collection ul {
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+#product-related-collection li {
+    list-style: none;
+    padding: 10px;
+}
+#product-related-collection li a {
+    font-weight: var(--body_font_weight_medium);
+    font-size: calc(var(--large) - 5.75px);
+    color: #786b4a;
+    background-color: #fff7e3;
+    padding: 11px 38px;
+    border-radius: 30px;
+    display: inline-block;
+    text-decoration: none;
+    line-height: 28px;
+}
+#product-related-collection li a:hover {
+    background-color: #9a7e38;
+    color: #fff;
+}
+@media screen and (max-width: 800px){
+    #product-related-collection li a {
+    font-size: calc(var(--large) - 12.75px);
+    line-height: 17px;
+    letter-spacing: .33px;
+    padding: 6px 20px;
+}
+#product-related-collection li {
+    padding: 5px;
+}
+div#product-related-collection {
+    padding-top: 20px;
+}
+}
+</style>
+
+{%- if product.metafields.my_fields.related_collection != blank -%}
+  <div id="product-related-collection">
+    <div class="container">
+      {%- assign collectionList = product.metafields.my_fields.related_collection | replace: ' ,', ',' | replace: ', ', ',' | split: ',' -%}
+      <ul>
+        {%- for pCollectionHandle in collectionList -%}
+          {%- assign pCollection = collections[pCollectionHandle] -%}
+          <li>
+            <a href="{{pCollection.url}}">{{ pCollection.title }}</a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    </div>
+  </div>
+{%- endif -%}
+{% schema %}
+  {
+    "name": "Related Collection",
+    "settings": [],
+      "presets": [
+    {
+      "name": "Related Collection"
+    }
+  ]
+  }
+{% endschema %}

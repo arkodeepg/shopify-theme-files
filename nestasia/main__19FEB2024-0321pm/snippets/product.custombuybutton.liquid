@@ -1,0 +1,146 @@
+<style>
+  .cbuy-cont {
+    display: flex;
+    gap: 10px;
+    z-index: 99;
+  }
+  .cbuy-cont .cbuybtn {
+    margin-bottom: 20px;
+  }
+  .cbuy-buy {
+    border-radius: 0;
+    max-width: 100%;
+    font-family: var(--body_font) !important;
+    font-weight: 400;
+    letter-spacing: 0.8px;
+    min-height: 46px;
+    background-color: #fff;
+    color: #96865d !important;
+    width: 100%;
+    /* border-color: #96865d; */
+    border: 1px solid #96865d;
+  }
+  .csold-out {
+    border-radius: 0;
+    max-width: 50%;
+    font-family: var(--body_font) !important;
+    font-weight: 400;
+    letter-spacing: 0.8px;
+    min-height: 46px;
+    background-color: #fff;
+    color: #96865d !important;
+    width: 100%;
+    /* border-color: #96865d; */
+    border: 1px solid #96865d;
+    pointer-events: none;
+    cursor: disabled;
+  }
+.cbuy-act {
+    font-size: 16px !important;
+    background: #96865d;
+    color: #fff !important;
+    width: 100%;
+  }
+  .cbuy-cont button:hover {
+    background: #786b4a !important;
+    color: #fff !important;
+    border-color: transparent !important;
+  }
+
+  html.js-ajax-cart-processing .cthank {
+    display: block;
+  }
+  html:not(.js-ajax-cart-processing) .cthank {
+    display: none;
+  }
+  html.js-ajax-cart-processing .cbuy-act:not(.cthank) {
+    display: none;
+  }
+  html:not(.js-ajax-cart-processing) .cbuy-act:not(.cthank) {
+    display: block;
+  }
+
+  /* html.js-ajax-cart-processing .cbuy-act{
+    display: none;
+  } */
+  @media (min-width: 640px){
+    .observeATCdivActive {
+        position: fixed;
+        bottom: 10px;
+        width: 42%;
+        right: 5vw;
+        z-index: 1;
+    }
+    .cbuy-cont.observeATCdivActive button {
+        margin: 0;
+    }
+  }
+</style>
+
+<div class="cbuy-cont">
+  {% if product.available %}
+    <button class="cbuy-act" type="submit" name="add">Add to cart</button>
+    <button class="cbuy-act cthank">Adding...</button>
+    <button class="cbuy-buy" onclick="handleFloBuyNowBtn(event)">Buy Now</button>
+  {% else %}
+    <button class="csold-out">Sold Out</button>
+  {% endif %}
+</div>
+<script defer>
+      function observerInterSection(){
+          function handleVisibilityChange(entries, observer) {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              $('.cbuy-cont').removeClass('observeATCdivActive');
+            } else {
+              $('.cbuy-cont').addClass('observeATCdivActive');
+            }
+          });
+        }
+
+        // Options for the intersection observer
+        const options = {
+          root: null, // Use the viewport as the root
+          rootMargin: '0px',
+          threshold: 0 // Trigger when any part of the div becomes visible
+        };
+
+        // Replace 'yourDivId' with the actual ID of your <div> element
+        const yourDiv = document.querySelector('cbuy-cont');
+
+        // Create an IntersectionObserver instance
+        const observer = new IntersectionObserver(handleVisibilityChange, options);
+
+        // Start observing the div
+        observer.observe(yourDiv);
+    }
+
+
+
+    const scrollDiv = document.getElementsByClassName('addOnTotalWraper')[0];
+      let isRunning = false;
+
+      function yourFunction() {
+        // Your function logic here
+        console.log('Function is running...');
+      }
+
+      function checkDivPosition() {
+        const divBottom = scrollDiv.offsetTop + scrollDiv.offsetHeight +100;
+        const viewportBottom = window.scrollY + window.innerHeight;
+
+        if (divBottom <= viewportBottom) {
+          if (!isRunning) {
+            isRunning = true;
+            yourFunction();
+            $('.cbuy-cont').removeClass('observeATCdivActive');
+          }
+        } else {
+          $('.cbuy-cont').addClass('observeATCdivActive');
+          // console.log("observerInterSection else");
+          isRunning = false;
+        }
+      }
+
+      window.addEventListener('scroll', checkDivPosition);
+</script>

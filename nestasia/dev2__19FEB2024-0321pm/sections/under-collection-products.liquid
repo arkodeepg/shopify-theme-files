@@ -1,0 +1,573 @@
+<style>
+  .underHead {
+    display: flex;
+    width: 100%;
+  }
+  .underLeft {
+    width: 22%;
+  }
+  .underRight {
+    width: 78%;
+  }
+  .categoryImg {
+    margin-bottom: 16px;
+  }
+  .custom-underprice-silder {
+    overflow-x: hidden;
+  }
+  .custom-underprice-silder .c-arrow_next {
+    right: 0;
+    position: absolute;
+    top: 30%;
+    z-index: 1;
+    transform: translateX(100%);
+}
+
+.custom-underprice-silder .c-arrow_prev {
+    left: 0;
+    position: absolute;
+    top: 30%;
+    z-index: 1;
+    transform: translateX(0px);
+}
+
+  .title.head {
+    width: 85%;
+    font-size: 15px;
+    line-height: 22px;
+    letter-spacing: 0.01em;
+    text-transform: capitalize;
+    color: #171717;
+    font-family: var(--body_font) !important;
+    margin-bottom: 8px;
+    height: 40px;
+    overflow: hidden;
+  }
+  .undercontent a {
+    color: #171717;
+  }
+  .undercontent .bestSllerPrice {
+    font-size: 16px;
+    line-height: 19px;
+    letter-spacing: 0.01em;
+    color: #171717;
+    font-weight: 600;
+  }
+  .undercontent .bestSllerPrice .oldPrice {
+    color: #4c4c4c;
+    font-size: 12px;
+    text-decoration: line-through;
+  }
+  span.offerpercent {
+    color: #c24352;
+    font-size: 12px;
+  }
+  .rating_head {
+    min-height: 18px;
+  }
+  .undertag {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  .margin-50 {
+    margin: 30px 0;
+  }
+  .underCollection-atc{
+    width: 35px;
+    height: 35px;
+    line-height: 40px;
+    border-radius: 50%;
+    text-align: center;
+    cursor: pointer;
+    position: relative
+  }
+  .underCollection-atc:before{
+    content: "";
+    background: url(/cdn/shop/files/xccxc.png?v=1688484304);
+    background-repeat: no-repeat;
+    width: 100%;
+    position: absolute;
+    height: 100%;
+    font-size: 20px;
+    top: 0;
+    background-size: 35px;
+    left: 0;
+}
+  .underCollection-atc input[type='submit']{
+    width: 35px;
+    height: 35px;
+    opacity: 0;
+  }
+  .swiper-button-disabled {
+    pointer-events: none !important;
+  }
+  
+  @media screen and (max-width: 640px) {
+    .underLeft {
+      width: 50% !important;
+      padding-right: 20px;
+    }
+    .underRight {
+      width: 50% !important;
+    }
+    .title.head {
+      font-size: 11px !important;
+      line-height: 16px !important;
+      height: 16px !important;
+      white-space: nowrap;
+      overflow: hidden !important;
+      text-overflow: ellipsis;
+    }
+    .bestSllerPrice {
+      font-size: 12px !important;
+    }
+    .undercontent .bestSllerPrice .oldPrice,
+    span.offerpercent {
+      font-size: 8px;
+    }
+  }
+</style>
+<div class="container ">
+  {% if page.metafields.custom.under_price_heading != blank %}
+    <div class="twelve text-center offerHead ">
+      <h2 class="margin-50">{{ page.metafields.custom.under_price_heading }}</h2>
+    </div>
+  {% endif %}
+</div>
+
+{% if page.metafields.custom.under_price_collections != blank %}
+  <section class="under-priceCollection margin-50">
+    <div class="container clearfix">
+      <div class="underHead">
+        {% assign offercollection = page.metafields.custom.under_price_collections %}
+        {% assign collectionMaincontainer = offercollection | split: '::' %}
+        {%- for technical_details in collectionMaincontainer %}
+          {% assign collectionSubcontainer = technical_details | split: '|' %}
+          <div class="underLeft">
+            <div class="categoryImg">
+              <a href="{{ collectionSubcontainer[1] }}">
+                <img src="{{ collectionSubcontainer[0] }}" alt="" width="100%"
+              ></a>
+            </div>
+          </div>
+          <div class="underRight">
+            <div
+              data-section-id="{{ section.id }}-1"
+              class="clearfix custom-silder-section collection-container"
+            >
+              <div class="container grid clearfix">
+                <div class="tab-body swiper-container-wrapper tab-body-badge">
+                  <div
+                    class="swiper-container plus-slider product-loop text-left custom-underprice-silder custom-underprice-silder1"
+                    id="swiper-carousel-{{ section.id }}-1"
+                  >
+                    <div class="ldslags swiper-wrapper swiper-wrapper-{{ section.id }}-1">
+                      {% assign varCount = 0 %}
+                      {% for product in collections[collectionSubcontainer[2]].products limit: 100 %}
+                        {% if product.available and varCount < 10 %}
+                          <div class="animate-loop-{{ forloop.index0 }} swiper-slide swiper-slide-active">
+                            <div class="underImg">
+                              <a href="{{ product.url }}">
+                                <img src="{{ product | img_url: 'master' }}" alt="" class="img-fluid">
+                              </a>
+                            </div>
+
+                            <div class="undercontent">
+                              <div class="title head">
+                                <a href="#">{{ product.title }}</a>
+                              </div>
+                              <span class="bestSllerPrice">
+                                {{- product.selected_or_first_available_variant.price | money_with_currency }}
+                                <span class="oldPrice">
+                                  {{-
+                                    product.selected_or_first_available_variant.compare_at_price
+                                    | money_with_currency
+                                  -}}
+                                </span>
+                                {% assign compare_at_price = product.selected_or_first_available_variant.compare_at_price %}
+                                {% assign price = product.selected_or_first_available_variant.price %}
+                                {% if compare_at_price > price %}
+                                  <span class="offerpercent">
+                                    (
+                                    {{ compare_at_price | minus: price | times: 100 | divided_by: compare_at_price -}}
+                                    % Off)
+                                  </span>
+                                {%- endif -%}
+                              </span>
+                              <div class="rating_head">
+                                {%- render 'judgeme_widgets',
+                                  widget_type: 'judgeme_preview_badge',
+                                  jm_style: '',
+                                  concierge_install: true,
+                                  product: product
+                                -%}
+                              </div>
+                              <div class="undertag">
+                                <div class="offertagLeft">
+                                  {% for tag in product.tags %}
+                                    {% if tag == 'sale' %}
+                                      <p>Offers Available</p>
+                                    {% endif %}
+                                  {% endfor %}
+                                </div>
+                                <div class="offertagRight underCollection-atc">
+                                  <form method="post" action="/cart/add">
+                                    <input name="id" value="{{ product.variants.first.id }}" type="hidden">
+                                    <input name="add" value="ORDER NOW" type="submit" class="input-sbmit">
+                                  </form>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          {% assign varCount = varCount | plus: 1 %}
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                    <div class="c-arrow">
+                      <svg
+                        class="c-arrow_prev"
+                        width="36"
+                        height="36"
+                        viewBox="0 0 36 36"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <rect width="36" height="36" rx="18" fill="#96865D"/><path d="M21 24L15 18L21 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                      <svg
+                        class="c-arrow_next"
+                        width="36"
+                        height="36"
+                        viewBox="0 0 36 36"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <rect x="0.226562" y="0.516113" width="36" height="36" rx="18" fill="#96865D"/><path d="M15.2266 24.5161L21.2266 18.5161L15.2266 12.5161" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endif %}
+
+{% if page.metafields.custom.under_price_collections2 != blank %}
+  <section class="under-priceCollection margin-50">
+    <div class="container clearfix">
+      <div class="underHead">
+        {% assign offercollection = page.metafields.custom.under_price_collections2 %}
+        {% assign collectionMaincontainer = offercollection | split: '::' %}
+        {%- for technical_details in collectionMaincontainer %}
+          {% assign collectionSubcontainer = technical_details | split: '|' %}
+          <div class="underLeft">
+            <div class="categoryImg">
+              <a href="{{ collectionSubcontainer[1] }}">
+                <img src="{{ collectionSubcontainer[0] }}" alt="" width="100%"
+              ></a>
+            </div>
+          </div>
+          <div class="underRight">
+            <div
+              data-section-id="{{ section.id }}-1"
+              class="clearfix custom-silder-section collection-container"
+            >
+              <div class="container grid clearfix">
+                <div class="tab-body swiper-container-wrapper tab-body-badge">
+                  <div
+                    class="swiper-container plus-slider product-loop text-left custom-underprice-silder custom-underprice-silder2"
+                    id="swiper-carousel-{{ section.id }}-1"
+                  >
+                    <div class="ldslags swiper-wrapper swiper-wrapper-{{ section.id }}-1">
+                      {% assign varCount = 0 %}
+                      {% for product in collections[collectionSubcontainer[2]].products limit: 100 %}
+                        {% if product.available and varCount < 10 %}
+                          <div class="animate-loop-{{ forloop.index0 }} swiper-slide swiper-slide-active ">
+                            <div class="underImg">
+                              <a href="{{ product.url }}">
+                                <img src="{{ product | img_url: 'master' }}" alt="" class="img-fluid">
+                              </a>
+                            </div>
+
+                            <div class="undercontent">
+                              <div class="title head">
+                                <a href="#">{{ product.title }}</a>
+                              </div>
+                              <span class="bestSllerPrice">
+                                {{- product.selected_or_first_available_variant.price | money_with_currency }}
+                                <span class="oldPrice">
+                                  {{-
+                                    product.selected_or_first_available_variant.compare_at_price
+                                    | money_with_currency
+                                  -}}
+                                </span>
+                                {% assign compare_at_price = product.selected_or_first_available_variant.compare_at_price %}
+                                {% assign price = product.selected_or_first_available_variant.price %}
+                                {% if compare_at_price > price %}
+                                  <span class="offerpercent">
+                                    (
+                                    {{ compare_at_price | minus: price | times: 100 | divided_by: compare_at_price -}}
+                                    % Off)
+                                  </span>
+                                {%- endif -%}
+                              </span>
+                              <div class="rating_head">
+                                {%- render 'judgeme_widgets',
+                                  widget_type: 'judgeme_preview_badge',
+                                  jm_style: '',
+                                  concierge_install: true,
+                                  product: product
+                                -%}
+                              </div>
+                              <div class="undertag">
+                                <div class="offertagLeft">
+                                  {% for tag in product.tags %}
+                                    {% if tag == 'sale' %}
+                                      <p>Offers Available</p>
+                                    {% endif %}
+                                  {% endfor %}
+                                </div>
+                                <div class="offertagRight underCollection-atc">
+                                  <form method="post" action="/cart/add">
+                                    <input name="id" value="{{ product.variants.first.id }}" type="hidden">
+                                    <input name="add" value="ORDER NOW" type="submit" class="input-sbmit">
+                                  </form>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          {% assign varCount = varCount | plus: 1 %}
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                    <div class="c-arrow">
+                      <svg
+                        class="c-arrow_prev"
+                        width="36"
+                        height="36"
+                        viewBox="0 0 36 36"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <rect width="36" height="36" rx="18" fill="#96865D"/><path d="M21 24L15 18L21 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                      <svg
+                        class="c-arrow_next"
+                        width="36"
+                        height="36"
+                        viewBox="0 0 36 36"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <rect x="0.226562" y="0.516113" width="36" height="36" rx="18" fill="#96865D"/><path d="M15.2266 24.5161L21.2266 18.5161L15.2266 12.5161" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endif %}
+
+{% if page.metafields.custom.under_price_collections3 != blank %}
+  <section class="under-priceCollection margin-50">
+    <div class="container clearfix">
+      <div class="underHead">
+        {% assign offercollection = page.metafields.custom.under_price_collections3 %}
+        {% assign collectionMaincontainer = offercollection | split: '::' %}
+        {%- for technical_details in collectionMaincontainer %}
+          {% assign collectionSubcontainer = technical_details | split: '|' %}
+          <div class="underLeft">
+            <div class="categoryImg">
+              <a href="{{ collectionSubcontainer[1] }}">
+                <img src="{{ collectionSubcontainer[0] }}" alt="" width="100%"
+              ></a>
+            </div>
+          </div>
+          <div class="underRight">
+            <div
+              data-section-id="{{ section.id }}-1"
+              class="clearfix custom-silder-section collection-container"
+            >
+              <div class="container grid clearfix">
+                <div class="tab-body swiper-container-wrapper tab-body-badge">
+                  <div
+                    class="swiper-container plus-slider product-loop text-left custom-underprice-silder custom-underprice-silder3"
+                    id="swiper-carousel-{{ section.id }}-1"
+                  >
+                    <div class="ldslags swiper-wrapper swiper-wrapper-{{ section.id }}-1">
+                      {% assign varCount = 0 %}
+                      {% for product in collections[collectionSubcontainer[2]].products limit: 100 %}
+                        {% if product.available and varCount < 10 %}
+                          <div class="animate-loop-{{ forloop.index0 }} swiper-slide swiper-slide-active ">
+                            <div class="underImg">
+                              <a href="{{ product.url }}">
+                                <img src="{{ product | img_url: 'master' }}" alt="" class="img-fluid">
+                              </a>
+                            </div>
+
+                            <div class="undercontent">
+                              <div class="title head">
+                                <a href="#">{{ product.title }}</a>
+                              </div>
+                              <span class="bestSllerPrice">
+                                {{- product.selected_or_first_available_variant.price | money_with_currency }}
+                                <span class="oldPrice">
+                                  {{-
+                                    product.selected_or_first_available_variant.compare_at_price
+                                    | money_with_currency
+                                  -}}
+                                </span>
+                                {% assign compare_at_price = product.selected_or_first_available_variant.compare_at_price %}
+                                {% assign price = product.selected_or_first_available_variant.price %}
+                                {% if compare_at_price > price %}
+                                  <span class="offerpercent">
+                                    (
+                                    {{ compare_at_price | minus: price | times: 100 | divided_by: compare_at_price -}}
+                                    % Off)
+                                  </span>
+                                {%- endif -%}
+                              </span>
+                              <div class="rating_head">
+                                {%- render 'judgeme_widgets',
+                                  widget_type: 'judgeme_preview_badge',
+                                  jm_style: '',
+                                  concierge_install: true,
+                                  product: product
+                                -%}
+                              </div>
+                              <div class="undertag">
+                                <div class="offertagLeft">
+                                  {% for tag in product.tags %}
+                                    {% if tag == 'sale' %}
+                                      <p>Offers Available</p>
+                                    {% endif %}
+                                  {% endfor %}
+                                </div>
+                                <div class="offertagRight underCollection-atc">
+                                  <form method="post" action="/cart/add">
+                                    <input name="id" value="{{ product.variants.first.id }}" type="hidden">
+                                    <input name="add" value="ORDER NOW" type="submit" class="input-sbmit">
+                                  </form>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          {% assign varCount = varCount | plus: 1 %}
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                    <div class="c-arrow">
+                      <svg
+                        class="c-arrow_prev"
+                        width="36"
+                        height="36"
+                        viewBox="0 0 36 36"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <rect width="36" height="36" rx="18" fill="#96865D"/><path d="M21 24L15 18L21 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                      <svg
+                        class="c-arrow_next"
+                        width="36"
+                        height="36"
+                        viewBox="0 0 36 36"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <rect x="0.226562" y="0.516113" width="36" height="36" rx="18" fill="#96865D"/><path d="M15.2266 24.5161L21.2266 18.5161L15.2266 12.5161" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endif %}
+
+<ul class="product-tags">
+  {% for tag in product.tags %}
+    <li>
+      <a href="/collections/all/{{ tag | handleize }}">{{ tag }}</a>
+    </li>
+  {% endfor %}
+</ul>
+
+<script defer>
+  const customUnderpriceSilder1 = new Swiper('.custom-underprice-silder1', {
+    slidesPerView: 1.5,
+    spaceBetween: 10,
+    draggable: 'true',
+    breakpoints: {
+      // When the window width is 800px or greater (desktop)
+      800: {
+        slidesPerView: 3.5,
+        navigation: {
+          nextEl: ".custom-underprice-silder1 .c-arrow_next",
+          prevEl: ".custom-underprice-silder1 .c-arrow_prev",
+        },
+      },
+    },
+  });
+  const customUnderpriceSilder2 = new Swiper('.custom-underprice-silder2', {
+    slidesPerView: 1.5,
+    spaceBetween: 10,
+    draggable: 'true',
+    breakpoints: {
+      // When the window width is 800px or greater (desktop)
+      800: {
+        slidesPerView: 3.5,
+        navigation: {
+          nextEl: ".custom-underprice-silder2 .c-arrow_next",
+          prevEl: ".custom-underprice-silder2 .c-arrow_prev",
+        },
+      },
+    },
+  });
+  const customUnderpriceSilder3 = new Swiper('.custom-underprice-silder3', {
+    slidesPerView: 1.5,
+    spaceBetween: 10,
+    draggable: 'true',
+    breakpoints: {
+      // When the window width is 800px or greater (desktop)
+      800: {
+        slidesPerView: 3.5,
+        navigation: {
+          nextEl: ".custom-underprice-silder3 .c-arrow_next",
+          prevEl: ".custom-underprice-silder3 .c-arrow_prev",
+        },
+      },
+    },
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Under Collection Products",
+  "settings": [],
+  "presets": [
+    {
+      "category": "Hero",
+      "name": "Under Collection Products"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,259 @@
+<style>
+  .mainGridCont{{ section.id }} .twimgGrid1Head{
+    font-size:40px;
+    font-family: var(--headline_font);
+    margin-top:40px;
+    font-weight:{{section.settings.headingFontweight}};
+    font-family:{{ section.settings.headingFont.family }};
+  }
+  .mainGridCont{{ section.id }} .twimgGridsImg img{
+    margin-top: 15px;
+  }
+  .mainGridCont{{ section.id }} .twimgGrids{
+  display:flex;
+    justify-content:center;
+  }
+  .mainGridCont{{ section.id }} .twimgGridsAtag{
+    width:100%;
+    margin:0 10px;
+    width:{{section.settings.deskgridWidth}}% ;
+  }
+  .mainGridCont{{ section.id }} .twimgGridsText, .mainGridCont{{ section.id }} .twimgGrid1subhead{
+    color:black;
+  }
+  .mainGridCont{{ section.id }} .grid_main_cont{
+    margin-bottom:20px;
+  }
+  .mainGridCont{{ section.id }} .twimgGridscardHead{
+    color:black;
+    font-size:20px;
+    font-weight:{{section.settings.CardheadingFontweight}};
+    font-family:{{ section.settings.CardheadingFont.family }};
+    margin-bottom:15px;
+    margin-top:15px;
+  }
+  .mainGridCont{{ section.id }} .twimgGridscardSubhead{
+    color:black;
+    line-height:26px;
+    font-size:16px;
+    font-family:{{ section.settings.subheadingFont.family }};
+    {% if section.settings.subheadBold %}
+      font-weight:bold;
+    {% endif %}
+  }
+  .mainGridCont{{ section.id }} .twimgGridscardreadMore{
+    color: #96865D;
+    font-size: 16px;
+    border-bottom: 1px solid;
+    padding-bottom: 4px;
+    width: fit-content;
+    margin: auto;
+    font-weight:{{section.settings.buttonFontweight}};
+    font-family:{{ section.settings.btnFont.family }};
+  }
+  @media(min-width:640px){
+    .mainGridCont{{ section.id }} .twimgGridsText, .mainGridCont{{ section.id }} .twimgGrid1subhead{
+      font-size:16px;
+    }
+  }
+  @media(max-width:640px){
+      .mainGridCont{{ section.id }} .twimgGrid1Head{
+        font-size: 24px;
+      }
+    .mainGridCont{{ section.id }} .twimgGrids {
+      {% if section.settings.checkboxfor4 %}
+      flex-wrap: wrap;
+      padding-left: 20px;
+      padding-right: 10px;
+      {% else %}
+      flex-flow: column;
+      {% endif %}
+  }
+    .mainGridCont{{ section.id }} .twimgGridsAtag{
+        margin:0;
+        width:100%;
+        {% if section.settings.checkboxfor4 %}
+        width: 50%;
+        padding-right: 10px;
+        padding-left:0;
+        {% else %}
+        padding:0 20px;
+        {% endif %}
+        box-sizing: border-box;
+      }
+      .mainGridCont{{ section.id }} .twimgGridscardHead{
+        font-size:16px;
+      }
+      .mainGridCont{{ section.id }} .twimgGridscardSubhead{
+        font-size:14px;
+      }
+      .mainGridCont{{ section.id }} .twimgGridscardreadMore{
+        font-size: 12px;
+        margin-bottom: 10px;
+        padding-bottom:0px;
+      }
+  }
+</style>
+
+<div class="container no-pad grid_main_cont mainGridCont{{ section.id }}">
+  {% if section.settings.CardHeading != blank %}<h2 class="text-center twimgGrid1Head">{{ section.settings.CardHeading }}</h2>{% endif %}
+  {% if section.settings.cardSubHeading != blank %}<p class='text-center twimgGrid1subhead'>{{ section.settings.cardSubHeading }}</p>{% endif %}
+
+  <div class="twimgGrids">
+    {% for block in section.blocks %}
+      <style>  
+        {% if block.settings.blodCheckbox %}
+        .mainGridCont{{ section.id }} .twimgGridsText{
+          font-weight:bold;
+        }
+      {% endif %}
+      </style>
+      <a class="twimgGridsAtag" href="{{ block.settings.cardLink }}">
+        <div class="twimgGridsImg"><img src="{{ block.settings.gridImage | img_url:'master'}}"/></div>
+        {% if block.settings.cardText != blank %}
+          <p class="twimgGridsText">{{ block.settings.cardText }}</p>
+        {% endif %}
+
+        {% if block.settings.cardTextHead != blank %}
+          <h3 class="twimgGridscardHead text-center">{{ block.settings.cardTextHead }}</h3>
+        {% endif %}
+        {% if block.settings.cardTextSubhead != blank %}
+          <p class="twimgGridscardSubhead text-center">{{ block.settings.cardTextSubhead }}</p>
+        {% endif %}
+        {% if block.settings.cardTextAtag != blank %}
+          <p class="twimgGridscardreadMore text-center">{{ block.settings.cardTextAtag }}</p>
+        {% endif %}
+      </a>
+    {% endfor %}
+  </div>
+  
+</div>
+
+{% schema %}
+  {
+    "name": "TW Image Grid",
+    "settings": [
+      {
+      "type": "text",
+      "id": "CardHeading",
+      "label": "Card Heading"
+      },
+      {
+      "type": "text",
+      "id": "cardSubHeading",
+      "label": "Card Subheading"
+      },
+      {
+      "type": "checkbox",
+      "id": "checkboxfor4",
+      "label": "Disable if the card are 4 or multiple of 2 and you want to stack them",
+      "default": false
+      },
+      {
+      "type": "text",
+      "id": "deskgridWidth",
+      "label": "Desktop Card width range 1 - 100"
+      },
+      {
+      "type": "checkbox",
+      "id": "subheadBold",
+      "label": "Bold subheading for under card texts",
+      "default":false
+      }
+      ,      {
+      "type": "text",
+      "id": "headingFontweight",
+      "label": "Heading Font Weight"
+      },
+      {
+      "type": "text",
+      "id": "CardheadingFontweight",
+      "label": "Card Heading Font weight"
+      },
+       {
+      "type": "text",
+      "id": "buttonFontweight",
+      "label": "Button Font weight"
+      },
+      {
+        "type": "font_picker",
+        "id": "headingFont",
+        "label": "Heading Fontfamily",
+        "default": "lato_n4"
+      },
+      {
+        "type": "font_picker",
+        "id": "CardheadingFont",
+        "label": "Card heading Fontfamily",
+        "default": "lato_n4"
+      },
+      {
+        "type": "font_picker",
+        "id": "subheadingFont",
+        "label": "SubHeading Fontfamily",
+        "default": "lato_n4"
+      },
+      {
+        "type": "font_picker",
+        "id": "btnFont",
+        "label": "Buttonn Fontfamily",
+        "default": "lato_n4"
+      }
+    ],
+    "blocks": [
+     {
+       "name": "imageGrid",
+       "type": "image",
+       "settings": [
+            {
+            "type": "image_picker",
+            "id": "gridImage",
+            "label": "Grid Image"
+           },
+           {
+            "type": "url",
+            "id": "cardLink",
+            "label": "Card link"
+            },
+            {
+            "type": "text",
+            "id": "cardText",
+            "label": "Card Text"
+            },
+             {
+            "type": "checkbox",
+            "id": "blodCheckbox",
+            "label": "Text bold Checkbox",
+            "default":false
+            },
+             {
+            "type": "text",
+            "id": "cardTextHead",
+            "label": "Under Image Heading"
+            },
+            {
+            "type": "text",
+            "id": "cardTextSubhead",
+            "label": "Under Image Sub-Heading"
+            },
+            {
+            "type": "text",
+            "id": "cardTextAtag",
+            "label": "Under Image See More Text"
+            }
+         ]
+     }
+  ],
+  "presets": [
+    {
+      "name": "TW Image Grid"
+    }
+  ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

@@ -1,0 +1,323 @@
+<script src="{{ 'script.popup.js' | asset_url }}" defer></script>
+
+{%- liquid
+  if section.blocks.size > 0 or section.settings.title != blank or section.settings.sub_title != blank or section.settings.body != blank
+  	assign section_onboarding = false
+  else
+  	assign section_onboarding = true
+  endif
+-%}
+
+<section data-section-id="{{ section.id }}" 
+         data-section-type="popup"
+         data-honeypot="{% if section.blocks.size > 0 %}true{% else %}false{% endif %}"
+         data-days="{{ section.settings.days }}"
+         id="popup-page"
+         class="skip">
+
+  <div id="popup" class="modal" aria-hidden="true">
+    <div class="modal-overlay" tabindex="-1" data-micromodal-close>
+      <div class="modal-container" role="dialog" aria-modal="true" aria-labelledby="modal-pop-up-{{ section.id }}">
+        <div class="modal-content">
+
+          {% unless section_onboarding %}
+          {% if section.settings.title != blank %}<h3 class="text-center" id="modal-pop-up-{{ section.id }}">{{ section.settings.title | escape }}</h3>{% endif %}
+          {% if section.settings.sub_title != blank %}<h4 class="text-center"{% if section.settings.title == blank %} id="modal-pop-up-{{ section.id }}"{% endif %}>{{ section.settings.sub_title | escape }}</h4>{% endif %}
+          {% if section.settings.body != blank %}<div class="text-center"{% if section.settings.title == blank and section.settings.sub_title == blank %} id="modal-pop-up-{{ section.id }}"{% endif %}>{{ section.settings.body }}</div>{% endif %}
+          {% else %}
+          <h3 class="text-center">{{ 'homepage.onboarding.no_title' | t }}</h3>
+          <h4 class="text-center">{{ 'homepage.onboarding.no_body' | t }}</h4>
+          {% endunless %}
+
+          {% if section.blocks.size > 0 %}
+          {%- assign email_placeholder = 'contact.form.email_placeholder' | t -%}
+          {%- assign form_type = 'contact' -%}
+          {% capture fields %}
+          {% for block in section.blocks %}
+          <div class="clearfix" {{ block.shopify_attributes }}>
+            {% case block.type %}
+
+            {% when 'newsletter' %}
+            {% if block.settings.email != blank %}{%- assign email_placeholder = block.settings.email -%}{% endif %}
+            {%- assign form_type = 'customer' -%}
+            <input type="hidden" name="contact[tags]" value="newsletter">
+
+            {% when 'contact' %}
+            {% if block.settings.email != blank %}{%- assign email_placeholder = block.settings.email -%}{% endif %}
+
+            {% if block.settings.first != blank %}
+            <span class="form pop">
+              <label for="popFirst" class="visually-hidden">{{ block.settings.first }}</label>
+              <input type="text" id="popFirst" name="contact[{{ block.settings.first }}]" placeholder="{{ block.settings.first }}" required />
+            </span>
+            {% endif %}
+
+            {% if block.settings.last != blank %}
+            <span class="form pop">
+              <label for="popLast" class="visually-hidden">{{ block.settings.last }}</label>
+              <input type="text" id="popLast" name="contact[{{ block.settings.last }}]" placeholder="{{ block.settings.last }}" required />
+            </span>
+            {% endif %}
+
+            {% if block.settings.phone != blank %}
+            <span class="form pop">
+              <label for="popPhone" class="visually-hidden">{{ block.settings.phone }}</label>
+              <input type="tel" id="popPhone" name="contact[{{ block.settings.phone }}]" placeholder="{{ block.settings.phone }}" pattern="[0-9\-]*" required />
+            </span>
+            {% endif %}
+
+            {% if block.settings.message != blank %}
+            <span class="form pop">
+              <label for="popMessage" class="visually-hidden">{{ block.settings.message }}</label>
+              <textarea id="popMessage" name="contact[{{ block.settings.message }}]" placeholder="{{ block.settings.message }}" required ></textarea>
+            </span>
+            {% endif %}
+
+            {% when 'survey' %}
+
+            {% if block.settings.email != blank %}{%- assign email_placeholder = block.settings.email -%}{% endif %}
+            {% if block.settings.select_title != blank and block.settings.select_body != blank %}
+            <label for="popSelect"{% unless block.settings.select_label != blank %} class="visually-hidden"{% endunless %}>{% if block.settings.select_label != blank %}{{ block.settings.select_label }}{% else %}{{ block.settings.select_title }}{% endif %}</label>
+            <span class="form pop select">
+              <select id="popSelect" class="no-select" name="contact[{% if block.settings.select_label != blank %}{{ block.settings.select_label }}{% else %}{{ block.settings.select_body }}{% endif %}]" required>          
+                <option value="">{{ block.settings.select_title }}</option>
+                {%- assign list = block.settings.select_body | split: ',' -%}
+                {%- for l in list -%}
+                <option value="{{ l | escape | lstrip | rstrip  }}">{{ l | escape | lstrip | rstrip }}</option>
+                {%- endfor -%}
+              </select>
+              {%- render 'icons.theme', icon: 'arrow-down', size: 14 -%}
+             </span>
+            {% endif %}
+
+            {% if block.settings.checkbox_body != blank %}
+            <span class="form pop radiobox">
+              {% if block.settings.checkbox_label != blank %}<label for="popCheckbox">{{ block.settings.checkbox_label }}</label>{% endif %}
+              {%- assign list = block.settings.checkbox_body | split: ',' -%}
+              {%- for l in list -%}
+              <span>
+                <label for="popCheckbox-{{ forloop.index }}" class="visually-hidden">{{ l | escape | lstrip | rstrip }}</label>
+                <input type="checkbox" id="popCheckbox-{{ forloop.index }}" class="popCheckbox" title="{{ l | escape | lstrip | rstrip }}" value="{{ l | escape | lstrip | rstrip }}"> {{ l | escape | lstrip | rstrip }}{% unless forloop.last %}<br/>{% endunless %}
+              </span>
+              {%- endfor -%}
+              <input type="hidden" id="popCheckbox" name="contact[{% if block.settings.checkbox_label != blank %}{{ block.settings.checkbox_label }}{% else %}{{ block.settings.checkbox_body }}{% endif %}]">
+            </span>
+            {% endif %}
+
+            {% if block.settings.radio_body != blank %}
+            <span id="popRadio" class="form pop radiobox">
+              {% if block.settings.radio_label != blank %}<label for="popRadio">{{ block.settings.radio_label }}</label>{% endif %}
+              {%- assign list = block.settings.radio_body | split: ',' -%}
+              {%- for l in list -%}
+              <span>
+                <label for="popRadio-{{ forloop.index }}" class="visually-hidden">{{ l | escape | lstrip | rstrip }}</label>
+                <input type="radio" id="popRadio-{{ forloop.index }}" name="contact[{% if block.settings.radio_label != blank %}{{ block.settings.radio_label }}{% else %}{{ block.settings.radio_body }}{% endif %}]" title="{{ l | escape | lstrip | rstrip }}" value="{{ l | escape | lstrip | rstrip }}"{% if forloop.first %} required{% endif %}> {{ l | escape | lstrip | rstrip }}{% unless forloop.last %}<br/>{% endunless %}
+              </span>
+              {%- endfor -%}
+            </span>
+            {% endif %}
+
+            {% if block.settings.textarea != blank %}
+            <span class="form pop">
+              <label for="popTextarea" class="visually-hidden">{{ block.settings.textarea }}</label>
+              <textarea id="popTextarea" name="contact[{{ block.settings.textarea }}]" placeholder="{{ block.settings.textarea }}" required></textarea>
+            </span>
+            {% endif %}
+
+            {% endcase %}
+          </div>
+          {% endfor %}
+          {% endcapture %}
+
+          {% form form_type, id: 'popup_form', class: 'form-validation' %}
+
+          {% if form.posted_successfully? %}
+          <div class="success successForm feedback pop clearfix">
+            {% if form_type == 'customer' %}
+            <p>{{ 'general.newsletter.post_success' | t }}</p>
+            {% else %}
+            <p>{{ 'contact.form.post_success' | t }}</p>
+            {% endif %}
+          </div>
+          {% elsif form.errors %}
+          <div class="errors errorForm feedback pop clearfix">
+            <p>{{ 'contact.form.post_error' | t }} {{ 'contact.form.post_error_msg1' | t }} {{ form.errors | size | pluralize: 'error', 'errors' }} {{ 'contact.form.post_error_msg2' | t }}</p>
+            {{ form.errors | default_errors }}
+          </div>
+          {% endif %}
+
+          {{ fields }}
+
+          <span class="form pop">
+            <label for="popEmail" class="visually-hidden">{{ email_placeholder }}</label>
+            <input type="email" id="popEmail" name="contact[email]" placeholder="{{ email_placeholder }}" autocorrect="off" autocapitalize="off" value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}" required />
+          </span> 
+
+          <span class="hidden extra" aria-hidden="true">
+            <label for="popNumber">Extra</label>
+            <input type="text" id="popNumber" name="Extra" value="">
+          </span>
+
+          <span id="pop-honeypot"></span>
+          <noscript><span class="btn outline auto-full-width" id="popSubmit">{{ 'layout.general.no_js' | t }}</span></noscript>
+
+          {% endform %}
+
+          {% endif %}
+
+        </div>
+        <button class="modal-close" aria-label="{{ 'layout.general.close' | t | escape }}" data-micromodal-close>{%- render 'icons.theme', icon: 'times', size: 18 -%}</button>
+      </div>  
+    </div>
+  </div>
+
+</section>
+
+{% schema %}
+  {
+    "name": "t:sections.exit_pop_up.label",
+	"max_blocks": 1,
+    "settings": [
+      {
+        "type": "paragraph",
+    	"content": "t:sections.exit_pop_up.info"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "t:sections.heading.label",
+		"default": "Exit pop up"
+      },
+      {
+        "type": "text",
+        "id": "sub_title",
+        "label": "t:sections.subheading.label",
+		"default": "Create newsletter sign ups, promo offers, surveys and more"
+      },
+      {
+        "type": "richtext",
+        "id": "body",
+        "label": "t:sections.text.label"
+      },
+      {
+        "type": "range",
+        "id": "days",
+        "min": 0,
+        "max": 30,
+        "step": 1,
+        "label": "t:sections.display_delay.label",
+        "default": 7
+      }
+    ],
+    "blocks": [
+      {
+        "type": "newsletter",
+        "name": "t:sections.newsletter.name",
+        "settings": [
+          {
+            "type": "text",
+            "id": "email",
+            "label": "t:sections.placeholder.email",
+            "default": "E-Mail"
+          }
+        ]
+      },
+      {
+        "type": "contact",
+        "name": "t:sections.contact.name",
+        "settings": [
+          {
+            "type": "text",
+            "id": "first",
+            "label": "t:sections.placeholder.first",
+            "default": "First name"
+          },
+          {
+            "type": "text",
+            "id": "last",
+            "label": "t:sections.placeholder.last",
+            "default": "Last name"
+          },
+          {
+            "type": "text",
+            "id": "message",
+            "label": "t:sections.placeholder.message",
+            "default": "Message"
+          },
+          {
+            "type": "text",
+            "id": "phone",
+            "label": "t:sections.placeholder.phone",
+            "default": "Phone"
+          },
+          {
+            "type": "text",
+            "id": "email",
+            "label": "t:sections.placeholder.email",
+            "default": "E-Mail"
+          }
+        ]
+      },
+      {
+        "type": "survey",
+        "name": "t:sections.survey.name",
+        "settings": [ 
+          {
+            "type": "text",
+            "id": "select_label",
+            "label": "t:sections.select.dropdown_label"
+          },
+          {
+            "type": "text",
+            "id": "select_title",
+            "label": "t:sections.select.dropdown_placeholder",
+            "default": "Please choose..."
+          },
+          {
+            "type": "textarea",
+            "id": "select_body",
+            "label": "t:sections.select.dropdown_options",
+			"default": "Option 1, Option 2, Option 3",
+        	"info": "t:sections.seperate.info"
+          },
+          {
+            "type": "text",
+            "id": "checkbox_label",
+            "label": "t:sections.checkbox_label.label"
+          },
+          {
+            "type": "textarea",
+            "id": "checkbox_body",
+            "label": "t:sections.checkbox_options.label",
+			"default": "Option 1, Option 2, Option 3",
+        	"info": "t:sections.seperate.info"
+          },
+          {
+            "type": "text",
+            "id": "radio_label",
+            "label": "t:sections.radio_label.label"
+          },
+          {
+            "type": "textarea",
+            "id": "radio_body",
+            "label": "t:sections.radio_options.label",
+			"default": "Option 1, Option 2, Option 3",
+        	"info": "t:sections.seperate.info"
+          },         
+          {
+            "type": "textarea",
+            "id": "textarea",
+            "label": "t:sections.placeholder.message",
+            "default": "Message..."
+          },
+          {
+            "type": "text",
+            "id": "email",
+            "label": "t:sections.placeholder.email",
+            "default": "E-Mail"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,43 @@
+<div class="newsletter clearfix">
+  {%- liquid
+    capture id
+      echo 'contact-form-'
+      echo section.id
+    endcapture
+    capture class
+      echo 'section-color newsletter_form'
+      if request.page_type == 'password'
+      	echo ' eight center'
+      endif
+    endcapture
+  -%}
+  {% form 'customer', id: id, class: class %}
+
+  {% if form.posted_successfully? %}
+  <div class="clearfix">
+    <div class="success successForm feedback news">
+      <p>{{ 'general.newsletter.post_success' | t }}</p>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if form.errors %}
+  <div class="clearfix">
+    <div class="errors errorForm feedback news">
+      <p>{{ 'contact.form.post_error' | t }} {{ 'contact.form.post_error_msg1' | t }} {{ form.errors | size | pluralize: 'error', 'errors' }} {{ 'contact.form.post_error_msg2' | t }}</p>
+      {{ form.errors | default_errors }}
+    </div>
+  </div>
+  {% endif %}
+
+  <input type="hidden" name="contact[tags]" value="newsletter">
+  <span class="form no-label">
+    <label for="email-{{ section.id }}" class="visually-hidden">{{ 'contact.form.email' | t }}</label>
+    <input type="email" value="{% if customer %}{{ customer.email }}{% else %}{{ form.email }}{% endif %}" placeholder="{{ 'contact.form.email_placeholder' | t }}" name="contact[email]" id="email-{{ section.id }}" class="section-color required email" autocorrect="off" autocapitalize="off">
+  </span>
+  <span>
+    <button type="submit" name="commit" id="subscribe-{{ section.id }}" class="btn button auto-full-width" aria-label="{{ 'general.newsletter.subscribe_btn' | t | escape }}">{{ 'general.newsletter.subscribe_btn' | t }}</button>
+  </span>
+
+  {% endform %}
+</div>

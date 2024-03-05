@@ -1,0 +1,233 @@
+<style>
+.seo_content_wrap{
+  margin: calc(var(--master_spacing)*1.5) 0;
+}
+  .seo_content_wrap p {
+    font-size: 14px;
+    color: #343333;
+}
+.seo_content_wrap-inner{
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    z-index: 9999;
+    opacity: .9;
+}
+.seo_content_wrap_popup {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    width: 100%;
+    height: 90%;
+    display: none;
+    z-index: 1;
+    background-color: white;
+    justify-content: center;
+    z-index: 9999;
+    overflow: auto;
+    opacity: 1;
+    max-width: 800px;
+    margin: 10px 0;
+    transform: translate(-50%, 0);
+    box-shadow: 0px 0px 25px 1px rgba(0, 0, 0, .2);
+    padding: 15px 25px;
+}
+.seo_content_link{
+    color: #96865d;
+    font-family: var(--body_font);
+    letter-spacing: .7px;
+    line-height: 1.2;
+    border-bottom: 1px solid;
+    font-weight: 500;
+}
+.seo_content_link:hover{
+    text-decoration: none;
+}
+.seo_content_wrap_popup h4{
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+}
+  .seo_content_wrap h4 {
+    font-size: 16px;
+    line-height: 1.5;
+    letter-spacing: .3px;
+    color: #343333;
+    font-family: var(--body_font);
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+.seo_content_wrap_popup p {
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0;
+}
+.seo_content_wrap_close {
+    font-size: 16px!important;
+    background: #96865d;
+    color: #fff!important;
+    border-radius: 4px;
+    width: calc(var(--master_spacing)*1.5);
+    height: calc(var(--master_spacing)*1.5);
+    position: absolute;
+    top: 7px;
+    right: 7px;
+}
+  {% comment %}
+.seo_content_wrap_close:after {
+    content: var(--menu_times);
+    /* position: absolute; */
+    /* top: 0; */
+    /* right: 0; */
+    /* width: calc(var(--master_spacing)*1.5); */
+    /* height: calc(var(--master_spacing)*1.5); */
+    font-weight: 700;
+    font-size: var(--large);
+    line-height: calc(var(--master_spacing)*1.5);
+    font-family: var(--icon_font), Arial, "Helvetica Neue", Helvetica, sans-serif;
+    color: var(--white);
+    text-align: center;
+    transition: background-color .25s;
+    -webkit-box-sizing: border-box;
+    -khtml-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -o-box-sizing: border-box;
+    box-sizing: border-box;
+    z-index: 2;
+}
+{% endcomment %}
+  @media screen and (max-width: 800px) {
+    .seo_content_wrap h4 {
+    font-size: 12px;
+}
+    .seo_content_wrap a {
+    font-size: 11px;
+    letter-spacing: .55px;
+}
+    .seo_content_wrap_popup {
+        width: 90%;
+    }
+    .seo_content_wrap-outer .container {
+    padding: 0 25px;
+}
+    .seo_content_wrap p {
+    font-size: 11px;
+    padding-bottom: 6px;
+}
+  }
+</style>
+
+{% if section.settings.title != blank or section.settings.subheading != blank %}
+{%- assign section_onboarding = false -%}
+{% else %}
+{%- assign section_onboarding = true -%}
+{% endif %}
+
+<div data-section-id="{{ section.id }}" 
+     data-section-type="seo-content"
+    class="seo_content_wrap-outer">
+
+  {% unless section.settings.subheading == blank or section.settings.title == blank %}
+  <div class="clearfix margins-section">
+    {% unless section.settings.full_width %}<div class="container clearfix"><div class="twelve">{% endunless %}
+    {% unless section_onboarding %}
+    <div class="seo_content_wrap">
+      {%- if section.settings.title != blank -%}
+      <h4>{{section.settings.title}}</h4>
+      {%- endif -%}
+      {%- if section.settings.subheading != blank -%}
+        <p>{{section.settings.subheading | strip_html | truncatewords: 50}}</p>
+      {%- endif -%}
+      <a href="javascript:void(0)" class="seo_content_link">Read More</a>
+    </div>
+    <div class="seo_content_wrap-inner"></div>
+    <div class="seo_content_wrap_popup">
+            {%- if section.settings.title != blank -%}
+            <h4>{{section.settings.title}}</h4>
+            {%- endif -%}
+            <button type="button" class="seo_content_wrap_close" title="Close">
+              <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M19 5L5 19M5.00001 5L19 19" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <!-- <button type="button" data-fancybox-close="" class="fancybox-button fancybox-close-small" title="Close"></button> -->
+
+            {%- if section.settings.subheading != blank -%}
+                {{section.settings.subheading }}
+            {%- endif -%}
+    </div>
+    {% else %}
+    <div class="text-center margins-section">
+      <h2 class="h1">{{ 'homepage.onboarding.no_title' | t }}</h2>
+      <h3>{{ 'homepage.onboarding.no_body' | t }}</h3>
+    </div>
+    {% endunless %}
+    {% unless section.settings.full_width %}</div></div>{% endunless %}
+  </div>
+  {% endunless %}
+  
+</div>
+
+<script defer>
+const seoPopup = document.querySelector('.seo_content_wrap_popup')
+const seoPopupOverlay = document.querySelector('.seo_content_wrap-inner')
+
+function toggleDisp(){
+    if (seoPopup.style.display === "none" || seoPopup.style.display === "") {
+        seoPopup.style.display = "block";
+    } else {
+        seoPopup.style.display = "none";
+    }
+
+    if (seoPopupOverlay.style.display === "none" || seoPopupOverlay.style.display === "") {
+        seoPopupOverlay.style.display = "flex";
+    } else {
+        seoPopupOverlay.style.display = "none";
+    }
+}
+  
+document.querySelector('.seo_content_link').addEventListener('click',() => {
+  toggleDisp();
+})
+document.querySelector('.seo_content_wrap_close').addEventListener('click',() => {
+  toggleDisp();
+})
+</script>
+
+{% schema %}
+  {
+    "name": "SEO Content",
+    "class": "seo-content-section",
+    "settings": [
+	  {
+       "type": "checkbox",
+       "id": "full_width",
+       "label": "Full width",
+       "default": false
+      },
+      {
+         "type": "text",
+         "id": "title",
+         "label": "Heading",
+         "default": "Seo Content"
+      },
+      {
+         "type": "richtext",
+         "id": "subheading",
+         "label": "Content",
+         "default": "<p>Lorem Ipsum Is Simply Dummy Text Of The Printing And Typesetting Industry. Lorem Ipsum Has Been The Industry’s Standard Dummy Text Ever Since The 1500S, When An Unknown Printer Took A Galley Of Type And Scrambled It To Make A Type Specimen Book. It Has Survived Not Only Five Centuries, But Also The Leap Into Electronic Typesetting, Remaining Essentially Unchanged. It Was Popularised In The 1960S With The Release Of Letraset Sheets Containing Lorem Ipsum Passages, And More Recently With Desktop Publishing Software Like Aldus Pagemaker Including Versions Of Lorem Ipsum. Lorem Ipsum Passages, And More Recently With Desktop Publishing Software</p>"
+      }
+    ],
+    "presets": [
+      {
+        "name": "SEO Content",
+        "category": "General"
+      }
+    ]
+  }
+{% endschema %}

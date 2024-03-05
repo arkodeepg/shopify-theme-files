@@ -1,0 +1,39 @@
+{% comment %}
+-------------------------------------------------------------------------------
+Product card
+-------------------------------------------------------------------------------
+Description
+render the product card for all purposes
+-------------------------------------------------------------------------------
+Accepts
+- product: product - product object
+-------------------------------------------------------------------------------
+Usage
+{% render 'product-card', product: product %}
+-------------------------------------------------------------------------------
+{% endcomment %}
+
+{% assign regularPrice = product.price %}
+{% assign salePrice = product.compare_at_price %}
+
+
+        {% capture the_snippet_fave_icon %}{% render 'ssw-widget-faveicon' with product.id %}{% endcapture %}
+{% unless the_snippet_fave_icon contains 'Liquid error' %}
+    {{ the_snippet_fave_icon }}
+{% endunless %}    
+<a href="{{ product.url }}" class="product-card_outer">
+    <img loading="lazy" class="lazy" 
+      width="{{ product.featured_image.width }}"
+      height="{{ product.featured_image.height }}"
+      data-src="{{product.featured_image | img_url: '500x'}}" alt="{{product.featured_image.alt}}" class="product-card_image">
+    <div class="product-card_title">{{product.title}}</div>
+    <div class="product-card_price-cont">
+        <div class="product-cart_actpri">{{product.price | money_with_currency}}</div>
+        <div class="product-cart_comppri">{{product.compare_at_price | money_with_currency}}</div>
+        {% if salePrice and salePrice > regularPrice %}
+            {% assign discountAmount = regularPrice | minus: salePrice %}
+            {% assign discountPercentage = discountAmount | times: 100 | divided_by: regularPrice %}
+            <div class="product-cart_discount">({{ product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round  | append: '%' }} Off)</div>
+        {% endif %}
+    </div>
+</a>

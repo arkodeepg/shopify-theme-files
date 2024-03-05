@@ -1,0 +1,31 @@
+{% if checkbox %}
+  <style>
+    .bulkOrderPtag {
+      color: #96865d;
+      font-size: 14px;
+      padding: 0 0 calc(var(--small) * 1.25);
+    }
+    .bulkOrderPtag a {
+      color: #96865d;
+      text-decoration: underline;
+    }
+    .bulkOrderPtag a:hover {
+      text-decoration: none;
+      color: black;
+    }
+    @media screen and (max-width: 800px){
+      .bulkOrderPtag {
+          padding: 0 0 calc(var(--small)/3);
+      }
+    }
+  </style>
+  {% if checkbox %}
+    <p class="bulkOrderPtag">
+      {% assign bulkMsg = text
+        | replace: '{product.name}', product.title
+        | replace: '{product.sku}', product.selected_or_first_available_variant.sku
+      %}
+      {{ bulkMsg }}
+    </p>
+  {% endif %}
+{% endif %}

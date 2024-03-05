@@ -1,0 +1,66 @@
+{% if section.settings.url %}
+  <script>
+// console.log("redirection script loaded")
+let rurl = `{{ section.settings.url }}`
+const currentWebsiteLink = window.location.href;
+// console.log("url => ", rurl);
+
+fetch(rurl)
+  .then(response => response.json())
+  .then(data => {
+    // Log the JSON data to the console
+    // console.log(data);
+    let newdata = data
+
+    function findRedirectLink(websiteLink, newdata) {
+      for (const entry of newdata) {
+        // console.log("entry => ", entry)
+        if (entry.main === websiteLink) {
+          return entry.redirect;
+        }
+      }
+      return null; // Return null if no match is found
+    }
+
+    // Check if there is a match and get the redirect link
+    const redirectLink = findRedirectLink(currentWebsiteLink, newdata);
+
+    // If a match is found, log and use the redirect link
+    if (redirectLink) {
+      console.log(`Redirecting from ${currentWebsiteLink} to ${redirectLink}`);
+      window.location.href = redirectLink;
+      // Use the redirectLink for redirection logic in your application
+    } else {
+      // console.log(`No match found for ${currentWebsiteLink}`);
+    }
+
+  })
+  .catch(error => {
+    console.error('Error fetching JSON:', error);
+  });
+  </script>
+{% endif %}
+{% schema %}
+{
+  "name": "redirection",
+  "settings": [
+    {
+      "type": "url",
+      "label": "url",
+      "id": "url"
+    }
+  ],
+  "presets": [
+    {
+      "name": "redirection"
+    }
+  ]
+
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

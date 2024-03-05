@@ -1,0 +1,196 @@
+<style>
+  .discount_coupons .three {
+    position: relative;
+  }
+  .offerHead h2 {
+    font-family: var(--headline_font);
+    font-weight: 400;
+    font-size: 26px;
+    line-height: 47px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #96865d;
+    margin-bottom: 50px;
+  }
+  .categoryImg {
+    margin-bottom: 16px;
+  }
+  .discount_coupons .three .cateGoryContent {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    top: 50%;
+    text-align: center;
+    width: 100%;
+  }
+  .discount_coupons .three .cateGoryContent h1 {
+    margin: 0;
+    font-size: 36px;
+    line-height: 40px;
+    font-family: 'glacialIndifference-bold';
+    color: #f4958c;
+  }
+  .discount_coupons .three .cateGoryContent .coupons_code {
+    border: 2px dotted #dd9494;
+    padding: 5px;
+    width: 62%;
+    margin: 8px auto;
+    position: relative;
+    cursor: pointer;
+  }
+  .discount_coupons .three .cateGoryContent .coupons_code .couponLeft {
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 19px;
+    text-align: center;
+    text-transform: capitalize;
+    color: #4a4a4a;
+  }
+  .discount_coupons .three .cateGoryContent .coupons_code .couponRight {
+    font-size: 15px;
+    line-height: 19px;
+    text-align: center;
+    text-transform: capitalize;
+    color: #171717;
+    font-family: 'glacialIndifference-bold';
+  }
+  .coupons_code .tooltip-content {
+    width: 67px;
+    padding: 4px;
+    text-align: center;
+    background-color: green;
+    left: 50%;
+    font-size: 14px;
+    top: -35px;
+    border-radius: 3px;
+    color: #fff;
+    position: absolute;
+    line-height: 18px;
+    letter-spacing: 0.36px;
+    font-style: italic;
+    font-family: var(--body_font) !important;
+    font-weight: 500;
+    opacity: 1;
+    transform: translatex(-55%);
+    display: none;
+  }
+  .offer-collection .three,
+  .discount_coupons .three {
+    padding: 0 8px !important;
+  }
+  @media (max-width: 991px) {
+    .offer-collection .three,
+    .discount_coupons .three {
+      width: 50%;
+    }
+    .discount_coupons .three .cateGoryContent h1 {
+      font-size: 20px !important;
+      line-height: 20px !important;
+    }
+    .discount_coupons .three .cateGoryContent .coupons_code {
+      width: 75% !important;
+    }
+    .discount_coupons .three .cateGoryContent p {
+      font-size: 10px !important;
+      line-height: 16px !important;
+      width: 100% !important;
+      margin: auto;
+      max-width: 70% !important;
+    }
+    .discount_coupons .three .cateGoryContent .coupons_code .couponLeft {
+      font-size: 10px !important;
+      line-height: 16px !important;
+    }
+    .discount_coupons .three .cateGoryContent .coupons_code .couponRight {
+      font-size: 10px !important;
+      line-height: 16px !important;
+    }
+    .categoryImg {
+      margin-bottom: 15px !important;
+    }
+    .discount_coupons .categoryImg img {
+      height: 130px;
+    }
+    .offerHead h2 {
+      font-size: 20px !important;
+      line-height: 24px !important;
+      margin-bottom: 30px !important;
+    }
+  }
+</style>
+
+{% if page.metafields.custom.discount_coupons != blank %}
+  <section class="discount_coupons margin-30 margin-bottom-30">
+    <div class="container clearfix">
+      {% if page.metafields.custom.discount_coupons_heading != blank %}
+        <div class="twelve text-center offerHead">
+          <h2>{{ page.metafields.custom.discount_coupons_heading }}</h2>
+        </div>
+      {% endif %}
+
+      <div class="tab-body divided_col">
+        {% assign offercollection = page.metafields.custom.discount_coupons %}
+        {% assign collectionMaincontainer = offercollection | split: '::' %}
+        {%- for technical_details in collectionMaincontainer %}
+          {% assign collectionSubcontainer = technical_details | split: '|' %}
+          <div class="three">
+            <div class="categoryImg">
+              <img
+                src="{{ collectionSubcontainer[0] }}"
+                alt=""
+                width="100%"
+              >
+            </div>
+            <div class="cateGoryContent">
+              <h1>{{ collectionSubcontainer[1] }}</h1>
+              <div class="coupons_code">
+                <span class="couponLeft">Coupon Code :</span>
+                <span class="couponRight">{{ collectionSubcontainer[2] }}</span>
+                <span class="tooltip-content">Copied</span>
+              </div>
+              <p>{{ collectionSubcontainer[3] }}</p>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endif %}
+
+<script defer>
+  $(document).on('click', '.coupons_code', function () {
+    copy = $(this).find('.couponRight').text();
+    var temp = $('<input>');
+    $('body').append(temp);
+    temp.val(copy).select();
+    document.execCommand('copy');
+    temp.remove();
+    $(this).find('.tooltip-content').show().addClass('show');
+
+    if ($('.coupons_code .tooltip-content').hasClass('show')) {
+      setTimeout(function () {
+        $('.tooltip-content').attr('style', 'display:none!important');
+      }, 1000);
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "coupon card",
+  "tag": "section",
+  "settings": [],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "coupon card"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

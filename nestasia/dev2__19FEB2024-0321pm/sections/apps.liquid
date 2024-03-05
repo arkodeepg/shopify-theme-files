@@ -1,0 +1,163 @@
+{%- liquid
+  assign full_width = section.settings.full_width
+  assign background_color = false
+  if section.settings.background != 'rgba(0,0,0,0)' and section.settings.background != blank
+    assign background_color = true
+    assign background_color_section = section.settings.background
+  endif    
+  if section.settings.background_gradient != 'rgba(0,0,0,0)' and section.settings.background_gradient != blank
+    assign background_color = true
+    assign background_color_section = section.settings.background_gradient
+  endif
+  capture classes
+    echo 'dynamic-section dynamic-section-'
+    echo section.id 
+    echo ' section-padding-top section-padding-bottom section-margin-bottom '
+    if section.settings.padding_border
+      echo 'section-border '
+    endif
+  endcapture
+-%}
+
+{% style %}
+  .dynamic-section-{{ section.id }} {
+    --section-padding-top-mobile: {{ section.settings.padding_top_mobile }}px;
+    --section-padding-top-desktop: {{ section.settings.padding_top_desktop }}px;
+    --section-padding-bottom-mobile: {{ section.settings.padding_bottom_mobile }}px;
+    --section-padding-bottom-desktop: {{ section.settings.padding_bottom_desktop }}px;
+    --section-margin-bottom-mobile: {{ section.settings.margin_bottom_mobile }}px;
+    --section-margin-bottom-desktop: {{ section.settings.margin_bottom_desktop }}px;
+    {% if background_color %}
+      --background:{{ background_color_section }};
+    {% endif %}
+  }
+{% endstyle %}
+
+<section data-section-id="{{ section.id }}" 
+         data-section-type="html" 
+         class="{{ classes }}{% if settings.animation_enable %}animate-section-div {% endif %}clearfix">
+
+  <div class="{% unless full_width %}container inner-container {% endunless %}{% if section_onboarding %} text-center {% endif %}clearfix">
+    {%- liquid
+      for block in section.blocks
+        render block
+      endfor
+    -%}
+  </div>
+  
+</section>
+
+{% schema %}
+  {
+    "name": "t:sections.apps.name",
+    "settings": [
+      {
+       "type": "checkbox",
+       "id": "full_width",
+       "label": "t:sections.full_width.label",
+       "default": false
+      },
+      {
+        "type": "header",
+        "content": "t:sections.section.name.content"
+      },
+      {
+        "id": "background",
+        "type": "color",
+        "label": "t:sections.section.settings.background_color.label"
+      },
+      {
+        "id": "background_gradient",
+        "type": "color_background",
+        "label": "t:sections.section.settings.background_gradient.label"
+      },
+      {
+        "type": "paragraph",
+        "content": "t:sections.section.settings.mobile.content"
+      },
+      {
+        "id": "padding_top_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.top_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 20
+      },
+      {
+        "id": "padding_bottom_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 20
+      },
+      {
+        "id": "margin_bottom_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_margin.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 20
+      },
+      {
+        "type": "paragraph",
+        "content": "t:sections.section.settings.desktop.content"
+      },
+      {
+        "id": "padding_top_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.top_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "padding_bottom_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "margin_bottom_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_margin.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "padding_border",
+        "type": "checkbox",
+        "label": "t:sections.section.settings.border.label",
+        "default": true
+      }
+    ],
+    "blocks": [
+    {
+      "type": "@app"
+    }
+    ],
+    "presets": [
+      {
+        "name": "t:sections.apps.name"
+      }
+    ],
+    "disabled_on": {
+      "groups": ["custom.overlay"]
+    }
+  }
+{% endschema %}

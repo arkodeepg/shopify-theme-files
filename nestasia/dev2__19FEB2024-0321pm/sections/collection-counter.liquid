@@ -1,0 +1,118 @@
+<style>
+  #productCount {
+    display: none;
+    position: fixed;
+    top: 80px;
+    z-index: 9;
+    background: #fdfdfd;
+    padding: 6px 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 50px;
+    color: black;
+    opacity: 85%;
+    cursor: pointer;
+  }
+</style>
+
+<div id="productCount">
+  <span id="product_count_viewed"></span>/<span id="product_countTotal"></span>
+  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="12" viewBox="0 0 11 12" fill="none">
+    <path d="M1 5.61538L5.61538 1L10.2308 5.61538" stroke="black" stroke-linecap="round"/>
+    <path d="M5.61523 1.38477V11.0001" stroke="black" stroke-linecap="round"/>
+  </svg>
+</div>
+
+<script async>
+  // Check if the user is on a mobile device
+  function isMobileDevice() {
+      if (screen.width<700) return true
+      else return false
+  }
+    $(document).ready(function() {
+      var multiplier = isMobileDevice() ? 2 : 4;
+      // let threshHold = isMobileDevice() ? 280 : 350;
+      let threshHold;
+      let divBottomPosition
+      $(window).scroll(function() {
+        threshHold= $(".wizzy-result-product").height()
+        const divElement = document.getElementsByClassName("wizzy-search-results")[0];
+        // console.log("divElement",divElement)
+        divBottomPosition = divElement.getBoundingClientRect().bottom;
+       // console.log("divBottomPosition",divBottomPosition)
+        let heightOfdiv = $(".wizzy-search-results").height();
+        // console.log("heightOfdiv",heightOfdiv)
+        var currentScroll = $(this).scrollTop();
+        let countThresh = (currentScroll-$("#wizzy-shopify-collection-page-wrapper").position().top)/threshHold;
+        // console.log("countThresh ",countThresh);
+        //  console.log("threshHold ",threshHold);
+        //  console.log("multiplier ",multiplier);
+        //    console.log("(Math.floor(countThresh))*multiplier ",(Math.floor(countThresh))*multiplier);
+
+        var productCount = ((Math.floor(countThresh))*multiplier);
+        var totalCount = $(".wizzy-result-product").length;
+
+        // console.log("math floor",(Math.floor(countThresh))*2);
+        // console.log("Current Scroll Amount:", currentScroll);
+           if (divBottomPosition >= window.innerHeight - (isMobileDevice() ? 400 : 100)) {
+             if(productCount > totalCount) $("#product_count_viewed").text(totalCount)
+             else $("#product_count_viewed").text(productCount);
+            if(productCount>5) $("#productCount").show()
+            else $("#productCount").hide()
+           }
+           else{
+            $("#product_count_viewed").text(totalCount)
+           }
+
+        {% comment %}
+         if (window.scrollY >= 100) {
+        const divElement = document.getElementsByClassName("wizzy-search-results")[0];
+        // console.log("divElement",divElement)
+        divBottomPosition = divElement.getBoundingClientRect().bottom;
+       // console.log("divBottomPosition",divBottomPosition)
+        let heightOfdiv = $(".wizzy-search-results").height();
+        // console.log("heightOfdiv",heightOfdiv)
+        var currentScroll = $(this).scrollTop();
+        let countThresh = currentScroll/threshHold;
+        console.log("math floor",(Math.floor(countThresh))*2);
+        // console.log("Current Scroll Amount:", currentScroll);
+           if (divBottomPosition >= window.innerHeight - 400) {
+           $("#product_count_viewed").text((Math.floor(countThresh))*2);
+           }
+         }
+
+        // console.log("The bottom of the div is within 300 pixels of the window inner height.");
+        // if (divBottomPosition <= window.innerHeight - 400) {
+        //   $("#product_count_viewed").text($("#product_countTotal").text());
+        // }
+        {% endcomment %}
+      });
+
+
+      $('#productCount').click(function(){
+          $('html, body').animate({scrollTop:0}, 'slow');
+          return false;
+      });
+
+    });
+</script>
+
+{% schema %}
+{
+  "name": "collection counter",
+  "tag": "section",
+  "settings": [],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "collection counter"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

@@ -1,0 +1,28 @@
+{% comment %}
+This snippet is to render the h1 tag only on the home page
+{% endcomment %}
+
+<h1 style="display: none">{{ shop.name }}</h1>
+
+{% schema %}
+{
+  "name": "h1 home",
+  "tag": "section",
+  "settings": [],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "h1 home"
+    }
+  ],
+  "templates": [
+    "index"
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

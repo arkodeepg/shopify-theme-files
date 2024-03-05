@@ -1,0 +1,170 @@
+{% if collection.previous_product or collection.next_product %}
+
+{%- liquid
+  assign background_color = false
+  if section.settings.background != 'rgba(0,0,0,0)' and section.settings.background != blank
+    assign background_color = true
+    assign background_color_section = section.settings.background
+  endif    
+  if section.settings.background_gradient != 'rgba(0,0,0,0)' and section.settings.background_gradient != blank
+    assign background_color = true
+    assign background_color_section = section.settings.background_gradient
+  endif
+  capture classes
+    echo 'dynamic-section dynamic-section-'
+    echo section.id 
+    echo ' section-padding-top section-padding-bottom section-margin-bottom '
+    if section.settings.padding_border
+      echo 'section-border '
+    endif
+  endcapture
+-%}
+
+{% style %}
+  .dynamic-section-{{ section.id }} { 
+    --margin_padding: {{ section.settings.padding }}vh;
+    {%- if text_color -%}
+    --headline_font_color:{{ text_color_section }};
+    {%- endif -%}
+    {%- if background_color -%}
+    --background:{{ background_color_section }};
+    {%- endif -%}
+    --section-padding-top-mobile: {{ section.settings.padding_top_mobile }}px;
+    --section-padding-top-desktop: {{ section.settings.padding_top_desktop }}px;
+    --section-padding-bottom-mobile: {{ section.settings.padding_bottom_mobile }}px;
+    --section-padding-bottom-desktop: {{ section.settings.padding_bottom_desktop }}px;
+    --section-margin-bottom-mobile: {{ section.settings.margin_bottom_mobile }}px;
+    --section-margin-bottom-desktop: {{ section.settings.margin_bottom_desktop }}px;
+  }
+{% endstyle %}
+
+<section data-section-id="{{ section.id }}" 
+         data-section-type="product_pagination" 
+         class="{{ classes }}{% if settings.animation_enable %}animate-section-div {% endif %}clearfix">
+
+  <div class="container half-pad{% if settings.animation_enable %} animate-section load{% endif %} clearfix">
+    <div class="twelve pagination bottompad-quarter animate">
+      {%- assign size = section.settings.title_size | prepend: 'skip section-title-' -%}
+      {% if collection.previous_product %}            
+        <div class="{% if collection.next_product %}six{% else %}twelve{% endif %} mobile left text-left negative-left">{%- render 'icons.theme', icon: 'left', size: section.settings.title_size, icon_class: 'prev' -%}{{ collection.previous_product.title | link_to: collection.previous_product, collection.previous_product.title, class: size }}</div>
+      {% endif %}
+      {% if collection.next_product %}
+        <div class="{% if collection.previous_product %}six{% else %}twelve{% endif %} mobile right text-right negative-right">{{ collection.next_product.title | link_to: collection.next_product, collection.next_product.title, class: size }}{%- render 'icons.theme', icon: 'right', size: section.settings.title_size, icon_class: 'next' -%}</div>
+      {% endif %}
+    </div>
+  </div>
+  
+</section>
+
+{% endif %}
+
+{% schema %}
+  {
+    "name": "t:sections.product_pagination.name",
+    "settings": [
+      {
+        "id": "title_size",
+        "type": "range",
+        "label": "t:sections.link_size.label",
+        "min": 12,
+        "max": 48,
+        "step": 6,
+        "unit": "px",
+        "default": 18
+      },
+      {
+        "id": "section_color",
+        "type": "color",
+        "label": "t:sections.text.color"
+      },
+      {
+        "type": "header",
+        "content": "t:sections.section.name.content"
+      },
+      {
+        "id": "background",
+        "type": "color",
+        "label": "t:sections.section.settings.background_color.label"
+      },
+      {
+        "id": "background_gradient",
+        "type": "color_background",
+        "label": "t:sections.section.settings.background_gradient.label"
+      },
+      {
+        "type": "paragraph",
+        "content": "t:sections.section.settings.mobile.content"
+      },
+      {
+        "id": "padding_top_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.top_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "id": "padding_bottom_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "id": "margin_bottom_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_margin.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 20
+      },
+      {
+        "type": "paragraph",
+        "content": "t:sections.section.settings.desktop.content"
+      },
+      {
+        "id": "padding_top_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.top_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "id": "padding_bottom_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "id": "margin_bottom_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_margin.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "padding_border",
+        "type": "checkbox",
+        "label": "t:sections.section.settings.border.label",
+        "default": false
+      }
+    ]
+  }
+{% endschema %}

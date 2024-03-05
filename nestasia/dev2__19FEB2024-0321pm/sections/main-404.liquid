@@ -1,0 +1,558 @@
+{%- liquid
+  assign full_width = section.settings.full_width
+  assign screen = ''
+  if section.settings.background_img_d != blank or section.settings.background_img_m != blank
+    assign background_img = true
+  else
+    assign background_img = false
+  endif              
+  if background_img
+    capture alt_d
+      if section.settings.background_img_d.alt != blank
+        echo section.settings.background_img_d.alt
+      elsif section.settings.title != blank
+        echo section.settings.title
+      elsif section.settings.sub_title != blank
+        echo section.settings.sub_title
+      elsif section.settings.body != blank
+        echo section.settings.body
+      else
+        echo section.settings.background_img_d | split: '/' | last | replace: '-', ' ' | replace: '_', ' ' | split: '.' | first | capitalize
+      endif
+    endcapture 
+    capture alt_m
+      if section.settings.background_img_m.alt != blank
+        echo section.settings.background_img_m.alt
+      elsif section.settings.title != blank
+        echo section.settings.title
+      elsif section.settings.sub_title != blank
+        echo section.settings.sub_title
+      elsif section.settings.body != blank
+        echo section.settings.body
+      else
+        echo section.settings.background_img_m | split: '/' | last | replace: '-', ' ' | replace: '_', ' ' | split: '.' | first | capitalize
+      endif
+    endcapture 
+  endif
+  assign text_color = false
+  if section.settings.section_color != 'rgba(0,0,0,0)' and section.settings.section_color != blank
+    assign text_color = true
+    assign text_color_section = section.settings.section_color
+  endif     
+  assign text_color_hover = false
+  if section.settings.section_color_hover != 'rgba(0,0,0,0)' and section.settings.section_color_hover != blank
+    assign text_color_hover = true
+    assign text_color_hover_section = section.settings.section_color_hover
+  endif 
+  assign background_color = false
+  if section.settings.background != 'rgba(0,0,0,0)' and section.settings.background != blank
+    assign background_color = true
+    assign background_color_section = section.settings.background
+  endif    
+  if section.settings.background_gradient != 'rgba(0,0,0,0)' and section.settings.background_gradient != blank
+    assign background_color = true
+    assign background_color_section = section.settings.background_gradient
+  endif
+  capture classes
+    echo 'dynamic-section dynamic-section-'
+    echo section.id 
+    echo ' section-padding-top section-padding-bottom section-margin-bottom '
+    if section.settings.padding_border
+      echo 'section-border '
+    endif
+  endcapture
+  assign overlay_color = false
+  if section.settings.background_img_overlay != 'rgba(0,0,0,0)' and section.settings.background_img_overlay != blank
+    assign overlay_color = true
+    assign overlay_color_section = section.settings.background_img_overlay
+  endif
+  if section.settings.background_img_overlay_gradient != 'rgba(0,0,0,0)' and section.settings.background_img_overlay_gradient != blank
+    assign overlay_color = true
+    assign overlay_color_section = section.settings.background_img_overlay_gradient
+  endif
+  if section.settings.enable_lazy
+    assign lazy = 'lazy'
+  else
+    assign lazy = 'eager'
+  endif
+  assign color = text_color_section | replace: '#', '%23'
+-%}
+
+{% style %}
+  .dynamic-section-{{ section.id }} { 
+    --margin_padding: {{ section.settings.padding }}vh;
+    {%- if background_color -%}
+    --background:{{ background_color_section }};
+    --button_primary_text:{{ section.settings.background }};
+    --button_secondary_hover:{{ section.settings.background }};
+    {%- endif -%}
+    {%- if overlay_color -%}
+    --overlay_background: {{ overlay_color_section }};
+    --overlay_opacity: {{ section.settings.background_img_overlay_opacity | times: 0.01 }};
+    {%- endif -%}
+    --section-padding-top-mobile: {{ section.settings.padding_top_mobile }}px;
+    --section-padding-top-desktop: {{ section.settings.padding_top_desktop }}px;
+    --section-padding-bottom-mobile: {{ section.settings.padding_bottom_mobile }}px;
+    --section-padding-bottom-desktop: {{ section.settings.padding_bottom_desktop }}px;
+    --section-margin-bottom-mobile: {{ section.settings.margin_bottom_mobile }}px;
+    --section-margin-bottom-desktop: {{ section.settings.margin_bottom_desktop }}px;
+    {%- if color != blank -%}
+    [type="search"]::-webkit-search-cancel-button{
+      background-image: url("data:image/svg+xml,%3Csvg height='16' width='16' viewBox='0 0 24 24' aria-hidden='true' focusable='false' role='presentation' xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.com/svgjs'%3E%3Cg%3E%3Cpath d='M 5 5 L 19 19' fill='none' stroke='{{ color }}' stroke-linecap='round' stroke-linejoin='round' stroke-width='3px'/%3E%3Cpath d='M 19 5 L 5 19' fill='none' stroke='{{ color }}' stroke-linecap='round' stroke-linejoin='round' stroke-width='3px'/%3E%3C/g%3E%3C/svg%3E");
+    }
+    {%- endif -%}
+  }
+  .dynamic-section-{{ section.id }} .section-color { 
+    {%- if text_color -%}
+    --headline_font_color:{{ text_color_section }};
+    --body_font_color:{{ text_color_section }};
+    --line_color:{{ text_color_section }};
+    {%- endif -%}
+    {%- if text_color_hover -%}
+    --body_font_hover_color:{{ text_color_hover_section }};
+    {%- endif -%}
+  }
+{% endstyle %}
+
+<style>
+  .errorSubHeading{
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 24px;
+    text-align: center;
+    letter-spacing: 0.08em;
+    color: #4C4C4C;
+    margin-bottom: 4px;
+  }
+  .errorImage{
+    margin-bottom: 40px;
+    margin-top: 10px;
+  }
+   .shoppingButton a{
+    background: #96865D;
+    border-radius: 21.978px;
+    width: 143px;
+    height: 34px;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 34px;
+    text-align: center;
+    letter-spacing: 0.05em;
+    color: #FFFFFF;
+    display: inline-block;
+    text-decoration: none;
+    margin-bottom: 42px;
+    font-family: glacialIndifference-regular;
+  }
+  @media screen and (max-width: 800px) {
+    #shopify-section-{{section.id}} input[type="search"].search-field{
+      display: none !important;
+    }
+  .errorImage{
+    margin-bottom: 25px;
+    margin-top: 10px;
+    max-width: 150px;
+  }
+    .errorSubHeading{
+    font-size: 14px;
+    line-height: 17px;
+    margin-bottom: 0;
+  }
+  }
+</style>
+<section data-section-id="{{ section.id }}" 
+         data-section-type="error_page" 
+         data-carousel-type="section"
+         class="{{ classes }}{% if settings.animation_enable %}animate-section-div {% endif %}clearfix">
+
+  {% if section.settings.title_enable or section.settings.sub_title != blank or background_img %}
+  {%- liquid
+    assign block_width = section.settings.block_width
+    case block_width
+      when '4'
+        assign block_width = 'four'
+      when '6'
+        assign block_width = 'six'
+      when '8'
+        assign block_width = 'eight'
+      when '9'
+        assign block_width = 'nine'
+      when '12'
+        assign block_width = 'twelve'
+    endcase
+  -%}
+  <div class="{% if full_width %}{% if background_img or overlay_color %}relative {% if background_img %}lazycontainer lazyignore {% endif %}{% if overlay_color %}background-overlay {% endif %}{% endif %}{% endif %}clearfix">
+    {%- liquid
+      if full_width and section.settings.background_img_d != blank
+      if section.settings.background_img_m != blank
+        assign screen = 'desktop-image '
+      endif
+      render 'image.load', img_src: section.settings.background_img_d, size: section.settings.background_img_d.width, alt: alt_d, background: true, screen: screen, full_width: true, lazy: lazy, sizes: '100vw'
+      endif
+      if full_width and section.settings.background_img_m != blank
+        if section.settings.background_img_d != blank
+          assign screen = 'mobile-image '
+        endif
+      render 'image.load', img_src: section.settings.background_img_m, size: section.settings.background_img_m.width, alt: alt_m, background: true, screen: screen, full_width: true, lazy: lazy, sizes: '100vw'
+      endif
+    -%}
+    <div class="relative container{% if full_width %} half-pad{% else %} {% if background_img or overlay_color %}inner-container{% else %}half-pad{% endif %}{% endif %}{% if settings.animation_enable %} animate-section load{% endif %} clearfix">
+      <div class="{% if full_width == false %}{% if background_img or overlay_color %}inner-container-pad relative {% if background_img %}lazycontainer lazyignore {% endif %}{% if overlay_color %}background-overlay {% endif %}{% endif %}{% endif %}clearfix">
+        {%- liquid
+          assign sizes = '(min-width: 1220px) 1180px, calc(100vw - 40px)'
+          if full_width == false and section.settings.background_img_d != blank
+            if section.settings.background_img_m != blank
+              assign screen = 'desktop-image '
+            endif
+            render 'image.load', img_src: section.settings.background_img_d, size: section.settings.background_img_d.width, alt: alt_d, background: true, screen: screen, lazy: lazy, sizes: sizes
+          endif
+          if full_width == false and section.settings.background_img_m != blank
+            if section.settings.background_img_d != blank
+              assign screen = 'mobile-image '
+            endif
+            render 'image.load', img_src: section.settings.background_img_m, size: section.settings.background_img_m.width, alt: alt_m, background: true, screen: screen, lazy: lazy, sizes: sizes
+          endif
+        -%}
+        <div class="relative table content-height">
+          <div class="table-cell {{ section.settings.vertical_content_alignment }}">
+            <div class="{{ block_width }} animate {{ section.settings.text_alignment }} {{ section.settings.horizontal_content_alignment }} bottompad-half">
+              {%- liquid
+                if section.settings.title_h1
+                  assign title = 1
+                else
+                  assign title = 2
+                endif
+              -%}
+              {% if section.settings.title_enable %}<h{{ title }} class="section-title-{{ section.settings.title_size }} section-color">{% if section.settings.title != blank%}{{ section.settings.title | escape }}{% else %}{{ 'general.404.title' | t }}{% endif %}</h{{ title }}>{% endif %}
+              {% if section.settings.sub_title != blank %}<h3 class="section-title-{{ section.settings.title_sub_size }} section-color errorSubHeading">{{ section.settings.sub_title | escape }}</h3>{% endif %}
+              {% if section.settings.error_image %}{{ section.settings.error_image | image_url: width: 230 | image_tag: class: 'errorImage' }}{% endif %}
+              {% if section.settings.body != blank %}{{ section.settings.body | replace: '<p>', '<p class="shoppingButton half-pad section-color">' }}{% endif %}
+              {%- liquid
+                if section.settings.include_search
+                  render 'search', id: section.id, search_class: 'page'
+                endif
+              -%}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>  
+  {% endif %}
+  
+</section>
+
+{% schema %}
+  {
+    "name": "t:sections.404.name",
+    "settings": [
+      {
+        "type": "header",
+        "content": "t:sections.banner.label"
+      },
+    {
+        "type": "image_picker",
+        "id": "error_image",
+        "label": "error image"
+      },
+      {
+        "id": "title_enable",
+        "type": "checkbox",
+        "label": "t:sections.heading.show_heading",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "t:sections.heading.label",
+		"default": "404 Page"
+      },
+      {
+        "id": "title_h1",
+        "type": "checkbox",
+        "label": "t:sections.heading.heading_one",
+        "default": true
+      },
+      {
+        "id": "title_size",
+        "type": "range",
+        "label": "t:sections.heading.heading_size",
+        "min": 12,
+        "max": 96,
+        "step": 6,
+        "unit": "px",
+        "default": 48
+      },
+      {
+        "type": "text",
+        "id": "sub_title",
+        "label": "t:sections.subheading.label",
+		"default": "This is not the page you are looking for"
+      },
+      {
+        "id": "title_sub_size",
+        "type": "range",
+        "label": "t:sections.subheading.subheading_size",
+        "min": 12,
+        "max": 96,
+        "step": 6,
+        "unit": "px",
+        "default": 24
+      },
+      {
+        "type": "richtext",
+        "id": "body",
+        "label": "t:sections.text.label",
+		"default": "<p>Nothing to see here, please move on. Click <a href=\"/collections/all\">here</a> to continue shopping.</p>"
+      },
+      {
+        "id": "section_color",
+        "type": "color",
+        "label": "t:sections.text.color"
+      },
+      {
+        "id": "section_color_hover",
+        "type": "color",
+        "label": "t:sections.text.hover"
+      },
+      {
+        "type": "select",
+        "id": "text_alignment",
+        "label": "t:sections.text_alignment.label",
+        "default": "text-center",
+        "options": [
+          {
+            "value": "text-left",
+            "label": "t:sections.alignment.left"
+          },
+          {
+            "value": "text-center",
+            "label": "t:sections.alignment.center"
+          },
+          {
+            "value": "text-right",
+            "label": "t:sections.alignment.right"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "block_width",
+        "label": "t:sections.content_width.label",
+        "default": "6",
+        "options": [
+          {
+            "value": "6",
+            "label": "50%"
+          },
+          {
+            "value": "8",
+            "label": "66%"
+          },
+          {
+            "value": "9",
+            "label": "75%"
+          },
+          {
+            "value": "12",
+            "label": "100%"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "horizontal_content_alignment",
+        "label": "t:sections.horizontal_position.label",
+        "default": "center",
+        "options": [
+          {
+            "value": "left",
+            "label": "t:sections.alignment.left"
+          },
+          {
+            "value": "center",
+            "label": "t:sections.alignment.center"
+          },
+          {
+            "value": "right",
+            "label": "t:sections.alignment.right"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "vertical_content_alignment",
+        "label": "t:sections.vertical_position.label",
+        "default": "middle",
+        "options": [
+          {
+            "value": "top",
+            "label": "t:sections.vertical_position.top"
+          },
+          {
+            "value": "middle",
+            "label": "t:sections.vertical_position.middle"
+          },
+          {
+            "value": "bottom",
+            "label": "t:sections.vertical_position.bottom"
+          }
+        ]
+      },
+      {
+        "type": "image_picker",
+        "id": "background_img_d",
+        "label": "t:sections.image.desktop.label",
+        "info": "t:sections.image.desktop.info"
+      },
+      {
+        "type": "image_picker",
+        "id": "background_img_m",
+        "label": "t:sections.image.mobile.label",
+        "info": "t:sections.image.mobile.info"
+      },
+	  {
+       "type": "checkbox",
+       "id": "full_width",
+       "label": "t:sections.full_width.label",
+       "default": true
+      },
+      {
+        "type": "range",
+        "id": "padding",
+        "min": 5,
+        "max": 100,
+        "step": 5,
+        "unit": "%",
+        "label": "t:sections.height.label",
+        "default": 50
+      },
+	  {
+        "type": "color",
+        "id": "background_img_overlay",
+        "label": "t:sections.overlay.label"
+      },
+      {
+        "type": "color_background",
+        "id": "background_img_overlay_gradient",
+        "label": "t:sections.overlay.gradient"
+      },
+      {
+        "type": "range",
+        "id": "background_img_overlay_opacity",
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "unit": "%",
+        "label": "t:sections.opacity.label",
+        "default": 0
+      },
+      {
+        "type": "header",
+        "content": "t:sections.options.label"
+      },
+      {
+        "type": "checkbox",
+        "id": "include_search",
+        "label": "t:sections.show_search.label",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "t:sections.section.name.content"
+      },
+      {
+        "id": "enable_lazy",
+        "type": "checkbox",
+        "label": "t:sections.section.settings.lazy.multiple.label",
+        "default": false
+      },
+      {
+        "id": "background",
+        "type": "color",
+        "label": "t:sections.section.settings.background_color.label"
+      },
+      {
+        "id": "background_gradient",
+        "type": "color_background",
+        "label": "t:sections.section.settings.background_gradient.label"
+      },
+      {
+        "type": "paragraph",
+        "content": "t:sections.section.settings.mobile.content"
+      },
+      {
+        "id": "padding_top_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.top_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "id": "padding_bottom_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "id": "margin_bottom_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_margin.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "type": "paragraph",
+        "content": "t:sections.section.settings.desktop.content"
+      },
+      {
+        "id": "padding_top_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.top_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "id": "padding_bottom_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "id": "margin_bottom_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_margin.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "id": "padding_border",
+        "type": "checkbox",
+        "label": "t:sections.section.settings.border.label",
+        "default": false
+      }
+    ]
+  }
+{% endschema %}

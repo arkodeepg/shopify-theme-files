@@ -1,0 +1,45 @@
+{% if page.metafields.custom.offerzone != blank %}
+  <section class="offerBanner">
+    {% assign offerbanner = page.metafields.custom.offerzone %}
+    {% assign collectionMaincontainer = offerbanner | split: "::" %}
+    {%- for technical_details in collectionMaincontainer %}
+      {% assign collectionSubcontainer = technical_details | split: "|" %}
+      <div class="offerImg onlydesktop">
+        <a href="{{collectionSubcontainer[1]}}">
+          <img class="lazy" loading="lazy"
+            {% if forloop.index > 2%}data-{% endif %}src="{{collectionSubcontainer[0]}}"
+            alt=""
+            width="100%"></a>
+      </div>
+      <div class="offerImg onlymobile">
+        <a href="{{collectionSubcontainer[3]}}">
+          <img class="lazy" loading="lazy"
+            {% if forloop.index > 2%}data-{% endif %}src="{{collectionSubcontainer[2]}}"
+            alt=""
+            width="100%"></a>
+      </div>
+    {% endfor %}
+
+  </section>
+
+{% endif %}
+
+{% schema %}
+{
+"name": "offer banner",
+"tag": "section",
+"settings": [],
+"blocks": [],
+"presets": [
+{
+"name": "offer banner"
+}
+]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

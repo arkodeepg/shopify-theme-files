@@ -1,0 +1,539 @@
+{%- liquid
+  assign full_width = section.settings.full_width
+  if section.settings.background_img != blank
+    capture alt
+      if section.settings.background_img.alt != blank
+        echo section.settings.background_img.alt
+      elsif section.settings.title != blank
+        echo section.settings.title
+      else
+        echo page.title
+      endif
+    endcapture  
+  endif
+  assign text_color = false
+  if section.settings.section_color != 'rgba(0,0,0,0)' and section.settings.section_color != blank
+    assign text_color = true
+    assign text_color_section = section.settings.section_color
+  endif
+  assign background_color = false
+  if section.settings.background != 'rgba(0,0,0,0)' and section.settings.background != blank
+    assign background_color = true
+    assign background_color_section = section.settings.background
+  endif    
+  if section.settings.background_gradient != 'rgba(0,0,0,0)' and section.settings.background_gradient != blank
+    assign background_color = true
+    assign background_color_section = section.settings.background_gradient
+  endif
+  capture classes
+    echo 'dynamic-section dynamic-section-'
+    echo section.id 
+    echo ' section-padding-top section-padding-bottom section-margin-bottom '
+    if section.settings.padding_border
+      echo 'section-border '
+    endif
+  endcapture
+  assign overlay_color = false
+  if section.settings.background_img_overlay != 'rgba(0,0,0,0)' and section.settings.background_img_overlay != blank
+    assign overlay_color = true
+    assign overlay_color_section = section.settings.background_img_overlay
+  endif
+  if section.settings.background_img_overlay_gradient != 'rgba(0,0,0,0)' and section.settings.background_img_overlay_gradient != blank
+    assign overlay_color = true
+    assign overlay_color_section = section.settings.background_img_overlay_gradient
+  endif
+  assign banner = false
+  if section.settings.enable_lazy
+    assign lazy = 'lazy'
+  else
+    assign lazy = 'eager'
+  endif
+-%}
+
+{% style %}
+  .dynamic-section-{{ section.id }} { 
+    --margin_padding: {{ section.settings.padding }}vh;
+    {%- if background_color -%}
+    --background:{{ background_color_section }};
+    --button_primary_text:{{ section.settings.background }};
+    --button_secondary_hover:{{ section.settings.background }};
+    {%- endif -%}
+    --section-padding-top-mobile: {{ section.settings.padding_top_mobile }}px;
+    --section-padding-top-desktop: {{ section.settings.padding_top_desktop }}px;
+    --section-padding-bottom-mobile: {{ section.settings.padding_bottom_mobile }}px;
+    --section-padding-bottom-desktop: {{ section.settings.padding_bottom_desktop }}px;
+    --section-margin-bottom-mobile: {{ section.settings.margin_bottom_mobile }}px;
+    --section-margin-bottom-desktop: {{ section.settings.margin_bottom_desktop }}px;
+  }
+  .dynamic-section-{{ section.id }} .banner-section { 
+    {%- if text_color -%}
+    --headline_font_color:{{ text_color_section }};
+    {%- endif -%}
+    {%- if overlay_color -%}
+    --overlay_background: {{ overlay_color_section }};
+    --overlay_opacity: {{ section.settings.background_img_overlay_opacity | times: 0.01 }};
+    {%- endif -%}
+  }
+{% endstyle %}
+
+<section data-section-id="{{ section.id }}" 
+         data-section-type="page" 
+         role="article"
+         class="{{ classes }}{% if settings.animation_enable %}animate-section-div {% endif %}clearfix">
+
+  {% if section.settings.title_enable or section.settings.sub_title != blank or section.settings.background_img != blank %}
+  {%- liquid
+    assign block_width = section.settings.block_width
+    case block_width
+      when '4'
+        assign block_width = 'four'
+      when '6'
+        assign block_width = 'six'
+      when '8'
+        assign block_width = 'eight'
+      when '9'
+        assign block_width = 'nine'
+    endcase
+  -%}
+  <div class="banner-section {% if full_width %}bottompad-half {% if section.settings.background_img != blank or overlay_color %}relative {% if section.settings.background_img != blank %}lazycontainer lazyignore {% endif %}{% if overlay_color %}background-overlay {% endif %}{% endif %}{% endif %}clearfix">
+    {%- liquid
+      if full_width and section.settings.background_img != blank
+        assign banner = true
+        render 'image.load', img_src: section.settings.background_img, size: section.settings.background_img.width, alt: alt, background: true, full_width: true, lazy: lazy, sizes: '100vw'
+      endif
+    -%}
+    <div class="relative container{% if full_width %} half-pad{% else %} {% if section.settings.background_img != blank or overlay_color %}inner-container{% else %}half-pad{% endif %}{% endif %}{% if settings.animation_enable %} animate-section load{% endif %} clearfix">
+      <div class="{% if full_width == false %}{% if section.settings.background_img != blank or overlay_color %}inner-container-pad relative {% if section.settings.background_img != blank %}lazycontainer lazyignore {% endif %}{% if overlay_color %}background-overlay {% endif %}{% endif %}{% endif %}clearfix">
+        {%- liquid
+          if full_width == false and section.settings.background_img != blank
+            assign banner = true
+            render 'image.load', img_src: section.settings.background_img, size: section.settings.background_img.width, alt: alt, background: true, lazy: lazy, sizes: '(min-width: 1220px) 1180px, calc(100vw - 40px)'
+          endif
+        -%}
+        <div class="relative table content-height">
+          <div class="table-cell {{ section.settings.vertical_content_alignment }}">
+            <div class="{{ block_width }} animate {{ section.settings.text_alignment }} {{ section.settings.horizontal_content_alignment }} bottompad-quarter section-height clearfix">
+              {%- liquid
+                if section.settings.title_h1
+                  assign title = 1
+                else
+                  assign title = 2
+                endif
+              -%}
+              {% if section.settings.title_enable %}<h{{ title }} class="section-title-{{ section.settings.title_size }}">{% if section.settings.title != blank%}{{ section.settings.title | escape }}{% else %}{{ page.title }}{% endif %}</h{{ title }}>{% if overlay_color %}{%- assign banner = true -%}{% endif %}{% endif %}
+              {% if section.settings.sub_title != blank %}<h3 class="section-title-{{ section.settings.title_sub_size }}">{{ section.settings.sub_title | escape }}</h3>{% if overlay_color %}{%- assign banner = true -%}{% endif %}{% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>  
+  {% endif %}
+
+  <div class="container {% if banner %}inner-container {% else %}half-pad {% endif %}{% if settings.animation_enable %}animate-section animate-section-margin load {% endif %}clearfix">
+    <div{% if banner %}{% unless full_width %} class="inner-container-grid"{% endunless %}{% endif %}>        
+      {%- liquid
+        case section.settings.block_width_content
+          when '4'
+            assign block_width_content = 'four'
+          when '6'
+            assign block_width_content = 'six'
+          when '8'
+            assign block_width_content = 'eight'
+          when '9'
+            assign block_width_content = 'nine'
+          when '12'
+            assign block_width_content = 'twelve'
+        endcase
+      -%}
+      <div class="{{ block_width_content }} center text-left {% if banner %}background-white {% else %}negative-left negtive-right {% endif %}clearfix">
+        {% if page.content != blank %}
+          <div class="twelve page-content bottompad-half">
+            {{ page.content }}
+          </div>
+        {% endif %}
+        <div class="product-loop table-center center text-left clearfix">
+          {%- liquid
+            assign categories = ''
+            for product_vendor in shop.vendors
+              capture categories
+                unless categories == blank
+                  echo categories | append: '|'
+                endunless
+                echo product_vendor | truncate: 1, '' | capitalize
+              endcapture
+            endfor
+            assign cat_array = categories | split: '|' | uniq
+          -%}
+          
+          {% for cat_item in cat_array %}
+
+            {%- liquid
+              capture vendors
+                for product_vendor in shop.vendors
+                  assign cat = product_vendor | truncate: 1, '' | capitalize
+                  if cat != product_vendor and cat_item == cat
+                    echo '<li>'
+                    assign product_vendor_handle = product_vendor | handle
+                    if collections[product_vendor_handle].handle == product_vendor_handle
+                      assign vendor_url = collections[product_vendor_handle].url
+                    else
+                      assign vendor_url = product_vendor | url_for_vendor
+                    endif
+                    echo product_vendor | link_to: vendor_url
+                    echo '</li>,,'
+                  endif
+                endfor
+              endcapture
+              assign vendors = vendors | split: ',,'
+              case section.settings.block_width_columns
+                when 1
+                  assign block_width_columns = 'twelve'
+                when 2
+                  assign block_width_columns = 'six'
+                when 3
+                  assign block_width_columns = 'four'
+                when 4
+                  assign block_width_columns = 'three'
+              endcase
+            -%}
+  
+            {% if vendors.size > 0 %}
+            <div class="product {{ block_width_columns }}">
+              <h2 class="vendors">{{ cat_item }}</h2>
+              <ul class="formatted">
+                {% for v in vendors %}
+                {{ v }}
+                {% endfor %}
+              </ul>
+            </div>
+            {% endif %}
+
+          {% endfor %}
+
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</section>
+
+{% schema %}
+  {
+    "name": "t:sections.vendors_page.name",
+    "settings": [
+      {
+        "type": "header",
+        "content": "t:sections.banner.label"
+      },
+      {
+        "id": "title_enable",
+        "type": "checkbox",
+        "label": "t:sections.heading.show_heading",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "t:sections.heading.label"
+      },
+      {
+        "id": "title_h1",
+        "type": "checkbox",
+        "label": "t:sections.heading.heading_one",
+        "default": true
+      },
+      {
+        "id": "title_size",
+        "type": "range",
+        "label": "t:sections.heading.heading_size",
+        "min": 12,
+        "max": 96,
+        "step": 6,
+        "unit": "px",
+        "default": 48
+      },
+      {
+        "type": "text",
+        "id": "sub_title",
+        "label": "t:sections.subheading.label"
+      },
+      {
+        "id": "title_sub_size",
+        "type": "range",
+        "label": "t:sections.subheading.subheading_size",
+        "min": 12,
+        "max": 96,
+        "step": 6,
+        "unit": "px",
+        "default": 24
+      },
+      {
+        "id": "section_color",
+        "type": "color",
+        "label": "t:sections.text.color"
+      },
+      {
+        "type": "select",
+        "id": "text_alignment",
+        "label": "t:sections.text_alignment.label",
+        "default": "text-center",
+        "options": [
+          {
+            "value": "text-left",
+            "label": "t:sections.alignment.left"
+          },
+          {
+            "value": "text-center",
+            "label": "t:sections.alignment.center"
+          },
+          {
+            "value": "text-right",
+            "label": "t:sections.alignment.right"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "block_width",
+        "label": "t:sections.content_width.label",
+        "default": "6",
+        "options": [
+          {
+            "value": "4",
+            "label": "33%"
+          },
+          {
+            "value": "6",
+            "label": "50%"
+          },
+          {
+            "value": "8",
+            "label": "66%"
+          },
+          {
+            "value": "9",
+            "label": "75%"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "horizontal_content_alignment",
+        "label": "t:sections.horizontal_position.label",
+        "default": "center",
+        "options": [
+          {
+            "value": "left",
+            "label": "t:sections.alignment.left"
+          },
+          {
+            "value": "center",
+            "label": "t:sections.alignment.center"
+          },
+          {
+            "value": "right",
+            "label": "t:sections.alignment.right"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "vertical_content_alignment",
+        "label": "t:sections.vertical_position.label",
+        "default": "middle",
+        "options": [
+          {
+            "value": "top",
+            "label": "t:sections.vertical_position.top"
+          },
+          {
+            "value": "middle",
+            "label": "t:sections.vertical_position.middle"
+          },
+          {
+            "value": "bottom",
+            "label": "t:sections.vertical_position.bottom"
+          }
+        ]
+      },
+      {
+        "type": "image_picker",
+        "id": "background_img",
+        "label": "t:sections.image.label",
+        "info": "t:sections.image.desktop.info"
+      },
+	  {
+       "type": "checkbox",
+       "id": "full_width",
+       "label": "t:sections.full_width.label",
+       "default": true
+      },
+      {
+        "type": "range",
+        "id": "padding",
+        "min": 5,
+        "max": 100,
+        "step": 5,
+        "unit": "%",
+        "label": "t:sections.height.label",
+        "default": 25
+      },
+	  {
+        "type": "color",
+        "id": "background_img_overlay",
+        "label": "t:sections.overlay.label"
+      },
+      {
+        "type": "color_background",
+        "id": "background_img_overlay_gradient",
+        "label": "t:sections.overlay.gradient"
+      },
+      {
+        "type": "range",
+        "id": "background_img_overlay_opacity",
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "unit": "%",
+        "label": "t:sections.opacity.label",
+        "default": 0
+      },
+      {
+        "type": "header",
+        "content": "t:sections.options.label"
+      },
+      {
+        "type": "select",
+        "id": "block_width_content",
+        "label": "t:sections.content_width.label",
+        "default": "12",
+        "options": [
+          {
+            "value": "4",
+            "label": "33%"
+          },
+          {
+            "value": "6",
+            "label": "50%"
+          },
+          {
+            "value": "8",
+            "label": "66%"
+          },
+          {
+            "value": "9",
+            "label": "75%"
+          },
+          {
+            "value": "12",
+            "label": "100%"
+          }
+        ]
+      },
+      {
+        "type": "range",
+        "id": "block_width_columns",
+        "min": 1,
+        "max": 4,
+        "step": 1,
+        "label": "t:sections.number_columns.label",
+        "default": 3
+      },
+      {
+        "type": "header",
+        "content": "t:sections.section.name.content"
+      },
+      {
+        "id": "enable_lazy",
+        "type": "checkbox",
+        "label": "t:sections.section.settings.lazy.multiple.label",
+        "default": false
+      },
+      {
+        "id": "background",
+        "type": "color",
+        "label": "t:sections.section.settings.background_color.label"
+      },
+      {
+        "id": "background_gradient",
+        "type": "color_background",
+        "label": "t:sections.section.settings.background_gradient.label"
+      },
+      {
+        "type": "paragraph",
+        "content": "t:sections.section.settings.mobile.content"
+      },
+      {
+        "id": "padding_top_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.top_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "id": "padding_bottom_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "margin_bottom_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_margin.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "type": "paragraph",
+        "content": "t:sections.section.settings.desktop.content"
+      },
+      {
+        "id": "padding_top_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.top_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "id": "padding_bottom_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "margin_bottom_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_margin.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "id": "padding_border",
+        "type": "checkbox",
+        "label": "t:sections.section.settings.border.label",
+        "default": false
+      }
+    ]
+  }
+{% endschema %}

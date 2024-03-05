@@ -1,0 +1,89 @@
+{% unless product.has_only_default_variant %}
+{%- liquid
+  if settings.swatch_color != blank
+  	assign var_color = settings.swatch_color | handleize
+  	assign swatch_color = settings.swatch_color
+  else
+   	assign var_color = 'products.general.color' | t | handleize
+   	assign swatch_color = 'products.general.color' | t
+  endif
+
+  if settings.swatch_size != blank
+   	assign var_size = settings.swatch_size | handleize
+   	assign swatch_size = settings.swatch_size
+  else
+   	assign var_size = 'products.general.size' | t | handleize
+   	assign swatch_size = 'products.general.size' | t
+  endif
+
+  assign block = false
+  assign block_title = false
+  assign color_block = false
+  assign color_block_title = false
+  assign size_block = false
+  assign size_block_title = false
+  assign color_size_block = false
+
+  if variant_enable == 'block'
+    assign block = true
+  elsif variant_enable == 'color-block'
+   	assign color_block = true
+  elsif variant_enable == 'size-block'
+   	assign size_block = true
+  elsif variant_enable == 'color-size-block'
+   	assign color_size_block = true
+  endif
+
+  if variant_color_enable == 'var-img-zoom-block'
+   	assign img_size = 140
+  else
+   	assign img_size = 72
+  endif
+
+  if block
+    render 'product.swatches' for product.options as swatch, var_color: var_color, swatch_color: swatch_color, var_size: var_size, swatch_size: swatch_size, hide: false, block: block, color_size_block: color_size_block, variant_color_enable: variant_color_enable, img_size: img_size, p_sect: p_sect, var_length_enable: var_length_enable, block_width: block_width, lazy: lazy
+    assign block_title = true
+  elsif color_size_block
+    render 'product.swatches' for product.options as swatch, var_color: var_color, swatch_color: swatch_color, var_size: var_size, swatch_size: swatch_size, hide: false, block: block, color_size_block: color_size_block, variant_color_enable: variant_color_enable, img_size: img_size, p_sect: p_sect, var_length_enable: var_length_enable, block_width: block_width, lazy: lazy
+    assign color_block_title = true
+    assign size_block_title = true
+  elsif color_block
+    render 'product.swatches' with swatch_color as swatch, var_color: var_color, swatch_color: swatch_color, var_size: var_size, swatch_size: swatch_size, hide: false, color_block: color_block, variant_color_enable: variant_color_enable, img_size: img_size, p_sect: p_sect, var_length_enable: var_length_enable, block_width: block_width, lazy: lazy
+    assign color_block_title = true
+  elsif size_block
+    render 'product.swatches' with swatch_size as swatch, var_color: var_color, swatch_color: swatch_color, var_size: var_size, swatch_size: swatch_size, hide: false, size_block: size_block, variant_color_enable: variant_color_enable, img_size: img_size, p_sect: p_sect, var_length_enable: var_length_enable, block_width: block_width, lazy: lazy
+    assign size_block_title = true
+  endif
+-%}
+{% endunless %}
+
+{% for option in product.options_with_values %}
+{%- capture for -%}product-select-{{ section.id }}-option-{{ forloop.index0 }}{% endcapture %}
+<div class="{{ block_width }}clearfix{% if product.has_only_default_variant or product.options_by_name[option.name].values.size == 1 and var_length_enable == false %} hidden{% else %}{% if block_title %} hidden{% elsif option.name contains swatch_color and color_block_title %} hidden{% elsif option.name contains swatch_size and size_block_title %} hidden{% endif %}{% endif %}">
+  <div class="selector-wrapper skip select selectors" data-option-index="{{ forloop.index0 }}">
+    {%- render 'product.labels', for: for, name: option.name, dropdown: true, opt_val: option.selected_value -%}
+    <select class="single-option-selector no-select selector single-option-selector-{{ forloop.index0}}"
+            data-option="option{{ forloop.index }}"
+            id="{{ for }}">
+      {% for value in option.values %}
+      <option value="{{ value | escape }}"{% if option.selected_value == value %} selected="selected"{% endif %}>{{ value }}</option>
+      {% endfor %}
+    </select>
+    {%- render 'icons.theme', icon: 'arrow-down', size: 14 -%}
+  </div>
+</div>
+{% endfor %}
+
+<div class="selector-wrapper skip select no-js hidden">
+  <label for="product-select-{{ section.id }}" class="no-js hidden">{{ 'layout.general.please_select' | t }}</label>
+  <select id="product-select-{{ section.id }}"
+          class="no-js hidden no-select" 
+          name="id"
+          data-length="{% if var_length_enable %}{% if product.has_only_default_variant %}1{% else %}0{% endif %}{% else %}1{% endif %}"
+          aria-label="label for the select">
+    {% for variant in product.variants %}
+    <option{% if variant == product.selected_or_first_available_variant %} selected="selected"{% endif %} value="{{ variant.id }}"{% if variant.inventory_management and variant.inventory_policy != 'continue' %} data-inv="{% if variant.inventory_quantity > 0 %}{{ variant.inventory_quantity }}{% else %}0{% endif %}"{% endif %} data-inc="{{ variant.incoming }}"{% if variant.incoming %} data-inc_date="{% if variant.incoming %}{%- assign today_date = 'now' | date: '%s' -%}{%- assign delivery_date = variant.next_incoming_date | date: '%s' -%}{% if variant.next_incoming_date != blank and delivery_date > today_date %}{% if variant.available %}{{ 'products.product.stock_more' | t }}{% else %}{{ 'products.product.stock_in' | t }}{% endif %} {{ variant.next_incoming_date | date: '%b %e' }}{% else %}{{ 'products.product.stock_soon' | t }}{% endif %}{% endif %}"{% endif %}>{{ variant.title }} - {% if settings.currency_enable %}{{ variant.price | money_with_currency }}{% else %}{{ variant.price | money }}{% endif%}</option>
+    {% endfor %}
+  </select>
+  {%- render 'icons.theme', icon: 'arrow-down', size: 14 -%}
+</div>

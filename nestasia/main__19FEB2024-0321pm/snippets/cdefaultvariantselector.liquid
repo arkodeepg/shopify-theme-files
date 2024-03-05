@@ -1,0 +1,91 @@
+{% comment %} default variant selector = dvs {% endcomment %}
+
+{% assign size = product.variants | size %}
+{% if size > 1 %}
+<style>
+  .dvs-var-cont {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.dvs-item {
+    border: 1px solid #6b6f81ba;
+    opacity: .8;
+    padding: 10px 8px;
+    cursor: pointer;
+    font-size: 11.5px;
+}
+
+.dvs-title {
+    color: black;
+    margin-bottom: 8px;
+}
+.dvs-active{
+    border-color: #96865d;
+    border-width: 2px;
+    background: #e6d1a2;
+}
+</style>
+  <div class="dvs-cont">
+    <div class="dvs-title">Select Style</div>
+    <div class="dvs-var-cont">
+      {% for var in product.variants %}
+        {% if var.available %}
+          <div class="dvs-item {% if forloop.first %}dvs-active{% endif %}" 
+          data-varid="{{ var.id }}" 
+          data-price="{{ var.price | money }}" 
+          data-compare="{{ var.compare_at_price | money }}"
+          data-discount="{{ var.compare_at_price | minus: var.price | times: 100.0 | divided_by: var.compare_at_price | ceil}}%"
+          data-featimg = "{{ var.featured_image | image_url }}"
+            >
+            {{ var.title }}
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  <script defer>
+    $('.dvs-cont .dvs-item').click(function(){
+      let varid = $(this).attr('data-varid')
+      let price = $(this).attr('data-price')
+      let compare = $(this).attr('data-compare')
+      let discount = $(this).attr('data-discount')
+      let featimg = $(this).attr('data-featimg')
+      //update the url
+      updateVariantId(varid)
+      //updating price
+      $('#product-details-{{section.id}}  .product-price').text(price)
+      $('#product-details-{{section.id}}  .product-compare_at_price').text(compare)
+      $('#product-details-{{section.id}}  .product-discount').text(discount)
+      // updating the variant id
+      $('#product-details-{{section.id}}  input[name="id"]').val(varid)
+      // getting the image position
+      if(featimg){
+        let pos = 0
+        productjson.images.forEach((item, index, arr)=>{
+          if(item == featimg){
+            pos = index
+          }
+        })
+        console.log('pos - ', pos)
+        swiper2.slideTo(pos);
+
+        //changing the highlight
+        $('.dvs-item').removeClass('dvs-active')
+        $(this).addClass('dvs-active')
+      }
+      else{
+        console.log("Featured image is not available")
+      }
+
+      //updating the varid for atc
+      console.log("price updated")
+      console.log(`
+        varid ${varid}
+        price ${price}
+        compare ${compare}
+      `)
+    })
+  </script>
+{% endif %}

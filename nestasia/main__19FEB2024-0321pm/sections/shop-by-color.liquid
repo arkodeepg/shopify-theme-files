@@ -1,0 +1,222 @@
+<style>
+    #shopByColourSection{
+     {% if section.settings.background_color %} background-color:{{section.settings.background_color}}  {% endif %}
+   }
+    #shopByColourSection .container{
+      position: relative
+    }
+      #swiper-scrollbar-{{ section.id }}{
+      margin-bottom: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+     #swiper-button-next-{{ section.id }} {
+      right: 0;
+      position: absolute;
+      top: 40%;
+      z-index: 1;
+     transform: translateX(30px);
+  }
+  #swiper-button-prev-{{ section.id }} {
+      left: 0;
+      position: absolute;
+      top: 40%;
+      z-index: 1;
+      transform: translateX(-30px);
+  }
+  #swiper-carousel-{{ section.id }}{
+      position: relative;
+      padding-top: calc(var(--master_spacing)/2);
+  }
+  .swiper-wrapper-{{ section.id }}{
+      margin-bottom: 20px;
+  }
+</style>
+
+{%- if collection -%}
+  {%- assign r_collection = collection -%}
+{%- else -%}
+  {%- for p_collection in product.collections -%}
+    {%- unless p_collection.handle contains 'all'
+      or p_collection.handle == 'all-new'
+      or p_collection.handle contains 'under-rs'
+      or p_collection.handle == 'best-selling-products'
+    -%}
+      {%- assign r_collection = p_collection -%}
+      {%- break -%}
+    {%- endunless -%}
+  {%- endfor -%}
+{%- endif -%}
+{%- assign colourTags = '' -%}
+{%- for tag in product.tags -%}
+  {%- if tag contains 'colour_' -%}
+    {%- if colourTags == '' -%}
+      {%- assign colourTags = colourTags | append: tag -%}
+    {%- else -%}
+      {%- assign colourTags = colourTags | append: ',' | append: tag -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- assign colourTagsArr = colourTags | split: ',' -%}
+{%- assign section_id = section.id -%}
+{%- assign rProductCount = 0 -%}
+{%- capture shopByColour -%}
+  {%- paginate r_collection.products by 1000 -%}
+    {% assign min = 1 %}
+    {% assign max = r_collection.products.size %}
+    {% assign diff = max | minus: min %}
+    {% assign selectedProducts = '' %}
+    {%- for rc_product in r_collection.products -%}
+      {% assign randomNumber = "now" | date: "%N" | modulo: diff | plus: min %}
+      {%- assign r_product = r_collection.products[randomNumber] -%}
+      {% unless selectedProducts contains r_product.handle %}
+        {% assign selectedProducts = selectedProducts | join: ',' %}
+        {% assign selectedProducts = selectedProducts | append: ',' | append: r_product.handle %} 
+        {% assign selectedProducts = selectedProducts | split: ',' %}
+        {%- assign rProductTagArr = r_product.tags | join:',' -%}
+        {%- assign productSelected = false -%}
+        {%- for tag in colourTagsArr -%}
+          {%- if rProductTagArr contains tag and r_product.handle != product.handle and r_product.available -%}
+            {%- assign productSelected = true -%}
+          {%- endif -%}
+        {%- endfor -%}
+        {%- if productSelected -%}
+            {%- assign productLoopClass = 'swiper-slide' -%}
+            {%- capture cycle -%}{% cycle cycleIndex: '', '', '', '', '' %}{%- endcapture -%}
+        <div class="{{productLoopClass}}">
+            {% render 'product-card', product: r_product %}
+        </div>
+            {%- assign rProductCount = rProductCount | plus: 1 -%}
+            {%- if rProductCount > 20 -%}
+              {%- break -%}
+            {%- endif -%}
+        {%- endif -%}
+      {% endunless %}
+    {%- endfor -%}
+  {% assign dm_paginate_by = paginate.page_size %}{%- endpaginate -%}
+{%- endcapture -%}
+{%- assign searchText = '' -%}
+{%- for C_tag in colourTagsArr -%}
+  {%- assign CTagString = C_tag | replace: 'colour_', '' | replace: ' ', '+' -%}
+  {%- if searchText == '' -%}
+    {%- assign searchText = searchText | append: CTagString -%}
+  {%- else -%}
+    {%- assign searchText = searchText | append: '&product_colour_tags[]=' | append: CTagString -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- if shopByColour != blank -%}
+  <div
+    id="shopByColourSection"
+    class="clearfix{% if rProductCount <= 4 %} section_bottom_remove{% endif %}"
+    data-section-type="shop-by-collection"
+    data-section-id="{{ section_id }}"
+  >
+    <div class="container">
+      <div class="">
+        <h2 class="text-center">
+          <a
+            class="collection-title slider-collection_title"
+            href="/collections/all-products?product_colour_tags[]={{searchText}}"
+            >Shop by
+            {%- if colourTagsArr.size == 1 %} {{ colourTagsArr[0] | replace: 'colour_', '' }}{% endif %}
+            Colour</a
+          >
+        </h2>
+      </div>
+      <div class="related-products-content">
+        <div class="swiper-container-wrapper clearfix">
+          <div
+            data-section-id="{{ section_id }}"
+            class="swiper-container product-loop{% if rProductCount == 3 %} tree_product{% endif %}{% if rProductCount > 2 %} plus-slider{% endif %}"
+
+            id="swiper-carousel-{{ section_id }}"
+          >
+            <div class="swiper-wrapper swiper-wrapper-{{ section_id }}">
+              {{ shopByColour }}
+            </div>
+            {% if rProductCount > 2 %}
+              <div id="swiper-scrollbar-{{ section.id }}" class="swiper-scrollbar cswiper-scrollbar"></div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="swiper-btn-cont">
+      {% if rProductCount > 2 %}
+        <svg
+          id="swiper-button-prev-{{ section.id }}"
+          class="swiper-button-prev"
+          width="36"
+          height="36"
+          viewBox="0 0 36 36"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <rect width="36" height="36" rx="18" fill="#96865D"/><path d="M21 24L15 18L21 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+
+        <svg
+          id="swiper-button-next-{{ section.id }}"
+          class="swiper-button-next"
+          width="36"
+          height="36"
+          viewBox="0 0 36 36"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <rect x="0.226562" y="0.516113" width="36" height="36" rx="18" fill="#96865D"/><path d="M15.2266 24.5161L21.2266 18.5161L15.2266 12.5161" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      {% endif %}
+      </div>
+          </div>
+  </div>
+{%- endif -%}
+{% comment %} {% if dm_paginate_by %}{% render 'spurit_dmr_collection_template_snippet', paginate_by: dm_paginate_by %}{% endif %} {% endcomment %}
+
+<script defer>
+  const swiper{{section.index}} = new Swiper('#swiper-carousel-{{ section.id }}', {
+    slidesPerView: 2.5,
+    spaceBetween: 10, // Default spacing value
+    scrollbar: {
+      el: '#swiper-scrollbar-{{ section.id }}',
+      draggable: true,
+    },
+    navigation: {
+      nextEl: '#swiper-button-next-{{ section_id }}',
+      prevEl: '#swiper-button-prev-{{ section_id }}',
+    },
+    breakpoints: {
+      // When the window width is 800px or greater (desktop)
+      800: {
+        slidesPerView: 4,
+        spaceBetween: 20,
+      }
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Shop by color",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "color",
+      "label": "background color",
+      "id": "background_color"
+    }
+  ],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "Shop by color"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

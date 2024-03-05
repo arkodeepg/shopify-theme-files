@@ -1,0 +1,150 @@
+<style>
+  .top-picks_outer {
+    padding: 20px 0;
+    margin: 20px 0;
+  }
+  .top-picks_image-container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  a.top-picks_image_child {
+    /* padding: 0 calc(var(--master_spacing)/2); */
+    margin: 0 0 var(--master_spacing);
+    display: flex;
+  }
+  .top-picks_image_child img {
+    margin: 0;
+    width: -webkit-fill-available;
+    padding: 0 calc(var(--master_spacing) / 2);
+  }
+  .top-picks_heading:hover{
+    color: #96865d!important;
+  }
+  @media screen and (max-width: 640px) {
+    .top-picks_outer {
+      padding: 10px 0;
+      margin: 10px 0;
+    }
+    .top-picks_image_child img {
+      padding: 0 7px;
+    }
+    .top-picks_image_child {
+      width: 50% !important;
+    }
+    .top-picks_image_child:nth-child(5) {
+      order: 3;
+      width: 100% !important;
+    }
+    a.top-picks_image_child:nth-child(1) {
+      order: 1;
+    }
+    a.top-picks_image_child:nth-child(2) {
+      order: 2;
+    }
+    a.top-picks_image_child:nth-child(3) {
+      order: 4;
+    }
+    a.top-picks_image_child:nth-child(4) {
+      order: 5;
+    }
+    .container.top-picks {
+      padding: 0;
+    }
+    a.top-picks_image_child {
+      margin: 0 0 calc(var(--master_spacing) / 2);
+    }
+  }
+</style>
+<div class="top-picks_outer">
+  <div class="container top-picks">
+    <a class="top-picks_heading mhead" href="{{section.settings.url}}">{{ section.settings.heading }}</a>
+    <div class="top-picks_image-container">
+      {%- for block in section.blocks -%}
+        <a style="width:{{ block.settings.width }}" href="{{block.settings.link}}" class="top-picks_image_child">
+          <img loading="lazy" 
+            width="{{ block.settings.image.width }}"
+            height="{{ block.settings.image.height }}"
+            class="lazy" data-src="{{block.settings.image | img_url: '900x'}}">
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "custom image section",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "label": "heading",
+      "id": "heading",
+      "default": "Top Picks"
+    },
+    {
+      "type": "url",
+      "label": "url",
+      "id": "url"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "slide",
+      "settings": [
+        {
+          "type": "url",
+          "label": "link",
+          "id": "link"
+        },
+        {
+          "type": "image_picker",
+          "label": "image",
+          "id": "image"
+        },
+        {
+          "type": "select",
+          "id": "width",
+          "label": "image width",
+          "default": "25%",
+          "options": [
+            {
+              "value": "25%",
+              "label": "25%"
+            },
+            {
+              "value": "33%",
+              "label": "33%"
+            },
+            {
+              "value": "50%",
+              "label": "50%"
+            },
+            {
+              "value": "66%",
+              "label": "66%"
+            },
+            {
+              "value": "75%",
+              "label": "75%"
+            },
+            {
+              "value": "100%",
+              "label": "100%"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "custom image section"
+    }
+  ]
+}
+{% endschema %}
+
+{% javascript %}
+{% endjavascript %}

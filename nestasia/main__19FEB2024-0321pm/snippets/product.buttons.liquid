@@ -1,0 +1,23 @@
+<div class="purchase-section {% if banner == false %}{% if alt %}one-column {% else %}{% if smart_enable %}two-column {% else %}one-column {% endif %}{% endif %}{% endif %}bottompad-half" data-smart="{{ smart_enable }}" {{ block.shopify_attributes }}>
+  <div{% if smart_enable and alt %} class="bottompad-quarter"{% endif %}>
+    {% unless variant.available %}
+      <button type="submit" id="add-to-cart-{{ section.id }}" class="btn add-to-cart auto-full-width disabled outline" disabled>{{ 'products.product.sold_out' | t }}</button>
+      <p class="feedback">{%- render 'icons.theme', icon: 'times', size: '12' -%}{%- render 'icons.theme', icon: 'check', size: '12' -%} <span class="html"></span></p>
+    {% else %}
+      <button type="submit" id="add-to-cart-{{ section.id }}" class="btn {% if product.selling_plan_groups == empty %}{% if smart_enable %}outline {% endif %}{% endif %}add-to-cart auto-full-width" data-atc="{% if product.tags contains settings.preorder %}{{ settings.preorder }}{% else %}{{ 'products.product.add_to_cart' | t }}{% endif %}" name="add">{% if product.tags contains settings.preorder %}{{ settings.preorder }}{% else %}{{ 'products.product.add_to_cart' | t }}{% endif %}</button>
+      <p class="feedback">{%- render 'icons.theme', icon: 'times', size: '12' -%}{%- render 'icons.theme', icon: 'check', size: '12' -%} <span class="html"></span></p>
+    {% endunless %}
+  </div>
+  {% if smart_enable %}
+  <div>
+    <!-- {{ form | payment_button }} -->
+    {% if product.selected_or_first_available_variant.available %}
+ <div class="shopify-payment-button">
+  <button type="button" id="flo-buy-now-button" onclick="handleFloBuyNowBtn(event)" class="shopify-payment-button__button shopify-payment-button__button--unbranded" name="flo-buy-now-button">
+    {{ 'Buy It Now' }}
+</button>
+ </div>
+ {%- endif -%}
+  </div>
+  {% endif %}
+</div>

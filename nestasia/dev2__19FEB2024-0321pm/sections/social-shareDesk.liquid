@@ -1,0 +1,106 @@
+<style>
+.socials ul li, .addthis_horizontal_follow_toolbox ul li, .addthis_inline_share_toolbox ul li {
+    display: inline-block;
+    margin: 0 2px 5px;
+    margin-right: 5px;
+    padding: 5px;
+    overflow: hidden;
+    line-height: 0;
+    list-style: none;
+}
+  .socials ul {
+    margin-top: 20px;
+}
+.socials ul li a span:before, .addthis_horizontal_follow_toolbox ul li a span:before, .addthis_inline_share_toolbox ul li a span:before {
+    color: var(--button_color) !important;
+    font-size: 20px;
+}
+  .socials ul li a{
+    padding: 0 !important;
+  }
+  .socials ul li a:hover{
+    padding: 0 !important;
+  }
+  .socials ul li:hover{
+    padding: 0px !important;
+  }
+  .socials ul li{
+    padding: 0px !important;
+    margin-right: 10px !important;
+  }
+  @media screen and (max-width: 800px){
+    .socials ul {
+    margin: 0;
+    padding: 0 20px;
+    }
+  }
+.product-details .socials li:first-child {
+    padding-left: 0;
+}
+.socials ul li a {
+    padding-left: 0px;
+}
+  
+</style>
+
+{% assign share_title = product.title %}
+{% assign share_permalink = product.url %}
+{% assign share_image = product.featured_media %}
+
+<div class="socials SocialDesk {% unless section.settings.hide_desktop %}onlydesktop{% endunless %} {% unless section.settings.hide_mobile %}onlymobile{% endunless %}">
+  <ul>
+    {% if settings.share_facebook %}
+    <li>
+      <a target="_blank" href="//www.facebook.com/sharer.php?u={{ shop.url | append: share_permalink }}" role="button" aria-label="{{ 'general.social.facebook' | t }}">
+        <span class="icon icon-facebook text-center"></span>
+      </a>
+    </li>
+    {% endif %}
+    {% if settings.share_twitter %}
+    <li>
+      <a target="_blank" href="//twitter.com/share?text={{ share_title | url_param_escape }}&amp;url={{ shop.url | append: share_permalink }}" role="button" aria-label="{{ 'general.social.twitter' | t }}">
+        <span class="icon icon-twitter text-center"></span>
+      </a>
+    </li>
+    {% endif %}
+
+    {% if settings.share_pinterest %}
+    <li>
+      <a target="_blank" href="//pinterest.com/pin/create/button/?url={{ shop.url | append: share_permalink }}&amp;media={{ share_image | img_url: '1024x1024' }}&amp;description={{ share_title | url_param_escape }}" role="button" aria-label="{{ 'general.social.pinterest' | t }}">
+        <span class="icon icon-pinterest text-center"></span>
+      </a>
+    </li>
+    {% endif %}
+  </ul>
+</div>
+
+{% schema %}
+{
+  "name": "socials SocialDesk",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "label": "hide mobile",
+      "id": "hide_mobile"
+    },
+    {
+      "type": "checkbox",
+      "label": "hide desktop",
+      "id": "hide_desktop"
+    }
+  ],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "socials SocialDesk"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

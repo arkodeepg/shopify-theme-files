@@ -1,0 +1,170 @@
+<style>
+ #product_faq {
+    margin-top: 36px;
+    margin-bottom: 40px;
+}
+#product_faq .container{
+    padding: 0 20px;
+}
+ .faq-accrodian {
+    width: 58%;
+    margin: 0 auto;
+}
+.faq-accordion-wrap {
+    border-bottom: 1px solid #d9d9d9;
+    padding: 16px 0;
+}
+.faq-accordion-wrap:last-child{
+  border-bottom: none;
+}
+    h2.faq-section-title {
+    margin-bottom: 10px !important;
+    letter-spacing: 1.3px;
+    font-size: calc(var(--x_large) - 3.75px);
+    font-family: var(--body_font);
+    font-weight: var(--body_font_weight) !important;
+    text-transform: capitalize;
+    line-height: 58px;
+    color: #343333;
+    padding: 0 30px;
+    text-align: center;
+}
+.faq-accordion-wrap .faq-accordion-tab {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.faq-accordion-wrap .faq-accordion-tab {
+    text-decoration: inherit;
+}
+
+.faq-accordion-tab[aria-expanded=true] svg {
+    transform: rotateZ(0deg);
+}
+.faq-accordion-tab[aria-expanded=false] svg {
+    transform: rotateZ(180deg);
+    transition: all .2s ease;
+}
+.faq-accordion-tab[aria-expanded=true]+.faq-accordion-content {
+    display: block;
+    color: #343333;
+    font-family: var(--body_font);
+    font-weight: 200;
+    line-height: 23px;
+}
+.faq-accordion-wrap .faq-accordion-content {
+    padding-right: 15px;
+    margin-top: 20px;
+}
+.faq-accordion-tab[aria-expanded=false]+.faq-accordion-content {
+    display: none;
+}
+.faq-accordion-wrap .faq-accordion-tab .faq-accordion-question {
+    font-size: 15px;
+    color: #000;
+    margin-bottom: 0;
+    font-family: var(--body_font);
+    font-weight: 400 !important;
+    line-height: 23px;
+}
+.faq-accordion-tab[aria-expanded=true] .faq-accordion-question {
+    color: #96865d;
+}
+@media screen and (max-width:800px) {
+    #product_faq {
+    margin-top: 20px;
+    margin-bottom: 0;
+}
+    h2.faq-section-title {
+    padding: 0;
+    letter-spacing: normal;
+    font-size: 14px;
+    line-height: 26px;
+    font-weight: 700 !important;
+    text-align: left;
+}
+.faq-accrodian {
+    width: 100%;
+}
+.faq-accordion-wrap .faq-accordion-tab .faq-accordion-question {
+    font-size: 15px;
+}
+.faq-accordion-tab[aria-expanded=true]+.faq-accordion-content {
+    font-size: 14.5px;
+}
+}
+</style>
+
+{%- for i in (1..5) -%}
+{%- capture faqHtml -%}
+{{faqHtml}}
+{%- assign questions = 'faq_questions_' | append: i -%}
+{%- assign answers ='faq_answers_' | append: i -%}
+{%- if product.metafields.my_fields[questions] != blank and product.metafields.my_fields[answers] != blank-%}
+<div class="faq-accordion-wrap">
+  <a class="faq-accordion-tab" href="javascript:;" aria-expanded="{% if faqHtml == blank %}true{% else %}false{% endif %}">
+    <div class="faq-accordion-question">{{product.metafields.my_fields[questions]}}</div>
+    <svg id="noun_down_arrow_636002" data-name="noun_down arrow_636002" xmlns="http://www.w3.org/2000/svg"
+      width="11.061" height="6.132" viewBox="0 0 11.061 6.132">
+      <g id="Group_9073" data-name="Group 9073" transform="translate(0)">
+        <path id="Path_2091" data-name="Path 2091"
+          d="M15.71,25.6,10.322,31a.4.4,0,0,0,.567.567l4.821-4.822,4.862,4.862a.4.4,0,0,0,.567-.567Z"
+          transform="translate(-10.2 -25.6)" fill="#96865d" />
+      </g>
+    </svg>
+  </a>
+  <div class="faq-accordion-content">
+    {{product.metafields.my_fields[answers]}}
+  </div>
+</div>
+{%- endif -%}
+{%- endcapture -%}
+{%- endfor -%}
+{%- if faqHtml != blank -%}
+<div id="product_faq">
+  <div class="container">
+    {%- if section.settings.title != blank -%}
+      <h2 class="faq-section-title">{{ section.settings.title }}</h2>
+    {%- endif -%}
+    <div class="faq-accrodian">
+      {{faqHtml}}
+    </div>
+  </div>
+</div>
+{%- endif -%}
+{% schema %}
+{
+  "name": "Product FAQ",
+  "class": "product_faq_section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Frequently Asked Questions"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product FAQ"
+    }
+  ]
+}
+{% endschema %}
+<script type="text/lazyload">
+  $(document).ready(function(){
+      // faq accordions js start header
+    const items = document.querySelectorAll(".faq-accordion-wrap .faq-accordion-tab");
+    function toggleAccordion() {
+      const itemToggle = this.getAttribute('aria-expanded');
+      for (i = 0; i < items.length; i++) {
+        items[ i ].setAttribute('aria-expanded', 'false');
+      }
+      if (itemToggle == 'false') {
+        this.setAttribute('aria-expanded', 'true');
+      }
+    }
+    items.forEach(item => item.addEventListener('click', toggleAccordion));
+
+  })
+</script>

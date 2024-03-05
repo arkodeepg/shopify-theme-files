@@ -1,0 +1,254 @@
+{% comment %} Product  accordions start {% endcomment %}
+
+<style>
+  .product-accordion-container {
+    display: inline-block;
+    width: 100%;
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--line_color);
+  }
+  .product-accordion-question_cont {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+  .product-accordion-answer {
+    display: none;
+    margin-top: 16px;
+    color: #343333;
+  }
+  .product-accordion-answer p {
+    padding: unset;
+    color: #4c4c4c;
+    font-family: Lato;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 22px;
+    font-size: 14px;
+    padding: 0 0 calc(var(--small) * 1.25);
+  }
+  .product-accordion-question_cont:hover {
+    cursor: pointer;
+  }
+  .product-accordion-question_cont[aria-expanded='true'] + .product-accordion-answer {
+    display: block;
+  }
+  .product-accordion-question_cont[aria-expanded='true'] > .product-accordion-icon {
+    transform: rotate(180deg);
+  }
+  .product-accordion_question {
+    font-family: var(--body_font) !important;
+    font-size: 18px;
+    color: #1e1e1e !important;
+    line-height: 23px;
+    font-style: normal;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+  }
+  .product-accordions-section .product-accordion-wrap .tab-body .tabindex {
+    font-family: var(--body_font) !important;
+    letter-spacing: 0;
+    color: #4c4c4c;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 22px;
+  }
+  .product-accordion-answer_descp-inner {
+    max-height: 92px;
+    overflow: hidden;
+        display: block;
+  }
+  .moreless-button {
+    color: #96865d;
+    font-size: 12px;
+    text-decoration-line: underline;
+    cursor: pointer;
+  }
+  .product-care-section-wrap {
+      margin-top: 15px;
+  }
+  .product-care-section {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      gap: 32px;
+  }
+  .product-care-section .care-icon-wrap {
+      width: 75px;
+  }
+</style>
+<div class="product-accordion-container">
+  <div class="product-accordion-question_cont" aria-expanded="true">
+    <div class="product-accordion_question">Description</div>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      class="product-accordion-icon"
+      width="16px"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+    </svg>
+  </div>
+  <div class="product-accordion-answer product-accordion-answer_descp">
+    <span class="product-accordion-answer_descp-inner">{{ product.description }}</span>
+    <span class="moreless-button">Read More</span>
+  </div>
+  
+</div>
+
+{% comment %}
+  <div
+    class="accordion-content"
+    {% if product_description == false and forloop.first %}
+      style="display: none;"
+    {% endif %}
+  ></div>
+{% endcomment %}
+
+{% assign NewTwMainFor = product.metafields.custom.product_acc_tw_extra.value.info %}
+
+{% if product.metafields.custom.product_acc_tw_extra %}
+  {% for newTwACC in NewTwMainFor %}
+    <div class="product-accordion-container">
+      <div class="product-accordion-question_cont" aria-expanded="false">
+        <div class="product-accordion_question">{{ newTwACC.headAcc }}</div>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="product-accordion-icon"
+          width="16px"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+        </svg>
+      </div>
+      <div class="product-accordion-answer">{{ newTwACC.descAcc }}</div>
+    </div>
+  {% endfor %}
+{% endif %}
+
+<div class="product-accordion-container">
+  <div class="product-accordion-question_cont" aria-expanded="false">
+    <div class="product-accordion_question">Shipping</div>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      class="product-accordion-icon"
+      width="16px"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+    </svg>
+  </div>
+  <div class="product-accordion-answer">{{ shipping }}</div>
+</div>
+{% if product.metafields.my_fields.more_information != blank %}
+<div class="product-accordion-container">
+  <div class="product-accordion-question_cont" aria-expanded="false">
+    <div class="product-accordion_question">More Information</div>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      class="product-accordion-icon"
+      width="16px"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+    </svg>
+  </div>
+  <div class="product-accordion-answer">{{ product.metafields.my_fields.more_information }}</div>
+</div>
+{% endif %}
+{% if product.metafields.pdp.care_icons1 != blank
+  or product.metafields.pdp.care_icons2 != blank
+  or product.metafields.pdp.care_icons3 != blank
+  or product.metafields.pdp.care_icons4 != blank
+  or product.metafields.pdp.care_icons5 != blank
+%}
+  <div class="product-care-section-wrap">
+    <div class="product-care-section">
+      {% if product.metafields.pdp.care_icons1 != blank %}
+        {% assign careIcon1 = product.metafields.pdp.care_icons1 | split: ',' %}
+        <div class="care-icon-wrap">
+          <a href="javascript:void(0)" class="care-icon" title="{{careIcon1[0]}}"
+            ><img
+              src="{{careIcon1[1]}}"
+              alt="{{careIcon1[0]}}"
+          ></a>
+        </div>
+      {% endif %}
+      {% if product.metafields.pdp.care_icons2 != blank %}
+        {% assign careIcon2 = product.metafields.pdp.care_icons2 | split: ',' %}
+        <div class="care-icon-wrap">
+          <a href="javascript:void(0)" class="care-icon" title="{{careIcon2[0]}}"
+            ><img
+              src="{{careIcon2[1]}}"
+              alt="{{careIcon2[0]}}"
+          ></a>
+        </div>
+      {% endif %}
+      {% if product.metafields.pdp.care_icons3 != blank %}
+        {% assign careIcon3 = product.metafields.pdp.care_icons3 | split: ',' %}
+        <div class="care-icon-wrap">
+          <a href="javascript:void(0)" class="care-icon" title="{{careIcon3[0]}}"
+            ><img
+              src="{{careIcon3[1]}}"
+              alt="{{careIcon3[0]}}"
+          ></a>
+        </div>
+      {% endif %}
+      {% if product.metafields.pdp.care_icons4 != blank %}
+        {% assign careIcon4 = product.metafields.pdp.care_icons4 | split: ',' %}
+        <div class="care-icon-wrap">
+          <a href="javascript:void(0)" class="care-icon" title="{{careIcon4[0]}}"
+            ><img
+              src="{{careIcon4[1]}}"
+              alt="{{careIcon4[0]}}"
+          ></a>
+        </div>
+      {% endif %}
+      {% if product.metafields.pdp.care_icons5 != blank %}
+        {% assign careIcon5 = product.metafields.pdp.care_icons5 | split: ',' %}
+        <div class="care-icon-wrap">
+          <a href="javascript:void(0)" class="care-icon" title="{{careIcon5[0]}}"
+            ><img
+              src="{{careIcon5[1]}}"
+              alt="{{careIcon5[0]}}"
+          ></a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endif %}
+<script defer>
+  $('.product-accordion-question_cont').click(function () {
+    let state = $(this).attr('aria-expanded');
+    $('.product-accordion-question_cont').attr('aria-expanded', 'false');
+    // console.log($(this).attr('aria-expanded'));
+    if (state == 'true') $(this).attr('aria-expanded', 'false');
+    else $(this).attr('aria-expanded', 'true');
+  });
+
+  $('.moreless-button').click(function () {
+    // console.log(`this - ${$(this).text().toLowerCase()}`);
+    if ($(this).text().toLowerCase() == 'read more') {
+      $(this).text('Read Less');
+      $('.product-accordion-answer_descp-inner').css('max-height', 'none');
+    } else {
+      $(this).text('Read More');
+      $('.product-accordion-answer_descp-inner').css('max-height', '92px');
+    }
+  });
+</script>
+
+{% comment %} Product  accordions end {% endcomment %}

@@ -1,0 +1,24 @@
+{%- liquid
+  if variant.unit_price_measurement
+    echo '<br/><small>'
+    if variant_free
+      echo 'products.product.up_to' | t
+      echo ' ' 
+    endif
+    if settings.currency_enable
+      echo variant.unit_price | money_with_currency
+    else
+      echo variant.unit_price | money
+    endif
+    if variant_slash == 'true'
+      echo '/'
+    else
+      echo 'products.general.per' | t
+    endif
+    if variant.unit_price_measurement.reference_value != 1
+      echo variant.unit_price_measurement.reference_value
+    endif
+    echo variant.unit_price_measurement.reference_unit
+    echo '</small>'
+  endif
+-%}

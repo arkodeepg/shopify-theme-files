@@ -1,0 +1,56 @@
+{%- liquid
+  if settings.currency_enable
+    assign money_format = shop.money_with_currency_format
+  else
+    assign money_format = shop.money_format
+  endif
+-%}
+
+<script>
+  window.themeInfo = {name: "Avenue"};
+  window.theme = window.theme || {};
+  theme.moneyFormat = {{ money_format | json }};
+  theme.discount_value = 0;
+  theme.customer_id = {{customer.id | json}};
+  theme.cart_token = {{cart.token}}
+  theme.routes_cart_url = {{ routes.cart_url | json }};
+  theme.routes_cart_add_url = {{ routes.cart_add_url | json }};
+  theme.routes_cart_change_url = {{ routes.cart_change_url | json }};
+  theme.routes_all_products_collection_url = {{ routes.all_products_collection_url | json }};
+  theme.routes_search_url = {{ routes.search_url | json }};
+  theme.routes_predictive_search_url = {{ routes.predictive_search_url | json }};
+  theme.routes_product_recommendations_url = {{ routes.product_recommendations_url | json }};
+  theme.language = {collections_general_update_cart: {{ 'collections.general.update_cart' | t | json }},collections_general_update_cart_message: {{ 'collections.general.update_cart_message' | t | json }},collections_general_update_cart_label_message: {{ 'collections.general.update_cart_label_message' | t | json }},collections_general_open: {{ 'collections.general.open' | t | json }},contact_form_send: {{ 'contact.form.send' | t | json }},layout_general_unavailable: {{ 'layout.general.unavailable' | t | json }},products_general_compare_empty_message: {{ 'products.general.compare_empty_message' | t | json }},products_general_inv_msg_1: {{ 'products.general.inv_msg_1' | t | json }},products_general_inv_msg_2: {{ 'products.general.inv_msg_2' | t | json }},products_general_per: {{ 'products.general.per' | t | json }},products_product_add_to_cart: {{ 'products.product.add_to_cart' | t | json }},products_product_ajax_adding: {{ 'products.product.ajax_adding' | t | json  }},products_product_ajax_added: {{ 'products.product.ajax_added' | t | json }},products_product_ajax_thanks: {{ 'products.product.ajax_thanks' | t | json  }},products_product_ajax_updated: {{ 'products.product.ajax_updated' | t | json }},products_product_ajax_view: {{ 'products.product.ajax_view' | t | json }},products_product_available: {{ 'products.product.available' | t | json }},products_product_disabled_add_to_cart: {{ 'products.product.disabled_add_to_cart' | t | json }},products_product_free: {{ 'products.product.free' | t | json }},products_product_sku: {{ 'products.product.sku' | t | json }},products_product_bar: {{ 'products.product.bar' | t | json }},products_product_sold_out: {{ 'products.product.sold_out' | t | json }},products_product_savings: {{ 'products.product.savings' | t | json }},products_general_per: {{ 'products.general.per' | t | json }},cart_general_checkout: {{ 'cart.general.checkout' | t | json }},cart_general_agree: {{ 'cart.general.agree' | t | json }},cart_general_each: {{ 'cart.general.each' | t | json }},cart_general_carttotal: {{ 'cart.general.carttotal' | t | json }},general_validation_error: {{ 'general.validation.error' | t | json }},general_validation_required: {{ 'general.validation.required' | t | json }},general_validation_valid_email: {{ 'general.validation.valid_email' | t | json }},general_validation_valid_url: {{ 'general.validation.valid_url' | t | json }},general_validation_valid_number: {{ 'general.validation.valid_number' | t | json }},general_validation_match: {{ 'general.validation.match' | t | json }},general_validation_characters_exceed: {{ 'general.validation.characters_exceed' | t | json }},general_validation_characters_min: {{ 'general.validation.characters_min' | t | json }},general_validation_value_less: {{ 'general.validation.value_less' | t | json }},general_validation_value_greater: {{ 'general.validation.value_greater' | t | json }},gift_cards_issued_copied: {{ 'gift_cards.issued.copied' | t | json }},gift_cards_issued_failed: {{ 'gift_cards.issued.copied_failed' | t | json }}};
+  theme.settings = {cart: {{ settings.go_to_cart_enable | json }},compare: {{ settings.compare_enable | json }},quickView: {{ settings.quick_view_enable | json }},animate: {{ settings.animation_enable | json }}};
+</script>
+<!-- <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
+<!-- <script src="{{ 'jquery3-7-0.min.js' | asset_url }}" defer></script> -->
+{{ 'jquery3-7-0.min.js' | asset_url | preload_tag: as: 'script' }}
+<script src="{{ 'jquery3-7-0.min.js' | asset_url }}"></script>
+<script src="{{ 'script.check.js' | asset_url }}" defer></script>
+<!-- for dev -->
+<!-- <script src="{{ 'script.js' | asset_url }}" defer></script> -->
+<!-- for prod -->
+<script src="{{ 'script.min.js' | asset_url }}" defer></script>
+<script src="{{ 'script.header.js' | asset_url }}" defer></script>
+
+{%- if request.page_type == 'product' -%}<script src="{{ 'script.product.js' | asset_url }}" defer></script>{% endif %}
+{%- if request.page_type == 'collection' -%}
+  <script src="{{ 'script.collection.js' | asset_url }}" defer></script>
+{% endif %}
+{%- if request.page_type == 'cart' -%}<script src="{{ 'script.cart.js' | asset_url }}" defer></script>{% endif %}
+{%- if request.page_type == 'page' and template.suffix contains 'contact' -%}
+  <script src="{{ 'script.contact.js' | asset_url }}" defer></script>
+{% endif %}
+{%- if request.page_type == 'search' -%}<script src="{{ 'script.search.js' | asset_url }}" defer></script>{% endif %}
+{%- if request.page_type contains 'customers/' -%}
+  <script src="{{ 'shopify_common.js' | shopify_asset_url }}" defer></script>
+  <script src="{{ 'script.customers.js' | asset_url }}" defer></script>
+{%- endif -%}
+{%- if request.page_type == '404' -%}<script src="{{ 'script.error.js' | asset_url }}" defer></script>{%- endif -%}
+{%- if request.page_type == 'password' -%}
+  <script src="{{ 'script.password.js' | asset_url }}" defer></script>
+{%- endif -%}
+{%- if request.page_type == 'gift_card' -%}{{ 'vendor/qrcode.js' | shopify_asset_url | script_tag }}{%- endif -%}
+
+{%- if settings.liquid != blank -%}{{ settings.liquid }}{%- endif -%}

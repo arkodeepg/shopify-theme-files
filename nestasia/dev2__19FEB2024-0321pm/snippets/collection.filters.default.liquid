@@ -1,0 +1,283 @@
+{%- unless collection.filters == empty -%}
+
+  {%- liquid
+    capture active_filters
+      for filter in collection.filters
+        for value in filter.active_values
+          echo '<li class="advanced-filter active-filter active hover"><a href="'
+          echo value.url_to_remove
+          echo '" title="'
+          echo 'collections.sidebar.filter_remove' | t | escape
+          echo ' '
+          unless filter.type == 'boolean'
+            echo filter.label | escape
+            echo ' '
+            echo value.label | escape
+          else
+            echo filter.label | escape
+          endunless
+          echo '">'
+          unless filter.type == 'boolean'
+            echo value.label | escape
+          else
+            echo filter.label | escape
+          endunless
+          echo '</a></li>'
+        endfor
+        if filter.type == "price_range"
+          if filter.min_value.value != nil or filter.max_value.value != nil
+            echo '<li class="advanced-filter active-filter active hover"><a href="'
+            echo filter.url_to_remove
+            echo '" title="'
+            echo 'collections.sidebar.filter_remove' | t | escape
+            echo ' '
+            echo filter.label | escape
+            echo '">'          
+              if filter.min_value.value
+                echo filter.min_value.value | money
+              else
+                echo '0' | money | escape
+              endif
+            echo ' - '
+              if filter.max_value.value
+                echo filter.max_value.value | money
+              else
+                echo filter.range_max | money | escape
+              endif
+            echo '</a></li>'
+          endif    
+        endif    
+      endfor
+    endcapture
+  -%}
+
+  {% unless active_filters == empty %}
+  <div class="filter none formatted clearfix">
+    <h6>{{ 'collections.sidebar.selected' | t }}</h6>
+    <ul class="advanced-filters unformatted">
+      {{ active_filters }}
+    </ul>
+  </div>
+  {% endunless %}
+
+  {%- for filter in collection.filters -%}
+    {% case filter.type %}
+      {% when 'boolean' or 'list' %}
+
+      {%- liquid
+        capture tags
+          for value in filter.values
+            if value.count == 0 and value.active == false
+              unless filter_disabled
+                echo '<li class="advanced-filter disabled"><span>'
+                unless filter.type == 'boolean'
+                  echo value.label | escape
+                else
+                  echo filter.label | escape
+                endunless
+                echo '</span></li>,,'
+              endunless
+            else
+              if value.active
+                echo '<li class="advanced-filter active-filter active"><a href="'
+                echo value.url_to_remove
+                echo '" title="'
+                echo 'collections.sidebar.filter_remove' | t | escape
+                echo ' '
+                unless filter.type == 'boolean'
+                  echo filter.label | escape
+                  echo ' '
+                  echo value.label | escape
+                else
+                  echo filter.label | escape
+                endunless
+                echo '">'
+                unless filter.type == 'boolean'
+                  echo value.label | escape
+                else
+                  echo filter.label | escape
+                endunless
+                echo '</a></li>,,'
+              else
+                echo '<li class="advanced-filter"><a href="'
+                echo value.url_to_add
+                echo '" title="'
+                echo 'collections.sidebar.filter_add' | t | escape
+                echo ' '
+                unless filter.type == 'boolean'
+                  echo filter.label | escape
+                  echo ' '
+                  echo value.label | escape
+                else
+                  echo filter.label | escape
+                endunless
+                echo '">'
+                unless filter.type == 'boolean'
+                  echo value.label | escape
+                else
+                  echo filter.label | escape
+                endunless
+                echo '</a></li>,,'
+              endif
+            endif
+          endfor
+        endcapture
+        assign tags = tags | split: ',,'
+      -%}
+
+      {% if tags.size > 0 %}
+        <div class="filter formatted clearfix">
+          <div class="relative open-container open-container-filter desktop">            
+            {% unless filter.type == 'boolean' %}
+            <details open>
+              <summary class="open open-btn open-filter open-{{ section.id }}" title="{{ 'collections.general.open' | t | escape }}" role="button" aria-label="{{ 'collections.general.open' | t | escape }}">{%- render 'icons.theme', icon: 'plus', size: 18 -%}<span class="h5">{{ filter.label | escape }}</span></summary>
+            </details>
+            <div id="{{ filter.label | handleize }}-filter" class="open-slide open-slide-filter">
+              <ul class="advanced-filters unformatted">
+                {% for t in tags limit: 5 %}
+                {{ t }}
+                {% endfor %}
+              </ul>
+              {% if tags.size > 5 %}
+                <details>
+                  <summary><span class="open-more" title="{{ 'collections.general.open' | t | escape }}" role="button" aria-label="{{ 'collections.general.open' | t | escape }}"><span class="more">{{ 'collections.sidebar.more' | t }}</span><span class="less hidden">{{ 'collections.sidebar.less' | t }}</span></span></summary>
+                </details>
+                <div class="open-slide">
+                  <ul class="advanced-filters unformatted open-slide">
+                    {% for t in tags offset: 5 %}
+                    {{ t }}
+                    {% endfor %}
+                  </ul>
+                </div>
+              {% endif %}
+            </div>
+            {% else %}            
+            <div id="{{ filter.label | handleize }}-filter" class="open-slide open-slide-filter">
+              <ul class="advanced-filters unformatted">
+                {% for t in tags limit: 1 %}
+                {{ t }}
+                {% endfor %}
+              </ul>
+            </div>            
+            {% endunless %}
+          </div>
+        </div>
+      {% endif %}
+
+      {% when 'price_range' %}
+      {% unless section.settings.layout == 'form' %}
+      {%- liquid
+        assign max_price_value = filter.max_value.value | divided_by: 100.0
+        assign min_price_value = filter.min_value.value | divided_by: 100.0
+        assign min_price = '0'
+        assign max_price = filter.range_max | divided_by: 100.0 | ceil
+        assign min_price_amount = '0' | money
+        assign max_price_amount = filter.range_max | money
+      -%}
+
+      <div class="filter formatted clearfix">
+        <div class="relative open-container open-container-filter desktop">
+          <details open>
+            <summary class="open open-btn open-filter open-{{ section.id }}" title="{{ 'collections.general.open' | t | escape }}" role="button" aria-label="{{ 'collections.general.open' | t | escape }}">{%- render 'icons.theme', icon: 'plus', size: 18 -%}<span class="h5">{{ filter.label | escape }}</span></summary>
+          </details>
+          <div id="{{ filter.label | handleize }}-filter" class="open-slide open-slide-filter">
+            {%- liquid
+              capture mn
+                if filter.min_value.value and filter.min_value.value > 0 and filter.min_value.value < filter.range_max
+                  echo min_price_value
+                else
+                  echo min_price
+                endif
+              endcapture
+              capture mx
+                if filter.max_value.value and filter.max_value.value < filter.range_max and filter.max_value.value > 0
+                  echo max_price_value
+                else
+                  echo max_price
+                endif
+              endcapture
+              assign mxmnhun = 100.0 | divided_by: max_price       
+              assign mxmnhunmn = mxmnhun | times: mn
+              assign mxmnhunmx = mxmnhun | times: mx
+            -%}
+
+            <div>
+              <div slider id="slider-distance">
+                <div>
+                  <div inverse-left style="width:{{ mxmnhunmn }}%;"></div>
+                  <div inverse-right style="width:{{ 100.0 | minus: mxmnhunmx }}%;"></div>
+                  <div range style="left:{{ mxmnhunmn }}%;right:{{ 100.0 | minus: mxmnhunmx }}%;"></div>            
+                  <span thumb class="left" style="left:{{ mxmnhunmn }}%;"></span>
+                  <span thumb class="right" style="left:{{ mxmnhunmx }}%;"></span>
+                </div>
+  
+                <input id="price-min-slide"
+                       class="price-input"
+                       type="range" 
+                       tabindex="-1" 
+                       aria-hidden="true"
+                       value="{{ mn }}" 
+                       max="{{ max_price }}" 
+                       min="{{ min_price }}" 
+                       step="1" 
+                       oninput="this.value=Math.min(this.value,this.parentNode.childNodes[5].value-1);
+                                var value=(100/(parseInt(this.max)-parseInt(this.min)))*parseInt(this.value)-(100/(parseInt(this.max)-parseInt(this.min)))*parseInt(this.min);
+                                var children = this.parentNode.childNodes[1].childNodes;
+                                children[1].style.width=value+'%';
+                                children[5].style.left=value+'%';
+                                children[7].style.left=value+'%';
+                                document.getElementById('price-min').value=this.value;" />
+  
+                <input id="price-max-slide"
+                       class="price-input"
+                       type="range" 
+                       tabindex="-1"
+                       aria-hidden="true" 
+                       value="{{ mx }}" 
+                       max="{{ max_price }}" 
+                       min="{{ min_price }}" 
+                       step="1" 
+                       oninput="this.value=Math.max(this.value,this.parentNode.childNodes[3].value-(-1));
+                                var value=(100/(parseInt(this.max)-parseInt(this.min)))*parseInt(this.value)-(100/(parseInt(this.max)-parseInt(this.min)))*parseInt(this.min);
+                                var children = this.parentNode.childNodes[1].childNodes;
+                                children[3].style.width=(100-value)+'%';
+                                children[5].style.right=(100-value)+'%';
+                                children[9].style.left=value+'%';
+                                document.getElementById('price-max').value=this.value;" />
+              </div>
+  
+              <div sign class="price-container tab-body">
+                <div sign class="form six relative">
+                  <label for="price-min" class="visually-hidden">{{ 'collections.sidebar.price_min' | t }}</label>                            
+                  <input class="price-input"
+                         id="price-min"
+                         data-url="{{ filter.min_value.param_name }}"
+                         value="{{ mn | round }}"
+                         type="number"
+                         placeholder="{{ min_price_amount }}"
+                         min="{{ min_price }}"
+                         max="{{ max_price }}"/>
+                  <span>{{ cart.currency.symbol }}</span>
+                </div>
+                <div sign class="form six relative">
+                  <label for="price-max" class="visually-hidden">{{ 'collections.sidebar.price_max' | t }}</label>                            
+                  <input class="price-input"
+                         id="price-max"
+                         data-url="{{ filter.max_value.param_name }}"
+                         value="{{ mx | round }}"
+                         type="number"
+                         placeholder="{{ max_price_amount }}"
+                         min="{{ min_price }}"
+                         max="{{ max_price }}"/>    
+                  <span>{{ cart.currency.symbol }}</span> 
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      {% endunless %}
+    {% endcase %}
+  {%- endfor -%}
+{%- endunless -%}

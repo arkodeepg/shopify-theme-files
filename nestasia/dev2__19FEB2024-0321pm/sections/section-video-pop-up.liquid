@@ -1,0 +1,538 @@
+{% if section.settings.video_link != blank %}
+
+  {%- liquid
+    assign full_width = section.settings.full_width
+    assign screen = ''
+    if section.settings.background_img_d != blank or section.settings.background_img_m != blank
+      assign background_img = true
+    else
+      assign background_img = false
+    endif         
+    if background_img
+      capture alt_d
+        if section.settings.background_img_d.alt != blank
+          echo section.settings.background_img_d.alt
+        elsif section.settings.title != blank
+          echo section.settings.title
+        elsif section.settings.sub_title != blank
+          echo section.settings.sub_title
+        elsif section.settings.body != blank
+          echo section.settings.body
+        else
+          echo section.settings.background_img_d | split: '/' | last | replace: '-', ' ' | replace: '_', ' ' | split: '.' | first | capitalize
+        endif
+      endcapture 
+      capture alt_m
+        if section.settings.background_img_m.alt != blank
+          echo section.settings.background_img_m.alt
+        elsif section.settings.title != blank
+          echo section.settings.title
+        elsif section.settings.sub_title != blank
+          echo section.settings.sub_title
+        elsif section.settings.body != blank
+          echo section.settings.body
+        else
+          echo section.settings.background_img_m | split: '/' | last | replace: '-', ' ' | replace: '_', ' ' | split: '.' | first | capitalize
+        endif
+      endcapture 
+    endif
+    assign text_color = false
+    if section.settings.section_color != 'rgba(0,0,0,0)' and section.settings.section_color != blank
+      assign text_color = true
+      assign text_color_section = section.settings.section_color
+    endif     
+    assign text_color_hover = false
+    if section.settings.section_color_hover != 'rgba(0,0,0,0)' and section.settings.section_color_hover != blank
+      assign text_color_hover = true
+      assign text_color_hover_section = section.settings.section_color_hover
+    endif 
+    assign background_color = false
+    if section.settings.background != 'rgba(0,0,0,0)' and section.settings.background != blank
+      assign background_color = true
+      assign background_color_section = section.settings.background
+    endif    
+    if section.settings.background_gradient != 'rgba(0,0,0,0)' and section.settings.background_gradient != blank
+      assign background_color = true
+      assign background_color_section = section.settings.background_gradient
+    endif
+    capture classes
+      echo 'dynamic-section dynamic-section-'
+      echo section.id 
+      echo ' section-padding-top section-padding-bottom section-margin-bottom '
+      if section.settings.padding_border
+        echo 'section-border '
+      endif
+    endcapture
+    assign overlay_color = false
+    if section.settings.background_img_overlay != 'rgba(0,0,0,0)' and section.settings.background_img_overlay != blank
+      assign overlay_color = true
+      assign overlay_color_section = section.settings.background_img_overlay
+    endif
+    if section.settings.background_img_overlay_gradient != 'rgba(0,0,0,0)' and section.settings.background_img_overlay_gradient != blank
+      assign overlay_color = true
+      assign overlay_color_section = section.settings.background_img_overlay_gradient
+    endif
+    if section.settings.enable_lazy
+      assign lazy = 'lazy'
+    else
+      assign lazy = 'eager'
+    endif
+  -%}
+  
+  {% style %}
+    .dynamic-section-{{ section.id }} { 
+      --margin_padding_desktop: {{ section.settings.padding_desktop }}vh;
+      --margin_padding_mobile: {{ section.settings.padding_mobile }}vh;
+      {%- if text_color -%}
+      --headline_font_color:{{ text_color_section }};
+      --body_font_color:{{ text_color_section }};
+      --button_primary_background:{{ text_color_section }};
+      --button_primary_border:{{ text_color_section }};
+      --button_primary_text:var(--background);
+      --button_secondary_background:{{ text_color_section }};
+      --button_secondary_border:{{ text_color_section }};
+      --button_secondary_text:{{ text_color_section }};
+      {%- endif -%}
+      {%- if text_color_hover -%}
+      --body_font_hover_color:{{ text_color_hover_section }};
+      {%- endif -%}
+      {%- if background_color -%}
+      --background:{{ background_color_section }};
+        {%- if text_color -%}
+        --button_primary_text:{{ section.settings.background }};
+        --button_secondary_hover:{{ section.settings.background }};
+        {% endif %}
+      {%- endif -%}
+      {%- if overlay_color -%}      
+        {%- if text_color -%}  
+        --button_primary_text:{{ section.settings.background_img_overlay }};
+        --button_secondary_hover:{{ section.settings.background_img_overlay }};
+        {% endif %}    
+      --overlay_background: {{ overlay_color_section }};
+      --overlay_opacity: {{ section.settings.background_img_overlay_opacity | times: 0.01 }};
+      {%- endif -%}
+      --section-padding-top-mobile: {{ section.settings.padding_top_mobile }}px;
+      --section-padding-top-desktop: {{ section.settings.padding_top_desktop }}px;
+      --section-padding-bottom-mobile: {{ section.settings.padding_bottom_mobile }}px;
+      --section-padding-bottom-desktop: {{ section.settings.padding_bottom_desktop }}px;
+      --section-margin-bottom-mobile: {{ section.settings.margin_bottom_mobile }}px;
+      --section-margin-bottom-desktop: {{ section.settings.margin_bottom_desktop }}px;
+    }
+  {% endstyle %}
+  
+  <section data-section-id="{{ section.id }}" 
+           data-section-type="video" 
+           data-url="{{ 'script.video.js' | asset_url }}"
+           data-type="{{ section.settings.video_link.type }}"
+           data-video="{{ section.settings.video_link.id }}"
+           class="{{ classes }}{% if settings.animation_enable %}animate-section-div {% endif %}clearfix">
+  
+    {%- liquid
+      assign block_width = section.settings.block_width
+      case block_width
+        when '4'
+          assign block_width = 'four'
+        when '6'
+          assign block_width = 'six'
+        when '8'
+          assign block_width = 'eight'
+        when '9'
+          assign block_width = 'nine'
+      endcase
+    -%}
+    <div class="{% if full_width %}{% if background_img or overlay_color %}relative {% if background_img %}lazycontainer {% endif %}{% if overlay_color %}background-overlay {% endif %}{% endif %}{% endif %}clearfix">
+      {%- liquid
+        if full_width and section.settings.background_img_d != blank
+          if section.settings.background_img_m != blank
+            assign screen = 'desktop-image '
+          endif
+        render 'image.load', img_src: section.settings.background_img_d, size: section.settings.background_img_d.width, alt: alt_d, background: true, screen: screen, full_width: true, lazy: lazy, sizes: '100vw'
+        endif
+        if full_width and section.settings.background_img_m != blank
+          if section.settings.background_img_d != blank
+            assign screen = 'mobile-image '
+          endif
+        render 'image.load', img_src: section.settings.background_img_m, size: section.settings.background_img_m.width, alt: alt_m, background: true, screen: screen, full_width: true, lazy: lazy, sizes: '100vw'
+        endif
+      -%}
+      <div class="relative container{% if full_width %} half-pad{% else %} {% if background_img or overlay_color %}inner-container{% else %}half-pad{% endif %}{% endif %}{% if settings.animation_enable %} animate-section load{% endif %} clearfix">
+        <div class="{% if full_width == false %}{% if background_img or overlay_color %}inner-container-pad relative {% if background_img %}lazycontainer {% endif %}{% if overlay_color %}background-overlay {% endif %}{% endif %}{% endif %}clearfix">
+          {%- liquid
+            if full_width == false and section.settings.background_img_d != blank
+              if section.settings.background_img_m != blank
+                assign screen = 'desktop-image '
+              endif
+              render 'image.load', img_src: section.settings.background_img_d, size: section.settings.background_img_d.width, alt: alt_d, background: true, screen: screen, lazy: lazy, sizes: '(min-width: 1220px) 1180px, calc(100vw - 40px)'
+            endif
+            if full_width == false and section.settings.background_img_m != blank
+              if section.settings.background_img_d != blank
+                assign screen = 'mobile-image '
+              endif
+              render 'image.load', img_src: section.settings.background_img_m, size: section.settings.background_img_m.width, alt: alt_m, background: true, screen: screen, lazy: lazy, sizes: '(min-width: 1220px) 1180px, calc(100vw - 40px)'
+            endif
+          -%}
+          <div class="relative table content-height content-height-options">
+            <div class="table-cell {{ section.settings.vertical_content_alignment }}">
+              <div class="{{ block_width }} animate {{ section.settings.text_alignment }} {{ section.settings.horizontal_content_alignment }}">
+                {%- liquid
+                  if section.settings.title_h1
+                    assign title = 1
+                  else
+                    assign title = 2
+                  endif
+                -%}
+                {% if section.settings.title != blank%}<h{{ title }} class="section-title-{{ section.settings.title_size }}" id="modal-pop-up-{{ section.id }}">{{ section.settings.title | escape }}</h{{ title }}>{% endif %}
+                {% if section.settings.sub_title != blank %}<h3 class="section-title-{{ section.settings.title_sub_size }}"{% if section.settings.title == blank %} id="modal-pop-up-{{ section.id }}"{% endif %}>{{ section.settings.sub_title | escape }}</h3>{% endif %}
+                {% if section.settings.body != blank %}{{ section.settings.body }}{% endif %}
+                <p><button type="button" data-micromodal-trigger="video-{{ section.id }}" id="vid-{{ section.id }}" class="btn{% if section.settings.outline_button %} outline{% endif %}" aria-label="{% if section.settings.button != blank %}{{ section.settings.button | escape }}{% else %}{{ 'layout.general.play' | t | escape }}{% endif %}">{% if section.settings.button != blank %}{{ section.settings.button | escape }}{% else %}{%- render 'icons.theme', icon: 'play', size: '16' -%}{% endif %}</button></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div id="video-{{ section.id }}" class="modal" aria-hidden="true">
+      <div class="modal-overlay" tabindex="-1" data-micromodal-close>
+        <div class="modal-container" role="dialog" aria-modal="true" aria-labelledby="modal-pop-up-{{ section.id }}" >
+          <div class="modal-content nopad">
+            <div class="youtube-container no-container">
+              <div class="loader"></div>
+            </div>
+          </div>
+          <button class="modal-close" aria-label="{{ 'layout.general.close' | t | escape }}" data-micromodal-close>{%- render 'icons.theme', icon: 'times', size: 18 -%}</button>
+        </div>
+      </div>
+    </div>
+    
+  </section>
+
+{% endif %}
+
+{% schema %}
+  {
+    "name": "t:sections.video.video_pop_up",
+    "settings": [
+      {
+        "type": "header",
+        "content": "t:sections.banner.label"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "t:sections.heading.label",
+		"default": "Video"
+      },
+      {
+        "id": "title_h1",
+        "type": "checkbox",
+        "label": "t:sections.heading.heading_one",
+        "default": false
+      },
+      {
+        "id": "title_size",
+        "type": "range",
+        "label": "t:sections.heading.heading_size",
+        "min": 12,
+        "max": 96,
+        "step": 6,
+        "unit": "px",
+        "default": 48
+      },
+      {
+        "type": "text",
+        "id": "sub_title",
+        "label": "t:sections.subheading.label",
+		"default": "Promo videos will play in a pop-up window"
+      },
+      {
+        "id": "title_sub_size",
+        "type": "range",
+        "label": "t:sections.subheading.subheading_size",
+        "min": 12,
+        "max": 96,
+        "step": 6,
+        "unit": "px",
+        "default": 24
+      },
+      {
+        "type": "richtext",
+        "id": "body",
+        "label": "t:sections.text.label"
+      },
+      {
+        "type": "checkbox",
+        "id": "outline_button",
+        "label": "t:sections.outline.label",
+        "default": false
+      },
+      {
+        "id": "section_color",
+        "type": "color",
+        "label": "t:sections.text.color"
+      },
+      {
+        "id": "section_color_hover",
+        "type": "color",
+        "label": "t:sections.text.hover"
+      },
+      {
+        "type": "select",
+        "id": "text_alignment",
+        "label": "t:sections.text_alignment.label",
+        "default": "text-center",
+        "options": [
+          {
+            "value": "text-left",
+            "label": "t:sections.alignment.left"
+          },
+          {
+            "value": "text-center",
+            "label": "t:sections.alignment.center"
+          },
+          {
+            "value": "text-right",
+            "label": "t:sections.alignment.right"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "block_width",
+        "label": "t:sections.content_width.label",
+        "default": "6",
+        "options": [
+          {
+            "value": "4",
+            "label": "33%"
+          },
+          {
+            "value": "6",
+            "label": "50%"
+          },
+          {
+            "value": "8",
+            "label": "66%"
+          },
+          {
+            "value": "9",
+            "label": "75%"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "horizontal_content_alignment",
+        "label": "t:sections.horizontal_position.label",
+        "default": "center",
+        "options": [
+          {
+            "value": "left",
+            "label": "t:sections.alignment.left"
+          },
+          {
+            "value": "center",
+            "label": "t:sections.alignment.center"
+          },
+          {
+            "value": "right",
+            "label": "t:sections.alignment.right"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "vertical_content_alignment",
+        "label": "t:sections.vertical_position.label",
+        "default": "middle",
+        "options": [
+          {
+            "value": "top",
+            "label": "t:sections.vertical_position.top"
+          },
+          {
+            "value": "middle",
+            "label": "t:sections.vertical_position.middle"
+          },
+          {
+            "value": "bottom",
+            "label": "t:sections.vertical_position.bottom"
+          }
+        ]
+      },
+      {
+        "type": "image_picker",
+        "id": "background_img_d",
+        "label": "t:sections.image.desktop.label",
+        "info": "t:sections.image.desktop.info"
+      },
+      {
+        "type": "image_picker",
+        "id": "background_img_m",
+        "label": "t:sections.image.mobile.label",
+        "info": "t:sections.image.mobile.info"
+      },
+	  {
+       "type": "checkbox",
+       "id": "full_width",
+       "label": "t:sections.full_width.label",
+       "default": true
+      },
+      {
+        "type": "range",
+        "id": "padding_desktop",
+        "min": 5,
+        "max": 100,
+        "step": 5,
+        "unit": "%",
+        "label": "t:sections.height.desktop.label",
+        "default": 25
+      },
+      {
+        "type": "range",
+        "id": "padding_mobile",
+        "min": 5,
+        "max": 100,
+        "step": 5,
+        "unit": "%",
+        "label": "t:sections.height.mobile.label",
+        "default": 25
+      },
+	  {
+        "type": "color",
+        "id": "background_img_overlay",
+        "label": "t:sections.overlay.label"
+      },
+      {
+        "type": "color_background",
+        "id": "background_img_overlay_gradient",
+        "label": "t:sections.overlay.gradient"
+      },
+      {
+        "type": "range",
+        "id": "background_img_overlay_opacity",
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "unit": "%",
+        "label": "t:sections.opacity.label",
+        "default": 0
+      },
+      {
+        "type": "header",
+        "content": "t:sections.video.name"
+      },
+      {
+        "type": "video_url",
+        "id": "video_link",
+        "label": "t:sections.video.link",
+        "accept": ["youtube", "vimeo"],
+		"default": "https://youtu.be/_9VUPq3SxOc",
+		"info": "https://youtu.be/_9VUPq3SxOc"
+      },
+      {
+        "type": "header",
+        "content": "t:sections.section.name.content"
+      },
+      {
+        "id": "enable_lazy",
+        "type": "checkbox",
+        "label": "t:sections.section.settings.lazy.multiple.label",
+        "default": true
+      },
+      {
+        "id": "background",
+        "type": "color",
+        "label": "t:sections.section.settings.background_color.label"
+      },
+      {
+        "id": "background_gradient",
+        "type": "color_background",
+        "label": "t:sections.section.settings.background_gradient.label"
+      },
+      {
+        "type": "paragraph",
+        "content": "t:sections.section.settings.mobile.content"
+      },
+      {
+        "id": "padding_top_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.top_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 20
+      },
+      {
+        "id": "padding_bottom_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 20
+      },
+      {
+        "id": "margin_bottom_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_margin.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 20
+      },
+      {
+        "type": "paragraph",
+        "content": "t:sections.section.settings.desktop.content"
+      },
+      {
+        "id": "padding_top_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.top_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "padding_bottom_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "margin_bottom_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_margin.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "padding_border",
+        "type": "checkbox",
+        "label": "t:sections.section.settings.border.label",
+        "default": true
+      }
+    ],
+    "presets": [
+      {
+        "name": "t:sections.video.video_pop_up"
+      }
+    ],
+    "disabled_on": {
+	  "templates": ["password"],
+      "groups": ["custom.overlay"]
+    }
+  }
+{% endschema %}

@@ -1,0 +1,917 @@
+{%liquid
+    assign product_categories = null | sort
+    assign product_titles = null | sort
+    assign product_prices = null | sort
+    assign product_prices_purchase = null | sort
+    assign item_counts = 0
+    for line in checkout.line_items
+        assign item_counts = item_counts | plus:line.quantity
+        assign arr_product_category = line.product.type | sort
+        assign arr_product_title = line.title | sort
+        assign arr_product_price = line.original_line_price | money | sort
+        assign arr_product_price_purchase = line.original_line_price | money_without_currency | sort
+        
+        if product_categories.size == 0
+            assign product_categories = arr_product_category
+        else
+            assign product_categories = product_categories |concat:arr_product_category
+        endif
+
+        if product_titles.size == 0
+            assign product_titles = arr_product_title
+        else
+            assign product_titles = product_titles |concat:arr_product_title
+        endif
+
+        if product_prices.size == 0
+            assign product_prices = arr_product_price
+        else
+            assign product_prices = product_prices |concat:arr_product_price
+        endif
+
+        if product_prices_purchase.size == 0
+            assign product_prices_purchase = arr_product_price_purchase
+        else
+            assign product_prices_purchase = product_prices_purchase |concat:arr_product_price_purchase
+        endif
+    endfor
+    assign amountFormat = '₹ {{amount}}'
+%}
+<script>
+window.ShopifyCheckout=window.ShopifyCheckout||{},window.ShopifyCheckout.money_format=`{{-amountFormat-}}`,window.ShopifyCheckout.formatMoney=function(o,e){"string"==typeof o&&(o=o.replace(".",""));var a="",t=/\{\{\s*(\w+)\s*\}\}/,r=e||window.ShopifyCheckout.money_format;function n(o,e){return void 0===o?e:o}function i(o,e,a,t){if(e=n(e,2),a=n(a,","),t=n(t,"."),isNaN(o)||null==o)return 0;var r=(o=(o/100).toFixed(e)).split(".");return r[0].replace(/(\d)(?=(\d\d\d)+(?!\d))/g,"$1"+a)+(r[1]?t+r[1]:"")}switch(r.match(t)[1]){case"amount":a=i(o,2);break;case"amount_no_decimals":a=i(o,0);break;case"amount_with_comma_separator":a=i(o,2,".",",");break;case"amount_no_decimals_with_comma_separator":a=i(o,0,".",",");break;case"amount_with_apostrophe_separator":a=i(o,2,"'",".")}return r.replace(t,a)};
+</script>
+<script>
+    const expressShippingValue = `{{-checkout.shipping_method.title-}}`;
+    const store = {
+        order_attributes: [
+            'express_shipping'
+        ]
+    }
+    const storeOrderData = {
+        attributes: {
+            express_shipping: expressShippingValue
+        }
+    };
+    const {
+        attributes
+    } = storeOrderData;
+    function injectInputs(element, orderAttributes) {
+        orderAttributes.forEach((attribute) => {
+            const $input = document.querySelectorAll(`input[name="checkout[attributes][${attribute}]"]`);
+            if ($input.length < element.length) {
+                const $newInput = document.createElement('input');
+                $newInput.type = 'hidden';
+                $newInput.name = `checkout[attributes][${attribute}]`;
+                element.appendChild($newInput);
+            }
+        });
+    }
+    function setStoreAttributes(data, orderAttributes) {
+        orderAttributes.forEach((attribute) => {
+            const $inputs = document.querySelectorAll(`input[name="checkout[attributes][${attribute}]"]`);
+            $inputs.forEach((input) => {
+                input.value = data[`${attribute}`];
+            });
+        });
+    }
+    function updateAttributes() {
+        const $cartForms = document.querySelectorAll('form[method="post"].edit_checkout');
+        if ($cartForms.length > 0) {
+            $cartForms.forEach((form) => {
+                injectInputs(form, store.order_attributes);
+            });
+        }
+        setStoreAttributes(attributes, store.order_attributes);
+    }
+</script>
+{% if compression == "minify" %}
+    <script>
+        var checkoutTotalPrice = {{checkout.total_price | plus: checkout.discounts_amount | divided_by: 100 }};
+        
+        const line_items = [
+            {%- for line in checkout.line_items -%}
+                {%- if line.variant.compare_at_price > 0 -%}
+                    {
+                        'variant_id':'{{- line.variant_id -}}',
+                        'compare_at_price':'{{- line.variant.compare_at_price -}}',
+                        'quantity': {{- line.quantity -}},
+                        'original_price': {{- line.original_price -}},
+                    },
+                {%- endif -%}
+            {%- endfor -%}
+        ];
+        const error_check = {
+            pin: {%- if settings.turn_off_pincodes -%}true{%- else -%}false{%- endif -%},
+            phone: {%- if settings.turn_off_phone -%}true{%- else -%}false{%- endif -%}
+        };
+        function initGST(e){var n=`\n            <div data-address-field="gst" class="field field--optional">\n                <div class="field__input-wrapper">\n                <label\n                    class="field__label field__label--visible"\n                    for="checkout_${e}_gst"\n                >\n                    GST (optional)\n                </label>\n                <input\n                    placeholder="GST (optional)"\n                    autocorrect="off"\n                    data-backup="gst"\n                    class="field__input"\n                    size="30"\n                    type="number"\n                    name="checkout[attributes][CustomerGSTIN]"\n                    id="checkout_${e}_gst"\n                >\n                </div>\n            </div>\n            `;document.querySelector('[data-address-field="phone"]').insertAdjacentHTML("afterend",n)};
+        function injectCompareAtPrice(){var t=0,e=0;line_items.forEach((function(a){try{var o=document.querySelector(`[data-variant-id='${a.variant_id}'] .product__price`);if(!o)return;var r=o.innerHTML,n=(parseFloat(a.quantity)*parseFloat(a.compare_at_price)/100).toFixed(2);o.innerHTML=`<del class='order-summary__small-text'>${window.ShopifyCheckout.formatMoney(n)}</del><br>${r}`,t=parseFloat(t)+parseFloat(a.quantity)*parseFloat(a.compare_at_price),e=parseFloat(e)+parseFloat(a.quantity)*parseFloat(a.original_price)}catch(t){console.error("Error rendering compare_at_price",t)}}));var a=t-e,o=(a/100).toFixed(2);if(0!=Number(a)){var r=`<tr class="total-line total-line--total-savings">\n                <th class="total-line__name" scope="row">Discount on MRP</th>\n                <td class="total-line__price">\n                    <span class="order-summary__emphasis skeleton-while-loading" data-checkout-totalsavings-price-target="${a}" style="color:#f4958c;">\n                    - ${window.ShopifyCheckout.formatMoney(o)}\n                    </span>\n                </td>\n                </tr>`;document.querySelector("tr.total-line.total-line--subtotal").insertAdjacentHTML("afterend",r)}var n=document.querySelector("[data-checkout-subtotal-price-target]");let l=n.getAttribute("data-checkout-subtotal-price-target");var i=((parseFloat(l)+a)/100).toFixed(2);n.innerHtml=window.ShopifyCheckout.formatMoney(i),document.querySelector("tr.total-line--subtotal .order-summary__emphasis[data-checkout-subtotal-price-target]")&&(document.querySelector("tr.total-line--subtotal .order-summary__emphasis[data-checkout-subtotal-price-target]").innerHTML=window.ShopifyCheckout.formatMoney(i)),document.querySelector("s.total-recap__original-price.remove-while-loading[data-checkout-original-payment-due-target]")&&(document.querySelector("s.total-recap__original-price.remove-while-loading[data-checkout-original-payment-due-target]").innerHTML=window.ShopifyCheckout.formatMoney(i)),document.querySelector("tr.total-line--subtotal th.total-line__name")&&(document.querySelector("tr.total-line--subtotal th.total-line__name").innerHTML="Total MRP"),document.querySelector("tr.total-line--reduction th.total-line__name > span:not(.reduction-code)")&&(document.querySelector("tr.total-line--reduction th.total-line__name > span:not(.reduction-code)").innerHTML="Coupon Discount -"),document.querySelector("th.total-line__name.payment-due-label .payment-due-label__total")&&(document.querySelector("th.total-line__name.payment-due-label .payment-due-label__total").innerHTML="Total Amount"),setTimeout((function(){document.querySelector("tr.total-line--subtotal .order-summary__emphasis[data-checkout-subtotal-price-target]")&&(document.querySelector("tr.total-line--subtotal .order-summary__emphasis[data-checkout-subtotal-price-target]").innerHTML=window.ShopifyCheckout.formatMoney(i))}),100)}document.addEventListener("rebuy.refresh",injectCompareAtPrice);
+        (function($) {
+
+            $(document).find('[name="checkout[shipping_address][zip]"]').attr("maxlength","6");        
+            $(document).find('[name="checkout[shipping_address][phone]"]').attr("maxlength","10");
+            
+            /*$('.order-summary__section.order-summary__section--total-lines').addClass('loading');
+            setTimeout(function(){
+                $('.order-summary__section.order-summary__section--total-lines').removeClass('loading');
+            },3000);*/
+            $(document).on("page:load page:change", function() {
+                {% if customer %}
+                    $('.order-summary__section.order-summary__section--total-lines').addClass('loading');
+                    let spanIntervalRewards = setInterval(function(){
+                        if($('#ssw_rewards_checkout_redeem_widget').length > 0){    
+                            clearInterval(spanIntervalRewards);
+                            $('.order-summary__section.order-summary__section--total-lines').removeClass('loading');
+                            //remain code
+                        }else if ($('#ssw_rewards_checkout_redeem_widget').length === 0){
+                            $('.order-summary__section.order-summary__section--total-lines').removeClass('loading');
+                        }
+                    }, 1000);
+                {%- endif -%}
+                $(document).on("click","#checkout_submit",(function(){localStorage.setItem("ChackoutDiscountCode","true")})),"contact_information"===Shopify.Checkout.step&&(initGST("shipping"),$.fn.inputFilter=function(t){return this.on("input keydown keyup mousedown mouseup select contextmenu drop",(function(){t(this.value)?(this.oldValue=this.value,this.oldSelectionStart=this.selectionStart,this.oldSelectionEnd=this.selectionEnd):this.hasOwnProperty("oldValue")?(this.value=this.oldValue,this.setSelectionRange(this.oldSelectionStart,this.oldSelectionEnd)):this.value=""}))});
+                $(document).on('click','#continue_button',function(){
+                    if(Shopify?.Checkout?.step === "contact_information"){
+                        gtag('event', 'conversion', {
+                            'allow_custom_scripts': true,
+                            'u1': {{product_categories | join:"," | json}},
+                            'u2': {{product_titles | join:"," | json}},
+                            'u3': '{{product_prices |join:"," | json}}',
+                            'send_to': 'DC-11868793/nes_disp/nesta000+unique'
+                        });
+                    }else if(Shopify?.Checkout?.step === "shipping_method"){
+                        gtag('event', 'conversion', {
+                            'allow_custom_scripts': true,
+                            'u1': {{product_categories | join:"," | json}},
+                            'u2': {{product_titles | join:"," | json}},
+                            'u3': '{{product_prices |join:"," | json}}',
+                            'u4': '{{item_counts}}',
+                            'u5': '{{ checkout.total_price | money }}',
+                            'send_to': 'DC-11868793/nes_disp/nesta005+unique'
+                        });
+                    }else if(Shopify?.Checkout?.step === "payment_method"){
+                        gtag('event', 'conversion', {
+                            'allow_custom_scripts': true,
+                            'u1': {{product_categories | join:"," | json}},
+                            'u2': {{product_titles | join:"," | json}},
+                            'u3': '{{product_prices |join:"," | json}}',
+                            'u4': '{{item_counts}}',
+                            'u5': '{{ checkout.total_price | money }}',
+                            'send_to': 'DC-11868793/nes_disp/nesta003+unique'
+                        });
+                    }
+                });
+                if(Shopify?.Checkout?.step === "contact_information"){
+                    let continue_button=document.querySelector("#continue_button"),pins={},pinsLoaded=!1;function continue_check(){error_check.pin&&error_check.phone?(continue_button.style.pointerEvents="all",continue_button.style.opacity=1):(continue_button.style.pointerEvents="none",continue_button.style.opacity=.5)}
+                    {%- unless settings.turn_off_pincodes -%}
+                        function pincodeSearch(e,r){parent=e.closest(".field"),error=document.querySelector("#error-for-zip"),pins&&pins[r]?(document.querySelector("#checkout_shipping_address_city").value=pins[r][0],province=document.querySelector("#checkout_shipping_address_province"),state="",Array.prototype.forEach.call(province.options,(function(e){e.text==pins[r][1]&&(state=e.value)})),province.value=state,setTimeout((function(){parent.classList.remove("field--error")}),10),error&&(error.style.display="none"),document.querySelector('[data-address-field="province"]').classList.remove("field--error"),document.querySelector('[data-address-field="city"]').classList.remove("field--error"),error_check.pin=!0,continue_check()):(document.querySelector("#checkout_shipping_address_city").value="",document.querySelector("#checkout_shipping_address_province").value="",error?(error.style.display="block",error.innerText=r.length<6?"Please enter a valid pincode":"We are currently not delivering to this pincode"):(errorEl=document.createElement("p"),errorEl.classList.add("field__message","field__message--error"),errorEl.id="error-for-zip",errorEl.innerText=r.length<6?"Please enter a valid pincode":"We are currently not delivering to this pincode",parent&&parent.append(errorEl)),error_check.pin=!1,continue_check(),setTimeout((function(){parent.classList.add("field--error")}),10))}function capitalize(e){return e?e.trim().toLowerCase().replace(/\w\S*/g,(e=>e.replace(/^\w/,(e=>e.toUpperCase())))).replace("And","and"):""}function getAllPincodes(e,r){pincodes_csv.split("\n").forEach((function(e,r){r>1&&(obj=e.split(","),""!=obj[0]&&(pins[obj[0]]=[capitalize(obj[1]),capitalize(obj[2])]))})),document.querySelectorAll("#checkout_shipping_address_zip").forEach((function(e){e.classList.add("clean")})),pinsLoaded=!0,pincodeSearch(e,r)}function pincodes(e,r=null){pinsLoaded?pincodeSearch(e,r.trim()):getAllPincodes(e,r.trim())}document.querySelectorAll("#checkout_shipping_address_zip").forEach((function(e){setTimeout((function(){e.classList.contains("visually-hidden")||(pincodes(e,e.value),e.addEventListener("input",(function(){pincodes(e,this.value)})))}),500)}));
+                    {%- endunless -%}
+                    {%- unless settings.turn_off_phone -%}
+                        var pattern=new RegExp("^[0-9]{10}$");function checkPhone(e,n=null){parent=e.closest(".field"),error=document.querySelector("#error-for-phone"),val=n.split(" ").join(""),pattern.test(val)&&!isNaN(val)?(error_check.phone=!0,continue_check(),parent.classList.remove("field--error"),error&&(error.style.display="none")):(console.log("Else data calling..."),error_check.phone=!1,continue_check(),error?error.style.display="block":(errorEl=document.createElement("p"),errorEl.classList.add("field__message","field__message--error"),errorEl.id="error-for-phone",errorEl.innerText="Please enter a 10 digit mobile number",parent&&parent.append(errorEl)),parent.classList.add("field--error"))}document.querySelectorAll('[autocomplete="shipping tel"]').forEach((function(e){setTimeout((function(){if(!e.classList.contains("visually-hidden")){var n=e.value.replace("+91","").replace(/ /g,"");checkPhone(e,n),e.addEventListener("input",(function(){var n=this.value.replace("+91","").replace(/ /g,"");checkPhone(e,n)}))}}),500)})),$("#checkout_shipping_address_zip").bind("keypress keyup keydown input",(function(e){this.classList.contains("visually-hidden")||pincodes(this,this.value),continue_check()})),$(document).on("input","#checkout_shipping_address_zip",(function(e){this.classList.contains("visually-hidden")||pincodes(this,this.value),continue_check(),console.log("In")})),$('[autocomplete="shipping tel"]').bind("keypress keyup keydown input",(function(e){($("#checkout_shipping_address_zip").keyup(),this.classList.contains("visually-hidden"))||checkPhone(this,this.value.replace("+91","").replace(/ /g,""));continue_check()})),$(document).on("change",'[autocomplete="shipping tel"]',(function(){$("#checkout_shipping_address_zip").keyup();var e=this.value.replace("+91","").replace(/ /g,"");checkPhone(document.getElementById("checkout_shipping_address_phone"),e),continue_check()}));
+                    {%- endunless -%}
+                    $(document).on("change",'[name="checkout[shipping_address][id]"]',(function(){$("#checkout_shipping_address_zip").keyup(),$('[autocomplete="shipping tel"]').keyup()})),$('[name="checkout[shipping_address][zip]"],[name="checkout[shipping_address][phone]"]').inputFilter((function(e){return/^\d*$/.test(e)})),$(document).find('[name="checkout[attributes][CustomerGSTIN]"]').attr({type:"text",maxlength:"15",pattern:"^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$",title:"Invalid GST Number."}),$(document).find('[name="checkout[attributes][CustomerGSTIN]"]').closest(".field").append('<p class="field__message field__message--error" id="error-for-gst" style="display: none;">Please enter a valid GST number.</p>'),$(document).find('[name="checkout[email]"]').closest(".field").append('<p class="field__message field__message--error" style="display:block;" id="error-for-email"></p>'),$(document).on("keyup",'[name="checkout[attributes][CustomerGSTIN]"]',(function(){var e=$(this).val();if(""==e)$(this).closest(".field").removeClass("field--error"),$(this).closest(".field").find(".field__message--error").hide();else{if(new RegExp("^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$").test(e))return $(this).closest(".field").removeClass("field--error"),$(this).closest(".field").find(".field__message--error").hide(),!0;$(this).closest(".field").addClass("field--error"),$(this).closest(".field").find(".field__message--error").show(),$('[name="checkout[attributes][CustomerGSTIN]"]').focus()}}));
+                }else if(Shopify?.Checkout?.step === "shipping_method"){
+                    var pins_est={},pinsEstLoaded=!1,default_title=document.querySelector(".section--shipping-method #main-header"),express_row=document.querySelector('[data-shipping-method-label-title="Express Shipping Prepaid Payment"]');default_title.innerHTML="Standard Shipping";
+                    calculateShippingDates = function () {
+
+                        let pincode = Number({{checkout.shipping_address.zip}});
+
+                        let now = new Date({{'now' | date: '%Y/%m/%d %H:%M' | json}});
+                        let hour=now.getHours(),add=hour>=11?1:0,add2=hour>=14?1:0,ships={default:[parseInt(pins_est[pincode][2])+add,parseInt(pins_est[pincode][3])+add],express:[parseInt(pins_est[pincode][0])+add2,parseInt(pins_est[pincode][1])+add2]},calc=function(e){return secs=864e5*e,date=new Date(now.getTime()+secs),month=date.getMonth(),day=date.getDate(),1==day||21==day||31==day?day+="st":2==day||22==day?day+="nd":3==day||23==day?day+="rd":day+="th",months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],day+" "+months[month]},deliver={default:[calc(ships.default[0]),calc(ships.default[1])],express:[calc(ships.express[0]),calc(ships.express[1])]};default_title.innerHTML='Standard Shipping <span class="est">Estimated delivery between '+deliver.default[0]+" - "+deliver.default[1]+"</span>",express_row&&(document.querySelector(".section--shipping-method #sub-header").innerHTML='Express Shipping <span class="est">Estimated delivery between '+deliver.express[0]+" - "+deliver.express[1]+"</span>");
+                    }
+
+                    if(!pinsEstLoaded){var res=pincodes_time_csv.split("\n");express_row&&(el=document.createElement("div"),el.classList.add("section__header","express"),el.innerHTML='<h2 class="section__title" id="sub-header" tabindex="-1">Express Shipping</h2>',express_row.closest(".content-box__row").before(el)),res.forEach((function(e,s){0!=s&&(obj=e.split(","),""!=obj[0]&&(pins_est[obj[0]]=[obj[3],obj[4],obj[5],obj[6]]))})),pinsEstLoaded=!0,calculateShippingDates()}
+                }else if (Shopify?.Checkout?.step == 'payment_method') {
+                    $("#continue_button").prop("disabled",!0),method=document.querySelector('[data-review-section="shipping-cost"]');let shippingMethod=document.querySelector('[data-review-section="shipping-cost"]');-1!=shippingMethod.innerText.indexOf("Cash on Delivery")?$.when(document.querySelectorAll('[data-gateway-name="offsite_v2"]').forEach((function(e){e.remove(),document.head.insertAdjacentHTML("beforeend",'<style>[data-subfields-for-gateway],[data-gateway-name="offsite_v2"] { display:none!important }</style>')}))).then((function(){$('.input-radio[name="checkout[payment_gateway]"]:first').prop("checked",!0),$("#continue_button").prop("disabled",!1)})):$.when(document.querySelectorAll('[data-gateway-name="manual"]').forEach((function(e){e.remove(),document.head.insertAdjacentHTML("beforeend",'<style>[data-gateway-name="manual"] { display:none!important }</style>')}))).then((function(){$('.input-radio[name="checkout[payment_gateway]"]:first').prop("checked",!0),$("#continue_button").prop("disabled",!1)}));
+                }
+                // inject compare at price
+                injectCompareAtPrice();
+                {%- if checkout.shipping_method.title contains "Express Shipping Prepaid" -%}
+                    updateAttributes();
+                {%- endif -%}
+            });
+
+            // conversion 
+            gtag('event', 'conversion', {
+                'allow_custom_scripts': true,
+                'u1': {{product_categories | join:"," | json}},
+                'u2': {{product_titles | join:"," | json}},
+                'u3': '{{product_prices |join:"," | json}}',
+                'u4': '{{item_counts}}',
+                'u5': '{{checkout.total_price | money}}',
+                'send_to': 'DC-11868793/nes_disp/nesta001+unique'
+            });
+
+            if(Shopify?.Checkout?.OrderStatus === true || Shopify?.Checkout?.page === "thank_you"){
+                gtag('event', 'purchase', {
+                    'allow_custom_scripts': true,
+                    'value': '{{ checkout.total_price | money }}',
+                    'transaction_id': {{checkout.order_id | json}},
+                    'u1': {{product_categories | join:"," | json}},
+                    'u2': {{product_titles | join:"," | json}},
+                    'u3': {{product_prices_purchase | join:"," | json}},
+                    'u4': '{{item_counts}}',
+                    'u5': '{{ checkout.total_price | money_without_currency }}',
+                    'send_to': 'DC-11868793/nes_d0/nesta0+transactions'
+                });
+            }
+
+            {%- if customer -%}
+                customRewardPointFunction=function(){var e=0,t=0,r="",a=500000009,i="";$("#ssw_reward_spending_rules option:not([disabled]):not(#initial-option)").each((function(a,s){var o=parseInt($(s).attr("data-rule-price")),d=parseInt($(s).attr("data-title").replace($(s).attr("value")+" • ","").replace("Get ₹ ","").replace(" off",""));if(checkoutTotalPrice>d){e<o&&(e=o,t=$(s).text(),i=$(s).attr("data-rule-id"));let a=$(s).attr("value"),d=$('.order-summary__sections .tag__wrapper .reduction-code [aria-hidden="true"]').text().replace(/^\s+|\s+$/gm,"");const n=4;""!=$(s).attr("value")&&(a.slice(a.length-n)==d.slice(d.length-n)?r+=`<li class="btn disabled active" data-option-name="${$(s).attr("value")}">${$(s).attr("data-title").replace($(s).attr("value")+" • ","").replace("Get ","")}</li>`:r+=""!=d?`<li class="btn disabled" data-option-name="${$(s).attr("value")}">${$(s).attr("data-title").replace($(s).attr("value")+" • ","").replace("Get ","")}</li>`:`<li class="btn" data-option-name="${$(s).attr("value")}">${$(s).attr("data-title").replace($(s).attr("value")+" • ","").replace("Get ","")}</li>`)}})),$("#ssw_reward_spending_rules option:not(#initial-option)").each((function(e,t){var r=parseInt($(t).attr("data-rule-price"));a>r&&(a=r)})),$('#ssw_reward_spending_rules option[data-rule-price="'+e+'"]').attr("selected","selected"),$("#ssw_rewards_redeem_button").prop("disabled",!1).removeClass("btn--disabled").attr("data-type","gift_card"),$(".customize_unuse_reward_pointe_wrap").remove(),$(".customize_reward_pointe_checkbox_wrap").remove(),""!=r&&$("#ssw_rewards_checkout_redeem_widget .ssw_rewards_redeem .field__input-btn-wrapper").after(`<div class="customize_unuse_reward_pointe_wrap"><div class="order-summary__emphasis" style="margin-bottom:5px;margin-top:20px;">You have Unused Reward Points!</div><ul>${r}</ul></div>`),0!=t?$("#ssw_rewards_checkout_redeem_widget .ssw_rewards_redeem .field__input-btn-wrapper").after(`<div class="customize_reward_pointe_checkbox_wrap"><label for="rewardPointeCheckBox123" class="container" data-rule-id="${i}"><input type="checkbox" id="rewardPointeCheckBox" name="rewardPointe" value="${t}"><span class="checkmark"></span>${t}</label></div>`):500000009!=a&&$(".order-summary__emphasis + p").text("Minimum "+a+" Points can be redeemed."),$("#ssw_rewards_checkout_redeem_widget").append('<div class="custom-loader-wrap"><div class="custom-loader"></div></div>')};var rewardPointeIntervalCount=0;const rewardPointeInterval=setInterval((function(){($('select#ssw_reward_spending_rules[name="ssw_rewards_checkout_redeem"]').length>0||rewardPointeIntervalCount>400)&&(clearInterval(rewardPointeInterval),customRewardPointFunction()),rewardPointeIntervalCount++}),500);$(document).on("click","#ssw_rewards_checkout_redeem_widget .customize_reward_pointe_checkbox_wrap label",(function(){if($(".customize_unuse_reward_pointe_wrap li.active").length>0)return $(this).find("#rewardPointeCheckBox").prop("checked",!1),0==$(".customize_reward_pointe_checkbox_wrap .reward_error_show").length&&$(".customize_reward_pointe_checkbox_wrap").append('<p class="reward_error_show" style="color:red;">A gift card is already applied to your Cart.</p>'),!1;if($(this).find("#rewardPointeCheckBox").prop("disabled",!0),$(this).find("#rewardPointeCheckBox").prop("checked")){var e=$(this).attr("data-rule-id").trim();$("#ssw_rewards_checkout_redeem_widget").addClass("loading"),$(this).find("#rewardPointeCheckBox").prop("checked",!1),console.log("selected",$(".customize_unuse_reward_pointe_wrap li.active").attr("data-option-name"));var t=$(`.field__input-btn-wrapper #ssw_reward_spending_rules option[data-rule-id="${e}"]`).attr("value"),r=t.substr(t.length-4);$(".tags-list .tag__button").each((function(e,t){var a=$(t).closest(".tag__wrapper").find('[aria-hidden="true"]').text().trim(),i=a.substr(a.length-4);r==i&&$(this).click()}))}else $(this).find("#rewardPointeCheckBox").prop("checked",!0),$("#ssw_rewards_redeem_button").click();setTimeout((function(){$(this).find("#rewardPointeCheckBox").prop("disabled",!1)}),2e3)})),$(document).on("click",".customize_unuse_reward_pointe_wrap li",(function(){if($('.tags-list .edit_checkout [name^="checkout[applied_gift_cards]').length>0)return 0==$(".customize_unuse_reward_pointe_wrap .reward_error_show").length&&$(".customize_unuse_reward_pointe_wrap").append('<p class="reward_error_show" style="color:red;">A gift card is already applied to your Cart.</p>'),!1;var e=$(this).attr("data-option-name");$(this).addClass("active"),$(".customize_unuse_reward_pointe_wrap li").addClass("disabled"),$('#ssw_reward_spending_rules option[value="'+e+'"]').attr("selected","selected"),setTimeout((function(){$("#ssw_rewards_redeem_button").click()}),200)})),$(document).on("click",".tag__button",(function(){$("#ssw_rewards_checkout_redeem_widget").addClass("loading");var e=$(this).closest(".tag__wrapper").find(".reduction-code__text").text();$(this).closest(".tag__wrapper").find('[name="checkout[clear_discount]"]').length>0&&e==localStorage.getItem("discountCode")&&localStorage.setItem("discountCode","remove"),setTimeout((function(){window.location.href=window.location.href.replace(`&discount=${e}`,"")}),3e3)}));   
+            {%- else -%}
+                $(document).on("click",".tag__button",(function(){var t=$(this).closest(".tag__wrapper").find(".reduction-code__text").text();$(this).closest(".tag__wrapper").find('[name="checkout[clear_discount]"]').length>0&&t==localStorage.getItem("discountCode")&&localStorage.setItem("discountCode","remove"),setTimeout((function(){window.location.href=window.location.href.replace(`&discount=${t}`,"")}),3e3)}));
+            {%- endif -%}
+            if (window.matchMedia('(max-width: 999px)').matches) {
+                $('.order-summary-toggle__text--show').click();
+            }
+            {%- unless customer -%}
+                $('#order-summary .edit_checkout .field__input-btn-wrapper').before('<div class="gift_card_discount_heading">To Redeem your Reward Points, Please <a href="https://nestasia.in/account/login?checkout_url=https://nestasia.in/cart">Log In</a></div>');
+            {%- endunless -%}
+        })(Checkout.$);      
+    </script>
+{%- else -%}
+    <script>
+        var checkoutTotalPrice = {{checkout.total_price | plus: checkout.discounts_amount | divided_by: 100 }};
+        const error_check = {
+            pin: {%- if settings.turn_off_pincodes -%}true{%- else -%}false{%- endif -%},
+            phone: {%- if settings.turn_off_phone -%}true{%- else -%}false{%- endif -%}
+        };
+        function initGST(fieldName) {
+            var phoneField = document.querySelector('[data-address-field="phone"]');
+            var GSTMarkup = `
+            <div data-address-field="gst" class="field field--optional">
+                <div class="field__input-wrapper">
+                <label
+                    class="field__label field__label--visible"
+                    for="checkout_${fieldName}_gst"
+                >
+                    GST (optional)
+                </label>
+                <input
+                    placeholder="GST (optional)"
+                    autocorrect="off"
+                    data-backup="gst"
+                    class="field__input"
+                    size="30"
+                    type="number"
+                    name="checkout[attributes][CustomerGSTIN]"
+                    id="checkout_${fieldName}_gst"
+                >
+                </div>
+            </div>
+            `;  
+            phoneField.insertAdjacentHTML('afterend', GSTMarkup);
+        }
+        /**
+           * It adds strikethrough compare_at_price to the order summary items.
+           * Does so by looking for data-variant-ids, and injecting the compare_at_price for that line item.
+           * Total savings module
+           */
+        function injectCompareAtPrice() {
+            var line_items = [
+                {%- for line in checkout.line_items -%}
+                    {%- if line.variant.compare_at_price > 0 -%}
+                        {
+                            'variant_id':'{{- line.variant_id -}}',
+                            'compare_at_price':'{{- line.variant.compare_at_price -}}',
+                            'quantity': {{- line.quantity -}},
+                            'original_price': {{- line.original_price -}},
+                        },
+                    {%- endif -%}
+                {%- endfor -%}
+            ]
+            var totalComparePrice = 0;
+            var totalOriginalPrice = 0;
+            line_items.forEach(function (item) {
+                try {
+                    var el = document.querySelector(`[data-variant-id='${item.variant_id}'] .product__price`);
+                    if (!el) {
+                        return;
+                    }
+                    var content = el.innerHTML;
+                    var amount = (parseFloat(item.quantity) * parseFloat(item.compare_at_price) / 100).toFixed(2);
+                    el.innerHTML = `<del class='order-summary__small-text'>${window.ShopifyCheckout.formatMoney(amount)}</del><br>${content}`;
+                    totalComparePrice = parseFloat(totalComparePrice) + (parseFloat(item.quantity) * parseFloat(item.compare_at_price));
+                    totalOriginalPrice = parseFloat(totalOriginalPrice) + (parseFloat(item.quantity) * parseFloat(item.original_price));
+                } catch (ex) {
+                    console.error('Error rendering compare_at_price', ex);
+                }
+            });
+            // Total savings
+            var totalSavings = (totalComparePrice - totalOriginalPrice);
+            // var DiscounEle = document.querySelector(`[data-checkout-discount-amount-target]`);
+            // let getDiscount = 0;
+            // if(DiscounEle != null || DiscounEle != undefined){
+            //   getDiscount = DiscounEle.getAttribute("data-checkout-discount-amount-target"); 
+
+            // }
+            var grossTotalSavings = (totalSavings / 100).toFixed(2);
+            if (Number(totalSavings) != 0) {
+                var savingsHtml = `<tr class="total-line total-line--total-savings">
+                        <th class="total-line__name" scope="row">Discount on MRP</th>
+                        <td class="total-line__price">
+                            <span class="order-summary__emphasis skeleton-while-loading" data-checkout-totalsavings-price-target="${totalSavings}" style="color:#f4958c;">
+                            - ${window.ShopifyCheckout.formatMoney(grossTotalSavings)}
+                            </span>
+                        </td>
+                        </tr>`;
+                //$(savingsHtml).insertAfter("tr.total-line.total-line--subtotal");
+                document.querySelector('tr.total-line.total-line--subtotal').insertAdjacentHTML('afterend', savingsHtml);
+                
+            }
+
+            var SubTotal = document.querySelector(`[data-checkout-subtotal-price-target]`);
+            let getSubTotal = SubTotal.getAttribute("data-checkout-subtotal-price-target");
+            var grossSubTotal = ((parseFloat(getSubTotal) + totalSavings) / 100).toFixed(2);
+            //SubTotal.innerHtml = `₹${grossSubTotal}`;
+            SubTotal.innerHtml = window.ShopifyCheckout.formatMoney(grossSubTotal);
+            document.querySelector('tr.total-line--subtotal .order-summary__emphasis[data-checkout-subtotal-price-target]') ? (
+                document.querySelector('tr.total-line--subtotal .order-summary__emphasis[data-checkout-subtotal-price-target]').innerHTML= (window.ShopifyCheckout.formatMoney(grossSubTotal))
+            ) : undefined;
+            document.querySelector('s.total-recap__original-price.remove-while-loading[data-checkout-original-payment-due-target]') ? (
+                document.querySelector('s.total-recap__original-price.remove-while-loading[data-checkout-original-payment-due-target]').innerHTML=(window.ShopifyCheckout.formatMoney(grossSubTotal))
+            ) : undefined;
+            document.querySelector('tr.total-line--subtotal th.total-line__name') ? (
+                document.querySelector('tr.total-line--subtotal th.total-line__name').innerHTML=('Total MRP')
+            ): undefined
+            document.querySelector('tr.total-line--reduction th.total-line__name > span:not(.reduction-code)') ? (
+                document.querySelector('tr.total-line--reduction th.total-line__name > span:not(.reduction-code)').innerHTML=('Coupon Discount -')
+            ) : undefined;
+            document.querySelector('th.total-line__name.payment-due-label .payment-due-label__total') ? (
+                document.querySelector('th.total-line__name.payment-due-label .payment-due-label__total').innerHTML=('Total Amount')
+            ) : undefined;
+            setTimeout(function () {
+                document.querySelector('tr.total-line--subtotal .order-summary__emphasis[data-checkout-subtotal-price-target]') ? (
+                    document.querySelector('tr.total-line--subtotal .order-summary__emphasis[data-checkout-subtotal-price-target]').innerHTML=(window.ShopifyCheckout.formatMoney(grossSubTotal))
+                ) : undefined;
+            }, 100);
+        }
+        document.addEventListener('rebuy.refresh', injectCompareAtPrice);
+        (function($) {
+
+            $(document).find('[name="checkout[shipping_address][zip]"]').attr("maxlength","6");        
+            $(document).find('[name="checkout[shipping_address][phone]"]').attr("maxlength","10");
+            /*$('.order-summary__section.order-summary__section--total-lines').addClass('loading');
+            setTimeout(function(){
+                $('.order-summary__section.order-summary__section--total-lines').removeClass('loading');
+            },3000);*/
+            $(document).on("page:load page:change", function() {
+                {% if customer %}
+                    $('.order-summary__section.order-summary__section--total-lines').addClass('loading');
+                    let spanIntervalRewards = setInterval(function(){
+                        if($('#ssw_rewards_checkout_redeem_widget').length > 0){    
+                            clearInterval(spanIntervalRewards);
+                            $('.order-summary__section.order-summary__section--total-lines').removeClass('loading');
+                            //remain code
+                        }else if ($('#ssw_rewards_checkout_redeem_widget').length === 0){
+                            $('.order-summary__section.order-summary__section--total-lines').removeClass('loading');
+                        }
+                    }, 1000);
+                {%- endif -%}
+                $(document).on('click', '#checkout_submit', function(){
+                    localStorage.setItem("ChackoutDiscountCode", "true");
+                });
+
+                if (Shopify.Checkout.step === 'contact_information') {
+                    // Add GST field
+                    initGST('shipping');
+                     // Restricts input for the set of matched elements to the given inputFilter function.
+                    $.fn.inputFilter = function (inputFilter) {
+                        return this.on("input keydown keyup mousedown mouseup select contextmenu drop", function () {
+                            if (inputFilter(this.value)) {
+                                this.oldValue = this.value;
+                                this.oldSelectionStart = this.selectionStart;
+                                this.oldSelectionEnd = this.selectionEnd;
+                            } else if (this.hasOwnProperty("oldValue")) {
+                                this.value = this.oldValue;
+                                this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+                            } else {
+                                this.value = "";
+                            }
+                        });
+                    };
+                }
+                $(document).on('click','#continue_button',function(){
+                    if(Shopify?.Checkout?.step === "contact_information"){
+                        gtag('event', 'conversion', {
+                            'allow_custom_scripts': true,
+                            'u1': {{product_categories | join:"," | json}},
+                            'u2': {{product_titles | join:"," | json}},
+                            'u3': '{{product_prices |join:"," | json}}',
+                            'send_to': 'DC-11868793/nes_disp/nesta000+unique'
+                        });
+                    }else if(Shopify?.Checkout?.step === "shipping_method"){
+                        gtag('event', 'conversion', {
+                            'allow_custom_scripts': true,
+                            'u1': {{product_categories | join:"," | json}},
+                            'u2': {{product_titles | join:"," | json}},
+                            'u3': '{{product_prices |join:"," | json}}',
+                            'u4': '{{item_counts}}',
+                            'u5': '{{ checkout.total_price | money }}',
+                            'send_to': 'DC-11868793/nes_disp/nesta005+unique'
+                        });
+                    }else if(Shopify?.Checkout?.step === "payment_method"){
+                        gtag('event', 'conversion', {
+                            'allow_custom_scripts': true,
+                            'u1': {{product_categories | join:"," | json}},
+                            'u2': {{product_titles | join:"," | json}},
+                            'u3': '{{product_prices |join:"," | json}}',
+                            'u4': '{{item_counts}}',
+                            'u5': '{{ checkout.total_price | money }}',
+                            'send_to': 'DC-11868793/nes_disp/nesta003+unique'
+                        });
+                    }
+                });
+                if(Shopify?.Checkout?.step === "contact_information"){
+                    let continue_button = document.querySelector('#continue_button'),pins = {}, pinsLoaded = false; 
+                    function continue_check() {
+                        if (error_check.pin && error_check.phone) {
+                            continue_button.style.pointerEvents = 'all'
+                            continue_button.style.opacity = 1
+                        } else {
+                            continue_button.style.pointerEvents = 'none'
+                            continue_button.style.opacity = 0.5
+                        }
+                    }
+                    {%- unless settings.turn_off_pincodes -%}
+                        function pincodeSearch(el, value) {
+                            parent = el.closest('.field');
+                            error = document.querySelector('#error-for-zip');
+                
+                            if (pins && pins[value]) {
+                                    document.querySelector('#checkout_shipping_address_city').value = pins[value][0];
+                                    province = document.querySelector('#checkout_shipping_address_province');
+                                    state = '';
+                                    Array.prototype.forEach.call(province.options, function(o) {
+                                        if (o.text == pins[value][1]) {
+                                            state = o.value
+                                        }
+                                    });
+                                    province.value = state;
+                    
+                                    setTimeout(function() {
+                                        parent.classList.remove('field--error')
+                                    },10);
+
+                                    if (error) {
+                                        error.style.display = 'none';
+                                    }
+                                    document.querySelector('[data-address-field="province"]').classList.remove('field--error');
+                                    document.querySelector('[data-address-field="city"]').classList.remove('field--error');
+                    
+                                    error_check.pin = true;
+                                    continue_check();
+                            } else {
+                                document.querySelector('#checkout_shipping_address_city').value = '';
+                                document.querySelector('#checkout_shipping_address_province').value = '';
+                    
+                                if (!error) {
+                                    errorEl = document.createElement('p');
+                                    errorEl.classList.add('field__message', 'field__message--error');
+                                    errorEl.id = 'error-for-zip';
+                                    errorEl.innerText = value.length < 6 ? 'Please enter a valid pincode' : 'We are currently not delivering to this pincode';
+                                    if (parent) {
+                                        parent.append(errorEl);
+                                    }
+                                } else {
+                                    error.style.display = 'block';
+                                    error.innerText = value.length < 6 ? 'Please enter a valid pincode' : 'We are currently not delivering to this pincode';
+                                }
+                    
+                                error_check.pin = false;
+                                continue_check();
+                    
+                                setTimeout(function() {
+                                    parent.classList.add('field--error');
+                                }, 10);
+                            }
+                        }
+                
+                        function capitalize(s) {
+                            return s ? s.trim().toLowerCase().replace(/\w\S*/g, (w) => (w.replace(/^\w/, (c) => c.toUpperCase()))).replace('And', 'and') : '';
+                        }
+                
+                        function getAllPincodes(el, value) {
+                            var res = pincodes_csv.split("\n");
+                            res.forEach(function(code, index){
+                                if (index > 1) {
+                                    obj = code.split(',');
+                                    if (obj[0] != '') {
+                                        pins[obj[0]] = [ capitalize(obj[1]), capitalize(obj[2]) ];
+                                    }
+                                }
+                            });
+                            document.querySelectorAll('#checkout_shipping_address_zip').forEach(function(el) {
+                                el.classList.add('clean')
+                            });
+                            pinsLoaded = true;
+                            pincodeSearch(el, value);
+                        }
+                
+                        function pincodes(el, value = null) {
+                            if (pinsLoaded) {
+                                pincodeSearch(el, value.trim());
+                            } else {
+                                getAllPincodes(el, value.trim());
+                            }
+                        }
+                
+                        document.querySelectorAll('#checkout_shipping_address_zip').forEach(function(el) {
+                            setTimeout(function () {
+                                if (!el.classList.contains('visually-hidden')) {
+                                    pincodes(el, el.value);
+                                    el.addEventListener('input', function () {
+                                        pincodes(el, this.value);
+                                    });
+                                }
+                            }, 500);
+                        });
+                    {%- endunless -%}
+                    {%- unless settings.turn_off_phone -%}
+                        var pattern = new RegExp("^[0-9]{10}$");
+                        function checkPhone(el, value = null) {
+                            parent = el.closest('.field');
+                            error = document.querySelector('#error-for-phone');
+                            val = value.split(' ').join('');
+                            if (pattern.test(val) && !isNaN(val)) {
+                                error_check.phone = true;
+                                continue_check();
+                                // setTimeout(function() {
+                                parent.classList.remove('field--error');
+                                // },100);
+                        
+                                if (error) {
+                                    error.style.display = 'none';
+                                }
+                            } else {
+                                console.log('Else data calling...');
+                                error_check.phone = false;
+                                continue_check();
+                        
+                                if (!error) {
+                                    errorEl = document.createElement('p');
+                                    errorEl.classList.add('field__message', 'field__message--error');
+                                    errorEl.id = 'error-for-phone';
+                                    errorEl.innerText = 'Please enter a 10 digit mobile number';
+                                    if (parent) {
+                                        parent.append(errorEl);
+                                    }
+                                } else {
+                                    error.style.display = 'block';
+                                }
+                        
+                                // setTimeout(function() {
+                                parent.classList.add('field--error');
+                                // }, 100)
+                            }
+                        }
+                        document.querySelectorAll('[autocomplete="shipping tel"]').forEach(function (el) {
+                            setTimeout(function () {
+                                if (!el.classList.contains('visually-hidden')) {
+                                    var value = el.value.replace('+91', '').replace(/ /g, '');
+                                    checkPhone(el, value);
+                                    el.addEventListener('input', function () {
+                                        var val = this.value.replace('+91', '').replace(/ /g, '');
+                                        checkPhone(el, val);
+                                    });
+                                }
+                            }, 500);
+                        });
+                        
+                        $('#checkout_shipping_address_zip').bind("keypress keyup keydown input", function (el) {
+                            if (!this.classList.contains('visually-hidden')) {
+                                pincodes(this, this.value);
+                            }
+                            continue_check();
+                        });
+                        $(document).on('input', '#checkout_shipping_address_zip', function (el) {
+                            if (!this.classList.contains('visually-hidden')) {
+                                pincodes(this, this.value);
+                            }
+                            continue_check();
+                            console.log('In');
+                        });
+                        $('[autocomplete="shipping tel"]').bind("keypress keyup keydown input", function (el) {
+                            $('#checkout_shipping_address_zip').keyup();
+                            if (!this.classList.contains('visually-hidden')) {
+                                var val = this.value.replace('+91', '').replace(/ /g, '');
+                                checkPhone(this, val);
+                            }
+                            continue_check();
+                        });
+                        $(document).on('change', '[autocomplete="shipping tel"]', function () {
+                            $('#checkout_shipping_address_zip').keyup();
+                            // if (!this.classList.contains('visually-hidden')) {
+                            var val = this.value.replace('+91', '').replace(/ /g, '');
+                            checkPhone(document.getElementById('checkout_shipping_address_phone'), val);
+                            // }
+                            continue_check();
+                        });
+                    {%- endunless -%}
+                    $(document).on('change','[name="checkout[shipping_address][id]"]', function(){
+                        $('#checkout_shipping_address_zip').keyup();
+                        $('[autocomplete="shipping tel"]').keyup();
+                    });
+                    $('[name="checkout[shipping_address][zip]"],[name="checkout[shipping_address][phone]"]').inputFilter(function(value) {
+                        return /^\d*$/.test(value);    // Allow digits only, using a RegExp
+                    });
+                    $(document).find('[name="checkout[attributes][CustomerGSTIN]"]').attr({"type":"text","maxlength":"15", "pattern":"^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$", "title":"Invalid GST Number."});
+                    $(document).find('[name="checkout[attributes][CustomerGSTIN]"]').closest('.field').append('<p class="field__message field__message--error" id="error-for-gst" style="display: none;">Please enter a valid GST number.</p>');
+                    $(document).find('[name="checkout[email]"]').closest('.field').append('<p class="field__message field__message--error" style="display:block;" id="error-for-email"></p>');
+                    $(document).on('keyup', '[name="checkout[attributes][CustomerGSTIN]"]', function () {
+                        var inputvalues = $(this).val();
+                        if (inputvalues == '') {
+                            $(this).closest('.field').removeClass('field--error');
+                            $(this).closest('.field').find('.field__message--error').hide();
+                        } else {
+                            var gstinformat = new RegExp('^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$');
+                            if (gstinformat.test(inputvalues)) {
+                                $(this).closest('.field').removeClass('field--error');
+                                $(this).closest('.field').find('.field__message--error').hide();
+                                return true;
+                            } else {
+                                $(this).closest('.field').addClass('field--error');
+                                $(this).closest('.field').find('.field__message--error').show();
+                                //$('[name="checkout[attributes][shipping_gst]"]').val('');
+                                $('[name="checkout[attributes][CustomerGSTIN]"]').focus();
+                            }
+                        }
+                    });
+                }else if(Shopify?.Checkout?.step === "shipping_method"){
+                    var pins_est = {},
+                        pinsEstLoaded = false,
+                        default_title = document.querySelector('.section--shipping-method #main-header'),
+                        express_row = document.querySelector('[data-shipping-method-label-title="Express Shipping Prepaid Payment"]');
+
+                    default_title.innerHTML = 'Standard Shipping';
+                    calculateShippingDates = function () {
+
+                        let pincode = Number({{checkout.shipping_address.zip}});
+
+                        let now = new Date({{'now' | date: '%Y/%m/%d %H:%M' | json}});
+                        let hour = now.getHours();
+                        let add = hour >= 11 ? 1 : 0;
+                        let add2 = hour >= 14 ? 1 : 0;
+                        let ships = {
+                            default: [parseInt(pins_est[pincode][2]) + add, parseInt(pins_est[pincode][3]) + add],
+                            express: [parseInt(pins_est[pincode][0]) + add2, parseInt(pins_est[pincode][1]) + add2]
+                        };
+
+                        let calc = function (add) {
+                            secs = add * 86400000;
+                            date = new Date(now.getTime() + secs);
+                            month = date.getMonth();
+                            day = date.getDate();
+
+                            if (day == 1 || day == 21 || day == 31) {
+                                day += 'st';
+                            } else if (day == 2 || day == 22) {
+                                day += 'nd';
+                            } else if (day == 3 || day == 23) {
+                                day += 'rd';
+                            } else {
+                                day += 'th';
+                            }
+
+                            months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+                            return day + ' ' + months[month];
+                        }
+
+                        let deliver = {
+                            default: [calc(ships.default[0]), calc(ships.default[1])],
+                            express: [calc(ships.express[0]), calc(ships.express[1])]
+                        };
+
+                        default_title.innerHTML = 'Standard Shipping <span class="est">Estimated delivery between ' + deliver.default[0] + ' - ' + deliver.default[1] + '</span>';
+
+                        if (express_row) {
+                            document.querySelector('.section--shipping-method #sub-header').innerHTML = 'Express Shipping <span class="est">Estimated delivery between ' + deliver.express[0] + ' - ' + deliver.express[1] + '</span>';
+                        }
+                    }
+
+                    if (!pinsEstLoaded) {
+                        var res = pincodes_time_csv.split("\n");
+
+                        if (express_row) {
+                            el = document.createElement('div');
+                            el.classList.add('section__header', 'express');
+                            el.innerHTML = '<h2 class="section__title" id="sub-header" tabindex="-1">Express Shipping</h2>';
+                            express_row.closest('.content-box__row').before(el);
+                        }
+
+                        res.forEach(function (code, index) {
+                            if (index != 0) {
+                                obj = code.split(',');
+                                if (obj[0] != '') {
+                                    pins_est[obj[0]] = [obj[3], obj[4], obj[5], obj[6]];
+                                }
+                            }
+                        })
+
+                        pinsEstLoaded = true;
+                        calculateShippingDates();
+                    }  
+                }else if (Shopify?.Checkout?.step == 'payment_method') {
+                    $('#continue_button').prop('disabled', true);
+                    method = document.querySelector('[data-review-section="shipping-cost"]');
+                    let shippingMethod = document.querySelector('[data-review-section="shipping-cost"]')
+                    if (shippingMethod.innerText.indexOf('Cash on Delivery') != -1) {
+                        $.when(
+                            document.querySelectorAll('[data-gateway-name="offsite_v2"]').forEach(function (el) {
+                                el.remove();
+                                document.head.insertAdjacentHTML("beforeend", `<style>[data-subfields-for-gateway],[data-gateway-name="offsite_v2"] { display:none!important }</style>`)
+                            })
+                        ).then(function () {
+                            $('.input-radio[name="checkout[payment_gateway]"]:first').prop('checked', true);
+                            $('#continue_button').prop('disabled', false);
+                        });
+                    } else {
+                        $.when(
+                            document.querySelectorAll('[data-gateway-name="manual"]').forEach(function (el) {
+                                el.remove();
+                                document.head.insertAdjacentHTML("beforeend", `<style>[data-gateway-name="manual"] { display:none!important }</style>`)
+                            })
+                        ).then(function () {
+                            $('.input-radio[name="checkout[payment_gateway]"]:first').prop('checked', true);
+                            $('#continue_button').prop('disabled', false);
+                        });
+                    }
+                }   
+                // inject compare at price
+                injectCompareAtPrice();
+                {%- if checkout.shipping_method.title contains "Express Shipping Prepaid" -%}
+                    updateAttributes();
+                {%- endif -%}
+            });
+
+            // conversion 
+            gtag('event', 'conversion', {
+                'allow_custom_scripts': true,
+                'u1': {{product_categories | join:"," | json}},
+                'u2': {{product_titles | join:"," | json}},
+                'u3': '{{product_prices |join:"," | json}}',
+                'u4': '{{item_counts}}',
+                'u5': '{{checkout.total_price | money}}',
+                'send_to': 'DC-11868793/nes_disp/nesta001+unique'
+            });
+
+            if(Shopify?.Checkout?.OrderStatus === true || Shopify?.Checkout?.page === "thank_you"){
+                gtag('event', 'purchase', {
+                    'allow_custom_scripts': true,
+                    'value': '{{ checkout.total_price | money }}',
+                    'transaction_id': {{checkout.order_id | json}},
+                    'u1': {{product_categories | join:"," | json}},
+                    'u2': {{product_titles | join:"," | json}},
+                    'u3': {{product_prices_purchase | join:"," | json}},
+                    'u4': '{{item_counts}}',
+                    'u5': '{{ checkout.total_price | money_without_currency }}',
+                    'send_to': 'DC-11868793/nes_d0/nesta0+transactions'
+                });
+            }
+
+            {%- if customer -%}
+                customRewardPointFunction = function () {
+                    var rewardPointeIntervalCount = 0;
+                    var rewardPointeMaxValue = 0;
+                    var rewardPointeText = 0;
+                    var rewardPointeMinText = 0;
+                    var unuseRewardPoint = '';
+                    var rewardPointeMinValue = 500000009,
+                        rewardPointeRuleId = '';
+                    $('#ssw_reward_spending_rules option:not([disabled]):not(#initial-option)').each(function (index, value) {
+                        var currentOptionValue = parseInt($(value).attr('data-rule-price'));
+                        var currentOptionPriceValue = parseInt($(value).attr('data-title').replace($(value).attr('value') + ' • ', '').replace('Get ₹ ', '').replace(' off', ''));
+                        if (checkoutTotalPrice > currentOptionPriceValue) {
+                            if (rewardPointeMaxValue < currentOptionValue) {
+                                rewardPointeMaxValue = currentOptionValue;
+                                rewardPointeText = $(value).text();
+                                rewardPointeRuleId = $(value).attr('data-rule-id');
+                            }
+                            let str = $(value).attr('value');
+                            let disStr = $('.order-summary__sections .tag__wrapper .reduction-code [aria-hidden="true"]').text().replace(/^\s+|\s+$/gm, '');
+                            const n = 4;
+                            if ($(value).attr('value') != '') {
+                                if (str.slice(str.length - n) == disStr.slice(disStr.length - n)) {
+                                    unuseRewardPoint += `<li class="btn disabled active" data-option-name="${$(value).attr('value')}">${$(value).attr('data-title').replace($(value).attr('value')+' • ','').replace('Get ','')}</li>`;
+                                } else if (disStr != '') {
+                                    unuseRewardPoint += `<li class="btn disabled" data-option-name="${$(value).attr('value')}">${$(value).attr('data-title').replace($(value).attr('value')+' • ','').replace('Get ','')}</li>`;
+                                } else {
+                                    unuseRewardPoint += `<li class="btn" data-option-name="${$(value).attr('value')}">${$(value).attr('data-title').replace($(value).attr('value')+' • ','').replace('Get ','')}</li>`;
+                                }
+                            }
+                        }
+                    });
+                    $('#ssw_reward_spending_rules option:not(#initial-option)').each(function (index, value) {
+                        var currentOptionValue = parseInt($(value).attr('data-rule-price'));
+                        if (rewardPointeMinValue > currentOptionValue) {
+                            rewardPointeMinValue = currentOptionValue;
+                        }
+                    });
+                    $('#ssw_reward_spending_rules option[data-rule-price="' + rewardPointeMaxValue + '"]').attr('selected', 'selected');
+                    $('#ssw_rewards_redeem_button').prop('disabled', false).removeClass('btn--disabled').attr('data-type', 'gift_card');
+                    $('.customize_unuse_reward_pointe_wrap').remove();
+                    $('.customize_reward_pointe_checkbox_wrap').remove();
+                    if (unuseRewardPoint != '') {
+                        $('#ssw_rewards_checkout_redeem_widget .ssw_rewards_redeem .field__input-btn-wrapper').after(`<div class="customize_unuse_reward_pointe_wrap"><div class="order-summary__emphasis" style="margin-bottom:5px;margin-top:20px;">You have Unused Reward Points!</div><ul>${unuseRewardPoint}</ul></div>`);
+                    }
+                    if (rewardPointeText != 0) {
+                        $('#ssw_rewards_checkout_redeem_widget .ssw_rewards_redeem .field__input-btn-wrapper').after(`<div class="customize_reward_pointe_checkbox_wrap"><label for="rewardPointeCheckBox123" class="container" data-rule-id="${rewardPointeRuleId}"><input type="checkbox" id="rewardPointeCheckBox" name="rewardPointe" value="${rewardPointeText}"><span class="checkmark"></span>${rewardPointeText}</label></div>`);
+                    } else if (rewardPointeMinValue != 500000009) {
+                        $('.order-summary__emphasis + p').text('Minimum ' + rewardPointeMinValue + ' Points can be redeemed.');
+                    }
+                    $('#ssw_rewards_checkout_redeem_widget').append('<div class="custom-loader-wrap"><div class="custom-loader"></div></div>');
+                }
+                var rewardPointeIntervalCount = 0;
+                const rewardPointeInterval = setInterval(function () {
+                    if ($('select#ssw_reward_spending_rules[name="ssw_rewards_checkout_redeem"]').length > 0 || rewardPointeIntervalCount > 400) {
+                        clearInterval(rewardPointeInterval);
+                        customRewardPointFunction();
+                    }
+                    rewardPointeIntervalCount++;
+                }, 500);
+                $(document).on('click', '#ssw_rewards_checkout_redeem_widget .customize_reward_pointe_checkbox_wrap label', function () {
+                    //           if($('.tags-list .tag__button').length > 0 && !$(this).find('#rewardPointeCheckBox').prop('checked')){
+                    if ($('.customize_unuse_reward_pointe_wrap li.active').length > 0) {
+                        $(this).find('#rewardPointeCheckBox').prop('checked', false);
+                        if ($('.customize_reward_pointe_checkbox_wrap .reward_error_show').length == 0) {
+                            $('.customize_reward_pointe_checkbox_wrap').append('<p class="reward_error_show" style="color:red;">A gift card is already applied to your Cart.</p>');
+                        }
+                        return false;
+                    }
+                    //           console.log('Data click checkbox');
+                    $(this).find('#rewardPointeCheckBox').prop('disabled', true);
+                    if ($(this).find('#rewardPointeCheckBox').prop('checked')) {
+                        var ruleId = $(this).attr('data-rule-id').trim();
+                        $('#ssw_rewards_checkout_redeem_widget').addClass('loading');
+                        $(this).find('#rewardPointeCheckBox').prop('checked', false);
+                        console.log('selected', $('.customize_unuse_reward_pointe_wrap li.active').attr('data-option-name'));
+                        var selectedCode = $(`.field__input-btn-wrapper #ssw_reward_spending_rules option[data-rule-id="${ruleId}"]`).attr('value'),
+                            selectedCodeLastFour = selectedCode.substr(selectedCode.length - 4);
+                        $('.tags-list .tag__button').each(function (index, item) {
+                            var thisCode = $(item).closest('.tag__wrapper').find('[aria-hidden="true"]').text().trim(),
+                                thisCodeLastFour = thisCode.substr(thisCode.length - 4);
+                            if (selectedCodeLastFour == thisCodeLastFour) {
+                                $(this).click();
+                            }
+                        })
+                        //         	$('.tags-list .tag__button').click();
+                    } else {
+                        $(this).find('#rewardPointeCheckBox').prop('checked', true);
+                        $('#ssw_rewards_redeem_button').click();
+                    }
+                    setTimeout(function () {
+                        $(this).find('#rewardPointeCheckBox').prop('disabled', false);
+                    }, 2000)
+                });
+                $(document).on('click', '.customize_unuse_reward_pointe_wrap li', function () {
+                    if ($('.tags-list .edit_checkout [name^="checkout[applied_gift_cards]').length > 0) {
+                        if ($('.customize_unuse_reward_pointe_wrap .reward_error_show').length == 0) {
+                            $('.customize_unuse_reward_pointe_wrap').append('<p class="reward_error_show" style="color:red;">A gift card is already applied to your Cart.</p>');
+                        }
+                        return false;
+                    }
+                    var value = $(this).attr('data-option-name');
+                    $(this).addClass('active');
+                    $('.customize_unuse_reward_pointe_wrap li').addClass('disabled');
+                    $('#ssw_reward_spending_rules option[value="' + value + '"]').attr('selected', 'selected');
+                    setTimeout(function () {
+                        $('#ssw_rewards_redeem_button').click();
+                    }, 200);
+                });
+                $(document).on('click', '.tag__button', function () {
+                    $('#ssw_rewards_checkout_redeem_widget').addClass('loading');
+                    var code = $(this).closest('.tag__wrapper').find('.reduction-code__text').text();
+                    if ($(this).closest('.tag__wrapper').find('[name="checkout[clear_discount]"]').length > 0 && code == localStorage.getItem("discountCode")) {
+                        localStorage.setItem("discountCode", "remove");
+                    }
+                    setTimeout(function () {
+                        //             customRewardPointFunction();
+                        //             location.reload();
+                        window.location.href = window.location.href.replace(`&discount=${code}`, ``);
+                    }, 3000);
+                });    
+            {%- else -%}
+                $(document).on('click', '.tag__button', function () {
+                    var code = $(this).closest('.tag__wrapper').find('.reduction-code__text').text();
+                    if ($(this).closest('.tag__wrapper').find('[name="checkout[clear_discount]"]').length > 0 && code == localStorage.getItem("discountCode")) {
+                        localStorage.setItem("discountCode", "remove");
+                    }
+                    setTimeout(function () {
+                        window.location.href = window.location.href.replace(`&discount=${code}`, ``);
+                    }, 3000);
+                });
+            {%- endif -%}
+            if (window.matchMedia('(max-width: 999px)').matches) {
+                $('.order-summary-toggle__text--show').click();
+            }
+            {%- unless customer -%}
+                $('#order-summary .edit_checkout .field__input-btn-wrapper').before('<div class="gift_card_discount_heading">To Redeem your Reward Points, Please <a href="https://nestasia.in/account/login?checkout_url=https://nestasia.in/cart">Log In</a></div>');
+            {%- endunless -%}
+        })(Checkout.$);      
+    </script>
+{% endif %}
+<!-- 	This script for reward widget on checkout page start11 -->
+{% if customer %}
+    <script defer src="/apps/ssw/lite2/core/widget/index?module=reward&name=checkoutRedeem&customer_id={{ customer.id }}"></script>
+{% endif %}
+<!-- 	This script for reward widget on checkout page end -->

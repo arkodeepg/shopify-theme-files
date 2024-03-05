@@ -1,0 +1,11 @@
+{%- liquid
+  echo '<div class="product-single__store-availability-container text-left" data-store-availability-container data-product-title="'
+  echo product.title | escape
+  echo '" data-has-only-default-variant="'
+  echo product.has_only_default_variant
+  echo '" data-base-url="'
+  echo shop.url | append: routes.root_url
+  echo '"'
+  echo block.shopify_attributes
+  echo '></div>'
+-%}

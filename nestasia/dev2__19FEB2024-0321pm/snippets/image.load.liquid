@@ -1,0 +1,128 @@
+{%- liquid
+  capture img_height
+    if img_src.width < size
+      echo img_src.height
+    else
+      echo size | divided_by: img_src.aspect_ratio
+    endif
+  endcapture
+  assign img_height = img_height | round
+  capture img_width
+    if img_src.width < size
+      echo img_src.width
+    else
+      echo size
+    endif
+  endcapture
+  assign img_width = img_width | round
+  assign alt = alt | escape
+  capture widths_set
+    unless logo
+      if img_src.width < size
+        echo img_src.width | append: ', '
+      endif
+      if size < 580
+        echo size | append: ', '
+      endif
+      if img_src.width >= 580
+        echo '580, '
+      endif
+      if img_src.width >= 880
+        echo '580, '
+      endif
+      if img_src.width >= 1180
+        echo '1180, '
+      endif
+      if img_src.width >= 2000
+        echo '2000, '
+      endif
+      if img_src.width > 2360
+        echo '2360, '
+      endif
+      if full_width and img_src.width > 3800
+        echo '3800, '
+      endif
+    else
+      echo size | times: 2
+    endunless
+  endcapture
+  assign widths = widths_set | remove_last: ', '
+  capture class
+    echo screen
+    unless nopad
+      echo 'nopad '
+    endunless
+    echo 'js '
+    echo 'lazyload '
+    if background or swatch
+      echo 'lazybackground '
+      echo position
+      echo ' '
+    endif
+    echo 'img-align '
+    if img_src.aspect_ratio > 1
+      echo 'landscape'
+    elsif img_src.aspect_ratio < 1
+      echo 'vertical'
+    else
+      echo 'square'
+    endif
+  endcapture
+  if lazy != blank
+    assign lazy = lazy
+  else
+    assign lazy = 'lazy'
+  endif
+  capture style
+    echo 'aspect-ratio:'
+    echo img_src.aspect_ratio
+    echo ';'
+    unless background
+      if swatch != true and img_align and img_src.aspect_ratio < 1
+        echo 'max-height: 100%;max-width: 100%;'
+      else        
+        echo 'max-height:'
+        echo img_height
+        echo 'px;'        
+        echo 'max-width:'
+        echo img_width
+        echo 'px;'
+      endif
+    endunless
+  endcapture
+  capture data_src
+    if background
+      echo img_src | image_url
+    else
+      if img_src.width < size
+        echo img_src | image_url
+      else
+        echo img_src | image_url: width: size
+      endif
+    endif
+  endcapture
+  capture data_source
+    echo img_src | image_url
+  endcapture
+  if img_src.width >= 1160
+    assign zoom_total = 1160
+  else
+    assign zoom_total = img_src.width
+  endif
+  capture data_zoom
+    echo img_src | image_url: width: zoom_total
+  endcapture
+-%}
+
+{% unless logo %}
+  {{ img_src | image_url: width: img_src.width | image_tag: alt: alt, widths: widths, class: class, loading: lazy, fetchpriority: fetch, style: style, sizes: sizes, data-aspectratio: img_src.aspect_ratio, data-source: data_source, data-src: data_src, data-zoom: data_zoom }}
+{% else %}
+  <img src="{{ img_src | image_url: width: size }}"
+       alt="{{ alt }}"
+       srcset="{{ img_src | image_url: width: size }} 1x, {{ img_src | image_url: width: widths }} 2x"
+       width="{{ img_width }}"
+       height="{{ img_height }}"
+       class="{{ class }}"
+       loading="{{ lazy }}"
+       style="{{ style }}">
+{% endunless %}

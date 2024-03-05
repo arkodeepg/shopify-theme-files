@@ -1,0 +1,843 @@
+{%- assign full_width = section.settings.full_width -%}
+
+{% if section.settings.background_img != blank %}
+  {%- assign img_src = section.settings.background_img -%}
+  {%- capture image_data -%}
+    {%- render 'image-background-src', img_src: img_src -%}{%- endcapture -%}
+  {%- assign img_size = '1x' -%}
+{% endif %}
+
+<div
+  data-section-id="{{ section.id }}"
+  data-section-type="page-contact"
+  class="page bottompad-section clearfix page-contact-template"
+>
+  <div class="container">
+    <div class="contact__page_left_wrapper">
+      <div class="section_heading">
+        <h1>
+          {% if section.settings.title != blank %}
+            {{ section.settings.title }}
+          {% else %}
+            {{ page.title -}}
+          {%- endif %}
+        </h1>
+      </div>
+      {% if section.settings.content != blank %}
+        <div class="content">{{ section.settings.content }}</div>
+      {% endif %}
+      <div class="contact_details_block">
+        {% if section.settings.whatsapp != blank %}
+          <div class="contact_info">
+            <h4>
+              <svg
+                class="deskp"
+                width="26"
+                height="27"
+                viewBox="0 0 26 27"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                d="M13.4434 1C6.64699 1 1.11244 6.55695 1.09995 13.3808C1.09995 15.5635 1.66215 17.6959 2.74907 19.5775L1 26L7.54651 24.2815C9.34555 25.2725 11.382 25.7868 13.4434 25.7868C20.2397 25.7868 25.7743 20.2298 25.7868 13.3934C25.7868 10.0818 24.5 6.9709 22.1762 4.62519C19.84 2.29202 16.7416 1 13.4434 1ZM13.4434 23.6919C11.5943 23.6919 9.79531 23.1902 8.22115 22.2619L7.84635 22.0361L3.96092 23.0522L4.99787 19.2514L4.748 18.8625C3.72355 17.2193 3.17384 15.3251 3.18633 13.3808C3.18633 7.69844 7.78388 3.08229 13.4434 3.08229C16.1794 3.08229 18.753 4.16106 20.6895 6.10537C22.626 8.04967 23.6879 10.6337 23.6879 13.3934C23.6879 19.0758 19.0904 23.6919 13.4434 23.6919ZM19.0654 15.9774C18.753 15.8269 17.2413 15.0743 16.954 14.9739C16.6666 14.8736 16.4668 14.8234 16.2544 15.1244C16.0545 15.438 15.4548 16.1279 15.2799 16.3412C15.105 16.5419 14.9176 16.5795 14.6177 16.4165C14.3054 16.2659 13.3184 15.9398 12.1441 14.8861C11.232 14.0707 10.6074 13.0547 10.4325 12.7411C10.2576 12.4275 10.4075 12.2644 10.5699 12.1139C10.7073 11.9759 10.8822 11.7501 11.0322 11.5745C11.1821 11.3989 11.232 11.2609 11.3445 11.0602C11.4444 10.8595 11.3945 10.6714 11.3195 10.5208C11.2445 10.3703 10.6199 8.83994 10.37 8.22529C10.1201 7.62318 9.87027 7.69844 9.67038 7.69844C9.49547 7.6859 9.28308 7.6859 9.08319 7.6859C8.8833 7.6859 8.54598 7.76116 8.25863 8.07476C7.97128 8.38836 7.1842 9.12845 7.1842 10.6588C7.1842 12.1766 8.28362 13.6568 8.44603 13.8575C8.59595 14.0582 10.6199 17.1942 13.7182 18.5364C14.4553 18.85 15.03 19.0507 15.4798 19.1887C16.2169 19.427 16.8915 19.3894 17.4162 19.3141C18.0034 19.2263 19.2403 18.5615 19.5026 17.8465C19.765 17.1189 19.765 16.5043 19.6775 16.3788C19.5776 16.2158 19.3777 16.1405 19.0654 15.9774Z"
+                fill="currentColor"
+                stroke="currentColor"
+                stroke-width="0.4" />
+              </svg>
+
+              <svg
+                class="mob"
+                width="16"
+                height="15"
+                viewBox="0 0 16 15"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M12.9791 2.18104C11.5535 0.773343 9.6527 0 7.62857 0C3.46061 0 0.0652944 3.33571 0.061667 7.43051C0.061667 8.74198 0.409904 10.0178 1.0701 11.1475L0 15L4.01198 13.9665C5.11836 14.5581 6.36258 14.8717 7.62857 14.8717H7.63219C11.8002 14.8717 15.1955 11.536 15.1991 7.43763C15.1955 5.4526 14.4083 3.58517 12.9791 2.18104Z"
+                  fill="#B39D6F" />
+                <path d="M9.74812 8.35679C9.92224 8.42094 10.8509 8.86998 11.0395 8.96264C11.2281 9.05529 11.3551 9.10162 11.4023 9.18003C11.4494 9.25843 11.4494 9.62907 11.2934 10.0638C11.1338 10.4986 10.3793 10.8942 10.0166 10.9477C9.69009 10.994 9.28018 11.0154 8.82675 10.8728C8.55106 10.7873 8.1992 10.6733 7.74939 10.4808C5.85222 9.6754 4.61526 7.80084 4.52094 7.67611C4.42663 7.55138 3.74829 6.67112 3.74829 5.75522C3.74829 4.83933 4.23437 4.39029 4.40849 4.20497C4.58261 4.01966 4.78575 3.97333 4.91271 3.97333C5.03967 3.97333 5.16663 3.97333 5.27546 3.98046C5.39153 3.98402 5.54752 3.93413 5.69987 4.29763C5.85948 4.66827 6.23673 5.58416 6.28389 5.67682C6.33105 5.76948 6.36007 5.87639 6.2984 6.00113C6.23673 6.12586 6.20409 6.20426 6.10977 6.31118C6.01546 6.41809 5.91026 6.55351 5.82683 6.63548C5.73252 6.72814 5.63457 6.82793 5.7434 7.01324C5.85585 7.19856 6.23311 7.80797 6.79537 8.29977C7.51723 8.93413 8.12665 9.13014 8.31527 9.22279C8.5039 9.31545 8.61635 9.3012 8.72518 9.17647C8.834 9.0553 9.19675 8.63477 9.32371 8.44945C9.44704 8.26413 9.57401 8.29621 9.74812 8.35679Z" fill="white" />
+              </svg>
+
+              <span>{{ section.settings.whatsapp }}</span>
+            </h4>
+            <div class="text">{{ section.settings.whatsapp_text }}</div>
+          </div>
+        {% endif %}
+        {% if section.settings.email != blank %}
+          <div class="contact_info">
+            <h4>
+              <svg
+                class="deskp"
+                width="28"
+                height="22"
+                viewBox="0 0 28 22"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M1 5.28571L12.2714 12.8C12.7409 13.1133 13.2927 13.2804 13.8571 13.2804C14.4216 13.2804 14.9733 13.1133 15.4429 12.8L26.7143 5.28571M3.85714 21H23.8571C24.6149 21 25.3416 20.699 25.8774 20.1632C26.4133 19.6273 26.7143 18.9006 26.7143 18.1429V3.85714C26.7143 3.09938 26.4133 2.37266 25.8774 1.83684C25.3416 1.30102 24.6149 1 23.8571 1H3.85714C3.09938 1 2.37266 1.30102 1.83684 1.83684C1.30102 2.37266 1 3.09938 1 3.85714V18.1429C1 18.9006 1.30102 19.6273 1.83684 20.1632C2.37266 20.699 3.09938 21 3.85714 21Z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+
+              <svg
+                class="mob"
+                width="21"
+                height="17"
+                viewBox="0 0 21 17"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M1.7733 1.77027C2.26839 1.27707 2.93988 1 3.64005 1H17.3288C18.029 1 18.7004 1.27707 19.1955 1.77027C19.6906 2.26347 19.9688 2.93238 19.9688 3.62987V4.59332C19.9689 4.59996 19.9689 4.60659 19.9688 4.61322V13.3701C19.9688 14.0676 19.6906 14.7365 19.1955 15.2297C18.7004 15.7229 18.029 16 17.3288 16H3.64005C2.93988 16 2.26839 15.7229 1.7733 15.2297C1.27821 14.7365 1.00007 14.0676 1.00007 13.3701V4.61322C0.999976 4.60659 0.999976 4.59996 1.00007 4.59332V3.62987C1.00007 2.93239 1.27821 2.26347 1.7733 1.77027ZM2.36895 5.87789V13.3701C2.36895 13.706 2.50287 14.028 2.74124 14.2655C2.97962 14.503 3.30293 14.6364 3.64005 14.6364H17.3288C17.6659 14.6364 17.9892 14.503 18.2276 14.2655C18.466 14.028 18.5999 13.706 18.5999 13.3701V5.87789L11.9496 10.2944C11.9495 10.2945 11.9497 10.2944 11.9496 10.2944C11.5158 10.5827 11.0059 10.7367 10.4844 10.7367C9.96298 10.7367 9.45322 10.5828 9.01944 10.2946C9.01937 10.2945 9.01951 10.2946 9.01944 10.2946L2.36895 5.87789ZM18.5999 4.239L11.1901 9.15997C10.9812 9.29879 10.7355 9.37302 10.4844 9.37302C10.2333 9.37302 9.98784 9.29893 9.77896 9.1601L2.36895 4.239V3.62987C2.36895 3.29404 2.50287 2.97197 2.74124 2.73451C2.97962 2.49704 3.30293 2.36364 3.64005 2.36364H17.3288C17.6659 2.36364 17.9892 2.49704 18.2276 2.73451C18.466 2.97197 18.5999 3.29405 18.5999 3.62987V4.239Z"
+                  fill="#B39D6F" />
+                <path d="M1 4.21429L9.31467 9.85C9.66102 10.0849 10.0681 10.2103 10.4844 10.2103C10.9008 10.2103 11.3078 10.0849 11.6542 9.85L19.9688 4.21429M3.10765 16H17.8612C18.4202 16 18.9563 15.7742 19.3515 15.3724C19.7468 14.9705 19.9688 14.4255 19.9688 13.8571V3.14286C19.9688 2.57454 19.7468 2.02949 19.3515 1.62763C18.9563 1.22576 18.4202 1 17.8612 1H3.10765C2.54867 1 2.01258 1.22576 1.61732 1.62763C1.22206 2.02949 1 2.57454 1 3.14286V13.8571C1 14.4255 1.22206 14.9705 1.61732 15.3724C2.01258 15.7742 2.54867 16 3.10765 16Z" fill="#B39D6F" />
+                <path
+                  d="M1 4.21429L9.31467 9.85C9.66102 10.0849 10.0681 10.2103 10.4844 10.2103C10.9008 10.2103 11.3078 10.0849 11.6542 9.85L19.9688 4.21429M3.10765 16H17.8612C18.4202 16 18.9563 15.7742 19.3515 15.3724C19.7468 14.9705 19.9688 14.4255 19.9688 13.8571V3.14286C19.9688 2.57454 19.7468 2.02949 19.3515 1.62763C18.9563 1.22576 18.4202 1 17.8612 1H3.10765C2.54867 1 2.01258 1.22576 1.61732 1.62763C1.22206 2.02949 1 2.57454 1 3.14286V13.8571C1 14.4255 1.22206 14.9705 1.61732 15.3724C2.01258 15.7742 2.54867 16 3.10765 16Z"
+                  stroke="white"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+
+              <span>{{ section.settings.email }}</span>
+            </h4>
+            <div class="text">{{ section.settings.email_text }}</div>
+          </div>
+        {% endif %}
+        {% if section.settings.address != blank %}
+          <div class="contact_info address">
+            <h4>
+              <svg
+                class="deskp"
+                width="20"
+                height="27"
+                viewBox="0 0 20 27"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M13.8062 20.7807L11.0464 25.3183C10.8484 25.5344 10.6133 25.7058 10.3544 25.8228C10.0956 25.9398 9.81816 26 9.53797 26C9.25779 26 8.98035 25.9398 8.72152 25.8228C8.46268 25.7058 8.22754 25.5344 8.02951 25.3183L4.73513 19.6171C2.06718 14.9628 1.4934 13.9301 1.16402 12.1244C0.834633 10.3187 1.00373 8.4471 1.64992 6.74622C2.29611 5.04533 3.39038 3.59156 4.79434 2.56874C6.1983 1.54593 7.84891 1 9.53744 1C11.226 1 12.8766 1.54593 14.2805 2.56874C15.6845 3.59156 16.7788 5.04533 17.425 6.74622C18.0711 8.4471 18.2402 10.3187 17.9109 12.1244C17.5815 13.9301 15.9997 16.5258 13.8062 20.7807Z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round" />
+                <path
+                  d="M12.739 10.3086C12.739 11.2344 12.4017 12.1222 11.8013 12.7769C11.2009 13.4315 10.3866 13.7993 9.53747 13.7993C8.68837 13.7993 7.87405 13.4315 7.27365 12.7769C6.67324 12.1222 6.33594 11.2344 6.33594 10.3086C6.33594 9.38279 6.67324 8.49491 7.27365 7.84028C7.87405 7.18564 8.68837 6.81787 9.53747 6.81787C10.3866 6.81787 11.2009 7.18564 11.8013 7.84028C12.4017 8.49491 12.739 9.38279 12.739 10.3086V10.3086Z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+
+              <svg
+                class="mob"
+                width="14"
+                height="17"
+                viewBox="0 0 14 17"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M9.54383 12.8684L7.70264 15.591C7.57052 15.7206 7.41364 15.8235 7.24096 15.8937C7.06827 15.9639 6.88318 16 6.69625 16C6.50932 16 6.32422 15.9639 6.15153 15.8937C5.97885 15.8235 5.82197 15.7206 5.68985 15.591L3.49195 12.1703C1.71199 9.3777 1.32918 8.75804 1.10943 7.67463C0.889673 6.59123 1.00249 5.46826 1.4336 4.44773C1.86472 3.4272 2.59478 2.55493 3.53146 1.94124C4.46813 1.32756 5.56936 1 6.69589 1C7.82242 1 8.92365 1.32756 9.86032 1.94124C10.797 2.55493 11.5271 3.4272 11.9582 4.44773C12.3893 5.46826 12.5021 6.59123 12.2824 7.67463C12.0626 8.75804 11.0073 10.3155 9.54383 12.8684Z"
+                  fill="#B39D6F"
+                  stroke="#B39D6F"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round" />
+                <path
+                  d="M8.83191 6.58545C8.83191 7.14093 8.60688 7.67365 8.20631 8.06644C7.80574 8.45922 7.26245 8.67988 6.69596 8.67988C6.12946 8.67988 5.58617 8.45922 5.1856 8.06644C4.78504 7.67365 4.56 7.14093 4.56 6.58545C4.56 6.02998 4.78504 5.49725 5.1856 5.10447C5.58617 4.71169 6.12946 4.49103 6.69596 4.49103C7.26245 4.49103 7.80574 4.71169 8.20631 5.10447C8.60688 5.49725 8.83191 6.02998 8.83191 6.58545V6.58545Z"
+                  stroke="white"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+
+              <span>{{ section.settings.address }}</span>
+            </h4>
+            <div class="text">{{ section.settings.address_text }}</div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+    <div class="contact__page_form_wrapper">
+      {% form 'contact' %}
+        {% if form.posted_successfully? %}
+          <div class="twelve">
+            <div class="success successForm feedback">
+              <p>{{ 'contact.form.post_success' | t }}</p>
+            </div>
+          </div>
+        {% endif %}
+        {% if form.errors %}
+          <div class="twelve">
+            <div class="errors errorForm feedback">
+              <p>
+                {{ 'contact.form.post_error' | t }}
+                {{ 'contact.form.post_error_msg1' | t }}
+                {{ form.errors | size | pluralize: 'error', 'errors' }}
+                {{ 'contact.form.post_error_msg2' | t }}
+              </p>
+              <ul class="unformatted">
+                {% for field in form.errors %}
+                  {% if field == 'form' %}
+                    <li>{{ form.errors.messages[field] }}</li>
+                  {% else %}
+                    <li>{{ form.errors.translated_fields[field] }} - {{ form.errors.messages[field] }}</li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        {% endif %}
+        <div id="contactFormWrapper">
+          <h2 class="content-form-head">Write to us</h2>
+          <span class="form">
+            {%- assign name_attr = 'contact.form.name' | t | handle -%}
+            <label for="contactFormName">{{ 'contact.form.name' | t }}</label>
+            <input
+              required
+              type="text"
+              id="contactFormName"
+              name="contact[{{ name_attr }}]"
+              placeholder="Full Name"
+              autocapitalize="words"
+              value="{% if form[name_attr] %}{{ form[name_attr] }}{% elsif customer %}{{ customer.name }}{% endif %}"
+              required
+            >
+          </span>
+          <span class="form">
+            <label for="contactFormEmail">{{ 'contact.form.email' | t }}</label>
+            <input
+              required
+              type="email"
+              id="contactFormEmail"
+              name="contact[email]"
+              placeholder="Email"
+              autocorrect="off"
+              autocapitalize="off"
+              value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+              required
+            >
+          </span>
+          <!--
+            <span class="form">
+            {%- assign phone_attr = 'contact.form.phone' | t | handle -%}
+            <label for="contactFormTelephone">{{ 'contact.form.phone' | t }}</label>
+            <input type="number" id="contactFormTelephone" name="contact[{{ phone_attr }}]" placeholder="{{ 'contact.form.phone_placeholder' | t }}" pattern="[0-9\-]*" value="{% if form[phone_attr] %}{{ form[phone_attr] }}{% elsif customer %}{{ customer.phone }}{% endif %}" class="text-left" />
+            </span>
+          -->
+
+          <span class="form">
+            <label for="contactFormName">{{ 'contact.form.name' | t }}</label>
+            <input
+              required
+              type="text"
+              id="contactFormSubject"
+              name="contact[subject]"
+              placeholder="Subject"
+              autocapitalize="words"
+              value=""
+              required
+            >
+          </span>
+          <span class="form message">
+            <label for="contactFormMessage">{{ 'contact.form.message' | t }}</label>
+            <textarea
+              required
+              id="contactFormMessage"
+              name="contact[body]"
+              placeholder="Message"
+              required
+            >
+              {% if form.body %}
+                {{ form.body }}{% endif %}
+            </textarea>
+          </span>
+          <span class="hidden extra" aria-hidden="true">
+            <label for="contactFormNumber">Extra</label>
+            <input
+              type="text"
+              id="contactFormNumber"
+              name="Extra"
+              value=""
+            >
+          </span>
+          <div class="contact-info twelve">
+            <span id="honeypot"></span>
+            <noscript>
+              <span class="btn standard-width" id="contactFormSubmit">Enable Javascript</span>
+            </noscript>
+          </div>
+        </div>
+      {% endform %}
+    </div>
+  </div>
+</div>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Lato:ital, wght@0, 300;0, 400;0, 700;0, 900;1, 300;1, 400;1, 700 &display=swap');
+  * {
+    box-sizing: border-box;
+  }
+
+  img {
+    vertical-align: middle;
+    max-width: 100%;
+  }
+
+  .container {
+    /*     max-width: 1280px; */
+  }
+
+  .page-contact-template .container {
+    display: flex;
+    /*   flex-wrap: wrap; */
+  }
+
+  .page-contact-template .container > div {
+    /*     width: 100%;
+    height: 100%;
+    padding: 80px; */
+  }
+
+  .contact__page_form_wrapper {
+    height: 100%;
+    padding: 80px;
+  }
+
+  .contact__page_left_wrapper .section_heading h1 {
+    margin: 0 0 24px;
+    font-family: var(--headline_font);
+    font-style: normal;
+    /*     font-weight: 700; */
+    font-size: 60px;
+    line-height: 71px;
+    text-transform: capitalize;
+    color: #b39d6f;
+  }
+
+  .contact__page_left_wrapper .content p {
+    margin: 0 0 40px;
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 32px;
+    color: #292d32;
+  }
+
+  .contact__page_left_wrapper .contact_details_block .contact_info h4 svg {
+    vertical-align: middle;
+    max-width: 25px;
+    max-height: 25px;
+  }
+
+  .contact__page_left_wrapper .contact_details_block .contact_info h4 span {
+    vertical-align: middle;
+    display: inline-block;
+    margin-left: 10px;
+    font-family: var(--headline_font);
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 32px;
+    text-align: center;
+    text-transform: capitalize;
+    color: #b39d6f;
+  }
+
+  .contact__page_left_wrapper .contact_details_block .contact_info h4 {
+    margin: 0 0 5px;
+  }
+
+  .contact__page_left_wrapper .contact_details_block .contact_info .text p a {
+    text-decoration: none;
+    display: inline-block;
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 32px;
+    text-align: center;
+    text-transform: none;
+    color: #171717;
+  }
+
+  .contact__page_left_wrapper .contact_details_block .contact_info .text p {
+    margin: 0;
+    padding: 0;
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 32px;
+    color: #171717;
+  }
+
+  .contact__page_left_wrapper .contact_details_block .contact_info {
+    margin-bottom: 40px;
+  }
+  .contact__page_left_wrapper .contact_details_block .contact_info:last-child {
+    margin-bottom: 0;
+  }
+  .contact__page_left_wrapper .contact_details_block .contact_info h4 svg {
+    vertical-align: middle;
+    max-width: 25px;
+    max-height: 25px;
+    color: #b39d6f;
+  }
+
+  div#contactFormWrapper > h2.content-form-head {
+    margin: 0 0 20px;
+    font-family: var(--headline_font);
+    font-style: normal;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 29px;
+    color: #171717;
+    text-align: center;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  div#contactFormWrapper span.form {
+    margin: 0 0 10px;
+  }
+
+  #contactFormWrapper span.form label {
+    display: none;
+  }
+  #contactFormWrapper span.form label.error {
+    font-size: 14px;
+  }
+
+  div#contactFormWrapper span.form input::placeholder {
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 25px;
+    color: #999999;
+  }
+
+  div#contactFormWrapper span.form.message textarea#contactFormMessage::placeholder {
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 25px;
+    color: #999999;
+  }
+
+  div#contactFormWrapper .contact-info.twelve span#honeypot {
+    display: block;
+  }
+
+  div#contactFormWrapper .contact-info.twelve {
+    padding: 0;
+  }
+
+  div#contactFormWrapper .contact-info.twelve span#honeypot input#contactFormSubmit {
+    margin: 0;
+    max-width: 100%;
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 25px;
+    text-transform: uppercase;
+    color: #ffffff;
+  }
+
+  div#contactFormWrapper .contact-info.twelve span#honeypot input#contactFormSubmit {
+    margin: 0;
+    max-width: 100%;
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 25px;
+    text-transform: uppercase;
+    color: #ffffff;
+    padding: 16px 0;
+    height: 57px;
+  }
+
+  .contact__page_form_wrapper {
+    width: 50%;
+    background: #fff;
+    box-shadow: 0 4px 50px rgba(0, 0, 0, 0.05);
+  }
+
+  .page.bottompad-section.clearfix.page-contact-template:after {
+    position: absolute;
+    content: '';
+    height: 100%;
+    background: rgba(211, 189, 139, 0.1);
+    width: 32vw;
+    z-index: -1;
+    right: 0;
+    top: 0;
+  }
+
+  .content.page-page.contact {
+    background: none;
+  }
+
+  .page.bottompad-section.clearfix.page-contact-template {
+    position: relative;
+  }
+
+  div#shopify-section-page-contact-template-new .page.bottompad-section.clearfix.page-contact-template {
+    margin: 0;
+    padding: 158px 0;
+  }
+
+  /*   .contact__page_form_wrapper:after {
+    position: fixed;
+    content: '';
+    background: rgba(211, 189, 139, 0.1);
+    width: 34%;
+    right: 0;
+    top: 0;
+    height: 100vh;
+    z-index: -1;
+    background: red;
+}  */
+
+  .contact__page_left_wrapper {
+    width: 50%;
+    padding: 10px;
+  }
+
+  .page.bottompad-section.clearfix.page-contact-template {
+    padding-top: 196px;
+  }
+
+  .contact__page_left_wrapper .content p strong {
+    display: block;
+  }
+
+  div#contactFormWrapper span.form input {
+    box-shadow: 0 4px 50px rgba(0, 0, 0, 0.05);
+    height: 47px;
+    outline: none;
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 25px;
+  }
+
+  div#contactFormWrapper span.form.message textarea#contactFormMessage {
+    box-shadow: 0 4px 50px rgba(0, 0, 0, 0.05);
+    outline: none;
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 25px;
+  }
+
+  .contact-info.twelve span#honeypot input#contactFormSubmit {
+    background: #d3bd8b;
+  }
+
+  div#contactFormWrapper .contact-info.twelve span#honeypot input#contactFormSubmit {
+    border: none;
+  }
+
+  .contact__page_left_wrapper .contact_details_block .contact_info h4 svg.mob {
+    display: none;
+  }
+
+  footer {
+    margin: 0;
+  }
+
+  @media (min-width: 768px) {
+    .contact__page_left_wrapper {
+      padding-right: 100px;
+    }
+  }
+
+  @media (max-width: 1536px) {
+    .page.bottompad-section.clearfix.page-contact-template:after {
+      width: 31vw;
+    }
+  }
+
+  @media (max-width: 1280px) {
+    .page.bottompad-section.clearfix.page-contact-template:after {
+      width: 27vw;
+    }
+  }
+
+  @media screen and (max-width: 1199px) {
+    div#shopify-section-page-contact-template-new .page.bottompad-section.clearfix.page-contact-template {
+      padding: 82px 0;
+    }
+  }
+
+  @media screen and (min-device-width: 768px) and(max-device-width: 991px) {
+    .contact__page_form_wrapper {
+      height: 100%;
+      padding: 50px 20px;
+    }
+  }
+
+  @media (max-width: 767px) {
+    footer {
+      margin-top: 20px;
+    }
+
+    div#shopify-section-page-contact-template-new .page.bottompad-section.clearfix.page-contact-template {
+      margin: 0;
+      padding: 30px 0;
+    }
+
+    .page.bottompad-section.clearfix.page-contact-template:after {
+      width: 100vw;
+      height: 325px;
+      z-index: -1;
+      top: 64%;
+      background: #f7f4ed;
+    }
+
+    .content.page-page.contact {
+      background: none !important;
+    }
+
+    .contact__page_left_wrapper .contact_details_block .contact_info h4 svg.deskp {
+      display: none;
+    }
+
+    .contact__page_left_wrapper .contact_details_block .contact_info h4 svg.mob {
+      display: inline-block;
+    }
+
+    .contact__page_form_wrapper {
+      box-shadow: 0 4px 50px rgb(0 0 0 / 5%);
+    }
+
+    .page.bottompad-section.clearfix.page-contact-template {
+      margin: 0;
+      padding: 30px 0;
+    }
+
+    .page-contact-template .container {
+      flex-direction: column;
+    }
+
+    .contact__page_left_wrapper {
+      width: 100%;
+      padding: 22px 22px 0;
+      margin-bottom: 30px;
+    }
+
+    .contact__page_form_wrapper {
+      width: 100%;
+      padding: 20px;
+      background: #fff;
+    }
+
+    .contact__page_left_wrapper .section_heading h1 {
+      font-weight: 700;
+      font-size: 32px;
+      margin-bottom: 10px;
+      line-height: 38px;
+      text-align: center;
+    }
+
+    .contact__page_left_wrapper .content p {
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 19px;
+      text-align: center;
+    }
+
+    .contact__page_left_wrapper .content p strong {
+      display: inline;
+    }
+
+    .contact__page_left_wrapper .content p {
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 19px;
+      text-align: center;
+      padding-bottom: 0;
+      margin-bottom: 30px;
+    }
+
+    .contact_details_block {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    div#contactFormWrapper > h2.content-form-head {
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 19px;
+      letter-spacing: 0.08em;
+    }
+
+    .contact__page_left_wrapper .contact_details_block .contact_info {
+      width: 50%;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .contact__page_left_wrapper .contact_details_block .contact_info h4 svg {
+      max-width: 18px;
+      max-height: 20px;
+    }
+
+    .contact__page_left_wrapper .contact_details_block .contact_info h4 span {
+      margin-left: 5px;
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 22px;
+    }
+
+    .contact__page_left_wrapper .contact_details_block .contact_info h4 {
+      margin: 0;
+    }
+
+    .contact__page_left_wrapper .contact_details_block .contact_info .text p a {
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 19px;
+    }
+
+    .contact__page_left_wrapper .contact_details_block .contact_info .text p {
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 19px;
+    }
+
+    .contact__page_left_wrapper .contact_details_block .contact_info.address {
+      width: 100%;
+      padding-right: 0;
+      text-align: left;
+    }
+
+    div#contactFormWrapper span.form input::placeholder {
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 22px;
+      box-shadow: 0 4px 50px rgb(0 0 0 / 5%);
+    }
+
+    div#contactFormWrapper .contact-info.twelve span#honeypot input#contactFormSubmit {
+      padding: 9px !important;
+      height: auto;
+    }
+
+    div#contactFormWrapper .contact-info.twelve span#honeypot input#contactFormSubmit {
+      padding: 9px !important;
+      height: auto;
+      font-size: 14px !important;
+      border: none;
+    }
+
+    .content.page-page.contact {
+      background: #fff;
+    }
+
+    .contact_info:nth-child(2) {
+      order: -1;
+    }
+
+    .custom-footer-main {
+      padding: 0;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Custom Contact page",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "Content"
+    },
+    {
+      "type": "header",
+      "content": "Whatsapp"
+    },
+    {
+      "type": "text",
+      "id": "whatsapp",
+      "label": "Whatsapp Heading",
+      "default": "Whatsapp"
+    },
+    {
+      "type": "richtext",
+      "id": "whatsapp_text",
+      "label": "Whatsapp text"
+    },
+    {
+      "type": "header",
+      "content": "Email"
+    },
+    {
+      "type": "text",
+      "id": "email",
+      "label": "Email Heading",
+      "default": "Email"
+    },
+    {
+      "type": "richtext",
+      "id": "email_text",
+      "label": "Email text"
+    },
+    {
+      "type": "header",
+      "content": "Address"
+    },
+    {
+      "type": "text",
+      "id": "address",
+      "label": "Address Heading",
+      "default": "Address"
+    },
+    {
+      "type": "richtext",
+      "id": "address_text",
+      "label": "Address text"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Contact page"
+    }
+  ]
+}
+{% endschema %}
+
+<script defer>
+  let bulkorderValue = sessionStorage.getItem('Buld_Order_Pdp');
+  if (bulkorderValue !== null) {
+    $('#contactFormSubject').val(bulkorderValue);
+  }
+</script>

@@ -1,0 +1,857 @@
+<style>
+  .rewardSm_pointdiv{
+    background: #96865D;
+    color: white;
+    display: flex;
+    padding: 6px 30px;
+    gap: 30px;
+    align-items: center;
+    width: fit-content;
+}
+  .rewardSm_wrapper{
+    float: left;
+    width: 100%;
+    background: white;
+    padding: 30px;
+  }
+  .rewardSm_pointdiv_headtext{
+    font-size: 19px;
+    margin-bottom:6px;
+  }
+  .rewardSm_pointdivImage img{
+    max-width:45px;
+    margin:0;
+  }
+
+  .rewardSm_currentpointDiv{    
+    background: #F7F4ED;
+    padding: 15px 30px;
+    margin-top: 10px;
+    width: 100%;
+    max-width: 682px;
+  }
+  .rewardSm_currentpointStatus{
+    font-size: 32px;
+    color: #96865D;
+    line-height: 22px;
+    margin-bottom: 8px;
+  }
+  .rewardSm_currentpointText{
+    color: #000;
+    font-size: 16px;
+  }
+
+  .rewardSm_transactionId{
+    color: #4C4C4C;
+    font-size: 16px;
+  }
+  .Rewardsm_orderValue{
+    color: #4C4C4C;
+    font-size: 12px;
+  }
+  .Rewardsm_Date{
+    color: #7C7C7C;
+    font-size: 10px;
+  }
+  .Rewardsm_expire{
+    border-radius: 40px;
+    background: rgba(194, 67, 82, 0.10);
+    color: #C24352;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+  }
+  .Rewardsm_expireEd{
+    border-radius: 40px;
+    background: rgba(158, 158, 158, 0.15);
+    color: #8A8A8A;
+    font-size: 12px;
+    padding: 4px 14px;
+    line-height: initial;
+  }
+  .rewardSm_transactionNdpoints{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .rewardSm_transactionPoints{
+    font-size: 16px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .Rewardsm_DatesWrap{
+    display: flex;
+    justify-content: space-between;
+    align-items:center;
+  }
+  .rewardSm_TransactionWrapperTotal{
+    width: 100%;
+    margin-top: 45px;
+    max-width: 682px;
+  }
+  .rewardSm_TransactionWrapperUnder{
+    border-bottom: 1px solid #E6E6E6;
+    margin-bottom: 10px;
+    padding: 10px 30px;
+  }
+  .green{
+    color: #6E945C;
+  }
+  .red{
+    color:#C24352;
+  }
+  .expireGrey{
+    color:#8A8A8A !important;
+  }
+
+  /* empty */
+  .emptDiamond img{
+    max-width: 50px;
+  }
+  .emptText{
+    color: #4C4C4C;
+    text-align:center;
+    font-size: 20px;
+    margin-top: 20px;
+    margin-bottom: 50px;
+  }
+  .emptLink{
+    border-radius: 10px;
+    background: #96865D;
+    color: white;
+    padding: 10px 15px;
+    width: fit-content;
+    display: block;
+    margin: auto;
+     font-size: 14px;
+  }
+  .rewardSm_wrapnopoint{
+    display:none;
+    margin-top: 70px;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 682px;
+  }
+  .Rewardsm_Redeemed{
+     color: #6E945C;
+    font-size: 12px;
+    border-radius: 40px;
+    background: #E2F8D8;
+    padding: 4px 15px;
+  }
+
+  
+
+  @media(max-width:640px){
+    .rewardSm_wrapper {
+      padding: 10px;
+    }
+    .rewardSm_currentpointDiv {
+        background: #F7F4ED;
+        padding: 10px 15px;
+        margin-top: 10px;
+        width: 100%;
+        min-width: auto;
+    }
+    .rewardSm_pointdiv {
+    padding: 6px 15px;
+    gap: 10px;
+    }
+    .rewardSm_pointdiv_headtext {
+    font-size: 14px;
+    }
+    .rewardSm_pointdiv_subtext{
+      font-size: 10px;
+    }
+    .rewardSm_pointdivImage img {
+    max-width: 35px;
+    }
+    .rewardSm_currentpointStatus {
+    font-size: 24px;
+      margin-bottom:4px;
+    }
+    .rewardSm_currentpointText {
+    font-size: 12px;
+    }
+    .rewardSm_TransactionWrapperTotal {
+    width: 100%;
+    min-width: auto;
+    margin-top: 20px;
+    }
+    .rewardSm_TransactionWrapperUnder {
+    padding: 10px 10px;
+    }
+    .rewardSm_transactionId {
+    font-size: 14px;
+    }
+    .rewardSm_transactionPoints {
+    font-size: 14px;
+    }
+    .Rewardsm_expire {
+    font-size: 10px;
+    padding: 4px 15px;
+    }
+    .Rewardsm_expireEd {
+    font-size: 10px;
+    padding: 4px 15px;
+    }
+    .rewardSm_transactionNdpoints {
+    gap: 20px;
+    }
+
+    /* empty */
+    .rewardSm_wrapnopoint {
+        margin-top: 40px;
+        margin-bottom: 20px;
+      }
+      .emptDiamond img {
+      max-width: 45px;
+      }
+    .emptText {
+    font-size: 14px;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    }
+    .emptLink {
+    font-size: 12px;
+    }
+    .Rewardsm_Redeemed{
+    font-size: 10px;
+    }
+  }
+
+  {% if request.path contains '/pages/wishlist' %}
+  .account-page-main-wrapper .main-content-wrapper .header-top-wrap {
+    padding: 0 15px !important;
+    box-shadow: none;
+  }
+  @media(max-width:640px){
+    .BackSmBtnWish{
+      display:none;
+    }
+    .account-page-main-wrapper .main-content-wrapper .header-top-wrap {
+        padding: 0 15px !important;
+        box-shadow: none;
+    }
+      .account-page-main-wrapper .main-content-wrapper .header-top-wrap {
+        padding: 0px !important;
+    }
+      .account-page-main-wrapper .main-content-wrapper .header-top-wrap .title {
+        margin-left: 0px;
+    }
+  }
+  
+  {% endif %}
+  
+</style>
+
+{% if page.handle == 'collections' %}
+  <div id="ssw-page" class="ssw-page ssw-clearfix gw-container">
+    {% render 'ssw-widget-listing' %}
+    <script defer>
+      var collectionTrackerInterval = setInterval(function () {
+        if (typeof trackShopStats == "function") {
+          clearInterval(collectionTrackerInterval);
+          trackShopStats('collection_page_view', 'all');
+        }
+      }, 1000);
+    </script>
+  </div>
+{% else %}
+  {% if page.handle == 'share-review' and shop.customer_accounts_enabled %}
+    <div id="ssw-page" class="ssw-page ssw-clearfix gw-container">
+      {% render 'ssw-widget-share-review' %}
+    </div>
+  {% elsif request.path contains '/pages/reward' %}
+    <div class="container clearfix reward__page_container">
+      <div class="three account-sidebar-wrap">
+        {%- render 'account-sidebar' -%}
+      </div>
+      <div class="nine main-content-wrapper">
+
+    {% comment %}
+        <div class="twelve header-top-wrap">
+          <button type="button" class="back-btn">
+            <a href="/"><svg width="19" height="15" viewBox="0 0 19 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.07031 0L8.57031 1.5L4 6.07031H18.0703V8.07031H4L8.57031 12.6406L7.07031 14.1406L0 7.07031L7.07031 0Z" fill="#001325" fill-opacity="0.92"></path></svg></a>
+          </button>
+          <h2 class="title">My Rewards</h2>
+        </div>
+    {% endcomment %}
+
+    {% comment %}
+        <div id="ssw-page" class="ssw-page ssw-clearfix gw-container">
+          <div class="ssw-page-loading">
+            <span class="ssw-spin ssw-loader"></span>
+          </div>
+        </div>
+    {% endcomment %}
+          <div class="rewardSm_wrapper">
+    
+            <div class="rewardSm_pointdiv">
+              <div>
+                <div class="rewardSm_pointdiv_headtext">1 Nest Reward for every ₹100 spent</div>
+                <div class="rewardSm_pointdiv_subtext">Easy one click redemption - just select the option at the time of checkout | No code needed</div>
+              </div>
+              <div class="rewardSm_pointdivImage"><img src="https://cdn.shopify.com/s/files/1/2690/0106/files/N_logo_1.png?v=1692263251"/></div>
+            </div>
+
+            <div class="rewardSm_currentpointDiv">
+              <div class="rewardSm_currentpointStatus"></div>
+              <div class="rewardSm_currentpointText">Your available rewards points balance</div>
+            </div>
+
+            <div class="rewardSm_TransactionWrapperTotal"></div>
+            <div class="rewardSm_wrapnopoint">
+              <div class="emptDiamond"><img src="https://cdn.shopify.com/s/files/1/2690/0106/files/Revamp_Icons_by_Arijit_square-59_1_1.png?v=1692278385"/></div>
+              <div class="emptText">Shop now and start earning rewards</div>
+              <a class="emptLink" href="{{ shop.url }}">Continue Shopping</a>
+            </div>
+          </div>
+      </div>
+    </div>
+    <script defer>
+      {% unless customer %} window.location.href = '/account' {% endunless %}
+      if (typeof sswPageInterval == 'undefined') {
+        var sswPageInterval = setInterval(function () {
+          if (typeof sswJqLoaded != 'undefined' && sswJqLoaded) {
+            clearInterval(sswPageInterval);
+            var path_name = window.location.pathname;
+            var ssw_substr = '/pages/';
+            var ssw_index = path_name.indexOf(ssw_substr) + ssw_substr.length;
+            var ssw_request_url = sswProxyUrl + '/lite2/' + path_name.substr(ssw_index);
+            if (path_name.indexOf('pages/profile-edit') > -1) {
+              ssw_request_url = sswProxyUrl + '/lite2/profile-edit';
+            }
+            else if (path_name.substr(ssw_index) == 'feed' || path_name.indexOf('pages/profile') > -1)
+              ssw_request_url = sswProxyUrl + '/lite2/' + path_name.substr(ssw_index) + '/';
+            else if (path_name.substr(ssw_index) == 'collections' || path_name.substr(ssw_index) == 'people' || path_name.substr(ssw_index) == 'invite' || path_name.substr(ssw_index) == 'faves' || path_name.substr(ssw_index) == 'edit-notifications' || path_name.substr(ssw_index) == 'reviews')
+              ssw_request_url = sswProxyUrl + '/lite2/' + path_name.substr(ssw_index);
+            var params = location.search.substring(1).replace(/_sid\=[0-9a-f-]+\&*|\bhash_key\b\=[0-9a-f-]+\&*/ig, '');
+            if (path_name.indexOf('pages/collections') && window.location.hash.substring(1)) {
+              if (params) {
+                params += '&' + window.location.hash.substring(1);
+              }
+              else {
+                params = window.location.hash.substring(1);
+              }
+            }
+            var data = '_sid=' + sswCookie('hesid');
+            if (typeof sswApp !== 'undefined' && typeof sswApp.accounts_enabled !== 'undefined') {
+              data += '&accounts_enabled=' + sswApp.accounts_enabled;
+            }
+            if (params) {
+              data += '&' + params;
+            }
+
+            if (sswCookie('mail_id')) {
+              data += '&resource_id=' + sswCookie('mail_id') + '&resource_type=mail';
+            }
+            sswUserChecked(function () {
+              if (path_name.substr(ssw_index) == 'reviews') {
+                  /* Define TimeZone offset */
+                  const customer_timezone_offset = -1 * new Date().getTimezoneOffset() * 60;
+                  data += '&customer_timezone_offset=' + customer_timezone_offset;
+              }
+              data += '&hash_key=' + sswCookie('hash_key');
+              ssw.post(ssw_request_url, data, 'html').done(function (response) {
+                ssw('#ssw-page').css('opacity', 0);
+                ssw('#ssw-page').html(response).animate({
+                  opacity: "1"
+                }, 50, function () {
+                  if (typeof window.afterSswPageLoadedCallback === 'function') {
+                    window.afterSswPageLoadedCallback(response);
+                  }
+                  sswDispatchEvent('sswPageLoaded', {
+                    detail: {},
+                    bubbles: true,
+                    cancelable: false
+                  });
+                });
+
+               
+
+                
+                $("#ssw-reward-page-rewards-wrapper").prepend(`<p class="coupnText">Unused Coupons</p>`);
+                $("#ssw-reward-page-rewards-wrapper").wrapAll("<div></div>");
+                $(".ssw-reward-box-discount-info-item-desc").hide();
+                $('.ssw-reward-box-discount-info').find('.ssw-reward-box-discount-info-item-text:eq(0)').hide()
+                $('.ssw-reward-page-balance-count').find('br').remove()
+                $(".ssw-reward-box-discount-info-item-desc").hide();
+                $('.ssw-reward-friend-desc').after('<img id="rewrtImg" src="https://cdn.shopify.com/s/files/1/2690/0106/files/rewartBox.svg?v=1668863220" />')
+                var attr = $('.ssw-reward-box-discount-info-item-text').attr('aria-label')
+                var attr2 = $('.ssw-reward-box-discount-info').find('.ssw-reward-box-discount-info-item-text:eq(1)').attr('aria-label')
+                $(".ssw-reward-box-discount-info").after(`<p class='discount-info-text'>Your friend gets ${attr} on signup and, you get ${attr2} too everytime!`)
+                $('.ssw-reward-page-balance-count').append(`<p class="points">Points</p>`);
+                $('.ssw-reward-friend-wrapper').after('<p class="shareRefrlCode">Share your referral Code via</p>');
+                $('.shareRefrlCode').next().addClass('shareRefrlCode');
+                $('.shareRefrlCode').wrapAll('<div class="shareHead"></div>');
+                $('.ssw-reward-page-faq-item').wrapAll('<div class="faqWrap"></div>')
+                $('.ssw-reward-friend-desc').text('Refer your friends and Earn');
+                
+    
+                 
+        
+                
+
+                
+                {% comment %} $('.ssw-reward-activity-load-link').click(function(){
+                  setTimeout(() => {
+                  $('.ssw-reward-activity-items .ssw-text-center').each(function(item){
+                    if(this.innerText.includes('-')){
+                    $(this).addClass('historyMinusText');
+                    console.log('hello')
+                    }
+                    })
+                  }, 2000)
+                })
+          
+                
+                  setTimeout(() => {
+                   
+                    $('.ssw-reward-activity-items .ssw-text-center').each(function(item){
+                      if(this.innerText.includes('-')){
+                      $(this).addClass('historyMinusText');
+                      }
+                      })
+                  }, 2000) {% endcomment %}
+               
+
+               
+                
+
+
+                {% comment %} History prepaid order Start {% endcomment %}
+                $('#ssw-reward-page-activity-wrapper .ssw-reward-activity-widget').before(`<div id="ssw-reward-page-earning-rules-wrapper" class="ssw-reward-page-earning-rules-wrapper">
+                  <div class="ssw-reward-page-earning-rules ssw-reward-page-earning-rules-1" data-count="1" data-count-in-row="1">
+                                     <div class="ssw-reward-page-earning-rule  " data-type="place_order" tabindex="0" aria-label="Earning rule">
+           
+                       <!-- TODO ВАЖНО! в новом дизайне для ревард страницы нужно будет добавить изображения для place_order рула когда для него работает boost campaign -->
+                       <div class="ssw-reward-page-rule-icon-wrapper ssw-text-center">
+                         <div class="ssw-square-big">
+                                          <i class="ssw-icon-basket"></i>
+                           <svg version="1.1" class="ssw-square-border" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 52 52" enable-background="new 0 0 52 52" xml:space="preserve">
+                             <g>
+                               <path fill="transparent" d="M13.5,1h25C45.4,1,51,6.6,51,13.5v25C51,45.4,45.4,51,38.5,51h-25C6.6,51,1,45.4,1,38.5v-25C1,6.6,6.6,1,13.5,1z"></path>
+                             </g>
+                             <path id="ssw-square-border" fill="none" stroke="#96865D" stroke-width="2" stroke-miterlimit="10" stroke-dasharray="178.6449,178.6449" d="
+                             M26,1h12.6C45.4,1,51,6.5,51,13.4V26v12.6C51,45.4,45.5,51,38.6,51H26H13.4C6.6,51,1,45.5,1,38.6V13.4C1,6.6,6.5,1,13.4,1H26z"></path>
+                           </svg>
+                         </div>
+                       </div>
+                       <div class="ssw-reward-page-rule-title ssw-text-center" tabindex="0" aria-label="Prepaid orders">Prepaid orders</div>
+           
+                       <div class="ssw-reward-page-rule-earn ssw-text-center">
+                        
+                         <div class="ssw-reward-page-rule-earn ssw-text-center" tabindex="0" aria-label="1 Points for every ₹ 1">
+                          <span class="ssw-earn-points-count">1</span> Points for every ₹ 1              </div>
+                       </div>
+                                   <input class="discount-data" type="hidden" data-title="Prepaid orders" data-description="Get points on each prepaid order!" data-type="place_order">
+                                  <div class="ssw-reward-page-earning-rule-btn-wrapper ssw-hide">
+                                                 </div>
+                       <button class="ssw-reward-page-earning-rule-more">
+                                      Learn more                         </button>
+           
+                      
+                                </div>
+                            
+                   
+                  </div>
+                  <div class="ssw-clearfix"></div>
+                      </div>`)
+                      {% comment %} History prepaid order End {% endcomment %}
+
+
+
+
+                       {% comment %} Faq prepaid order Start {% endcomment %}
+
+                       $('#ssw-reward-page-faq-wrapper .faqWrap').before(`<div id="ssw-reward-page-earning-rules-wrapper" class="ssw-reward-page-earning-rules-wrapper">
+                        <div class="ssw-reward-page-earning-rules ssw-reward-page-earning-rules-1" data-count="1" data-count-in-row="1">
+                          <div class="ssw-reward-page-earning-rule  " data-type="place_order" tabindex="0" aria-label="Earning rule">
+                            <!-- TODO ВАЖНО! в новом дизайне для ревард страницы нужно будет добавить изображения для place_order рула когда для него работает boost campaign -->
+                            <div class="ssw-reward-page-rule-icon-wrapper ssw-text-center">
+                              <div class="ssw-square-big"> <i class="ssw-icon-basket"></i>
+                                <svg version="1.1" class="ssw-square-border" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 52 52" enable-background="new 0 0 52 52" xml:space="preserve">
+                                  <g>
+                                    <path fill="transparent" d="M13.5,1h25C45.4,1,51,6.6,51,13.5v25C51,45.4,45.4,51,38.5,51h-25C6.6,51,1,45.4,1,38.5v-25C1,6.6,6.6,1,13.5,1z"></path>
+                                  </g>
+                                  <path id="ssw-square-border" fill="none" stroke="#96865D" stroke-width="2" stroke-miterlimit="10" stroke-dasharray="178.6449,178.6449" d="
+                                                   M26,1h12.6C45.4,1,51,6.5,51,13.4V26v12.6C51,45.4,45.5,51,38.6,51H26H13.4C6.6,51,1,45.5,1,38.6V13.4C1,6.6,6.5,1,13.4,1H26z"></path>
+                                </svg>
+                              </div>
+                            </div>
+                            <div class="ssw-reward-page-rule-title ssw-text-center" tabindex="0" aria-label="Prepaid orders">Prepaid orders</div>
+                            <div class="ssw-reward-page-rule-earn ssw-text-center">
+                              <div class="ssw-reward-page-rule-earn ssw-text-center" tabindex="0" aria-label="1 Points for every ₹ 1"> <span class="ssw-earn-points-count">1</span> Points for every ₹ 1 </div>
+                            </div>
+                            <input class="discount-data" type="hidden" data-title="Prepaid orders" data-description="Get points on each prepaid order!" data-type="place_order">
+                            <div class="ssw-reward-page-earning-rule-btn-wrapper ssw-hide"> </div>
+                            <button class="ssw-reward-page-earning-rule-more"> Learn more </button>
+                          </div>
+                        </div>
+                        <div class="ssw-clearfix"></div>
+                      </div>`)
+
+                       {% comment %} Faq prepaid order End {% endcomment %}
+
+                      
+                      let btn_target = (parent_div) => {
+                        if($(this).hasClass('active')){
+                          $(`#${parent_div} .ssw-fave-list-header-title .ssw-fave-result .ssw-fave-action`).trigger('click');
+                        } else{
+                          console.log(this);
+                        }
+                       }
+                      $('#ssw-fave-page-lists-wrapper .ssw-fave-list-header-title .ssw-fave-result .ssw-fave-action').each(function(item) {
+                         let btn_text = this.innerText;
+                         let trg_id = $(this).parents('.ssw-fave-list').attr('id');
+                         $('#ssw-fave-page-lists-wrapper').before(`<button data-target="${trg_id}" onclick="btn_target('${trg_id}')">${btn_text}</button>`);
+                      
+                      })
+                      
+                      
+
+               
+
+                
+
+                {% comment %} $(".ssw-reward-item-discount-title, .ssw-reward-item-code-wrapper").wrapAll("<div></div>"); {% endcomment %}
+      
+                
+
+              }).fail(function(jqXHR) {
+                if (jqXHR?.responseJSON?.message === 'Storefront account is disabled') {
+                    ssw('#ssw-page').slideUp( "slow");
+                }
+              });
+            });
+          }
+        }, 300);
+      }
+    </script>
+    {% elsif request.path contains '/pages/wishlist' %}
+      <div class="container clearfix wishlist__page_container">
+        <div class="three account-sidebar-wrap">
+          {%- render 'account-sidebar' -%}
+        </div>
+        <div class="nine main-content-wrapper">
+          <div class="twelve header-top-wrap">
+            <button type="button" class="back-btn BackSmBtnWish">
+              <a href="/"><svg width="19" height="15" viewBox="0 0 19 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.07031 0L8.57031 1.5L4 6.07031H18.0703V8.07031H4L8.57031 12.6406L7.07031 14.1406L0 7.07031L7.07031 0Z" fill="#001325" fill-opacity="0.92"></path></svg></a>
+            </button>
+            <h1 class="title">Wishlist</h1>
+          </div>
+          <div id="ssw-page" class="ssw-page ssw-clearfix gw-container">
+            <div class="ssw-page-loading">
+              <span class="ssw-spin ssw-loader"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+     
+      <script defer>
+        {% unless customer %} window.location.href = '/account' {% endunless %}
+        if (typeof sswPageInterval == 'undefined') {
+          var sswPageInterval = setInterval(function () {
+            if (typeof sswJqLoaded != 'undefined' && sswJqLoaded) {
+              clearInterval(sswPageInterval);
+              var path_name = window.location.pathname;
+              var ssw_substr = '/pages/';
+              var ssw_index = path_name.indexOf(ssw_substr) + ssw_substr.length;
+              var ssw_request_url = sswProxyUrl + '/lite2/' + path_name.substr(ssw_index);
+              if (path_name.indexOf('pages/profile-edit') > -1) {
+                ssw_request_url = sswProxyUrl + '/lite2/profile-edit';
+              }
+              else if (path_name.substr(ssw_index) == 'feed' || path_name.indexOf('pages/profile') > -1)
+                ssw_request_url = sswProxyUrl + '/lite2/' + path_name.substr(ssw_index) + '/';
+              else if (path_name.substr(ssw_index) == 'collections' || path_name.substr(ssw_index) == 'people' || path_name.substr(ssw_index) == 'invite' || path_name.substr(ssw_index) == 'faves' || path_name.substr(ssw_index) == 'edit-notifications' || path_name.substr(ssw_index) == 'reviews')
+                ssw_request_url = sswProxyUrl + '/lite2/' + path_name.substr(ssw_index);
+              var params = location.search.substring(1).replace(/_sid\=[0-9a-f-]+\&*|\bhash_key\b\=[0-9a-f-]+\&*/ig, '');
+              if (path_name.indexOf('pages/collections') && window.location.hash.substring(1)) {
+                if (params) {
+                  params += '&' + window.location.hash.substring(1);
+                }
+                else {
+                  params = window.location.hash.substring(1);
+                }
+              }
+              var data = '_sid=' + sswCookie('hesid');
+              if (typeof sswApp !== 'undefined' && typeof sswApp.accounts_enabled !== 'undefined') {
+                data += '&accounts_enabled=' + sswApp.accounts_enabled;
+              }
+              if (params) {
+                data += '&' + params;
+              }
+  
+              if (sswCookie('mail_id')) {
+                data += '&resource_id=' + sswCookie('mail_id') + '&resource_type=mail';
+              }
+              sswUserChecked(function () {
+                if (path_name.substr(ssw_index) == 'reviews') {
+                    /* Define TimeZone offset */
+                    const customer_timezone_offset = -1 * new Date().getTimezoneOffset() * 60;
+                    data += '&customer_timezone_offset=' + customer_timezone_offset;
+                }
+                data += '&hash_key=' + sswCookie('hash_key');
+                ssw.post(ssw_request_url, data, 'html').done(function (response) {
+                  ssw('#ssw-page').css('opacity', 0);
+                  ssw('#ssw-page').html(response).animate({
+                    opacity: "1"
+                  }, 50, function () {
+                    if (typeof window.afterSswPageLoadedCallback === 'function') {
+                      window.afterSswPageLoadedCallback(response);
+                    }
+                    sswDispatchEvent('sswPageLoaded', {
+                      detail: {},
+                      bubbles: true,
+                      cancelable: false
+                    });
+                  });
+                }).fail(function(jqXHR) {
+                  if (jqXHR?.responseJSON?.message === 'Storefront account is disabled') {
+                      ssw('#ssw-page').slideUp( "slow");
+                  }
+                });
+              });
+            }
+          }, 300);
+        }
+      </script>
+  {% else %}
+    <div id="ssw-page" class="ssw-page ssw-clearfix gw-container">
+      <div class="ssw-page-loading">
+        <span class="ssw-spin ssw-loader"></span>
+      </div>
+    </div>
+     {% if page.handle == 'reviews' %}
+       {% if shop.metafields.ssw.reviews_stats %}
+         {% assign sswstats = shop.metafields.ssw['reviews_stats'] %}
+         {% if sswstats.type == 'json' %}
+           {% assign sswstats = shop.metafields.ssw['reviews_stats'].value %}
+         {% endif %}
+           <div itemscope itemtype="https://schema.org/Product">
+             <meta itemprop="name" content="{{ shop.name | escape }}"/>
+             <div itemprop="aggregateRating" itemscope itemtype="https://schema.org/AggregateRating">
+               <meta itemprop="ratingCount" content="{{ sswstats.count }}"/>
+               <meta itemprop="ratingValue" content="{{ sswstats.avg }}"/>
+             </div>
+           </div>
+       {% endif %}
+     {% endif %}
+    <script defer>
+      if (typeof sswPageInterval == 'undefined') {
+        var sswPageInterval = setInterval(function () {
+          if (typeof sswJqLoaded != 'undefined' && sswJqLoaded) {
+            clearInterval(sswPageInterval);
+            var path_name = window.location.pathname;
+            var ssw_substr = '/pages/';
+            var ssw_index = path_name.indexOf(ssw_substr) + ssw_substr.length;
+            var ssw_request_url = sswProxyUrl + '/lite2/' + path_name.substr(ssw_index);
+            if (path_name.indexOf('pages/profile-edit') > -1) {
+              ssw_request_url = sswProxyUrl + '/lite2/profile-edit';
+            }
+            else if (path_name.substr(ssw_index) == 'feed' || path_name.indexOf('pages/profile') > -1)
+              ssw_request_url = sswProxyUrl + '/lite2/' + path_name.substr(ssw_index) + '/';
+            else if (path_name.substr(ssw_index) == 'collections' || path_name.substr(ssw_index) == 'people' || path_name.substr(ssw_index) == 'invite' || path_name.substr(ssw_index) == 'faves' || path_name.substr(ssw_index) == 'edit-notifications' || path_name.substr(ssw_index) == 'reviews')
+              ssw_request_url = sswProxyUrl + '/lite2/' + path_name.substr(ssw_index);
+            var params = location.search.substring(1).replace(/_sid\=[0-9a-f-]+\&*|\bhash_key\b\=[0-9a-f-]+\&*/ig, '');
+            if (path_name.indexOf('pages/collections') && window.location.hash.substring(1)) {
+              if (params) {
+                params += '&' + window.location.hash.substring(1);
+              }
+              else {
+                params = window.location.hash.substring(1);
+              }
+            }
+            var data = '_sid=' + sswCookie('hesid');
+            if (typeof sswApp !== 'undefined' && typeof sswApp.accounts_enabled !== 'undefined') {
+              data += '&accounts_enabled=' + sswApp.accounts_enabled;
+            }
+            if (params) {
+              data += '&' + params;
+            }
+
+            if (sswCookie('mail_id')) {
+              data += '&resource_id=' + sswCookie('mail_id') + '&resource_type=mail';
+            }
+            sswUserChecked(function () {
+              if (path_name.substr(ssw_index) == 'reviews') {
+                  /* Define TimeZone offset */
+                  const customer_timezone_offset = -1 * new Date().getTimezoneOffset() * 60;
+                  data += '&customer_timezone_offset=' + customer_timezone_offset;
+              }
+              data += '&hash_key=' + sswCookie('hash_key');
+              ssw.post(ssw_request_url, data, 'html').done(function (response) {
+                ssw('#ssw-page').css('opacity', 0);
+                ssw('#ssw-page').html(response).animate({
+                  opacity: "1"
+                }, 50, function () {
+                  if (typeof window.afterSswPageLoadedCallback === 'function') {
+                    window.afterSswPageLoadedCallback(response);
+                  }
+                  sswDispatchEvent('sswPageLoaded', {
+                    detail: {},
+                    bubbles: true,
+                    cancelable: false
+                  });
+                });
+              }).fail(function(jqXHR) {
+                 if (jqXHR?.responseJSON?.message === 'Storefront account is disabled') {
+                    ssw('#ssw-page').slideUp( "slow");
+                 }
+              });
+            });
+          }
+        }, 300);
+      }
+    </script>
+  {% endif %}
+{% endif %}
+
+{% if request.path contains '/pages/reward' %}
+<script defer>
+  console.log("Hi from theme.liquid {{request.path}}")
+
+  var myHeaders = new Headers();
+myHeaders.append("Authorization", "sfat-vhxkdkjlxjwjnhhppfehptiedn");
+
+var requestOptions = {
+  method: 'GET',
+  headers: myHeaders,
+  redirect: 'follow'
+};
+
+  let customerNumber = "{{customer.phone | remove:'+'}}";
+  console.log("customerNumber",customerNumber)
+
+fetch(`https://api.shopflo.co/banksy/api/v1/issuer/8d593cf0-99a5-4c0b-8988-0069fff0c197/merchant/f1e6554a-068d-4426-ba21-be4713957e85/user-wallet?phone-number=%2B${customerNumber}`, requestOptions)
+  .then(response => response.text())
+  .then(result => {
+    let resultN = JSON.parse(result);
+    let TotalPoints = resultN.data.total_wallet_balance;
+    let total_transaction = resultN.data.transactions;
+    let total_info = "";
+    let info_each = "";
+    let date ;
+    let month ;
+    let day ;
+    let year ;
+    let expire;
+    let currentDate;
+    let futureDate;
+    let timeDifference;
+    let remainingDays;
+    console.log(total_transaction,"console.log(result)");
+    console.log("resultN",TotalPoints);
+
+    if(TotalPoints > 0){
+      $(".rewardSm_TransactionWrapperTotal").css("display", "block");
+      $(".rewardSm_wrapnopoint").css("display", "none");
+    }else{
+      $(".rewardSm_TransactionWrapperTotal").css("display", "none");
+      $(".rewardSm_wrapnopoint").css("display", "block");
+    }
+
+    total_transaction.forEach(transaction => {
+       date = new Date(transaction.created_on);
+      console.log("date",date)
+       month = date.toLocaleString('default', {month: 'short',});
+       day = date.getDate();
+       year = date.getFullYear();
+            // Get the current date
+            currentDate = new Date();
+            
+            // Specify a future date
+            futureDate = new Date(transaction.expired_at); // Replace this with your desired future date
+            
+            // Calculate the time difference in milliseconds
+            timeDifference = futureDate - currentDate;
+            
+            // Convert milliseconds to days
+            remainingDays = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+            
+            console.log(`Remaining days: ${remainingDays}`);
+      console.log("Transaction ID:", transaction);
+
+            if(transaction.transaction_type == "CREDIT"){
+              if(remainingDays < 0){
+                info_each = `
+                  <div class="rewardSm_TransactionWrapper">
+                    <div class="monthWrap"></div>
+                    <div class="rewardSm_TransactionWrapperUnder">
+                      <div class="rewardSm_transactionNdpoints">
+                        <div class="rewardSm_transactionId expireGrey">${transaction.checkout_details.platform_order_id}</div>
+                         <div class="rewardSm_transactionPoints expireGrey"><span class="plusMinus">+</span>${transaction.transaction_amount/100} pts</div>
+                      </div>
+                      <div class="Rewardsm_orderValue expireGrey">Order Value: ₹${transaction.transaction_amount}</div>
+                      <div class="Rewardsm_DatesWrap">
+                        <div class="Rewardsm_Date expireGrey">${month} ${day},${year}</div>
+                        <div class="Rewardsm_expireEd">Expired</div>
+                      </div>
+                    </div>
+                  </div>`;
+              }
+              else{
+                 info_each = `
+                  <div class="rewardSm_TransactionWrapper">
+                    <div class="monthWrap"></div>
+                    <div class="rewardSm_TransactionWrapperUnder">
+                      <div class="rewardSm_transactionNdpoints">
+                        <div class="rewardSm_transactionId">${transaction.checkout_details.platform_order_id}</div>
+                         <div class="rewardSm_transactionPoints green"><span class="plusMinus">+</span>${transaction.transaction_amount/100} pts</div>
+                      </div>
+                      <div class="Rewardsm_orderValue">Order Value: ₹${transaction.transaction_amount}</div>
+                      <div class="Rewardsm_DatesWrap">
+                        <div class="Rewardsm_Date">${month} ${day},${year}</div>
+                        <div class="Rewardsm_expire">${remainingDays} Days Left</div>
+                      </div>
+                    </div>
+                  </div>`;
+              }
+            }
+            else{
+              info_each = `
+                <div class="rewardSm_TransactionWrapper">
+                  <div class="monthWrap"></div>
+                  <div class="rewardSm_TransactionWrapperUnder">
+                    <div class="rewardSm_transactionNdpoints">
+                      <div class="rewardSm_transactionId">${transaction.checkout_details.platform_order_id}</div>
+                       <div class="rewardSm_transactionPoints red"><span class="plusMinus">-</span>${transaction.transaction_amount/100} pts</div>
+                    </div>
+                    <div class="Rewardsm_orderValue">Order Value: ₹${transaction.transaction_amount}</div>
+                    <div class="Rewardsm_DatesWrap">
+                      <div class="Rewardsm_Date">${month} ${day},${year}</div>
+                      <div class="Rewardsm_Redeemed">Redeemed</div>
+                    </div>
+                  </div>
+                </div>`;
+            }
+
+
+    
+
+
+
+        
+        total_info = total_info + info_each;
+      });
+
+    setTimeout(() => {
+    $('.rewardSm_transactionId').each(function() {
+        var element = $(this);
+        
+        if (element.text().includes('null')) {
+          element.text("Manual Adjustment");
+        }
+      });
+    }, 500);
+    
+    $('.rewardSm_TransactionWrapperTotal').html(total_info);
+    
+
+     $(".rewardSm_currentpointStatus").text(TotalPoints);
+  })
+  .catch(error => console.log('error', error));
+
+</script>
+  {% endif %}

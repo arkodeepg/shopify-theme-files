@@ -1,0 +1,139 @@
+<style>
+  .seo-link-footer_heading{
+    font-family: 'glacialIndifference-bold';
+    font-size: 16px;
+    color: #4c4c4c;
+    text-transform: uppercase;
+    margin: 0;
+    margin-bottom: 20px;
+  }
+  .seo-link-footer_main{
+    list-style: none;
+    padding: 0;
+  }
+    .seo-link-footer_main li{
+    display: inline-block;
+    position: relative;
+    margin-right: 8px;
+    padding: 0 0 calc(var(--base)/2) 0;
+  }
+    .seo-link-footer_main li a{
+    font-style: normal;
+    font-size: 14px;
+    line-height: 22px;
+    color: #4c4c4c;
+  }
+  .seo-link-footer_main ul li:after {
+    content: ',';
+    position: absolute;
+    right: -5px;
+    bottom: 10px;
+    
+    }
+.seo-link-footer_container {
+    padding: 0 30px;
+    /* max-width: 1320px; */
+    background-color: #f9f9f9;
+    margin: auto;
+}
+  .pad-footer_top{
+    padding-top:calc(var(--master_spacing)*2);
+  }
+  .pad-footer_bot{
+    padding-bottom:calc(var(--master_spacing)*2);
+  }
+  @media screen and (max-width: 640px) {
+  .seo-link-footer_container{padding: 0 25px}
+  .seo-link-footer_inner-container.container{
+    padding-right: 0;
+    padding-left: 0;
+  }
+}
+  
+</style>
+
+{%- if section.settings.title != blank -%}
+    <div class="seo-link-footer_container">
+      <div class="seo-link-footer_inner-container container {% if section.settings.padtop %}pad-footer_top{% endif %} {% if section.settings.padbot %}pad-footer_bot{% endif %}">
+      <div class="seo-link-footer_heading">{{ section.settings.title }}</div>
+
+
+      <div id="{{ section.settings.title | strip | replace: ' ', '-' }}">
+        <ul class="seo-link-footer_main">
+          {% for block in section.blocks %}
+            {% if forloop.last %}
+            <li>
+              <a href="{{ block.settings.link }}">{{ block.settings.text }}</a>
+            </li>
+            {% else %}
+            <li>
+              <a href="{{ block.settings.link }}">{{ block.settings.text | append:' ' | append: section.settings.sep | append:' ' }}</a>
+            </li>
+          {% endif %}
+          {%- endfor -%}
+        </ul>
+      </div>
+    </div>
+    </div>
+{%- endif %}
+
+
+{% schema %}
+  {
+    "name": "seo link footer",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title"
+      },
+      {
+        "type": "text",
+        "id": "sep",
+        "label": "seperator",
+        "default":","
+      },
+      {
+        "type": "checkbox",
+        "id": "padtop",
+        "label": "Padding top",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "padbot",
+        "label": "Padding bottom",
+        "default":true
+      }
+    ],
+
+    "blocks": [
+      {
+        "type": "text",
+        "name": "seo link footer",
+        "settings": [
+          {
+            "type": "text",
+            "id": "text",
+            "label": "Text"
+          }, {
+            "type": "url",
+            "id": "link",
+            "label": "Link"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "seo link footer",
+        "category": "text",
+        "blocks": [
+          {
+            "type": "text"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

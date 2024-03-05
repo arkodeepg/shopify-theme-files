@@ -1,0 +1,63 @@
+{% comment %} https://liquid-ajax-cart.js.org/v2/mutations/ {% endcomment %}
+<!-- <script>
+  function myMutation() {
+  console.log("hi working")
+
+  // if you reach this point, the cart isn't empty and there is no mug in it
+  // Todo: initiate adding the Mug product to the cart
+}
+
+// Let Liquid Ajax Cart know about the mutation functions
+window.liquidAjaxCart.conf('mutations', [
+  myMutation
+]);
+  
+function myMutation2 () {
+  const cart = window.liquidAjaxCart.cart;
+  let giftwrapProduct = [], giftwrapGift = [];
+
+  // giftwrapProduct object structure
+  // id
+  // properties.giftWrap
+  // quantity
+  // index
+
+  // giftwrapGift object structure
+  // id
+  // _giftParentId
+  // quantity
+  // index
+
+  for(let i = 0; i<cart.items.length ; i++){
+    if(cart.items[i].properties._giftParentId){ //for giftwrapGift
+      let temp = {
+          id: cart.items[i].id,
+          giftParentId: cart.items[i].properties._giftParentId,
+          quantity: cart.items[i].quantity,
+          index: i
+      }
+      giftwrapGift.push(temp);
+    }
+  }
+
+  console.log('giftwrapGift - ',giftwrapGift)
+
+  
+  // return {
+  //   requests: [
+  //     {
+  //       type: "change", // remove the first item from the cart
+  //       body: {
+  //         line: 1,
+  //         quantity: 0
+  //       }
+  //     }
+  //   ]
+  // }
+}
+
+window.liquidAjaxCart.conf('mutations',myMutation2);  
+
+
+
+</script> -->

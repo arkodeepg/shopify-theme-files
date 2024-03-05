@@ -1,0 +1,6 @@
+{% if errors %}
+<div class="errors note form-error">
+  <p><strong>{{ 'contact.form.form_error' | t }}</strong></p>
+  {{ errors | default_errors }}
+</div>
+{% endif %}

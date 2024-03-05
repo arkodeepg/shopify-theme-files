@@ -1,0 +1,78 @@
+<!-- geo blocking countries start -->
+<!-- geo location actual = https://pastebin.com/EUMkisxF -->
+<script type="text/javascript">
+HuraScriptCountryBlocker = function () {
+    var appendCSS = '';
+    appendCSS += '<style>';
+    appendCSS += '.hura-popup-modal{display:none;position:fixed;z-index:9999999;left:0;top:0;width:100%;height:100%;overflow:auto;background-color:rgba(0,0,0,1)}';
+    appendCSS += '.hura-popup-modal .hura-popup-modal-content{background-color:#fefefe;margin:15% auto;padding:20px;border:1px solid #888;max-width:470px;position:relative}';
+    appendCSS += '.hura-popup-modal .hura-popup-close{color:#aaa;float:right;font-size:28px;font-weight:700}';
+    appendCSS += '.hura-popup-modal .hura-popup-close:hover,.hura-popup-close:focus{color:#000;text-decoration:none;cursor:pointer}';
+    appendCSS += '.hura-popup-modal .hura-popup-title{text-align:center}';
+    appendCSS += '.hura-popup-modal .hura-popup-subtitle{text-align:center}';
+    appendCSS += '.hura-popup-modal .hura-popup-confirm-btn{width:100%;text-align:center}';
+    appendCSS += '.hura-popup-modal .hura-popup-confirm-btn button{width:40%;padding:.4em .6em;border:none;border-radius:.25em;text-decoration:none;text-transform:uppercase;text-rendering:optimizeLegibility;background:#000;color:#fff;cursor:pointer}';
+    appendCSS += '.hura-popup-modal .hura-credit{position:absolute;bottom:-40px;right:0;font-size:11px;margin: 0 0 20px 0;color: rgb(255, 255, 255);font-style:italic;}';
+    appendCSS += '.hura-popup-modal .hura-credit a{color: rgb(255, 228, 0);}';
+    appendCSS += 'body {height: 100%;overflow-y: hidden;}';
+    appendCSS += '</style>';
+    var appendHTML = '';
+    appendHTML += '<div id="hura-country-blocker-popup" class="hura-popup-modal">';
+    appendHTML += '<div class="hura-popup-modal-content">';
+    appendHTML += '<div class="hura-popup-form-wapper">';
+    appendHTML += '<h2 class="hura-popup-title">Not Authorized</h2>';
+    appendHTML += '<p class="hura-popup-subtitle">Access denied! You are not authorized to access this site.</p>';
+    appendHTML += '</div>';
+    appendHTML += '</div>';
+    appendHTML += '</div>';
+    // $.get('https://www.cloudflare.com/cdn-cgi/trace').done(function (data) {
+    //     var country_code = data.replace(/(\r\n|\n|\r)/gm, "").split('loc=');
+    //     country_code = country_code[1].split('tls=');
+    //     country_code = country_code[0];
+    //     var blocked_countries = "BD,BR,BG,CN,FR,DE,IR,IL,JP,KZ,LT,MX,MD,PK,PL,RU,ZA,TR,AE";
+    //     blocked_countries = blocked_countries.split(",");
+    //     if (blocked_countries.includes(country_code)) {
+    //         try {
+    //             window.stop();
+    //         } catch (exception) {
+    //             document.execCommand('Stop');
+    //         }
+    //         $('head').append(appendCSS);
+    //         $('body').append(appendHTML);
+    //         $("#hura-country-blocker-popup").show();
+    //     }
+    // });
+  var xhr = new XMLHttpRequest();
+xhr.open('GET', 'https://www.cloudflare.com/cdn-cgi/trace', true);
+
+xhr.onload = function() {
+    if (xhr.status === 200) {
+        var data = xhr.responseText;
+        var country_code = data.replace(/(\r\n|\n|\r)/gm, "").split('loc=');
+        country_code = country_code[1].split('tls=');
+        country_code = country_code[0];
+        var blocked_countries = "BD,BR,BG,CN,FR,DE,IR,IL,JP,KZ,LT,MX,MD,PK,PL,RU,ZA,TR";
+        blocked_countries = blocked_countries.split(",");
+        
+        if (blocked_countries.includes(country_code)) {
+            try {
+                window.stop();
+            } catch (exception) {
+                document.execCommand('Stop');
+            }
+            
+            // Assuming you have the appendCSS and appendHTML variables defined somewhere
+            document.head.insertAdjacentHTML('beforeend', appendCSS);
+            document.body.insertAdjacentHTML('beforeend', appendHTML);
+            document.getElementById("hura-country-blocker-popup").style.display = "block";
+        }
+    }
+};
+
+xhr.send();
+
+}
+HuraScriptCountryBlocker();
+
+</script>
+  <!-- geo blocking countries end -->

@@ -1,0 +1,103 @@
+{% if collection.all_tags.size > 0 %}
+
+  {%- assign new_count = count | plus: 0 -%}
+
+  {% if new_count > 0 %}
+
+    {% if current_tags != blank %}
+    <div class="filter none formatted clearfix">
+      <h6>{{ 'collections.sidebar.selected' | t }}</h6>
+      <ul class="advanced-filters unformatted">
+        {%- liquid
+          for cat_item in cat_array
+            for tag in collection.all_tags
+              if current_tags contains tag
+                assign cat = tag | split: '_' | first
+                if cat != tag and cat_item == cat
+                  echo '<li class="advanced-filter active-filter active hover" data-group="'
+                  echo cat_item
+                  echo '" data-handle="'
+                  echo tag | handle
+                  echo '">'
+                  echo tag | split:'^' | last | split:'_' | last | prepend: ': ' | prepend: cat | link_to_remove_tag: tag
+                  echo '</li>'
+                endif
+              endif
+            endfor
+          endfor
+        -%}
+      </ul>
+    </div>
+    {% endif %}
+
+    {% for cat_item in cat_array %}
+	
+	<!-- collection.tags only shows whats on page -->
+    <!-- collection.all_tags only shows ALL -->
+
+    {%- liquid
+      capture tags
+        for tag in collection.all_tags
+          assign cat = tag | split: '_' | first
+          assign filtertag = tag | remove_first: cat_item | remove_first: '_' | split:'^' | last
+          if cat != tag and cat_item == cat
+            unless collection.tags contains tag
+              unless filter_disabled
+                echo '<li class="advanced-filter disabled'
+                echo '"><span>'
+                echo filtertag
+                echo '</span></li>,,'
+              endunless
+            else
+              if current_tags contains tag
+                echo '<li class="advanced-filter active-filter active'
+                echo '">'
+                echo filtertag | link_to_remove_tag: tag
+                echo '</li>,,'
+              else
+                echo '<li class="advanced-filter'
+                echo '">'
+                echo filtertag | link_to_add_tag: tag
+                echo '</li>,,'
+              endif
+            endunless
+          endif
+        endfor
+      endcapture
+      assign tags = tags | split: ',,'
+    -%}
+
+	{% if tags.size > 0 %}
+      <div class="filter formatted clearfix">
+        <div class="relative open-container open-container-filter desktop">
+          <details open>
+            <summary class="open open-btn open-filter open-{{ section.id }}" title="{{ 'collections.general.open' | t | escape }}" role="button" aria-label="{{ 'collections.general.open' | t | escape }}">{%- render 'icons.theme', icon: 'plus', size: 18 -%}<span class="h5">{{ cat_item }}</span></summary>
+          </details>
+          <div id="{{ cat_item }}-filter" class="open-slide open-slide-filter">
+            <ul class="advanced-filters unformatted">
+              {% for t in tags limit: 5 %}
+              {{ t }}
+              {% endfor %}
+            </ul>
+            {% if tags.size > 5 %}
+            <details>
+              <summary><span class="open-more" title="{{ 'collections.general.open' | t | escape }}" role="button" aria-label="{{ 'collections.general.open' | t | escape }}"><span class="more">{{ 'collections.sidebar.more' | t }}</span><span class="less hidden">{{ 'collections.sidebar.less' | t }}</span></span></summary>
+            </details>
+            <div class="open-slide">
+              <ul class="advanced-filters unformatted open-slide">
+                {% for t in tags offset: 5 %}
+                {{ t }}
+                {% endfor %}
+              </ul>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+	{% endif %}
+
+    {% endfor %}
+
+  {% endif %}
+
+{% endif %}

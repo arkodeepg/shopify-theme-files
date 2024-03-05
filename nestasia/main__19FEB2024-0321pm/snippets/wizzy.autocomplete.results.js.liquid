@@ -1,0 +1,75 @@
+<div class="wizzy-autocomplete-top-products">
+    <p class="top-products-title">[[topProductsTitle]]</p>
+    <ul class="autocomplete-top-products">
+        [[#products]]
+
+        <li class="topproduct-item" title="[[& name ]]" data-id="[[id]]"
+        [[#groupId]]data-groupId="[[groupId]]"[[/groupId]]>
+        <a href="[[&url]]" class="topproduct-item-link">
+        <div class="topproduct-item-image-new">
+            <img src="[[ mainImage ]]" class="topproduct-image" width="300" height="300" loading="lazy" />
+        </div><!-- ending of topproduct-item-image -->
+        <div class="topproduct-item-image hover-image-new">
+            [[#hoverImage]]
+                <img src="[[ hoverImage ]]" class="topproduct-image" width="300" height="300" loading="lazy" />
+            [[/hoverImage]]
+            [[^hoverImage]]
+                <img src="[[ mainImage ]]" class="topproduct-image" width="300" height="300" loading="lazy" />
+            [[/hoverImage]]
+        </div><!-- ending of topproduct-item-image -->
+        <div class="topproduct-item-info">
+            <p class="topproduct-title">[[& name ]]</p>
+             {% comment %}
+             [[#hasCategories]]
+            <p class="topproduct-in-category">in [[&category]]</p>
+            [[/hasCategories]]
+            {% endcomment %}
+            <p class="[[#discountPercentage]]discounted[[/discountPercentage]] topproduct-price">
+                [[#priceWithCurrency]][[ sellingPrice ]][[/priceWithCurrency]]<br>[[#price]]
+                <span class="topproduct-original-price">
+                                    [[#priceWithCurrency]][[ price ]][[/priceWithCurrency]]
+                                </span>
+                [[/price]]
+                <span class="topproduct-item-discount">
+                                   [[#discountPercentage]]
+                                       ([[discountPercentage]]% off)
+                                   [[/discountPercentage]]
+                               </span></p>
+
+                                     {% comment %}
+            <div class='product-item-review-container'>
+                 <div class="product-item-reviews">
+                            [[#star]]
+                     <span class="stars-wizzy-container-before" data-star=[[star]]%>
+                      ★★★★★          
+                    </span>
+                     <span class="stars-wizzy-container" data-star=[[star]]%>
+                      ★★★★★          
+                    </span>
+                    <span class="stars-wizzy-container-after" data-star=[[star]]%>
+                      ★★★★★          
+                    </span>
+                                  
+            [[/star]]
+                 </div>
+                     <span class="stars-wizzy-review-count" >
+                                 [[#reviewCount]]
+                      [[reviewCount]] review(s)    
+                                   [[/reviewCount]]
+                    </span>
+                                     </div>
+                                     {% endcomment %}
+                                     [[#star]]
+<div style="" class="jdgm-widget jdgm-preview-badge jdgm-preview-badge--with-link jdgm--done-setup" data-id="[[id]]" data-template="product" data-auto-install="false">
+  <div style="display:none" class="jdgm-prev-badge" data-average-rating="[[star]]" data-number-of-reviews="[[reviewCount]]" data-number-of-questions="0"> <span class="jdgm-prev-badge__stars" data-score="[[star]]" full=[[noOfFullStars]] half=[[noOfHalfStars]] empty=[[noOfEmptyStars]] starMarkup="[[starMarkup]]"  tabindex="0" aria-label="[[star]] stars" role="button">  </span> <span class="jdgm-prev-badge__text">[[(reviewCount)]]</span> </div>
+</div>
+                                   [[/star]]
+
+
+        </div><!-- ending of topproduct-item-info -->
+    </a><!-- ending of topproduct-item-link -->
+</li><!-- ending of topproduct-item -->
+
+[[/products]]
+</ul><!-- ending of autocomplete-top-products -->
+</div><!-- ending of top-products -->

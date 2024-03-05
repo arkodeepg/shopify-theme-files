@@ -1,0 +1,48 @@
+{%- liquid
+  assign avail_total = product_availability_total
+-%}
+
+<div class="{% if divider %}form-blocks {% else %}bottompad-quarter {% endif %}clearfix" {{ block.shopify_attributes }}>
+  <span id="inventory-{{ section.id }}" class="variant-inventory{% if banner %} banner bottompad-half{% endif %}" data-inv="{{ product_availability_total }}" role="status">
+    <h4>
+      {%- liquid
+          echo '<span>'
+          if variant.available
+            if variant.inventory_management and variant.inventory_policy != 'continue' and variant.inventory_quantity > 0 and variant.inventory_quantity < avail_total
+              echo 'products.general.inv_msg_1' | t
+              echo ' '
+              echo variant.inventory_quantity
+              echo ' '
+              echo 'products.general.inv_msg_2' | t
+            else
+              echo 'products.product.available' | t
+            endif
+          else
+          	echo 'products.product.sold_out' | t
+          endif
+          echo '</span>'
+          if variant.available == false or variant.available and variant.inventory_policy != 'continue' and variant.inventory_quantity > 0 and variant.inventory_quantity < avail_total
+            if variant.incoming
+              echo '<span class="error-text"><small><span class="icon icon-bell"></span> '
+              if variant.incoming
+                assign today_date = 'now' | date: '%s'
+                assign delivery_date = variant.next_incoming_date | date: '%s'
+                if variant.next_incoming_date != blank and delivery_date > today_date
+                  if variant.available
+                    echo 'products.product.stock_more' | t
+                  else
+                    echo 'products.product.stock_in' | t
+                  endif
+                  echo ' '
+                  echo variant.next_incoming_date | date: '%b %e'
+                else
+                  echo 'products.product.stock_soon' | t
+                endif
+              endif
+              echo '</small></span>'
+            endif
+          endif
+		-%}
+    </h4>
+  </span>
+</div>

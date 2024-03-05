@@ -1,0 +1,147 @@
+{%- assign featured_media = product.selected_or_first_available_variant.featured_media | default: product.featured_media -%}
+<div id="main-product-image-{{ section.id }}" 
+     class="featured-image featured-image-div-{{ section.id }} main-image-{{ section.id }} text-center relative"
+     data-product-single-media-group>
+  {% unless banner %}<a href="#product-details-{{ section_id }}" title="{{ 'layout.general.skipto' | t | escape }}" class="skip-to text-center visually-hidden">{{ 'layout.general.skipto' | t }}</a>{% endunless %}
+  {% for media in product.media %}
+  <div id="variant-image-{{ media.id }}" 
+       class="variant-image variant-image-{{ section.id }} relative{% if media == featured_media %} visible{% else %} hidden{% endif %}"
+       aria-hidden="{% if media == featured_media %}false{% else %}true{% endif %}" 
+       data-image-id="{{ media.id }}"{% if media.media_type == 'video' or media.media_type == 'external_video' %}
+       data-product-media-type-video data-enable-video-looping="{{ section.settings.loop_enable }}"{% endif %}{% if media.media_type == 'model' %}
+       data-product-media-type-model{% endif %}{% if media.media_type == 'external_video' %}
+       data-video-id="{{ media.external_id }}"{% endif %}
+       data-product-single-media-wrapper
+       data-media-id="{{ section.id }}-{{ media.id }}"{% unless section.settings.img_align %}
+       style="max-width:{{ media.width }}px"{% endunless %}>
+    {% case media.media_type %}
+      {% when 'image' %}
+        {%- liquid
+          capture alt
+             if media.alt != blank
+              echo media.alt
+             else
+              echo product.title
+              echo '-'
+              echo forloop.index
+             endif
+          endcapture
+          if media.width > 999 or media.height > 999
+            assign media_width = true
+          else
+            assign media_width = false
+          endif
+        -%}
+        <div class="{% if section.settings.zoom_enable and rtl == false and media_width %}drift disabled {% endif %}clearfix">
+          <div class="relative lazycontainer{% unless media == featured_media %} lazyskip{% endunless %}{% if section.settings.img_align %} image-align{% endif %}">
+            {%- liquid
+              if media == featured_media
+                assign lazyignore = true
+                assign fetch = 'high'
+              else
+                assign lazyignore = false
+                assign fetch = 'low'
+              endif
+              assign size = sizes_main | split: ',' | first | times: 1
+              capture sizes
+                echo '(min-width: 600px) '
+                echo sizes_main | split: ',,' | first | split: ',' | last
+                echo 'px, (min-width: 768px) '
+                echo sizes_main | split: ',,' | first | split: ',' | first
+                echo 'px, calc(100vw - '
+                echo sizes_main | split: ',,' | last
+                echo 'px)'
+              endcapture
+              render 'image.load', img_src: media, size: size, alt: alt, img_align: section.settings.img_align, lazy: lazy, sizes: sizes, fetch: fetch
+            -%}
+          </div>
+          {%- liquid
+            if section.settings.zoom_enable and section.settings.zoom_mobile_enable and rtl == false and media_width
+              echo '<button class="zoom-option">'
+                render 'icons.theme', icon: 'zoom', size: '18'
+                echo '<span class="enable">'
+                  echo 'products.general.zoom_enable' | t
+                echo '</span><span class="disable">'
+                  echo 'products.general.zoom_disable' | t
+                echo '</span>'
+              echo '</button>'
+            endif
+          -%}
+        </div>
+      {% when 'external_video' %}
+        {{ media | external_video_tag }} 
+      {% when 'model' %}
+        <div class="relative media-viewer text-left">
+          {{ media | model_viewer_tag: reveal: 'interaction', toggleable: true, data-model-id: media.id, image_size: '600x600' }}
+        </div>
+        <button class="btn auto-full-width modelthreed hidden"
+                aria-label="{{ 'products.general.media_view' | t | escape }}"
+                data-shopify-xr
+                data-shopify-model3d-id="{{ media.id }}"
+                data-shopify-title="{{ product.title | escape }}"
+                data-shopify-xr-hidden>{%- render 'icons.theme', icon: 'threed', size: '14', icon_class: 'view' -%}&nbsp;&nbsp;{{ 'products.general.media_view' | t }}</button>
+      {% when 'video' %}
+        <div class="relative">
+        {{ media | video_tag: controls: true, image_size: '600x600' }}
+        </div>
+      {% else %}
+      {{ media | media_tag: image_size: '600x600' }}
+    {% endcase %}
+  </div>
+  {% endfor %}
+</div>
+
+{% if product.media.size > 1 %}
+<div class="glider-contain">
+  <div{% if product.media.size > 4 %} id="thumbnails-{{ section.id }}"{% endif %} class="{% if product.media.size > 4 %}glider {% else %}twelve table-center negative-left negative-right {% endif %}thumbnails thumbs">
+    <div class="{% if product.media.size > 4 %}glider-track{% else %}center{% endif %}">
+      {% for media in product.media %}
+      {%- liquid
+        capture alt
+           if media.preview_image.alt != blank
+            echo media.preview_image.alt
+           else
+            echo product.title
+            echo '-'
+            echo forloop.index
+           endif
+        endcapture
+      -%}
+      <div class="three {% if product.media.size < 5 %}mobile {% endif %}thumb-image-{{ section.id }} image" data-image-id="{{ media.id }}"{% if product.media.size > 4 %} data-gslide="{{ forloop.index0 }}"{% endif %}>  
+        <div class="title-align">
+          <div class="relative lazycontainer">
+            <button type="button" aria-label="{{ alt | escape }}" class="img-align keyed" aria-current="{% if media == featured_media %}true{% else %}false{% endif %}">
+              {%- liquid
+                assign size = sizes_thumb | split: ',' | first | times: 1
+                capture sizes
+                  echo '(min-width: 600px) '
+                  echo sizes_thumb | split: ',' | first
+                  echo 'px, '
+                  echo sizes_thumb | split: ',' | last
+                  echo 'px'
+                endcapture
+                render 'image.load', img_src: media.preview_image, size: size, alt: alt, img_align: section.settings.img_align, nopad: true, lazy: lazy, sizes: sizes
+                case media.media_type
+                  when 'external_video'
+                  	render 'icons.theme', icon: 'play', size: '16', icon_class: 'thumbnail'
+                  when 'model'
+                  	render 'icons.theme', icon: 'threed', size: '16', icon_class: 'thumbnail'
+                  when 'video'
+                  	render 'icons.theme', icon: 'play', size: '16', icon_class: 'thumbnail'
+                endcase
+              -%}
+            </button>  
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% if product.media.size > 4 %}
+  <div id="glider-pagination-thumbs" class="glider-pagination relative">
+    <button id="glider-button-prev-thumbs-{{ section.id }}" class="tabindex glider-button-prev thumbs" type="button" aria-label="{{ 'products.general.previous' | t | escape }}">{%- render 'icons.theme', icon: 'left', size: '16' -%}</button>
+    <button id="glider-button-next-thumbs-{{ section.id }}" class="tabindex glider-button-next thumbs" type="button" aria-label="{{ 'products.general.next' | t | escape }}">{%- render 'icons.theme', icon: 'right', size: '16' -%}</button>
+  </div>
+  {% endif %}
+</div>
+{% endif %}

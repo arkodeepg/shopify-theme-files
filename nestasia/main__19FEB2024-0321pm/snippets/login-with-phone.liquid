@@ -1,0 +1,455 @@
+<div id="login_with_phone_wrap">
+  <div class="login_with_phone_content">
+    <div class="login_with_phone_content_wrap">
+      <a href="javascript:void(0)" class="login_width_phone_popup_close">×</a>
+      <div class="login_with_phone_send_code login_width_phone_step active">
+        <h3>Login / Register</h3>
+        <form id="login_with_phone_form">
+          <div class="form-group form-wrap">
+            <input type="text" name="login" placeholder="Enter Email ID or Phone Number">
+            <span class="form_error"></span>
+          </div>
+          <div class="form-submit-wrap">
+            <button type="submit" class="btn custom_loading" value="Proceed">Proceed
+            <div class="custom-loader-wrap"><div class="custom-loader"></div></div></button>
+          </div>
+        </form>
+      </div>
+      <div class="login_with_phone_verify_code login_width_phone_step">
+        <h3>Login / Register</h3>
+        <form id="login_with_phone_verification_form">
+          <input type="hidden" class="verification_send_width">
+          <div class="phone_verify_code_message"></div>
+          <div class="verification_input_wrap">
+            <input class="verification_input code_no_1" type="number" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" />
+            <input class="verification_input code_no_2" type="number" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" />
+            <input class="verification_input code_no_3" type="number" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" />
+            <input class="verification_input code_no_4" type="number" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" />
+            <div><span class="form_error"></span></div>
+            <div><span class="form_success"></span></div>
+          </div>
+          {%- comment -%}
+          <div class="form form-wrap">
+            <input type="email" value="" name="email_id" placeholder="{{ 'customer.login.email' | t }}" />
+            <span class="form_error"></span>
+          </div>
+          {%- endcomment -%}
+          <div class="form-submit-wrap">
+            <button type="submit" class="btn custom_loading" value="Verify">Verify
+            <div class="custom-loader-wrap"><div class="custom-loader"></div></div></button>
+          </div>
+          <div class="verification_link_wrap">
+            Didn't receive the code?
+            <div class="resend_call_me_wrap">
+              <a href="javascript:void(0)" class="btn send_code_again counting">Resend OTP <span></span></a>
+              <a href="javascript:void(0)" class="btn call_me_btn counting" data-count="1">Call Me <span></span></a>
+            </div>
+            <a href="javascript:void(0)" class="change_phone_number">Change Phone Number</a>
+            {%- comment -%}<a href="javascript:void(0)" class="change_phone_number">Back to Login</a>{%- endcomment -%}
+          </div>
+        </form>
+      </div>
+      <!-- shopify login form start -->
+      <div class="login_with_phone_shopify_login login_width_phone_step">
+        <h3>Login / Register</h3>
+        {% form 'customer_login' %} 
+          {%- comment -%}{{ form.errors | default_errors }}{%- endcomment -%}
+          {%- render 'form-errors-custom', errors: form.errors -%}
+          <div class="login_email clearfix">
+            <span class="form hide">
+              {%- comment -%}<label for="customer_email">{{ 'customer.login.email' | t }}</label>{%- endcomment -%}
+              <input type="email" value="" name="customer[email]" id="customer_email" placeholder="{{ 'customer.login.email' | t }}"  autocorrect="off" autocapitalize="off" />
+            </span>
+            <span class="form form-wrap">
+              {%- comment -%}<label for="customer_password">{{ 'customer.login.password' | t }}{% if form.password_needed %}<span class="right"><small><a href="javascript:void(0)" id="recover_password_btn" title="{{ 'customer.login.forgot_password' | t }}" class="form hidden">{{ 'customer.login.forgot_password' | t }}</a></small></span>{% endif %}</label>{%- endcomment -%}
+              <input type="password" value="" name="customer[password]" id="customer_password" placeholder="{{ 'customer.login.password' | t }}" />
+              <span class="form_error"></span>
+            </span>
+            <div class="form-button">
+              <button class="btn custom_loading custom-button" type="submit">{{ 'customer.login.sign_in' | t }}
+                <div class="custom-loader-wrap"><div class="custom-loader"></div></div>
+              </button>
+            </div>
+            <div class="form-group">
+              <a href="javascript:void(0)" id="recover_password_btn" title="{{ 'customer.login.forgot_password' | t }}" class="form">{{ 'customer.login.forgot_password' | t }}</a>
+            </div>
+            <div class="diff_line_or"><span>Or</span></div>
+            <div class="form-group">
+              <button id="get_otp_in_email_btn" title="Get OTP in Email" class="btn custom_loading custom-button form">
+                Get OTP in Email
+                <div class="custom-loader-wrap"><div class="custom-loader"></div></div>
+              </button>
+              {%- comment -%}<a href="javascript:void(0)" id="get_otp_in_email_btn" title="Get OTP in Email" class="form">Get OTP in Email</a>{%- endcomment -%}
+            </div>            
+            <div><span class="form_success"></span></div>
+          </div>
+        {% endform %}
+      </div>
+      <!-- shopify login form end -->
+      <!-- shopify recover_customer_password form start -->
+      <div class="login_with_phone_recover_customer_password login_width_phone_step">
+        <h3>Forgot Password</h3>
+        {% form 'recover_customer_password' %}
+      	 {%- render 'form-errors-custom', errors: form.errors -%}  
+        
+        <div class="clearfix">
+          <span class="form form-wrap">
+            {%- comment -%}<label for="recover-email">{{ 'customer.recover_password.email' | t }}</label>{%- endcomment -%}
+            <input type="email" value="" name="email" id="recover-email" class="{% if form.posted_successfully? %}reset-success {% endif %}{% if form.errors %}reset-error {% endif %}clearfix" placeholder="{{ 'customer.recover_password.email' | t }}" />
+            <span class="form_error"></span>
+          </span>
+          <span class="form">
+            <button class="btn" type="submit">{{ 'customer.recover_password.submit' | t }}</button><a href="javascript:void(0)" id="customer_login_btn" title="{{ 'customer.recover_password.cancel' | t }}" class="account-secondary hidden">{{ 'customer.recover_password.cancel' | t }}</a>
+          </span>
+            <a href="javascript:void(0)" id="customer_login_cancle_btn" title="Cancel" class="form">Cancel</a>
+        </div>
+        {% endform %}
+      </div>
+      <!-- shopify recover_customer_password form end -->
+      <div class="login_with_phone_email login_width_phone_step">
+        <h3>Please enter Email ID:</h3>
+        <form id="login_with_phone_email_form">
+          <div class="form-group form-wrap">
+            <input type="text" name="email" placeholder="Enter you Email">
+            <span class="form_error"></span>
+          </div>
+          <div class="form-submit-wrap">
+            <input type="submit" value="Submit" class="btn">
+          </div>
+        </form>
+      </div>
+      <div class="login_with_phone_information login_width_phone_step">
+        <h3>Your Information:</h3>
+        <form id="login_with_phone_information_form">
+          <div class="form-group form-wrap">
+            <input type="text" name="first_name" placeholder="Enter you first name">
+            <span class="form_error"></span>
+          </div>
+          <div class="form-group form-wrap">
+            <input type="text" name="last_name" placeholder="Enter you last name">
+            <span class="form_error"></span>
+          </div>
+          <div class="form-group form-wrap">
+            <input type="text" name="mobile" placeholder="Mobile Number">
+            <span class="form_error"></span>
+          </div>
+          <div class="form-group form-wrap">
+            <input type="text" name="email_id" placeholder="Email ID">
+            <span class="form_error"></span>
+          </div>
+          {%- comment -%}
+          <div class="form-group form-wrap">
+            <input type="password" value="" name="password" id="customer_password" placeholder="Password" />
+            <span class="form_error"></span>
+          </div>
+          <div class="form-group form-wrap">
+            <input type="password" value="" name="confirm_password" id="customer_password" placeholder="Confirm Password" />
+            <span class="form_error"></span>
+          </div>
+          <div class="form-group form-wrap">
+            <input type="date" name="dob" placeholder="Select DOB">
+            <span class="form_error"></span>
+          </div>
+          {%- endcomment -%}
+          <div class="information_form_message form_error"></div>
+          <div class="form-submit-wrap">
+            <button type="submit" class="btn custom_loading" value="Verify">Submit
+            <div class="custom-loader-wrap"><div class="custom-loader"></div></div></button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{%- style -%}
+  #login_with_phone_wrap{
+    display: none;
+  	position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 999999;
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+  #login_with_phone_wrap h3{
+  	text-align: center;
+    font-size: 23px;
+    line-height: 1.3;
+    border-bottom: 1px solid #dedede;
+    padding-bottom: 10px;
+  }
+  #login_with_phone_wrap .login_width_phone_step{
+  	display: none;
+  }
+  #login_with_phone_wrap .login_width_phone_step.active{
+  	display: block;
+  }
+  #login_with_phone_form,
+  #login_with_phone_wrap .login_email{
+  	padding: 20px;
+  }
+  #login_with_phone_form .form_error{
+  	text-align: center;
+  }
+  #login_with_phone_form input[type="text"]{
+  	text-align: center;
+    /* background-color: #f1f1f1; */
+    background-color: #fff;
+    border: 1px solid #dedede;
+  }
+  .login_with_phone_content{
+    width: 400px;
+    max-width: 90%;
+    background-color: #fff;
+    border: 1px solid #dedede;
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 5px;
+    -webkit-transition: top 300ms ease-in;
+    -moz-transition: top 300ms ease-in;
+    -o-transition: top 300ms ease-in;
+    transition: top 300ms ease-in;
+  }
+  .login_with_phone_content_wrap{
+    padding: 20px;
+    min-height: 300px;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+  @media only screen and (max-width: 600px){
+    .login_with_phone_content_wrap{
+      padding: 25px;
+    }
+  }
+  .login_with_phone_content.open{
+    top: 50%;
+    -webkit-transition: top 300ms ease-in;
+    -moz-transition: top 300ms ease-in;
+    -o-transition: top 300ms ease-in;
+    transition: top 300ms ease-in;
+  }
+  .login_width_phone_popup_close{
+    position: absolute;
+    top: -14px;
+    right: -13px;
+    color: #fff;
+    background-color: #4d4d4d;
+    z-index: 99;
+    line-height: 33px;
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    font-size: 27px;
+    text-align: center;
+  }
+  @media only screen and (max-width: 600px){
+    .login_width_phone_popup_close{
+      top: -11px;
+      right: -10px;
+      line-height: 26px;
+      width: 28px;
+      height: 28px;
+      font-size: 23px;
+    }
+  }
+  .login_width_phone_popup_close:hover, .login_width_phone_popup_close:focus{
+  	color: #cfcfcf;
+    text-decoration: none;
+  }
+  #login_with_phone_wrap .form-group{
+  	margin-bottom: 20px;
+  }
+  #login_with_phone_wrap .form-submit-wrap,
+  .login_email .form-button{
+  	text-align: center;
+    display: block;
+  }
+  input.verification_input {
+    margin: 0 5px;
+    text-align: center;
+    line-height: normal;
+    font-size: 33px;
+    border: solid 1px #ccc;
+    box-shadow: 0 0 5px #ccc inset;
+    outline: none;
+    width: 50px;
+    transition: all .2s ease-in-out;
+    border-radius: 3px;
+    height: 55px;
+    display: inline-block;
+    vertical-align: top;
+  }
+  input.verification_input:focus {
+    border-color: #96865d;
+    box-shadow: 0 0 5px #96865d inset;
+  }
+  input.verification_input::selection {
+    background: transparent;
+  }
+  .verification_input_wrap{
+  	text-align: center;
+    margin-bottom: 25px;
+  }
+  .verification_input_wrap .form_error, .verification_input_wrap .form_success{
+  	text-align: center;
+  }
+  .verification_link_wrap{
+  	text-align: center;
+    font-size: 16px;
+    margin-top: 15px;
+  }
+  .verification_link_wrap a{
+    margin-top: 5px;
+    display: inline-block;
+    color: #96865d;
+  }
+  input[type="date"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: var(--white);
+    border: 1px solid var(--line_color);
+    -webkit-box-sizing: border-box;
+    -khtml-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -o-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+    color: var(--body_font_color);
+    font-weight: var(--body_font_weight_medium);
+    font-size: var(--x_small);
+    line-height: calc(var(--x_small) * 1.25);
+    font-family: var(--body_font);
+    min-height: 40px;
+    padding: 11px var(--xx_small) 10px;
+    position: relative;
+    width: 100%;
+  }
+  .resend_call_me_wrap{
+  	margin-bottom: 7px;
+  }
+  #login_with_phone_verification_form .resend_call_me_wrap a{
+  	margin-right: 4px;
+    margin-left: 4px;
+    width: 120px;
+    border: 1px solid #96865d;
+    background-color: transparent;
+    color: #96865d !important;
+    padding: 8px 10px;
+    min-height: auto;
+    line-height: 1;
+  }
+  #login_with_phone_verification_form .resend_call_me_wrap a.send_code_again{
+    width: auto;
+    display: inline-block;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  #login_with_phone_verification_form .resend_call_me_wrap a.btn:hover{
+    background-color: #96865d !important;
+    color: #fff !important;
+  }
+/*   #login_with_phone_verification_form .call_me_btn{
+  	display: none !important;
+  } */
+  #login_with_phone_verification_form .call_me_btn.counting{
+  	position: relative;
+    pointer-events: none;
+    opacity: 0.8;
+    cursor: default;
+    background-color: #b7b5b1 !important;
+    color: #ffffff !important;
+    border-color: #b7b5b1;
+  }
+  #login_with_phone_verification_form .call_me_btn.counting:hover{
+    background-color: #b7b5b1 !important;
+  }
+  #login_with_phone_verification_form .send_code_again.counting{
+  	position: relative;
+    pointer-events: none;
+    opacity: 0.8;
+    cursor: default;
+    background-color: #b7b5b1 !important;
+    color: #ffffff !important;
+    border-color: #b7b5b1;
+  }
+  #login_with_phone_verification_form .send_code_again.counting:hover{
+    background-color: #b7b5b1 !important;
+  }
+  #login_with_phone_wrap #customer_login{
+  	text-align: center;
+  }
+  #login_with_phone_wrap #customer_login input{
+  	text-align: center;
+  }
+  #login_with_phone_wrap #customer_login .errors.note.form-error{
+  	display: none !important;
+  }
+  #login_with_phone_wrap #recover_password_btn{
+  	margin-top: 20px;
+    display: inline-block;
+  }
+  .login_with_phone_recover_customer_password form{
+  	margin-top: 30px;
+    padding: 20px;
+  }
+  .login_with_phone_recover_customer_password{
+  	text-align: center;
+  }
+  .login_with_phone_recover_customer_password input{
+  	text-align: center;
+  }
+  #login_with_phone_wrap label#recover-email-error{
+  	display: none !important;
+  }
+  #login_with_phone_verification_form input[name="email_id"]{
+  	text-align: center;
+    max-width: 270px;
+  }
+  #login_with_phone_verification_form .form{
+  	text-align: center;
+  }
+  #login_with_phone_verification_form .form .form_error{
+  	text-align: center;
+  }
+  #login_with_phone_verification_form .form-submit-wrap{
+  	margin-top: 15px;
+  }
+  #login_with_phone_wrap label#email_id-error{
+  	display: none !important;
+  }
+  .login_with_phone_shopify_login .form_error, .login_with_phone_recover_customer_password .form_error, #login_with_phone_email_form .form_error{
+  	text-align: center;
+  }
+  #login_with_phone_email_form{
+  	padding: 20px;
+  }
+  #login_with_phone_email_form input{
+  	text-align: center;
+  }
+  .login_with_phone_verify_code .change_phone_number{
+  	margin-left: 7px;
+    margin-right: 7px;
+  }
+  #login_with_phone_wrap .information_form_message{
+  	text-align: left;
+    margin-bottom: 15px;
+    margin-top: -15px;
+  }
+  #login_with_phone_wrap #customer_login .form_success{
+    text-align: center;
+  }
+  .phone_verify_code_message{
+    margin-bottom: 20px;
+    color: green;
+    text-align: center;
+  }
+{%- endstyle -%}

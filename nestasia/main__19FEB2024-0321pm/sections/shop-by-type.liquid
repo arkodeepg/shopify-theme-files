@@ -1,0 +1,218 @@
+<style>
+    #shopByTypeSection{
+      background-color: #f1ece3;
+    }
+    #shopByTypeSection .container{
+      position: relative;
+    }
+    #swiper-scrollbar-{{ section.id }}{
+      margin-bottom: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+     #swiper-button-next-{{ section.id }} {
+      right: 0;
+      position: absolute;
+      top: 40%;
+      z-index: 1;
+      transform: translateX(30px);
+  }
+  #swiper-button-prev-{{ section.id }} {
+      left: 0;
+      position: absolute;
+      top: 40%;
+      z-index: 1;
+      transform: translateX(-30px);
+  }
+  .swiper-container.shopByType{{section.index}}{
+      position: relative;
+      padding-top: calc(var(--master_spacing)/2);
+  }
+  .swiper-wrapper-{{ section.id }}{
+      margin-bottom: 20px;
+  }
+  @media screen and (max-width:800px){
+    #shopify-section-{{ section.id }} .swiper-btn-cont{
+      display: none;
+    }
+  }
+</style>
+{%- assign productTypeHandle = product.type | handle -%}
+{%- if collection -%}
+  {%- assign r_collection = collection -%}
+{%- elsif collections[productTypeHandle].products.size > 0 -%}
+  {%- assign r_collection = collections[productTypeHandle] -%}
+{%- else -%}
+  {%- comment -%}{%- assign r_collection = collections['all-products'] -%}{%- endcomment -%}
+  {%- for p_collection in product.collections -%}
+    {%- if p_collection.handle == 'kitchen'
+      or p_collection.handle == 'decor'
+      or p_collection.handle == 'bath-storage'
+      or p_collection.handle == 'soft-furnishings'
+      or p_collection.handle == 'stationery'
+      or p_collection.handle == 'garden'
+      or p_collection.handle == 'cup-mug'
+      or p_collection.handle == 'glassware'
+      or p_collection.handle == 'bowls-main-menu'
+      or p_collection.handle == 'snack-baskets'
+      or p_collection.handle == 'fondue'
+      or p_collection.handle == 'plate'
+      or p_collection.handle == 'cake-stands'
+      or p_collection.handle == 'dinner-set'
+      or p_collection.handle == 'coasters'
+      or p_collection.handle == 'cutlery'
+      or p_collection.handle == 'trays-main-menu'
+    -%}
+      {%- assign r_collection = p_collection -%}
+      {%- break -%}
+    {%- endif -%}
+    {%- assign r_collection = p_collection -%}
+  {%- endfor -%}
+{%- endif -%}
+{%- if r_collection == blank -%}
+  {%- assign r_collection = collections['all-products'] -%}
+{%- endif -%}
+{%- assign section_id = section.id -%}
+{%- assign rProductCount = 0 -%}
+{%- capture shopByType -%}
+  {%- paginate r_collection.products by 1000 -%}
+    {%- for r_product in r_collection.products -%}
+      {%- if r_product.type == product.type and r_product.handle != product.handle and r_product.available -%}
+        {%- assign productLoopClass = 'swiper-slide' -%}
+        {%- capture cycle -%}{% cycle cycleIndex: '', '', '', '', '' %}{%- endcapture -%}
+        {% comment %} <script>
+            console.log(`
+            product : {{r_product.title}}
+            cycle: {{cycle}}
+            class: {{productLoopClass}}
+            `)
+        </script> {% endcomment %}
+        {% comment %} {%- render 'product-loop', product: r_product, forloop_index0: forloop.index0, cycle: cycle, show_cta_button: false, class:productLoopClass -%} {% endcomment %}
+        <div class="{{productLoopClass}}">
+            {% render 'product-card', product: r_product %}
+        </div>
+        {%- assign rProductCount = rProductCount | plus: 1 -%}
+        {%- if rProductCount > 20 -%}
+          {%- break -%}
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+  {% assign dm_paginate_by = paginate.page_size %}{%- endpaginate -%}
+{%- endcapture -%}
+{%- if shopByType != blank -%}
+  <div
+    id="shopByTypeSection"
+    class="clearfix{% if rProductCount <= 4 %} section_bottom_remove{% endif %}"
+    data-section-type="shop-by-collection"
+    data-section-id="{{ section_id }}"
+  >
+    <div class="container">
+      <div class="">
+        <h2 class="text-center">
+          <a
+            class=" collection-title slider-collection_title"
+            href="/pages/search-results-page?q={{product.type | replace: ' ', '+'}}&page=1&rb_product_type={{product.type | replace: ' ', '+'}}"
+            >More in {{ product.type -}}
+          </a>
+        </h2>
+      </div>
+      <div class="related-products-content">
+        <div class="swiper-container-wrapper clearfix">
+          <div
+            data-section-id="{{ section_id }}"
+            class="swiper-container shopByType{{section.index}} product-loop{% if rProductCount == 3 %} tree_product{% endif %}{% if rProductCount > 2 %} plus-slider{% endif %}"
+            {% if rProductCount > 2 %}
+              id="swiper-carousel-{{ section_id }}"
+            {% endif %}
+          >
+            <div class="swiper-wrapper swiper-wrapper-{{ section_id }}">
+              {{ shopByType }}
+              <div class="product animate swiper-slide text-left three TwProductSeeall">
+                <div>
+                  <a
+                    class="TwProductSeeallaTag"
+                    href="/pages/search-results-page?q={{product.type | replace: ' ', '+'}}&page=1&rb_product_type={{product.type | replace: ' ', '+'}}"
+                    >See All</a
+                  >
+                </div>
+              </div>
+            </div>
+            {% if rProductCount > 2 %}
+              <div id="swiper-scrollbar-{{ section.id }}" class="swiper-scrollbar cswiper-scrollbar"></div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    <div class="swiper-btn-cont">
+      {%- if rProductCount > 2 -%}
+        <svg
+          id="swiper-button-prev-{{ section.id }}"
+          class="swiper-button-prev"
+          width="36"
+          height="36"
+          viewBox="0 0 36 36"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <rect width="36" height="36" rx="18" fill="#96865D"/><path d="M21 24L15 18L21 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <svg
+          id="swiper-button-next-{{ section.id }}"
+          class="swiper-button-next"
+          width="36"
+          height="36"
+          viewBox="0 0 36 36"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <rect x="0.226562" y="0.516113" width="36" height="36" rx="18" fill="#96865D"/><path d="M15.2266 24.5161L21.2266 18.5161L15.2266 12.5161" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      {%- endif -%}
+    </div>
+    </div>
+  </div>
+{%- endif -%}
+{% comment %} {% if dm_paginate_by %}{% render 'spurit_dmr_collection_template_snippet', paginate_by: dm_paginate_by %}{% endif %} {% endcomment %}
+
+<script defer>
+  const swiper{{section.index}} = new Swiper('.swiper-container.shopByType{{section.index}}', {
+    slidesPerView: 2.5,
+    spaceBetween: 10, // Default spacing value
+    scrollbar: {
+      el: '#swiper-scrollbar-{{ section.id }}',
+      draggable: true,
+    },
+    navigation: {
+      nextEl: '#swiper-button-next-{{ section_id }}',
+      prevEl: '#swiper-button-prev-{{ section_id }}',
+    },
+    breakpoints: {
+      // When the window width is 800px or greater (desktop)
+      800: {
+        slidesPerView: 4,
+        spaceBetween: 20,
+      }
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Shop by type",
+  "tag": "section",
+  "settings": [],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "Shop by type"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

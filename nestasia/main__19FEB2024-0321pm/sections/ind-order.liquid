@@ -1,0 +1,577 @@
+{% comment %} stands for indiviual order section {% endcomment %}
+<style>
+  .mobilesmOrderPage_arrow svg{
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+  .under_orderSm_skuMob{
+    font-size:16px;
+  }
+  .TrackOrderFor_underOrderDetail{
+    position: absolute;
+    right: 16px;
+    top: 0;
+  }
+  .relative_eight{
+    position:relative;
+  }
+  @media(max-width:640px){
+      .under_orderSm_skuMob{
+    font-size:11px;
+  }
+    .order_page_phNoSmNopadd{
+          padding: 0 0 calc(var(--small) * 1.25);
+    font-size: 14px;
+      margin: 0;
+    padding-left: 12px;
+    color: #1E1E1E;
+    padding-top: 0px;
+    line-height: 19px;
+    }
+    .account-page-main-wrapper .order-details-page .content-wrapper .account-user p{
+      padding-bottom:0px;
+    }
+      .TrackOrderFor_underOrderDetail{
+    position: unset;
+  }
+
+  }
+</style>
+<div class="container clearfix order-details-page">
+  <div class="three account-sidebar-wrap">
+    {%- render 'account-sidebar' -%}
+  </div>
+
+
+  <div class="nine main-content-wrapper">
+    
+    <div class="account-user twelve desktopView">
+      <div class="twelve header-top-wrap">
+        <button type="button" class="back-btn">
+          <a class="auto-width" href="{{ routes.account_url }}" title="{{ 'customer.account.return_to_my_Order' | t }}">
+            <svg width="19" height="15" viewBox="0 0 19 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.07031 0L8.57031 1.5L4 6.07031H18.0703V8.07031H4L8.57031 12.6406L7.07031 14.1406L0 7.07031L7.07031 0Z" fill="#001325" fill-opacity="0.92"></path></svg>
+          </a>
+        </button>
+        <h1 class="title">
+          {{ 'customer.account.return_to_my_Order' | t }}
+        </h1>
+      </div>    
+    </div>
+   
+    <div class="twelve">
+      <div class="content-wrapper">
+        <div class="clearfix">
+          <div class="eight relative_eight">
+            <div class="clearfix order-header-wrapper">
+              <div class="twelve trackBar">
+                <h1 class="order-number">
+                  <a class="mobilesmOrderPage_arrow mobileView" href="{{ routes.account_url }}"><svg width="15" height="15" viewBox="0 0 19 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.07031 0L8.57031 1.5L4 6.07031H18.0703V8.07031H4L8.57031 12.6406L7.07031 14.1406L0 7.07031L7.07031 0Z" fill="#001325" fill-opacity="0.92"></path></svg></a>
+                  {{ 'customer.order.title' | t }} {{ order.name }}
+                </h1>
+                
+              </div>
+
+              <div class="twelve">
+                <h2 class="order-date">
+                  {{ 'customer.order.date' | t }} {{ order.created_at | date: '%A' }}, {{ order.created_at | date: settings.month_day_year }} {{ 'customer.order.at' | t }} {{ order.created_at | date: '%l:%M %P' }}
+                </h2>
+              </div>
+
+              <div class="twelve Order_status">
+               <ul>
+                <li>{{ 'customer.orders.payment_status' | t }}: <strong>{{ order.financial_status_label }}</strong><span class="separator" aria-hidden="true"></span></li>
+                {% comment %}<li>{{ 'customer.orders.fulfillment_status' | t }}: <strong>{{ order.fulfillment_status_label }}</strong></li>{% endcomment %}
+                
+              </ul>
+              </div>
+
+              
+              {% if order.cancelled %}
+                <div class="twelve">
+                  <div id="order-cancelled" class="errors">
+                    <p class="cancel-label"><strong>Order :</strong> {{ 'customer.order.cancelled' | t }}</p>
+                    <p class="cancel-note"><strong>{{ 'customer.order.cancelled_date' | t }} :</strong> {{ order.cancelled_at | date: '%A' }}, {{ order.cancelled_at | date: settings.month_day_year }} {{ 'customer.order.at' | t }} {{ order.cancelled_at | date: '%l:%M %P' }}</p>
+                    <p class="cancel-note"><strong>{{ 'customer.order.cancelled_reason' | t }} :</strong> <span class="capitalize">{{ order.cancel_reason_label }}</span></p>
+                  </div>
+                </div>
+              {% endif %}
+              <div class="twelve">
+                <div class="status capitalize">
+                  <strong>{{ 'customer.order.payment_status' | t }}:</strong><span>{{ order.financial_status_label }}</span>
+                  <span class="separator" aria-hidden="true"></span>
+                  <strong>{{ 'customer.order.fulfillment_status' | t }}:</strong><span>{{ order.fulfillment_status_label }}</span>
+                </div>
+              </div>
+            </div>
+
+                   {% assign itemAwbs = nil %}
+              {% for line_item in order.line_items %}
+                {% unless itemAwbs contains line_item.fulfillment.tracking_number %}
+                  {% if itemAwbs != blank %}
+                    {% assign itemAwbs = itemAwbs | append:"," | append:line_item.fulfillment.tracking_number  %}
+                    {% else %}
+                      {% assign itemAwbs = line_item.fulfillment.tracking_number %} 
+                  {% endif %} 
+                
+                {% endunless %}
+              {% endfor %}
+
+          {% assign itemAwbsArr = itemAwbs | split:"," %}
+          <div class="cart-table account-table">
+          <h3 class="orders_title" style="display: none;">{{ 'customer.order.orders_title' | t }}</h3>
+          {% if itemAwbsArr.size > 0 %}
+            {% for itemAwb in itemAwbsArr  %}
+              <div id="group-awb-{{itemAwb}}" class="awb-group-item">
+                  <div class="track-order-flex">
+                    <h2 class="track-order-ship-title">Shipment {{ forloop.index }}</h2>
+                     <h3 class="awbNo" style="margin:0px;display:none;">{{ itemAwb}}</h3>
+                    <a href="#" class="Track_order TrackOrderFor_underOrderDetail"> Track Order</a>
+                  </div>
+                  {% assign images = false %} 
+                  {% for line_item in order.line_items %}
+                    {% if line_item.fulfillment.tracking_number ==  itemAwb %}
+                  <div id="{{ line_item.id }}" class="item relative product-id item-row clearfix item-wrapper">
+                    {% if line_item.variant.featured_media %}
+                      {% assign line_item_featured_media = line_item.variant.featured_media %}
+                    {% elsif line_item.product.featured_media %}
+                      {% assign line_item_featured_media = line_item.product.featured_media %}
+                    {% endif %}
+                    {% if line_item_featured_media %}
+                      <div class="three item-thumb-wrap title-align title-align-left"> 
+                        <a href="{{ line_item.variant.url | within: collections.all }} " title="{{ line_item.title | escape }} " class="item-image" tabindex="-1">
+                          {%- render 'image-load', img_src: line_item_featured_media, size: 180, id: line_item_featured_media.id, alt: line_item.title -%}
+                        </a>
+                      </div>
+                      {% assign images = true %}
+                    {% endif %}
+                    <div class="{% if line_item_featured_media %}nine{% else %}twelve{% endif %} item-details-wrap">
+                      <div class="item-details">
+                        <div class="item-title-wrap">
+                          <a href="{{ line_item.variant.url | within: collections.all }}" title="{{ line_item.title | escape }}">{{ line_item.product.title }}</a>
+                          {% if line_item.variant.title and line_item.variant.title != 'Default Title' %}
+                            <p><small>{{ line_item.variant.title }}</small></p>
+                          {% endif %}
+                        </div>
+                      
+                      <div class="product-price">
+                          <span class="order-money">
+                            {% if line_item.original_price != line_item.final_price %}
+                              {% if line_item.final_price > 0 %}
+                                {{ line_item.final_price | money }}
+                              {% else %}
+                                {{ 'cart.general.free' | t }}
+                              {% endif %}
+                              <del>
+                                {% if line_item.original_price > 0 %}
+                                  {{ line_item.original_price | money }}
+                                {% else %}
+                                  {{ 'cart.general.free' | t }}
+                                {% endif %}
+                              </del>
+                            {% else %}
+                              {{ line_item.original_price | money }}
+                            {% endif %}
+                            {%- comment -%}{{ 'customer.order.each' | t }}{%- endcomment -%}
+                          </span>
+                          <span>x </span>
+                          <span class="order-quantity"> {{ line_item.quantity }}</span>
+                          <span>= </span>
+                          <span class="order-total">
+                            {% if line_item.original_line_price != line_item.final_line_price %}
+                              {% if line_item.final_line_price > 0 %}
+                                {{ line_item.final_line_price | money }}
+                              {% else %}
+                                {{ 'cart.general.free' | t }}
+                              {% endif %}
+                              <del>
+                                {% if line_item.original_line_price > 0 %}
+                                  {{ line_item.original_line_price | money }}
+                                {% else %}
+                                  {{ 'cart.general.free' | t }}
+                                {% endif %}
+                              </del>
+                            {% else %}
+                              {{ line_item.original_line_price | money }}
+                            {% endif %}
+                          </span>
+                          {%- render 'product-unit-price', variant: line_item -%}
+                        </div>
+                      
+                        {% if line_item.sku != blank or line_item.line_level_discount_allocations != blank or line_item.fulfillment%}
+                          <div class="itm-info">
+                            <small>
+                              {% if line_item.sku != blank %}
+                                <span class="sku"><strong>{{ 'customer.order.sku' | t }}:</strong> {{ line_item.sku }}</span><br/>
+                              {% endif %}
+                              {% if line_item.line_level_discount_allocations != blank %}
+                                <strong>{{ 'customer.order.discount' | t }}:</strong> {% for discount_allocation in line_item.line_level_discount_allocations %}{{ discount_allocation.discount_application.title }} (-{{ discount_allocation.amount | money }})<br/>{% endfor %}
+                              {% endif %}
+                              {% comment %}
+                              {% if line_item.fulfillment %}
+                                <strong>{{ 'customer.order.fulfilled_at' | t }}:</strong> {{ line_item.fulfillment.created_at | date: settings.month_day_year }}{% if line_item.fulfillment.tracking_number %}<span class="separator" aria-hidden="true"></span><strong>{{ 'customer.order.tracking' | t }}:</strong> <a href="{{ line_item.fulfillment.tracking_url }}" title="{{ line_item.fulfillment.tracking_company | escape }} #{{ line_item.fulfillment.tracking_number}}">{{ line_item.fulfillment.tracking_company }} #{{ line_item.fulfillment.tracking_number }}</a>{% endif %}
+                              {% endif %}
+                              {% endcomment %}
+                            </small>
+                          <b>
+                          {% for line_item in order.line_items %}
+                            Qty: {{ line_item.quantity }}
+                          {% endfor %}
+                          </b>
+                          </div>
+                        {% endif %}
+    
+                      </div>
+                    </div>
+                  </div>
+                  
+                {% endif %}
+                {% endfor %}
+              
+                {% assign flag= false %}
+                {% for line_item in order.line_items %}
+                  {% if line_item.fulfillment.tracking_number ==  itemAwb %}
+                    {% if itemAwbsArr.size >= 1 %}
+                      {% assign flag = true %}
+                      {% break %}
+                    {%endif %}
+                  {% endif %}
+                {% endfor %}
+                {% if flag == true%}
+                  <div class="orderTrcingMain" style="background: #fff; display:none;">
+                    <div class="ShipingPage" style="padding: 15px;">
+                      <div class="order-item-wrap">
+                        <div class="trackingBar">
+                          <h1>Shipment</h1>
+                          <p>Tracking Number:<span>{{ itemAwb }}</span></p>
+                        </div>                    
+                      <div class="trckingHead">
+                        <div class="trackingBar ShippedStatusBar">
+                          <h3>Status: <span class="shipment_status"></span></h3>
+                          <p><b>Last updated at :</b> <b class="last_updated_dasta"></b></p>
+                        </div>
+              
+                        <div class="trcking-bar">
+                          <div class="trackingrow">
+                            <div class="order-tracking confirmed completed"> <span class="is-complete"></span>
+                              <p>Order Confirmed
+                                <br><span>{{ order.created_at | date: "%d %B %Y" }}</span></p>
+                            </div>
+                            <div class="order-tracking shipped completed"> <span class="is-complete"></span>
+                              <p>Shipped
+                                <br><span>{{ order.created_at | date: "%d %B %Y" }}</span></p>
+                            </div>
+                            <div class="order-tracking outDelivery"> <span class="is-complete"></span>
+                              <p><i class="text" style="font-style: normal;">Out For Delivery</i>
+                              <br><span class="OutDate" style="display:none"></span></p>
+                            </div>
+                            <div class="order-tracking arriving"> <span class="is-complete"></span>
+                              <p>Delivered
+                                <br><span class="ariveDate"></span></p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="OrderHelp"><h2>Need Help With your Order?<a href="https://nestasia.in/pages/contact-us"> Talk to Us Now</a></h2></div>
+                    </div>
+                    </div>
+                  </div>
+                {%endif%}
+            </div> 
+            {% endfor %}
+            {% else %}
+            {% assign images = false %} 
+            {% for line_item in order.line_items %}
+              <div id="{{ line_item.id }}" class="item relative product-id item-row clearfix item-wrapper">
+                {% if line_item.variant.featured_media %}
+                  {% assign line_item_featured_media = line_item.variant.featured_media %}
+                {% elsif line_item.product.featured_media %}
+                  {% assign line_item_featured_media = line_item.product.featured_media %}
+                {% endif %}
+                {% if line_item_featured_media %}
+                  <div class="three item-thumb-wrap title-align title-align-left"> 
+                    <a href="{{ line_item.variant.url | within: collections.all }} " title="{{ line_item.title | escape }} " class="item-image" tabindex="-1">
+                      {%- render 'image-load', img_src: line_item_featured_media, size: 180, id: line_item_featured_media.id, alt: line_item.title -%}
+                    </a>
+                  </div>
+                  {% assign images = true %}
+                {% endif %}
+                <div class="{% if line_item_featured_media %}nine{% else %}twelve{% endif %} item-details-wrap">
+                  <div class="item-details">
+                    <div class="item-title-wrap">
+                      <a href="{{ line_item.variant.url | within: collections.all }}" title="{{ line_item.title | escape }}">{{ line_item.product.title }}</a>
+                      {% if line_item.variant.title and line_item.variant.title != 'Default Title' %}
+                        <p><small>{{ line_item.variant.title }}</small></p>
+                      {% endif %}
+                    </div>
+
+                    <div class="product-price">
+                      <span class="order-money">
+                        {% if line_item.original_price != line_item.final_price %}
+                          {% if line_item.final_price > 0 %}
+                            {{ line_item.final_price | money }}
+                          {% else %}
+                            {{ 'cart.general.free' | t }}
+                          {% endif %}
+                          <del>
+                            {% if line_item.original_price > 0 %}
+                              {{ line_item.original_price | money }}
+                            {% else %}
+                              {{ 'cart.general.free' | t }}
+                            {% endif %}
+                          </del>
+                        {% else %}
+                          {{ line_item.original_price | money }}
+                        {% endif %}
+                        {%- comment -%}{{ 'customer.order.each' | t }}{%- endcomment -%}
+                      </span>
+    
+                      <span>x </span>
+                      <span class="order-quantity"> {{ line_item.quantity }}</span>
+                      <span>= </span>
+                      <span class="order-total">
+                        {% if line_item.original_line_price != line_item.final_line_price %}
+                          {% if line_item.final_line_price > 0 %}
+                            {{ line_item.final_line_price | money }}
+                          {% else %}
+                            {{ 'cart.general.free' | t }}
+                          {% endif %}
+                          <del>
+                            {% if line_item.original_line_price > 0 %}
+                              {{ line_item.original_line_price | money }}
+                            {% else %}
+                              {{ 'cart.general.free' | t }}
+                            {% endif %}
+                          </del>
+                        {% else %}
+                          {{ line_item.original_line_price | money }}
+                        {% endif %}
+                      </span>
+                      {%- render 'product-unit-price', variant: line_item -%}
+ 
+                    <!-- <p class="under_orderSm_skuMob"><strong>SKU: </strong> {{ line_item.sku }}</p> -->
+                    </div> 
+            
+                    {% if line_item.sku != blank or line_item.line_level_discount_allocations != blank or line_item.fulfillment%}
+                      <div class="itm-info">
+                        <div>
+                          {% if line_item.sku != blank %}
+                            <span class="sku"><strong>{{ 'customer.order.sku' | t }}:</strong> {{ line_item.sku }}</span><br/>
+                          {% endif %}
+                          {% if line_item.line_level_discount_allocations != blank %}
+                            <span>{{ 'customer.order.discount' | t }}:</span> {% for discount_allocation in line_item.line_level_discount_allocations %}{{ discount_allocation.discount_application.title }} (-{{ discount_allocation.amount | money }})<br/>{% endfor %}
+                          {% endif %}
+                          {% if line_item.fulfillment %}
+                            <span>{{ 'customer.order.fulfilled_at' | t }}:</span> {{ line_item.fulfillment.created_at | date: settings.month_day_year }}{% if line_item.fulfillment.tracking_number %}<span class="separator" aria-hidden="true"></span><span>{{ 'customer.order.tracking' | t }}:</span> <a href="{{ line_item.fulfillment.tracking_url }}" title="{{ line_item.fulfillment.tracking_company | escape }} #{{ line_item.fulfillment.tracking_number}}">{{ line_item.fulfillment.tracking_company }} #{{ line_item.fulfillment.tracking_number }}</a>{% endif %}
+                          {% endif %}
+                        </div>
+                        <div class="smQtyorderpage">Qty: {{ line_item.quantity }}</div>
+                      </div>
+                    {% endif %}
+          
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          {% endif %}  
+            </div>
+
+            
+            <div class="account-user clearfix">
+              <div class="twelve">
+
+
+                 <h3 class="Order_Payment_Summary">Order Payment Summary</h3>
+            <div class="account-table SmAccountTable">
+              <div class="footer-item-wrap clearfix">
+                <div class="ten ignore orders text-left">{{ 'customer.order.subtotal' | t }}:</div>
+                <span class="two item-details ignore half">
+                  <div class="text-right">{{ order.line_items_subtotal_price | money }}</div>
+                </span>
+              </div>
+              {% if order.cart_level_discount_applications != blank %}
+                <div class="footer-item-wrap clearfix">
+                  <div class="ten ignore orders text-left">{% if order.cart_level_discount_applications.size > 1 %}{{ 'customer.order.discounts' | t }}:{% else %}{{ 'customer.order.discount' | t }}:{% endif %}</div>
+                  <span class="two item-details ignore half">
+                    {% comment %} <h1>{{order.cart_level_discount_applications.size}}</h1> {% endcomment %}
+                    <div class="text-right">₹ 0</div> 
+                  </span>
+                </div>
+                {% for discount_application in order.cart_level_discount_applications %}
+                <div class="footer-item-wrap clearfix">
+                  <div class="ten ignore orders text-left"><div>{{ discount_application.title }}:</div></div>
+                  <span class="two item-details ignore half">
+                    <div class="text-right"><div>-{{ discount_application.total_allocated_amount | money }}</div></div>
+                  </span>
+                </div>
+                {% endfor %}
+              {% endif %}
+              {% for shipping_method in order.shipping_methods %}
+                <div class="footer-item-wrap clearfix">
+                  <div class="ten ignore orders text-left"><div>{{ shipping_method.title }}:</div></div>
+                  <span class="two item-details ignore half">
+                    <div class="text-right"><div>{{ shipping_method.price | money }}</div></div>
+                  </span>
+                </div>
+              {% endfor %}
+              {% if order.tax_lines != blank %}
+                <div class="footer-item-wrap clearfix">
+                  <div class="ten ignore orders text-left">{{ 'customer.order.tax' | t }}</div>
+                  <span class="two item-details ignore half">
+                    <div class="text-right">&nbsp;</div>
+                  </span>
+                </div>
+                {% for tax_line in order.tax_lines %}
+                  <div class="footer-item-wrap clearfix">
+                    <div class="ten ignore orders text-left">
+                        <div>{{ tax_line.title }} {{ tax_line.rate | times: 100 }}%:</div>
+                    </div>
+                    <span class="two item-details ignore half">
+                      <div class="text-right"><div>{{ tax_line.price | money }}</div></div>
+                    </span>
+                  </div>
+                {% endfor %}
+              {% endif %}
+              <div class="footer-item-wrap clearfix UnderSmAccountTableTotalOrder">
+                <div class="ten ignore orders text-left">
+                  <strong>{{ 'customer.order.total' | t }}:</strong>
+                </div>
+                <div class="two item-details text-right">
+                  <strong class="text-right">{{ order.total_price | money }}</strong>
+                </div>
+              </div>    
+            </div> 
+
+              <div class="shippingandbill_mobileSm">
+                <h3>{{ 'customer.order.billing_address' | t }}</h3>
+                {{ order.billing_address | format_address }}
+                <div class="order_page_phNoSmNopadd">{{ order.phone | remove: '+91' }}</div>
+                {% if order.shipping_address %}
+                <div class="account-user">
+                  <h3>{{ 'customer.order.shipping_address' | t }}</h3>
+                  {{ order.shipping_address | format_address }}
+                  <div class="order_page_phNoSmNopadd">{{ order.phone | remove: '+91' }}</div>
+                </div>
+                {% endif %}
+                </div>
+                
+              </div>
+            </div>
+            {% assign itemAwbs = nil %}
+              {% for line_item in order.line_items %}
+                {% unless itemAwbs contains line_item.fulfillment.tracking_number %}
+                  {% if itemAwbs != blank %}
+                    {% assign itemAwbs = itemAwbs | append:"," | append:line_item.fulfillment.tracking_number  %}
+                    {% else %}
+                      {% assign itemAwbs = line_item.fulfillment.tracking_number %} 
+                  {% endif %} 
+                
+                {% endunless %}
+              {% endfor %}
+        
+          </div>
+          <div class="four">
+            <div class="account-user desktopView clearfix">
+              <div class="twelve">
+                <h3>{{ 'customer.order.billing_address' | t }}</h3>
+                {{ order.billing_address | format_address }}
+                {% if order.shipping_address %}
+                <div class="account-user">
+                  <h3>{{ 'customer.order.shipping_address' | t }}</h3>
+                  {{ order.shipping_address | format_address }}
+                </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>       
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script defer>
+$(document).ready(function(){
+
+  function dateModified (OrderDate){
+    let dateFilter = OrderDate.toDateString().split(" ");
+    let year = dateFilter[3];
+    let day = dateFilter[2];
+    var months = {
+        "Jan": "January",
+        "Fab": "February",
+        "Mar": "March",
+        "Apr": "April",
+        "May": "May",
+        "Jun": "June",
+        "July": "July",
+        "Aug": "August",
+        "Sep": "September",
+        "Oct": "October",
+        "Nov": "November",
+        "Dec": "December"
+    }
+    //function getOrdinal(n) {
+    //    if((parseFloat(n) == parseInt(n)) && !isNaN(n)){
+    //        var s=["th","st","nd","rd"],
+    //        v=n%100;
+    //        return n+(s[(v-20)%10]||s[v]||s[0]);
+    //    }
+    //    return n;     
+    //}
+    return `${day} ${months[dateFilter[1]]}, ${year}`;
+  }
+  
+  $('.Track_order').on('click',function(e){
+    e.preventDefault();
+    $(this).closest('.awb-group-item').children('.orderTrcingMain').css("display","block");
+    var groupId = $(this).closest('.awb-group-item').attr('id');
+    var $container = $("html,body");
+    var $scrollTo = $(this).parents('.awb-group-item').children('.orderTrcingMain');
+    $container.animate({scrollTop: $scrollTo.offset().top - 65, scrollLeft: 0},400);   
+    var awbNo = $(this).closest('.awb-group-item').find('.awbNo').text();
+    var itemsdata = {
+      waybill_no: awbNo
+    };
+    $.ajax({
+      type: "POST",
+      url: "https://support.nestasia.in/api/track-delivery",
+      data: itemsdata,
+      dataType: "json",
+      success: function (data) {
+        for(var i=1; i <= data.response.ShipmentData.length; i++){
+          let Count = i - 1;
+          var statusDateTime = new Date(data.response.ShipmentData[Count].Shipment.Status.StatusDateTime).toDateString();
+          $(`#${groupId} .last_updated_dasta`).html(statusDateTime);         
+          var shipmentStatus = data.response.ShipmentData[Count].Shipment.Status.Status;
+          var outDateTime = new Date(data.response.ShipmentData[Count].Shipment.Status.StatusDateTime);   
+          var PickUpDate = new Date(data.response.ShipmentData[Count].Shipment.PickUpDate);            
+          var ExpectedDeliveryDate = new Date(data.response.ShipmentData[Count].Shipment.ExpectedDeliveryDate);
+          var shipmentInstructions =  data.response.ShipmentData[Count].Shipment.Status.Instructions;
+          if(shipmentStatus == 'Delivered' && outDateTime != undefined ){
+            $(`#${groupId} .shipment_status`).html(shipmentStatus);
+            $(`#${groupId} .order-tracking:eq(2)`).addClass('completed');
+            $(`#${groupId} .order-tracking:eq(3)`).addClass('completed');
+            $(`#${groupId} .OutDate`).css('display','block');
+            $(`#${groupId} .OutDate`).html(dateModified(PickUpDate)); 
+            $(`#${groupId} .arriving .ariveDate`).html(dateModified(outDateTime)); 
+            $(`#${groupId} .last_updated_dasta`).html(dateModified(outDateTime));
+          } else{
+            $(`#${groupId} .shipment_status`).html(`${shipmentStatus} (${shipmentInstructions})`);
+            $(`#${groupId} .order-tracking:eq(2)`).addClass('completed');
+            $(`#${groupId} .order-tracking:eq(3)`).removeClass('completed');
+            $(`#${groupId} .outDelivery .text`).html(shipmentStatus);
+            $(`#${groupId} .OutDate`).css('display','block');
+            $(`#${groupId} .OutDate`).html(`${dateModified(PickUpDate)} (${shipmentInstructions})`); 
+            $(`#${groupId} .arriving .ariveDate`).html(dateModified(ExpectedDeliveryDate)); 
+          }
+        }
+      },
+      error: function (error) {
+        console.log('error',error);
+      }
+    });
+  });
+});
+</script>
+

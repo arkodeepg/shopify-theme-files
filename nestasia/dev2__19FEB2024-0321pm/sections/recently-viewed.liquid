@@ -1,0 +1,269 @@
+<style>
+  .slick-disabled {
+    background: #cac2ae !important;
+  }
+  .RecentProductsPDP {
+    position: relative;
+  }
+  .RecentProductsPDP .ex_btn_next {
+    padding: 9px 13px 7px 13px;
+    border-radius: 50% !important;
+    position: absolute;
+    z-index: 1;
+    top: 43%;
+    transform: translateY(-50%);
+    right: -30px;
+  }
+  .RecentProductsPDP .ex_btn_prev {
+    padding: 9px 15px 7px 13px;
+    border-radius: 50% !important;
+    position: absolute;
+    z-index: 1;
+    top: 43%;
+    transform: translateY(-50%);
+    left: -30px;
+  }
+  .RecentProductsPDP .recent_heading {
+    padding-top: 20px;
+  }
+  .RecentProductsPDP .slick-track {
+    margin-left: inherit;
+  }
+  .recent_heading {
+    display: none;
+  }
+  .related-products-content {
+    position: relative;
+  }
+  #swiper-button-next-{{ section.id }} {
+    right: 0;
+    position: absolute;
+    top: 50%;
+    z-index: 1;
+    transform: translateX(30px);
+  }
+  #swiper-button-prev-{{ section.id }} {
+    left: 0;
+    position: absolute;
+    top: 50%;
+    z-index: 1;
+    transform: translateX(-30px);
+  }
+  @media screen and (max-width: 800px){
+    #shopify-section-{{section.id }} .swiper-btn-cont{
+      display: none;
+    }
+  }
+</style>
+
+<div
+  id="RecentProductsPDP"
+  class="RecentProductsPDP"
+>
+  <div class="container relative">
+    <div class="recent_heading">
+      <h2 class="text-center">
+        <a
+          class=" collection-title slider-collection_title"
+          href="/pages/search-results-page?q={{product.type | replace: ' ', '+'}}&page=1&rb_product_type={{product.type | replace: ' ', '+'}}"
+        >
+          {{- section.settings.heading -}}
+        </a>
+      </h2>
+    </div>
+    <div class="related-products-content swiper-container container">
+      <div class="swiper-wrapper recentSwiperPdp"></div>
+      <div id="swiper-scrollbar-{{ section.id }}" class="swiper-scrollbar cswiper-scrollbar"></div>
+    </div>
+    <div class="swiper-btn-cont">
+      <svg
+        id="swiper-button-prev-{{ section.id }}"
+        class="swiper-button-prev"
+        width="36"
+        height="36"
+        viewBox="0 0 36 36"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect width="36" height="36" rx="18" fill="#96865D"/><path d="M21 24L15 18L21 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <svg
+        id="swiper-button-next-{{ section.id }}"
+        class="swiper-button-next"
+        width="36"
+        height="36"
+        viewBox="0 0 36 36"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect x="0.226562" y="0.516113" width="36" height="36" rx="18" fill="#96865D"/><path d="M15.2266 24.5161L21.2266 18.5161L15.2266 12.5161" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Recently Viewed",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Recently Viewed"
+    }
+  ]
+}
+{% endschema %}
+
+<script defer>
+  $( document ).ready(function() {
+  function htmlinjection(callback){
+  let rececntPdp = [];
+  let info_each = "";
+  let total_info = "";
+  let counter = 0;
+  let sessionforRecentArrayValue = JSON.parse(localStorage.getItem("rececntPdp"));
+  {% comment %} console.log(`sessionforRecentArrayValue - ${JSON.stringify(sessionforRecentArrayValue)}`); {% endcomment %}
+  //console.log("sessionforRecentArrayValue value",sessionforRecentArrayValue);
+  if (sessionforRecentArrayValue !== null){
+    sessionforRecentArrayValue.push({id: {{ product.selected_or_first_available_variant.id }}, product: {{ product | json }} });
+
+    
+      const uniqueIds = new Map();
+      sessionforRecentArrayValue.forEach(item => {
+          uniqueIds.set(item.id, item);
+      });
+     sessionforRecentArrayValue = Array.from(uniqueIds.values());
+
+    localStorage.setItem("rececntPdp", JSON.stringify(sessionforRecentArrayValue));
+    sessionforRecentArrayValue.reverse();
+    
+    //console.log("sesddsion value");
+    for(let i = 1; i < sessionforRecentArrayValue.length; i++){
+      //console.log("sessionforRecentArrayValue.length",sessionforRecentArrayValue.length)
+      if( sessionforRecentArrayValue.length < 2){
+        $(".recent_heading").css("display","none");
+      }else{
+        $(".recent_heading").css("display","block");
+      }
+      
+      let discountRecent = Math. trunc(((sessionforRecentArrayValue[i].product.compare_at_price - sessionforRecentArrayValue[i].product.price)/sessionforRecentArrayValue[i].product.compare_at_price)*100);
+      let compareatPrice = sessionforRecentArrayValue[i].product.compare_at_price /100 ;
+      let flagForcomPrice = false;
+      if(compareatPrice > 0){
+        flagForcomPrice = true;
+      }
+      let prodprice = parseInt(sessionforRecentArrayValue[i].product.price);
+      let compprice = parseInt(sessionforRecentArrayValue[i].product.compare_at_price);
+      let discount = ((parseInt(sessionforRecentArrayValue[i].product.compare_at_price) - parseInt(sessionforRecentArrayValue[i].product.price, theme.moneyFormat))*100)/parseInt(sessionforRecentArrayValue[i].product.compare_at_price)
+      if(compprice > prodprice){
+        info_each = `
+          <a href="https://nestasia.in/products/${sessionforRecentArrayValue[i].product.handle}" class="product-card_outer swiper-slide">
+              <img loading="lazy" class="lazy" data-src="${sessionforRecentArrayValue[i].product.featured_image}" alt="${sessionforRecentArrayValue[i].product.featured_image.alt}" class="product-card_image">
+              <div class="product-card_title">{{product.title}}</div>
+              <div class="product-card_price-cont">
+                  <div class="product-cart_actpri">${Shopify.formatMoney(sessionforRecentArrayValue[i].product.price, theme.moneyFormat)}</div>
+                  <div class="product-cart_comppri">${Shopify.formatMoney(sessionforRecentArrayValue[i].product.compare_at_price, theme.moneyFormat)}</div>
+                  {% comment %}
+                  {% if salePrice and salePrice > regularPrice %}
+                      {% assign discountAmount = regularPrice | minus: salePrice %}
+                      {% assign discountPercentage = discountAmount | times: 100 | divided_by: regularPrice %}
+                      <div class="product-cart_discount">({{ product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round  | append: '%' }} Off)</div>
+
+                  {% endif %}
+                {% endcomment %}
+                <div class="product-cart_discount">(${Math.round(discount)}% Off)</div>
+              </div>
+          </a>
+        `
+        }
+        else{
+        info_each = `
+          <a href="${sessionforRecentArrayValue[i].product.url}" class="product-card_outer swiper-slide">
+              <img src="${sessionforRecentArrayValue[i].product.featured_image}" alt="${sessionforRecentArrayValue[i].product.featured_image.alt}" class="product-card_image">
+              <div class="product-card_title">{{product.title}}</div>
+              <div class="product-card_price-cont">
+                  <div class="product-cart_actpri">${Shopify.formatMoney(sessionforRecentArrayValue[i].product.price, theme.moneyFormat)}</div>
+              </div>
+          </a>
+        `
+        }
+       counter++;
+       total_info = total_info + info_each;
+      
+      if( i >15){
+        break;
+      }
+      
+    }
+    $('.recentSwiperPdp').html(total_info);
+    if(counter>4) console.log("number of products in recently viewed more than 4") 
+    else {
+      $('#shopify-section-{{ section.id }} .swiper-btn-cont').hide()
+    }
+    callback();
+  }
+  else{
+  rececntPdp.push({id: {{ product.selected_or_first_available_variant.id }}, product: {{ product | json }} });
+  console.log("rececntPdp",rececntPdp);
+  localStorage.setItem("rececntPdp", JSON.stringify(rececntPdp));
+  callback();
+  }
+  }
+
+  function sliderinit(){
+    console.log("data entered")
+      const swiper{{section.index}} = new Swiper('.swiper-container.related-products-content', {
+    slidesPerView: 2.5,
+    spaceBetween: 10, // Default spacing value
+     scrollbar: {
+      el: '#swiper-scrollbar-{{ section.id }}',
+      draggable: true,
+    },
+    navigation: {
+      nextEl: '#swiper-button-next-{{ section.id }}',
+      prevEl: '#swiper-button-prev-{{ section.id }}',
+    }, 
+    breakpoints: {
+      // When the window width is 800px or greater (desktop)
+      800: {
+        slidesPerView: 4,
+        spaceBetween: 20,
+      }
+    }
+  });
+  }
+
+  htmlinjection(sliderinit);
+});
+</script>
+
+{% comment %}
+  <script async>
+    $('.recentSwiperPdp').slick({
+      infinite: false,
+      arrows: true,
+      prevArrow:
+        "<button class='ex_btn ex_btn_prev flickity-prev-next-button previous' type='button' aria-label='previous'><svg xmlns='http://www.w3.org/2000/svg' width='10' height='17' viewBox='0 0 10 17' fill='none'><path d='M9.00076 1.33908L1.92969 8.41016L9.00076 15.4812' stroke='white' stroke-width='2'/></svg></button>",
+      nextArrow:
+        "<button class='ex_btn ex_btn_next flickity-prev-next-button next' type='button' aria-label='next'><svg xmlns='http://www.w3.org/2000/svg' width='10' height='16' viewBox='0 0 10 16' fill='none'><path d='M0.928928 0.928928L8 8L0.928928 15.0711' stroke='white' stroke-width='2'/></svg></button>",
+      slidesToShow: 4,
+      slidesToScroll: 1,
+      responsive: [
+        {
+          breakpoint: 600,
+          settings: {
+            arrows: false,
+            slidesToShow: 2.5,
+            slidesToScroll: 2,
+          },
+        },
+      ],
+    });
+  </script>
+{% endcomment %}

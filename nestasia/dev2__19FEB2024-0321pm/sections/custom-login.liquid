@@ -1,0 +1,164 @@
+{% assign sectionid = 'shopify-section-' | append: section.id %}
+<style>
+  #{{sectionid}}{
+    padding-top: calc(var(--master_spacing)*3);
+    padding-bottom: calc(var(--master_spacing)*3);
+    margin: 0;
+    background-color: #f3f3f3;
+  }
+  .login-page-wrapper .box-layout-wrapper {
+    background: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid var(--line_color);
+}
+  .diff_line_or.login_page {
+    text-align: center;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    position: relative;
+  }
+  .diff_line_or span {
+    background-color: #fff;
+    display: inline-block;
+    padding: 0 7px;
+    position: relative;
+    z-index: 1;
+}
+  .diff_line_or:before {
+    content: '';
+    height: 1px;
+    width: 100%;
+    background-color: var(--line_color);
+    display: block;
+    position: absolute;
+    top: 50%;
+    z-index: 0;
+}
+  .login-page-wrapper h1{
+    font-size: var(--x_large);
+    line-height: calc(var(--x_large)*1.25);
+  }
+  .login-page-wrapper span.form label {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+  @media screen and (max-width: 800px){
+    
+  }
+</style>
+
+{%- if customer -%}
+  <script defer>
+	window.location.href = '/cart';
+  </script>
+{%- endif -%}
+<div class="container clearfix login-page-wrapper">
+
+  <div id="resetSuccess" class="hidden"><div class="success"><p>{{ 'customer.recover_password.success' | t }}</p></div></div>
+
+  <div class="twelve"><h1>{{ 'customer.login.title' | t }}</h1></div>
+  <div class="customer_login_wrap_two_column">
+  <div class="customer-login six" id="customer_login">
+    <div class="box-layout-wrapper">
+      {% form 'customer_login' %} 
+      {%- comment -%}{{ form.errors | default_errors }}{%- endcomment -%}
+       {%- render 'form-errors-custom', errors: form.errors -%}
+      <div class="login_email clearfix">
+        <span class="form">
+          <label for="customer_email">{{ 'customer.login.email' | t }}</label>
+          <input type="email" value="" name="customer[email]" id="customer_email" placeholder="{{ 'customer.login.email' | t }}"  autocorrect="off" autocapitalize="off" required/>
+        </span>
+        <span class="form">
+          <label for="customer_password">{{ 'customer.login.password' | t }}{% if form.password_needed %}<span class="right"><small><a href="javascript:void(0)" id="recover_password_btn" title="{{ 'customer.login.forgot_password' | t }}" class="form hidden">{{ 'customer.login.forgot_password' | t }}</a></small></span>{% endif %}</label>
+          <input type="password" value="" name="customer[password]" id="customer_password" placeholder="{{ 'customer.login.password' | t }}" required />
+        </span>
+        <div style="text-align:center;">
+          <button class="btn" type="submit">{{ 'customer.login.sign_in' | t }}</button>
+        </div>
+        <div class="diff_line_or login_page"><span>Or</span></div>
+        <div style="text-align:center;">
+          <a href="javascript:void(0)" class="btn" onclick="theme.loginWithPhoneOpen()">Login / Sign up with OTP</a>
+        </div>
+      </div>
+      {% endform %}
+    </div>
+
+  </div>
+  
+  <div class="six">
+    <div class="box-layout-wrapper recover-password-wrapper">
+      <div class="recover-password" id="recover_password">
+        <h3>Forgot Password{%- comment -%}{{ 'customer.recover_password.title' | t }}{%- endcomment -%}</h3>
+        <p>{{ 'customer.recover_password.subtext' | t }}</p>
+    
+        {% form 'recover_customer_password' %}
+
+        {%- comment -%}{{ form.errors | default_errors }}{%- endcomment -%}
+      	 {%- render 'form-errors-custom', errors: form.errors -%}  
+        
+        <div class="clearfix">
+          <span class="form">
+            <label for="recover-email">{{ 'customer.recover_password.email' | t }}</label>
+            <input type="email" value="" name="email" id="recover-email" class="{% if form.posted_successfully? %}reset-success {% endif %}{% if form.errors %}reset-error {% endif %}clearfix" placeholder="{{ 'customer.recover_password.email' | t }}" autocorrect="off" autocapitalize="off" required />
+          </span>
+          <span>
+            <button class="btn" type="submit">{{ 'customer.recover_password.submit' | t }}</button><a href="javascript:void(0)" id="customer_login_btn" title="{{ 'customer.recover_password.cancel' | t }}" class="account-secondary hidden">{{ 'customer.recover_password.cancel' | t }}</a>
+          </span>
+        </div>
+        {% endform %}
+      </div>
+    </div>
+    {%- comment -%}
+    <div class="box-layout-wrapper clearfix">
+      <div class="guest-login left twelve">
+        {% if shop.checkout.guest_login %}
+        <h3>{{ 'customer.login.guest_title' | t }}</h3>
+        <p>{{ 'customer.login.guest_subtext' | t }}</p>
+        {% form 'guest_login' %}
+        <div class=" bottompad clearfix">
+          <a href="javascript:void(0)" class="btn" onclick="theme.loginWithPhoneOpen()">{{ 'customer.login.guest_continue' | t }}</a>
+          {%- comment -%}<button class="btn" type="submit">{{ 'customer.login.guest_continue' | t }}</button>{%- endcomment -%}
+        </div>
+        {% endform %}
+        {% else %}
+        <h3>{{ 'customer.register.title' | t }}</h3>
+        <p>{{ 'customer.register.subtext' | t }}</p>
+        <div class="clearfix">
+          <a href="javascript:void(0)" class="btn" onclick="theme.loginWithPhoneOpen()">{{ 'customer.login.sign_in' | t }}</a>
+          {%- comment -%}<a class="btn" title="{{ 'customer.register.subtext' | t }}" href="{{ routes.account_register_url }}">{{ 'customer.register.submit' | t }}</a>{%- endcomment -%}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {%- endcomment -%}
+  </div>
+  </div>
+  
+
+</div>
+
+<script defer>
+  if(document.querySelectorAll('#customer_login [name="checkout_url"]').length){
+    document.querySelectorAll('#customer_login [name="checkout_url"]')[0].value= "https://nestasia.in/cart"
+  }
+</script>
+{% schema %}
+{
+  "name": "custom login",
+  "tag": "section",
+  "settings": [],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "custom login"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

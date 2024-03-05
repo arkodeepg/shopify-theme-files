@@ -1,0 +1,45 @@
+{%- if product.metafields.reviews.rating.value != blank or comparison == true -%}
+
+{%- liquid
+  if comparison == true and product.metafields.reviews.rating.value == blank
+    assign rating_value_rating = 0
+    assign rating_count = 0
+    assign rating_scale_max = 5
+  else
+    assign rating_value_rating = product.metafields.reviews.rating.value.rating  
+    assign rating_count = product.metafields.reviews.rating_count
+    assign rating_scale_max = product.metafields.reviews.rating.value.scale_max
+  endif
+  assign rating_decimal = 0
+  assign decimal = rating_value_rating | modulo: 1
+  if decimal >= 0.3 and decimal <= 0.7
+    assign rating_decimal = 0.5
+  elsif decimal > 0.7
+    assign rating_decimal = 1
+  endif  
+  capture rating_value
+    echo rating_value_rating | round: 1
+    echo ' / '
+    echo rating_scale_max
+  endcapture  
+-%}
+
+{% style %}
+.stars {
+  --percent: calc((var(--rating) / var(--rating_max) + var(--rating_decimal) * var(--star_size) / (var(--rating_max) * (var(--star_spacing) + var(--star_size)))) * 100%);
+}
+{% endstyle %}
+
+<div class="reviews {% if divider %}form-blocks {% else %}bottompad-quarter {% endif %}clearfix" {{ block.shopify_attributes }}>
+  <span class="stars-rating" role="img" aria-label="{{ 'products.general.reviews' | t: total: rating_value, count: rating_count | escape }}">
+    <span class="stars" 
+          style="--rating: {{ rating_value_rating | floor }};--rating_max: {{ rating_scale_max }}; --rating_decimal: {{ rating_decimal }};" 
+          aria-hidden="true"></span>
+  </span>
+  {% if product_page %} 
+  <span class="stars-count">{{ 'products.general.reviews' | t: total: rating_value, count: rating_count }}</span>
+  {% else %}
+  <span class="stars-count">({{ rating_count }})</span>
+  {% endif %}
+</div>
+{%- endif -%}

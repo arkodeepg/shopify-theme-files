@@ -1,0 +1,424 @@
+{% if section.blocks.size > 0 %}
+
+  {%- liquid
+    assign full_width = section.settings.full_width
+    assign background_color = false
+    if section.settings.background != 'rgba(0,0,0,0)' and section.settings.background != blank
+      assign background_color = true
+      assign background_color_section = section.settings.background
+    endif    
+    if section.settings.background_gradient != 'rgba(0,0,0,0)' and section.settings.background_gradient != blank
+      assign background_color = true
+      assign background_color_section = section.settings.background_gradient
+    endif
+    capture classes
+      echo 'dynamic-section dynamic-section-'
+      echo section.id 
+      echo ' section-padding-top section-padding-bottom section-margin-bottom '
+      if section.settings.padding_border
+        echo 'section-border '
+      endif
+    endcapture
+    assign slider_color = false
+    if section.settings.use_slider_color != 'rgba(0,0,0,0)' and section.settings.use_slider_color != blank
+      assign slider_color = true
+      assign slider_color_section = section.settings.use_slider_color
+    endif
+  -%}
+  
+  {% style %}
+    .dynamic-section-{{ section.id }} { 
+      {%- if background_color -%}
+      --background:{{ background_color_section }};
+      {%- endif -%}
+      {% if slider_color %}
+      --arrow_color:{{ slider_color_section }};
+      {% endif %}
+      --section-padding-top-mobile: {{ section.settings.padding_top_mobile }}px;
+      --section-padding-top-desktop: {{ section.settings.padding_top_desktop }}px;
+      --section-padding-bottom-mobile: {{ section.settings.padding_bottom_mobile }}px;
+      --section-padding-bottom-desktop: {{ section.settings.padding_bottom_desktop }}px;
+      --section-margin-bottom-mobile: {{ section.settings.margin_bottom_mobile }}px;
+      --section-margin-bottom-desktop: {{ section.settings.margin_bottom_desktop }}px;
+    }
+  {% endstyle %}
+  
+  <section data-section-id="{{ section.id }}" 
+           data-section-type="slideshow"
+           {% if section.blocks.size > 1 %}data-url="{{ 'script.slideshow.js' | asset_url }}"
+           data-slideshow-type="image"
+           data-carousel-type="slideshow"
+           {% endif %}id="slideshow-{{ section.id }}"
+           class="{{ classes }}{% if section.blocks.size > 1 %}glider-enabled {% endif %}clearfix">
+  
+    <div class="relative clearfix">
+      <div class="glider-contain tab-body">
+        <div{% if section.blocks.size > 1 %} id="glider-carousel-{{ section.id }}" data-glider-autoplay="{{ section.settings.auto_rotate_every | times: 1000 }}" data-glider-autorotate="{% if section.settings.auto_rotate %}true{% else %}false{% endif %}" class="glider slideshow"{% endif %}>
+          <div class="glider-track slideshow">
+  
+            {% for block in section.blocks %}
+  
+              {%- liquid
+                assign screen = ''
+                if forloop.first
+                  if section.settings.enable_lazy
+                    assign lazy = 'lazy'
+                  else
+                    assign lazy = 'eager'
+                  endif
+                else
+                  assign lazy = 'lazy'
+                endif
+                if block.settings.background_img_d != blank or block.settings.background_img_m != blank
+                  assign background_img = true
+                  assign section_onboarding = false
+                else
+                  assign background_img = false
+                  assign section_onboarding = true
+                endif
+                assign screen = ''
+                assign desktop_img = ''
+                assign mobile_img = ''
+                if block.settings.background_img_d != blank              
+                  if full_width
+                    assign size_d = block.settings.background_img_d.width
+                  else
+                    assign size_d = 1180
+                  endif                  
+                  capture sizes_d
+                    if full_width
+                      echo '100vw'
+                    else
+                      echo '(min-width: 1220px) 1180px, calc(100vw - 40px)'
+                    endif
+                  endcapture
+                  capture alt_d
+                    if block.settings.background_img_d.alt != blank
+                      echo block.settings.background_img_d.alt
+                    elsif block.settings.title != blank
+                      echo block.settings.title
+                    elsif block.settings.sub_title != blank
+                      echo block.settings.sub_title
+                    else
+                      echo block.settings.background_img_d | split: '/' | last | replace: '-', ' ' | replace: '_', ' ' | split: '.' | first | capitalize
+                    endif
+                  endcapture                 
+                  if block.settings.background_img_m != blank
+                    assign screen = 'desktop-image '
+                  endif
+                  capture desktop_img
+                    render 'image.load', img_src: block.settings.background_img_d, size: size_d, alt: alt_d, screen: screen, full_width: full_width, lazy: lazy, sizes: sizes_d
+                  endcapture
+                endif
+                if block.settings.background_img_m != blank              
+                  if full_width
+                    assign size_m = block.settings.background_img_m.width
+                  else
+                    assign size_m = 1180
+                  endif
+                  capture sizes_m
+                    if full_width
+                      echo '100vw'
+                    else
+                      echo '(min-width: 1220px) 1180px, calc(100vw - 40px)'
+                    endif
+                  endcapture
+                  capture alt_m
+                    if block.settings.background_img_m.alt != blank
+                      echo block.settings.background_img_m.alt
+                    elsif block.settings.title != blank
+                      echo block.settings.title
+                    elsif block.settings.sub_title != blank
+                      echo block.settings.sub_title
+                    else
+                      echo block.settings.background_img_m | split: '/' | last | replace: '-', ' ' | replace: '_', ' ' | split: '.' | first | capitalize
+                    endif
+                  endcapture 
+                  if block.settings.background_img_d != blank
+                    assign screen = 'mobile-image '
+                  endif
+                  capture mobile_img
+                    render 'image.load', img_src: block.settings.background_img_m, size: size_m, alt: alt_m, screen: screen, full_width: full_width, lazy: lazy, sizes: sizes_m
+                  endcapture
+                endif
+                capture link
+                  echo '<a href="'
+                  echo block.settings.link | escape
+                  echo '" title="'
+                  if block.settings.background_img_d != blank
+                    echo alt_d | escape
+                  elsif block.settings.background_img_m != blank
+                    echo alt_m | escape
+                  endif
+                  echo '" class="absolute"></a>'
+                endcapture
+              -%}
+
+              {% capture section_onboarding_text %}
+                <div class="table">
+                  <div class="table-cell middle{% if section_onboarding %} placeholder-svg-background with-height{% endif %}">
+                    <div class="six mobile text-center center{% if section.blocks.size > 1 and section.settings.enable_nav %} bottompad-section{% endif %} white">
+                      <h2 class="h1">{{ 'homepage.onboarding.slide_no_title' | t }}</h2>
+                      <h3>{{ 'homepage.onboarding.no_body' | t }}</h3>
+                    </div>
+                  </div>
+                </div>
+              {% endcapture %}
+              
+              <div class="tab-body {% if section.blocks.size > 1 %}glider-slide {% if forloop.first %}active visible {% endif %}{% endif %}clearfix"{% if section.blocks.size > 1 %} data-gslide="{{ forloop.index0 }}"{% endif %} {{ block.shopify_attributes }}>
+                <div{% if full_width %} class="relative{% if background_img %} lazycontainer{% endif %}"{% endif %}>
+                
+                  {%- liquid
+                    if full_width
+                      if block.settings.link != blank and block.settings.button == blank
+                        echo link
+                      endif
+                      if desktop_img != blank
+                        echo desktop_img
+                      endif
+                      if mobile_img != blank
+                        echo mobile_img
+                      endif
+                      if section_onboarding
+                        echo section_onboarding_text
+                      endif
+                    endif
+                  -%}
+                  
+                  <div class="relative container{% if full_width %} half-pad{% else %} {% if background_img or section_onboarding %}inner-container{% endif %}{% endif %} clearfix">
+                    <div class="{% if full_width == false %}relative {% if background_img %}lazycontainer {% endif %}{% endif %}clearfix">
+                      {%- liquid
+                        if full_width == false
+                          if block.settings.link != blank and block.settings.button == blank
+                            echo link
+                          endif
+                          if desktop_img != blank
+                            echo desktop_img
+                          endif
+                          if mobile_img != blank
+                            echo mobile_img
+                          endif
+                          if section_onboarding
+                            echo section_onboarding_text
+                          endif
+                        endif
+                      -%}                     
+                    </div>
+                  </div>
+                  
+                </div>
+              </div>
+    
+            {% endfor %}
+              
+          </div>
+        </div>
+  
+        {% if section.blocks.size > 1 %}
+          <div id="glider-pagination-{{ section.id }}" class="glider-pagination slideshow-carousel{% unless section.settings.enable_nav %} visually-hidden{% endunless %}">
+            <div id="glider-dots-{{ section.id }}" role="tablist" class="dots"></div>
+            <!-- <button id="glider-button-prev-{{ section.id }}" class="glider-button-prev" type="button" aria-label="{{ 'products.general.previous' | t | escape }}">{%- render 'icons.theme', icon: 'left', size: '16' -%}</button>
+            <button id="glider-button-next-{{ section.id }}" class="glider-button-next" type="button" aria-label="{{ 'products.general.next' | t | escape }}">{%- render 'icons.theme', icon: 'right', size: '16' -%}</button> -->
+          </div>
+        {% endif %}
+  
+      </div>
+    </div>
+  
+  </section>
+
+{% endif %}
+
+{% schema %}
+  {
+    "name": "t:sections.slideshow_image.name",
+	"max_blocks": 4,
+    "settings": [
+      {
+        "type": "paragraph",
+    	"content": "t:sections.slideshow_image.info"
+      },
+      {
+        "type": "checkbox",
+        "id": "auto_rotate",
+        "label": "t:sections.auto_rotate.label",
+        "default": false
+      }, 
+      {
+        "type": "range",
+        "id": "auto_rotate_every",
+        "min": 5,
+        "max": 10,
+        "step": 1,
+        "unit": "s",
+        "label": "t:sections.change_slides.label",
+        "default": 5
+      },
+	  {
+       "type": "checkbox",
+       "id": "full_width",
+       "label": "t:sections.full_width.label",
+       "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_nav",
+        "label": "t:sections.enable_slide_nav.label",
+        "default": true
+      },
+      {
+        "id": "use_slider_color",
+        "type": "color",
+        "label": "t:sections.multi_slide_color.label"
+      },
+      {
+        "type": "header",
+        "content": "t:sections.section.name.content"
+      },
+      {
+        "id": "enable_lazy",
+        "type": "checkbox",
+        "label": "t:sections.section.settings.lazy.multiple.label",
+        "default": true
+      },
+      {
+        "id": "background",
+        "type": "color",
+        "label": "t:sections.section.settings.background_color.label"
+      },
+      {
+        "id": "background_gradient",
+        "type": "color_background",
+        "label": "t:sections.section.settings.background_gradient.label"
+      },
+      {
+        "type": "paragraph",
+        "content": "t:sections.section.settings.mobile.content"
+      },
+      {
+        "id": "padding_top_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.top_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 20
+      },
+      {
+        "id": "padding_bottom_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 20
+      },
+      {
+        "id": "margin_bottom_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_margin.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 20
+      },
+      {
+        "type": "paragraph",
+        "content": "t:sections.section.settings.desktop.content"
+      },
+      {
+        "id": "padding_top_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.top_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "padding_bottom_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "margin_bottom_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_margin.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "padding_border",
+        "type": "checkbox",
+        "label": "t:sections.section.settings.border.label",
+        "default": true
+      }
+    ],
+    "blocks": [
+      {
+        "type": "slide",
+        "name": "t:sections.slide.name",
+        "settings": [
+		  {
+             "type": "header",
+             "content": "t:sections.slide.name",
+             "info": "t:sections.slide.text"
+          },
+          {
+            "type": "url",
+            "id": "link",
+            "label": "t:sections.link.label"
+          },
+          {
+            "type": "header",
+            "content": "t:sections.background.label"
+          },
+          {
+            "type": "image_picker",
+            "id": "background_img_d",
+            "label": "t:sections.image.desktop.label",
+        	"info": "t:sections.image.desktop.info"
+          },
+          {
+            "type": "image_picker",
+            "id": "background_img_m",
+            "label": "t:sections.image.mobile.label",
+        	"info": "t:sections.image.mobile.info"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "t:sections.slideshow_image.name",
+        "blocks": [
+          {
+            "type": "slide"
+          },
+          {
+            "type": "slide"
+          },
+          {
+            "type": "slide"
+          }
+        ]
+      }
+    ],
+    "disabled_on": {
+	  "templates": ["password"],
+      "groups": ["custom.overlay"]
+    }
+  }
+{% endschema %}

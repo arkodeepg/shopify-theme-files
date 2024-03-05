@@ -1,0 +1,59 @@
+<style>
+    .linked_products_title {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+.linked_products_wrap {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    margin-top: -7px;
+    margin-left: -7px;
+    margin-right: -7px;
+    margin-bottom: 20px;
+}
+.linked_products_wrap .linked_product_box {
+    width: 82px;
+    padding: 0;
+    box-sizing: border-box;
+}
+.linked_product_box img {
+    display: block;
+    margin-bottom: 0;
+    border: 2px solid transparent;
+    padding: 3px;
+    box-sizing: border-box;
+}
+.linked_product_box.active img {
+    border-color: #e6d1a2;
+}
+  @media screen and (max-width:800px){
+    .linked_products_wrap .linked_product_box {
+        width: 68px;
+    }
+    .cbuyquantity input {
+        width: 40px;
+    }
+  }
+</style>
+{%- if product.metafields.my_fields.linked_products != blank -%}
+    {%- assign linked_products_arr = product.metafields.my_fields.linked_products | replace:', ',',' | replace:' ,',',' | split:',' -%}
+    <h3 class="linked_products_title">Select Style</h3>
+    <div class="linked_products_wrap">
+  {%- for linked_product_handle in linked_products_arr -%}
+        {%- assign linked_product = all_products[linked_product_handle] -%}
+        {% if linked_product.available %}
+        <div class="linked_product_box{% if linked_product.handle == product.handle %} active{% endif %}">
+    <a href="{{linked_product.url}}" data-image="{{linked_product_handle}}">
+            <img src="{{linked_product.featured_image | img_url: '75x'}}" alt="{% if linked_product.featured_image.alt == blank %}{{linked_product.title}}{% else %}{{linked_product.featured_image.alt}}{% endif %}">
+          </a>
+        </div>
+        {% endif %}
+      {%- endfor -%}
+    </div>
+  {%- endif -%}

@@ -1,0 +1,129 @@
+{% unless fakeID == false %}<ul id="cart-dropdown" data-items="{{ cart.item_count }}" data-total="{% if settings.currency_enable %}{{ cart.total_price | money_with_currency }}{% else %}{{ cart.total_price | money_without_trailing_zeros }}{% endif %}">{% endunless %}
+  {% for line_item in cart.items %}
+  <li class="clearfix cart-product relative{% if forloop.last %} last{% endif %}">
+    
+    {% if forloop.first %}<button class="modal-close hidden" aria-label="{{ 'layout.general.close' | t | escape }}" data-micromodal-close>{%- render 'icons.theme', icon: 'times', size: 18 -%}</button>{% endif %}
+    
+    <div class="table-center item item-row clearfix">
+      {% assign line_item_featured_media = line_item.image %}                          
+      {% if line_item_featured_media %}
+      <div class="five brands negative-left item-thumb title-align title-align-left">
+        <div class="relative lazycontainer">
+          <a href="{{ line_item.variant.url | within: collections.all }}" title="{{ line_item.title | escape }}" class="img-align keyed">
+            {%- liquid
+              capture alt
+                if line_item_featured_media.alt != blank
+                  echo line_item_featured_media.alt
+                else
+                  echo line_item.variant.title
+                  echo ' '
+                  echo line_item.title
+                endif
+              endcapture
+              render 'image.load', img_src: line_item_featured_media, size: 180, alt: alt, nopad: true, lazy: 'eager', sizes: '180px'
+            -%}
+          </a>
+        </div>
+      </div>
+      {% endif %}
+      <div class="{% if line_item_featured_media %}seven brands{% else %}twelve negative-left{% endif %} negative-right">
+        <div class="item-title"><h5><a href="{{ line_item.variant.url | within: collections.all }}" title="{{ line_item.title | escape }}">{{ line_item.product.title }}{% if line_item.variant.title and line_item.variant.title != 'Default Title' %}<br/><small>{{ line_item.variant.title }}</small>{% endif %}</a></h5></div>
+        {%- liquid
+          if settings.reviews_enable
+            render 'product.rating', product: line_item.product
+          endif
+          if line_item.selling_plan_allocation
+            echo '<p class="selling">'
+            echo line_item.selling_plan_allocation.selling_plan.name
+            echo '</p>'
+          endif
+          assign property_size = line_item.properties | size
+          if property_size > 0
+            echo '<p class="selling word-break">'
+            for p in line_item.properties
+              assign property_first_char = p.first | slice: 0
+              if p.last != blank and property_first_char != '_'
+                echo '<strong>'
+                echo p.first
+                echo ': </strong>'
+                echo p.last | split: '/' | last
+                unless forloop.last
+                  echo '<br/>'
+                endunless
+              endif
+            endfor
+            echo '</p>'
+          endif
+        -%}
+        <div class="product-price">
+          <h6>            
+            {%- liquid
+              if line_item.final_price > 0
+                if settings.currency_enable
+                  echo line_item.final_price | money_with_currency
+                else
+                  echo line_item.final_price | money
+                endif
+                echo ' '
+                echo 'cart.general.each' | t
+              else
+                echo 'products.product.free' | t
+              endif
+              render 'product.unitPrice', variant: line_item
+              if line_item.line_level_discount_allocations != blank
+                echo '<small>'
+                for discount_allocation in line_item.line_level_discount_allocations
+                  echo '<br/>'
+                  echo discount_allocation.discount_application.title
+                  echo ': '
+                  if settings.currency_enable
+                    echo discount_allocation.amount | money_with_currency | prepend: '-'
+                  else
+                    echo discount_allocation.amount | money | prepend: '-'
+                  endif
+                endfor
+                echo '</small>'
+              endif
+            -%}
+          </h6>
+        </div>
+        <p>
+          <span class="vendors">
+            {%- liquid
+              echo 'cart.general.carttotal' | t
+              if line_item.original_line_price != line_item.final_line_price
+                if settings.currency_enable
+                  echo line_item.final_line_price | money_with_currency
+                else
+                  echo line_item.final_line_price | money
+                endif
+                echo '| <s>'
+                if settings.currency_enable
+                  echo line_item.original_line_price | money_with_currency
+                else
+                  echo line_item.original_line_price | money
+                endif
+                echo '</s>'
+              else
+                if settings.currency_enable
+                  echo line_item.final_line_price | money_with_currency
+                else
+                  echo line_item.final_line_price | money
+                endif
+                if line_item.variant.compare_at_price > line_item.original_price
+                  echo ' | <s>'
+                  if settings.currency_enable
+                    echo line_item.variant.compare_at_price | times: line_item.quantity | money_with_currency
+                  else
+                    echo line_item.variant.compare_at_price | times: line_item.quantity | money
+                  endif
+                  echo '</s>'
+                endif
+              endif
+            -%}
+          </span></p>
+      </div>
+    </div> 
+  </li>
+  {% endfor %}
+{% unless fakeID == false %}</ul>{% endunless %}

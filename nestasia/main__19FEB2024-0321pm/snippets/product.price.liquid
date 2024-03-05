@@ -1,0 +1,25 @@
+<h2 class="offers section-title-{{ price_size }}">
+  <span id="price-{{ section.id }}" class="price-preview price price-field product-single__price" itemprop="price">{% if product.selected_or_first_available_variant.price > 0 %}{% if settings.currency_enable %}{{ product.selected_or_first_available_variant.price | money_with_currency }}{% else %}{{ product.selected_or_first_available_variant.price | money }}{% endif %}{% else %}{{ 'products.product.free' | t }}{% endif %}{% if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price %} <del>{% if settings.currency_enable %}{{ product.selected_or_first_available_variant.compare_at_price | money_with_currency }}{% else %}{{ product.selected_or_first_available_variant.compare_at_price | money }}{% endif %}</del>{% endif %}</span>
+  <span id="savings-{{ section.id }}" class="savings{% unless product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price %} hidden{% endunless %}"><span>{{ 'products.product.savings' | t }}</span> <span id="compare-{{ section.id }}">{% if settings.currency_enable %}{{ product.selected_or_first_available_variant.compare_at_price | minus: product.selected_or_first_available_variant.price | money_with_currency }}{% else %}{{ product.selected_or_first_available_variant.compare_at_price | minus: product.selected_or_first_available_variant.price | money_without_trailing_zeros }}{% endif %}</span></span>
+</h2>
+
+{%- liquid
+  if price_msg 
+    if shop.taxes_included or shop.shipping_policy.body != blank
+      echo '<p><small><strong>'
+      if shop.taxes_included
+        echo 'products.product.include_taxes' | t
+      endif
+      if shop.taxes_included and shop.shipping_policy.body != blank
+        echo '<span class="separator" aria-hidden="true"></span>'
+      endif
+      if shop.shipping_policy.body != blank
+        echo 'products.product.shipping_policy_html' | t: link: shop.shipping_policy.url
+      endif
+      echo '</strong></small></p>'
+    endif
+  endif
+  assign variant = product.selected_or_first_available_variant
+-%}
+
+<div id="offer-{{ section.id }}"{% unless product.selected_or_first_available_variant.unit_price_measurement %} class="hidden clearfix"{% endunless %}>{%- render 'product.unitPrice', variant: product.selected_or_first_available_variant -%}</div>

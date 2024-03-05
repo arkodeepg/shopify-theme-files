@@ -1,0 +1,56 @@
+<style>
+    .product-pricing_cont {
+        align-items: baseline;
+        gap: 5px 8px;
+        line-height: 32px;
+        margin-bottom: var(--master_spacing);
+    }
+    .product-pricing_cont .product-price{
+        font-weight: 600;
+        font-family: var(--body_font) !important;
+        font-size: calc(var(--large) + 2px);
+        letter-spacing: 0;
+        line-height: 35px;
+        color: #171717 !important;
+    }
+    .product-pricing_cont .product-compare_at_price{
+        color: #4C4C4C;
+        font-weight: 300;
+        font-size: 20px;
+        font-family: var(--body_font) !important;
+        letter-spacing: 0;
+        line-height: 35px;
+        text-decoration: line-through;
+    }
+    .product-pricing_cont .product-discount{
+        color: #c24352;
+        font-size: 20px;
+        font-weight: 700;
+    }
+  @media screen and (max-width:800px){
+    .product-pricing_cont .product-price,
+    .product-pricing_cont .product-compare_at_price,
+    .product-pricing_cont .product-discount{
+      font-size: 17px;
+      font-weight: bold;
+    }
+    .product-pricing_cont {
+        margin-bottom: calc(var(--master_spacing)/2);
+    }
+  }
+</style>
+<div class="product-pricing_cont flex">
+    <div class="product-price">
+        {{ product.selected_or_first_available_variant.price | money}}
+    </div>
+  {% if product.compare_at_price > product.price %}
+    <div class="product-compare_at_price">
+        {{ product.selected_or_first_available_variant.compare_at_price |  money }}
+    </div>
+  {% endif %}
+    {% if product.compare_at_price > product.price %}
+        <div class="product-discount">
+            {{ product.selected_or_first_available_variant.compare_at_price | minus: product.selected_or_first_available_variant.price | times: 100.0 | divided_by: product.compare_at_price | ceil}}%
+        </div>
+    {% endif %}
+</div>

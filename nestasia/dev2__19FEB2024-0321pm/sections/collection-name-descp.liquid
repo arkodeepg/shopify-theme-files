@@ -1,0 +1,67 @@
+{% if collection.metafields.custom.collection_name_descp %}
+<style>
+  .cnd-name{
+    color: #96865D;
+    font-family: Lato;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 600;
+    letter-spacing: 0.78px;
+    text-transform: capitalize;
+    margin-bottom: 16px;
+    margin-top: 10px;
+  }
+  .cnd-descp{
+    color: #4C4C4C;
+    font-family: Lato;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    margin-bottom: 30px;
+  }
+  @media screen and (max-width: 640px) {
+  .cnd-name{
+    color: #96865D;
+    font-family: Lato;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 600;
+    letter-spacing: 0.78px;
+    text-transform: capitalize;
+    margin-bottom: 11px;
+    margin-top: 10px;
+  }
+  .cnd-descp{
+    color: #4C4C4C;
+    font-family: Lato;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    margin-bottom: 24px;
+  }
+}
+</style>
+  
+  <div class="container">
+    <h1 class="cnd-name">{{ collection.metafields.custom.collection_h1 }}</h1>
+    <div class="cnd-name">{{ collection.metafields.custom.collection_name_descp.value.name }}</div>
+    <div class="cnd-descp">{{ collection.metafields.custom.collection_name_descp.value.descp }}</div>
+  </div>
+{% endif %}
+
+{% schema %}
+  {
+    "name": "collection name descp",
+    "presets": [
+      {
+        "name": "collection name descp"
+      }
+  ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

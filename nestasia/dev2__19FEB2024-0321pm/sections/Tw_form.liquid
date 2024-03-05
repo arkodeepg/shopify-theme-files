@@ -1,0 +1,443 @@
+<style>
+    .Tw_form{{ section.id}}{
+      display:flex;
+      margin-top:15px;
+      margin-bottom:15px;
+      {% if section.settings.FormImg %}
+        gap: 40px;
+      {% endif %}
+      {% if section.settings.directionDesk %}
+        flex-direction:row-reverse;
+      {% endif %}
+      {% if section.settings.centerForm %}
+        justify-content:center;
+      {% endif %}
+    }
+    .Tw_form{{ section.id}} > div{
+      width:50%;
+    }
+    .Tw_form{{ section.id}} .TwsmNameEmail{
+      display:flex;
+      justify-content:space-between;
+    }
+    .Tw_form{{ section.id}} .TwsmNameEmail > span{
+      width:49%;
+    }
+    .Tw_form{{ section.id}} .form_divTW{
+      {% if section.settings.FormImg %}
+      padding: 3%;
+      {% else %}
+      padding: 4%;
+      {% endif %}
+      background-color:{{section.settings.formBgcolor}};
+      box-sizing: border-box;
+    }
+    .Tw_form{{ section.id}} .leftAsideDiv img {
+      margin:0;
+    }
+    .Tw_form{{ section.id}} .form{
+    background:transparent;
+    }
+    .Tw_form{{ section.id}} .TwFormHead{
+      font-family:{{ section.settings.headingFont.family }};
+      font-weight:{{section.settings.headingFontWeight}};
+      font-size: 32px;
+
+    }
+    .Tw_form{{ section.id}} #honeypot > input{
+      margin-bottom: 0;
+      max-width: 100%;
+      border-radius:0;
+      font-family:var(--body_font);
+      font-weight:{{section.settings.submitTextFontWeight}};
+    }
+    .Tw_form{{ section.id}} .contact-info{
+      padding:0;
+    }
+    .Tw_form{{ section.id}} label{
+      font-size: 16px;
+    }
+    .Tw_form{{ section.id}} .leftAsideDiv{
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      {% if section.settings.FormImg %}
+      padding: 0;
+      {% else %}
+      padding: 4%;
+      {% endif %}
+      color:black;
+    }
+    .Tw_form{{ section.id}} .leftAsdHead{
+      font-size: 24px;
+      font-weight: {{section.settings.leftHeadfw}};
+      font-family: {{section.settings.leftHeadff.family}};
+      margin-bottom: 6px;
+    }
+    {% if section.settings.FormImg %}
+    .Tw_form{{ section.id}} textarea#contactFormMessage{
+      height:100px;
+    }
+    {% endif %}
+    .Tw_form{{ section.id}} .leftAsdSubhead{
+      font-size: 16px;
+      font-weight: {{section.settings.leftSubHeadfw}};
+      margin-bottom: 3px;
+    }
+    .Tw_form{{ section.id}} .leftAsdDesc{
+      font-weight: {{section.settings.leftDescfw}};
+      font-size: 16px;
+      margin-bottom: 10px;
+      padding: 0;
+    }
+    .Tw_formTw_form label {
+    font-size: 16px;
+    }
+    @media(max-width:640px){
+    .Tw_form{{ section.id}} .TwFormHead{
+      font-size: 20px;
+    }
+      .Tw_form{{ section.id}}{
+        margin-top:0px;
+        margin-bottom:-20px;
+        {% if section.settings.directionMob %}
+          flex-direction: column;
+        {% else %}
+          flex-direction: column-reverse;
+        {% endif %}
+        gap: 0px;
+      }
+      .Tw_form{{ section.id}} > div{
+      width:100%;
+      margin-bottom:20px;
+    }
+      .Tw_form{{ section.id}} label {
+      font-size: 14px;
+  }
+      .Tw_form{{ section.id}} .leftAsdSubhead, .Tw_form{{ section.id}} .leftAsdDesc{
+        font-size:14px;
+      }
+      .Tw_form{{ section.id}} .leftAsdHead{
+        font-size:20px;
+      }
+      .Tw_form{{ section.id}} input , .Tw_form{{ section.id}} textarea{
+      font-size: 12px;
+      }
+
+    }
+</style>
+
+<div class="container no-pad Tw_form Tw_form{{ section.id}}">
+  <div class="leftAsideDiv">
+    {% if section.settings.leftAsdHead != blank %}
+      <h2 class="leftAsdHead">{{ section.settings.leftAsdHead }}</h2>
+    {% endif %}
+    {% for block in section.blocks %}
+      {% if block.settings.leftAsdSubhead != blank %}
+        <h3 class="leftAsdSubhead">{{ block.settings.leftAsdSubhead }}</h3>
+      {% endif %}
+      {% if block.settings.leftAsdDesc != blank %}
+        <p class="leftAsdDesc">{{ block.settings.leftAsdDesc }}</p>
+      {% endif %}
+    {% endfor %}
+    {% if section.settings.FormImg -%}
+      <img width="100%" src="{{ section.settings.FormImg | img_url:'master' }}">
+    {%- endif %}
+  </div>
+
+  <div class="form_divTW">
+    <div class="contact__page_form_wrapper">
+      {% form 'contact' %}
+        {% if form.posted_successfully? %}
+          <div class="twelve">
+            <div class="success successForm feedback">
+              <p>{{ 'contact.form.post_success' | t }}</p>
+            </div>
+          </div>
+        {% endif %}
+        {% if form.errors %}
+          <div class="twelve">
+            <div class="errors errorForm feedback">
+              <p>
+                {{ 'contact.form.post_error' | t }}
+                {{ 'contact.form.post_error_msg1' | t }}
+                {{ form.errors | size | pluralize: 'error', 'errors' }}
+                {{ 'contact.form.post_error_msg2' | t }}
+              </p>
+              <ul class="unformatted">
+                {% for field in form.errors %}
+                  {% if field == 'form' %}
+                    <li>{{ form.errors.messages[field] }}</li>
+                  {% else %}
+                    <li>{{ form.errors.translated_fields[field] }} - {{ form.errors.messages[field] }}</li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        {% endif %}
+        <div id="contactFormWrapper">
+          <h2 class="content-form-head text-center TwFormHead">{{ section.settings.title }}</h2>
+          <div class="TwsmNameEmail">
+            <span class="form">
+              {%- assign name_attr = 'contact.form.name' | t | handle -%}
+              <label for="contactFormName">Full Name</label>
+              <input
+                required
+                type="text"
+                id="contactFormName"
+                name="contact[{{ name_attr }}]"
+                placeholder="Your full name"
+                autocapitalize="words"
+                value="{% if form[name_attr] %}{{ form[name_attr] }}{% elsif customer %}{{ customer.name }}{% endif %}"
+                required
+              >
+            </span>
+            <span class="form">
+              <label for="contactFormEmail">Email</label>
+              <input
+                required
+                type="email"
+                id="contactFormEmail"
+                name="contact[email]"
+                placeholder="Your email Id"
+                autocorrect="off"
+                autocapitalize="off"
+                value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+                required
+              >
+            </span>
+          </div>
+          <!--
+            <span class="form">
+            {%- assign phone_attr = 'contact.form.phone' | t | handle -%}
+            <label for="contactFormTelephone">{{ 'contact.form.phone' | t }}</label>
+            <input type="number" id="contactFormTelephone" name="contact[{{ phone_attr }}]" placeholder="{{ 'contact.form.phone_placeholder' | t }}" pattern="[0-9\-]*" value="{% if form[phone_attr] %}{{ form[phone_attr] }}{% elsif customer %}{{ customer.phone }}{% endif %}" class="text-left" />
+            </span>
+          -->
+
+          <span class="form">
+            <label for="contactFormName">Subject</label>
+            <input
+              required
+              type="text"
+              id="contactFormSubject"
+              name="contact[subject]"
+              placeholder="Subject of Message"
+              autocapitalize="words"
+              value=""
+              required
+            >
+          </span>
+          <span class="form message">
+            <label for="contactFormMessage">Message</label>
+            <textarea
+              required
+              id="contactFormMessage"
+              name="contact[body]"
+              placeholder="Type your message here"
+              required
+            >
+              {% if form.body %}
+                {{ form.body }}{% endif %}
+            </textarea>
+          </span>
+          <span class="hidden extra" aria-hidden="true">
+            <label for="contactFormNumber">Extra</label>
+            <input
+              type="text"
+              id="contactFormNumber"
+              name="Extra"
+              value=""
+            >
+          </span>
+          <div class="contact-info twelve">
+            <span id="honeypot"
+              ><input
+                class="btn standard-width bottompad"
+                type="submit"
+                value="{{ section.settings.submitText }}"
+                id="contactFormSubmit"
+            ></span>
+            <noscript>
+              <span class="btn standard-width" id="contactFormSubmit">Enable Javascript</span>
+            </noscript>
+          </div>
+        </div>
+      {% endform %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Tw Contact Form",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading"
+    },
+    {
+      "type": "font_picker",
+      "id": "headingFont",
+      "label": "Heading Fontfamily",
+      "default": "lato_n4"
+    },
+    {
+      "type": "text",
+      "id": "headingFontWeight",
+      "label": "Heading Font Weight"
+    },
+    {
+      "type": "text",
+      "id": "submitText",
+      "label": "Submit Button Text"
+    },
+    {
+      "type": "text",
+      "id": "submitTextFontWeight",
+      "label": "Submit Button Fontweight"
+    },
+    {
+      "type": "color",
+      "id": "formBgcolor",
+      "label": "Form Background Color",
+      "default": "#FCFBF8"
+    },
+    {
+      "type": "text",
+      "id": "leftAsdHead",
+      "label": "Left Aside Heading"
+    },
+    {
+      "type": "image_picker",
+      "id": "FormImg",
+      "label": "Form Image"
+    },
+    {
+      "type": "text",
+      "id": "leftHeadfw",
+      "label": "Heading fontweight"
+    },
+    {
+      "type": "font_picker",
+      "id": "leftHeadff",
+      "label": "Left text head fontfamily",
+      "default": "lato_n4"
+    },
+    {
+      "type": "text",
+      "id": "leftSubHeadfw",
+      "label": "SubHeading fontweight"
+    },
+    {
+      "type": "text",
+      "id": "leftDescfw",
+      "label": "Description fontweight"
+    },
+    {
+      "type": "checkbox",
+      "id": "directionDesk",
+      "label": "Desktop Position",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "directionMob",
+      "label": "Mobile Position",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "centerForm",
+      "label": "Form Center",
+      "default": false
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "Content"
+    },
+    {
+      "type": "header",
+      "content": "Whatsapp"
+    },
+    {
+      "type": "text",
+      "id": "whatsapp",
+      "label": "Whatsapp Heading",
+      "default": "Whatsapp"
+    },
+    {
+      "type": "richtext",
+      "id": "whatsapp_text",
+      "label": "Whatsapp text"
+    },
+    {
+      "type": "header",
+      "content": "Email"
+    },
+    {
+      "type": "text",
+      "id": "email",
+      "label": "Email Heading",
+      "default": "Email"
+    },
+    {
+      "type": "richtext",
+      "id": "email_text",
+      "label": "Email text"
+    },
+    {
+      "type": "header",
+      "content": "Address"
+    },
+    {
+      "type": "text",
+      "id": "address",
+      "label": "Address Heading",
+      "default": "Address"
+    },
+    {
+      "type": "richtext",
+      "id": "address_text",
+      "label": "Address text"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "Text",
+      "type": "text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "leftAsdSubhead",
+          "label": "Subheading"
+        },
+        {
+          "type": "text",
+          "id": "leftAsdDesc",
+          "label": "Description"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Tw Contact Form"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

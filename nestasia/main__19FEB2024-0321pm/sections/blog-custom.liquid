@@ -1,0 +1,389 @@
+<style>
+.underHead {
+    display: flex;
+    width: 100%;
+}
+.underLeft {
+    width: 22%;
+}
+.underRight {
+    width: 78%;
+}
+.categoryImg {
+    margin-bottom: 16px;
+}
+</style>
+<div class="container ">
+  {% if page.metafields.custom.under_price_heading !=blank %}
+    <div class="twelve text-center offerHead ">
+      <h2 class="margin-50">{{ page.metafields.custom.under_price_heading }}</h2>
+    </div>
+  {% endif %}
+</div>
+
+
+{% if page.metafields.custom.under_price_collections !=blank %}
+  <section class="under-priceCollection margin-50">
+    <div class="container clearfix">
+
+      <div class="underHead">
+        {% assign offercollection = page.metafields.custom.under_price_collections %}
+        {% assign collectionMaincontainer = offercollection | split: "::" %}
+        {%- for technical_details in collectionMaincontainer %}
+          {% assign collectionSubcontainer = technical_details | split: "|" %}
+          <div class="underLeft">
+            <div class="categoryImg">
+              <a href="{{ collectionSubcontainer[1] }}">
+                <img src="{{ collectionSubcontainer[0] }}" alt="" width="100%"></a>
+            </div>
+          </div>
+          <div class="underRight">
+
+            <div data-section-id="{{ section.id }}-1" data-section-type="custom-underprice-silder" class="clearfix custom-silder-section collection-container custom-underprice-silder">
+
+                    <div>
+                      <div class="swiper-container plus-slider product-loop text-left" id="swiper-carousel-{{ section.id }}-1">
+                        <div class="ldslags swiper-wrapper swiper-wrapper-{{ section.id }}-1">
+                          {% assign varCount = 0 %}
+                          {% for product in collections[collectionSubcontainer[2]].products limit: 100 %}
+                            {% if product.available and varCount < 10 %}
+                            <div class="animate-loop-{{ forloop.index0 }} swiper-slide swiper-slide-active three">
+                              <div class="underImg">
+                                <a href="{{ product.url }}">
+                                  <img src="{{ product | img_url: 'master' }}" alt="" class="img-fluid">
+                                </a>
+                              </div>
+
+                              <div class="undercontent">
+                                <div class="title head">
+                                <h1>
+                                  <a href="#">{{ product.title }}</a>
+                                </h1>
+                              </div>
+                                <span class="bestSllerPrice">{{ product.selected_or_first_available_variant.price| money_with_currency }} <span class="oldPrice">{{ product.selected_or_first_available_variant.compare_at_price| money_with_currency }}</span>
+                                {% assign compare_at_price = product.selected_or_first_available_variant.compare_at_price %}
+                                {% assign price = product.selected_or_first_available_variant.price %}
+                                {% if compare_at_price > price %}
+                                  <span class="offerpercent">
+                                   ( {{ compare_at_price | minus: price | times: 100 | divided_by: compare_at_price }}% Off)
+                                  </span>
+                                {%- endif -%}
+                                <div class="rating_head">
+                                  {%- render 'judgeme_widgets', widget_type: 'judgeme_preview_badge', jm_style: '', concierge_install: true, product: product -%}
+                                </div>
+                                <div class="undertag">
+                                  <div class="offertagLeft">
+                                   {% for tag in product.tags %}
+                                   {% if tag == 'sale' %} 
+                                   <p> Offers Available</p>
+                                   {% endif %}
+                                   {% endfor %}
+                                  </div>
+                                   <div class="offertagRight">
+                                     <form method="post" action="/cart/add">
+                                      <input name="id" value="{{ product.variants.first.id }}" type="hidden" />
+                                      <input name="add" value="ORDER NOW" type="submit" class="input-sbmit" />
+                                     </form>
+                                   </div>
+                              </div>
+                              
+                              
+                            </div>
+
+                            </div>
+                            {% assign varCount = varCount | plus: 1 %}
+                            {% endif %}
+                          {% endfor %}
+
+
+                        </div>
+
+                        <div id="swiper-scrollbar-{{ section.id }}-1" class="swiper-scrollbar"></div>
+
+                      </div>
+
+                      <div id="swiper-pagination-{{ section.id }}-1" class="swiper-pagination relative hidden">
+                        <div id="swiper-button-prev-{{ section.id }}-1" class="swiper-button-prev icon icon-chevron-left svg-icon " role="button" aria-label="{{ 'products.general.previous' | t }}">
+                          <span class="arrow"></span>
+                        </div>
+                        <div id="swiper-button-next-{{ section.id }}-1" class="swiper-button-next icon icon-chevron-right svg-icon" role="button" aria-label="{{ 'products.general.next' | t }}">
+                          <span class="arrow"></span>
+                        </div>
+                      </div>
+
+
+                    </div>
+
+                  </div>
+              </div>
+
+            </div>
+
+          </div>
+        {% endfor %}
+      </div>
+
+    </div>
+
+  </section>
+
+{% endif %}
+
+
+
+
+
+{% if page.metafields.custom.under_price_collections2 !=blank %}
+    <section class="under-priceCollection margin-50">
+      <div class="container clearfix">
+  
+        <div class="underHead">
+          {% assign offercollection = page.metafields.custom.under_price_collections2 %}
+          {% assign collectionMaincontainer = offercollection | split: "::" %}
+          {%- for technical_details in collectionMaincontainer %}
+            {% assign collectionSubcontainer = technical_details | split: "|" %}
+            <div class="underLeft">
+              <div class="categoryImg">
+                <a href="{{ collectionSubcontainer[1] }}">
+                  <img src="{{ collectionSubcontainer[0] }}" alt="" width="100%"></a>
+              </div>
+            </div>
+            <div class="underRight">
+  
+              <div data-section-id="{{ section.id }}-2" data-section-type="custom-underprice-silder" class="clearfix custom-silder-section collection-container custom-underprice-silder">
+                <div class="container grid clearfix">
+  
+                  <div>
+                    <div class="tab-body swiper-container-wrapper tab-body-badge">
+  
+                      <div>
+                        <div class="swiper-container plus-slider product-loop text-left" id="swiper-carousel-{{ section.id }}-2">
+                          <div class="swiper-wrapper swiper-wrapper-{{ section.id }}-2">
+                            {% assign varCount = 0 %}
+                            {% for product in collections[collectionSubcontainer[2]].products limit: 100 %}
+                              {% if product.available and varCount < 10 %}
+
+                              <div class="animate-loop-{{ forloop.index0 }} swiper-slide swiper-slide-active three">
+                                <div class="underImg">
+                                  <a href="{{ product.url }}">
+                                    <img src="{{ product | img_url: 'master' }}" alt="" class="img-fluid">
+                                  </a>
+                                </div>
+  
+                                <div class="undercontent">
+                                  <div class="title head">
+                                    <h1>
+                                      <a href="#">{{ product.title }}</a>
+                                    </h1>
+                                  </div>
+                                  <span class="bestSllerPrice">{{ product.selected_or_first_available_variant.price| money_with_currency }} <span class="oldPrice">{{ product.selected_or_first_available_variant.compare_at_price | money_with_currency }}</span>
+                                  {% assign compare_at_price = product.selected_or_first_available_variant.compare_at_price %}
+                                {% assign price = product.selected_or_first_available_variant.price %}
+                                {% if compare_at_price > price %}
+                                  <span class="offerpercent">
+                                   ( {{ compare_at_price | minus: price | times: 100 | divided_by: compare_at_price }}% Off)
+                                  </span>
+                                {%- endif -%}
+                                </div>
+                                <div class="rating_head">
+                                  {%- render 'judgeme_widgets', widget_type: 'judgeme_preview_badge', jm_style: '', concierge_install: true, product: product -%}
+                                </div>
+                                <div class="undertag">
+                                  <div class="offertagLeft">
+                                   {% for tag in product.tags %}
+                                   {% if tag == 'sale' %} 
+                                   <p> Offers Available</p>
+                                   {% endif %}
+                                   {% endfor %}
+                                  </div>
+                                   <div class="offertagRight">
+                                    <form method="post" action="/cart/add">
+                                      <input name="id" value="{{ product.variants.first.id }}" type="hidden" />
+                                      <input name="add" value="ORDER NOW" type="submit" class="input-sbmit" />
+                                    </form>
+                                   </div>
+                              </div>
+  
+                              </div>
+                              {% assign varCount = varCount | plus: 1 %}
+                              {% endif %}
+                            {% endfor %}
+  
+  
+                          </div>
+  
+                          <div id="swiper-scrollbar-{{ section.id }}-2" class="swiper-scrollbar"></div>
+  
+                        </div>
+  
+                        <div id="swiper-pagination-{{ section.id }}-2" class="swiper-pagination relative hidden">
+                          <div id="swiper-button-prev-{{ section.id }}-2" class="swiper-button-prev icon icon-chevron-left svg-icon " role="button" aria-label="{{ 'products.general.previous' | t }}">
+                            <span class="arrow"></span>
+                          </div>
+                          <div id="swiper-button-next-{{ section.id }}-2" class="swiper-button-next icon icon-chevron-right svg-icon" role="button" aria-label="{{ 'products.general.next' | t }}">
+                            <span class="arrow"></span>
+                          </div>
+                        </div>
+  
+  
+                      </div>
+  
+                    </div>
+                  </div>
+                </div>
+  
+              </div>
+  
+            </div>
+          {% endfor %}
+        </div>
+  
+      </div>
+  
+    </section>
+  
+  {% endif %}
+
+
+  {% if page.metafields.custom.under_price_collections3 !=blank %}
+    <section class="under-priceCollection margin-50">
+      <div class="container clearfix">
+  
+        <div class="underHead">
+          {% assign offercollection = page.metafields.custom.under_price_collections3 %}
+          {% assign collectionMaincontainer = offercollection | split: "::" %}
+          {%- for technical_details in collectionMaincontainer %}
+            {% assign collectionSubcontainer = technical_details | split: "|" %}
+            <div class="underLeft">
+              <div class="categoryImg">
+                <a href="{{ collectionSubcontainer[1] }}">
+                  <img src="{{ collectionSubcontainer[0] }}" alt="" width="100%"></a>
+              </div>
+            </div>
+            <div class="underRight">
+  
+              <div data-section-id="{{ section.id }}-3" data-section-type="custom-underprice-silder" class="clearfix custom-silder-section collection-container custom-underprice-silder">
+                <div class="container grid clearfix">
+  
+                  <div>
+                    <div class="tab-body swiper-container-wrapper tab-body-badge">
+  
+                      <div>
+                        <div class="swiper-container plus-slider product-loop text-left" id="swiper-carousel-{{ section.id }}-3">
+                          <div class="swiper-wrapper swiper-wrapper-{{ section.id }}-3">
+                            {% assign varCount = 0 %}
+                            {% for product in collections[collectionSubcontainer[2]].products limit: 100 %}
+                              {% if product.available and varCount < 10 %}
+                              <div class="animate-loop-{{ forloop.index0 }} swiper-slide swiper-slide-active three">
+                                <div class="underImg">
+                                  <a href="{{ product.url }}">
+                                    <img src="{{ product | img_url: 'master' }}" alt="" class="img-fluid">
+                                  </a>
+                                </div>
+  
+                                <div class="undercontent">
+                                  <div class="title head">
+                                    <h1>
+                                      <a href="#">{{ product.title }}</a>
+                                    </h1>
+                                  </div>
+                                  <span class="bestSllerPrice">{{ product.selected_or_first_available_variant.price | money_with_currency }} <span class="oldPrice">{{ product.selected_or_first_available_variant.compare_at_price | money_with_currency }}</span>
+                                  {% assign compare_at_price = product.selected_or_first_available_variant.compare_at_price %}
+                                {% assign price = product.selected_or_first_available_variant.price %}
+                                {% if compare_at_price > price %}
+                                  <span class="offerpercent">
+                                   ( {{ compare_at_price | minus: price | times: 100 | divided_by: compare_at_price }}% Off)
+                                  </span>
+                                {%- endif -%}
+                                </div>
+                                <div class="rating_head">
+                                  {%- render 'judgeme_widgets', widget_type: 'judgeme_preview_badge', jm_style: '', concierge_install: true, product: product -%}
+                                </div>
+                                <div class="undertag">
+                                  <div class="offertagLeft">
+                                   {% for tag in product.tags %}
+                                   {% if tag == 'sale' %} 
+                                   <p> Offers Available</p>
+                                   {% endif %}
+                                   {% endfor %}
+                                  </div>
+                                   <div class="offertagRight">
+                                    <form method="post" action="/cart/add">
+                                      <input name="id" value="{{ product.variants.first.id }}" type="hidden" />
+                                      <input name="add" value="ORDER NOW" type="submit" class="input-sbmit" />
+                                    </form>
+                                   </div>
+                              </div>
+  
+                              </div>
+                              {% assign varCount = varCount | plus: 1 %}
+                              {% endif %}
+                            {% endfor %}
+  
+  
+                          </div>
+  
+                          <div id="swiper-scrollbar-{{ section.id }}-3" class="swiper-scrollbar"></div>
+  
+                        </div>
+  
+                        <div id="swiper-pagination-{{ section.id }}-3" class="swiper-pagination relative hidden">
+                          <div id="swiper-button-prev-{{ section.id }}-3" class="swiper-button-prev icon icon-chevron-left svg-icon " role="button" aria-label="{{ 'products.general.previous' | t }}">
+                            <span class="arrow"></span>
+                          </div>
+                          <div id="swiper-button-next-{{ section.id }}-3" class="swiper-button-next icon icon-chevron-right svg-icon" role="button" aria-label="{{ 'products.general.next' | t }}">
+                            <span class="arrow"></span>
+                          </div>
+                        </div>
+  
+  
+                      </div>
+  
+                    </div>
+                  </div>
+                </div>
+  
+              </div>
+  
+            </div>
+          {% endfor %}
+        </div>
+  
+      </div>
+  
+    </section>
+  
+  {% endif %}
+
+  <ul class="product-tags">
+    {% for tag in product.tags %}
+    <li><a href="/collections/all/{{ tag | handleize }}">{{ tag }}</a></li>
+    {% endfor %}
+  </ul>
+
+<script defer>
+const customUnderpriceSilder = new Swiper('.custom-underprice-silder', {
+  slidesPerView: 3.5,
+  spaceBetween: 10,
+  breakpoints: {
+    // When the window width is 800px or greater (desktop)
+    800: {
+      slidesPerView: 3.5,
+      spaceBetween: 20,
+    }
+  }
+});</script>
+
+{% schema %}
+  {
+    "name": "Under Collection Products",
+    "settings": [],
+    "presets": [
+      {
+        "category": "Hero",
+        "name": "Under Collection Products"
+      }
+    ]
+  }
+{% endschema %}
+

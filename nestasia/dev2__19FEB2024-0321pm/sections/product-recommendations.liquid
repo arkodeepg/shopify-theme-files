@@ -1,0 +1,132 @@
+<style>
+  #productRecommendation{
+    {% if section.settings.background_color %} background-color:{{section.settings.background_color}}  {% endif %}
+  }
+  
+.productRecommendationsSlider{
+    margin-bottom: 20px;
+    position: relative;
+    overflow-x: hidden;
+  }
+svg.c-arrow_next {
+    right: 0;
+    position: absolute;
+    top: 40%;
+    z-index: 1;
+}
+svg.c-arrow_prev {
+    left: 0;
+    position: absolute;
+    top: 40%;
+    z-index: 1;
+} 
+  @media screen and (max-width:800px){
+    #shopify-section-{{ section.id }} .c-arrow{
+      display: none;
+    }
+  }
+</style>
+<div
+  id="productRecommendation"
+  class="custom-product-recommendations"
+  data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit=4&intent=related"
+>
+  {%- if recommendations.performed? and recommendations.products_count > 0 -%}
+      <h2 class="text-center slider-collection_title">{{section.settings.product_recommendations_heading}}</h2>
+      <div class="productRecommendationsSlider container">
+        <div class="swiper-wrapper">
+          {%- for product in recommendations.products -%}
+            <div class="swiper-slide">
+              {% render 'product-card', product: product %}
+            </div>
+          {%- endfor -%}
+        </div>
+        <div class="c-arrow">
+          <svg class="c-arrow_prev" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="36" height="36" rx="18" fill="#96865D"/><path d="M21 24L15 18L21 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg class="c-arrow_next" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0.226562" y="0.516113" width="36" height="36" rx="18" fill="#96865D"/><path d="M15.2266 24.5161L21.2266 18.5161L15.2266 12.5161" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="cswiper-scrollbar swiper-scrollbar"></div>
+      </div>
+  {%- endif -%}
+</div>
+
+<script defer>
+  const handleIntersection = (entries, observer) => {
+    if (!entries[0].isIntersecting) return;
+
+    observer.unobserve(productRecommendationsSection);
+
+    const url = productRecommendationsSection.dataset.url;
+
+    fetch(url)
+      .then(response => response.text())
+      .then(text => {
+        const html = document.createElement('div');
+        html.innerHTML = text;
+        const recommendations = html.querySelector('.custom-product-recommendations');
+
+        if (recommendations && recommendations.innerHTML.trim().length) {
+          productRecommendationsSection.innerHTML = recommendations.innerHTML;
+        }
+
+        document.querySelectorAll('#productRecommendation img[data-src]').forEach(function(img) {
+            img.src = img.getAttribute('data-src');
+        });
+
+        const swiper{{ section.index }} = new Swiper('.productRecommendationsSlider', {
+        slidesPerView: 2.5,
+        spaceBetween: 10, // Default spacing value
+        scrollbar: {
+          el: '.custom-product-recommendations .cswiper-scrollbar',
+          draggable: true,
+        },
+        navigation: {
+          nextEl: '.custom-product-recommendations .c-arrow_next',
+          prevEl: '.custom-product-recommendations .c-arrow_prev',
+        },
+        breakpoints: {
+          // When the window width is 800px or greater (desktop)
+          800: {
+            slidesPerView: 4,
+            spaceBetween: 20,
+          }
+        }
+      });
+      })
+      .catch(e => {
+        console.error(e);
+      });
+  };
+
+  const productRecommendationsSection = document.querySelector('.custom-product-recommendations');
+  const observer{{ section.index }} = new IntersectionObserver(handleIntersection, {rootMargin: '0px 0px 200px 0px'});
+
+  observer{{ section.index }}.observe(productRecommendationsSection);
+
+
+</script>
+
+
+{% schema %}
+  {
+    "name": "Product recommendations",
+    "settings": [
+      {
+        "type": "color",
+        "label": "background color",
+        "id": "background_color"
+      },
+      {
+        "type": "text",
+        "label": "Recommendation heading",
+        "id": "product_recommendations_heading", 
+        "default":"People also saw"
+      }
+    ],
+      "presets": [
+    {
+      "name": "Product recommendations"
+    }
+  ]
+  }
+{% endschema %}

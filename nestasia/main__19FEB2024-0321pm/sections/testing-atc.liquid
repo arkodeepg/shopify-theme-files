@@ -1,0 +1,52 @@
+
+<ajax-cart-product-form>
+  {% form 'product', product %}
+    <!-- form content -->
+    <input type="hidden" name="id"
+ value="{{ product.selected_or_first_available_variant.id }}">
+  <input type="text" name="quantity" min="1" value="1">
+    <button type="submit" name="add">
+      Add to cart
+    </button>
+  
+    <div data-ajax-cart-errors="form"></div>
+  {% endform %}
+</ajax-cart-product-form>
+
+<script>
+  // Listen for the "liquid-ajax-cart:request-end" event which is fired
+// after a Shopify Cart API Ajax request is performed
+document.addEventListener('liquid-ajax-cart:request-end', event => {
+  const {requestState} = event.detail;
+
+  // If the "add to cart" request is successful
+  if (requestState.requestType === 'add' && requestState.responseData?.ok) {
+
+    // Add the CSS class to the "body" tag
+    document.body.classList.add('js-show-ajax-cart');
+  }
+});
+</script>
+
+{% schema %}
+{
+  "name": "testing atc",
+  "tag": "section",
+  "settings": [],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "testing atc"
+    }
+  ],
+  "templates": [
+    "product"
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

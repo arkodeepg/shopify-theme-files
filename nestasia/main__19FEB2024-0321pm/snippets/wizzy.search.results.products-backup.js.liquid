@@ -1,0 +1,145 @@
+<li class="wizzy-result-product wizzy-product-[[id]] 
+    [[#groupId]]has-variations wizzy-group-product-[[groupId]][[/groupId]]"
+        title="[[& name ]]" data-id="[[id]]" [[#groupId]]data-groupId="[[groupId]]"[[/groupId]]>
+
+    <span class="wizzy-product-variation-loader-bg"></span>
+    <span class="wizzy-product-variation-loader"></span>
+
+    <a href="[[&url]]" class="wizzy-result-product-item">  
+
+        <div class="result-product-item-image-new">
+            <img class="SMAdded_img" src="[[ mainImage ]]" class="product-item-image" width="300" height="300" loading="lazy" />
+            <div class="smFalseDiv"></div>
+            <img class="badgeTopSMColl" src="[[collBadgeTop]]"/>
+            <div class="badgeBottomSMColl">[[collBadgeBottom]]</div>
+        </div><!-- ending of result-product-item-image -->
+        <div class="result-product-item-image hover-image-new">
+            [[#hoverImage]]
+                <img src="[[ hoverImage ]]" class="product-item-image" width="300" height="300" loading="lazy"/>
+            [[/hoverImage]]
+            [[^hoverImage]]
+                <img src="[[ mainImage ]]" class="product-item-image" width="300" height="300" loading="lazy"/>
+            [[/hoverImage]]
+        </div>
+              <!-- ending of result-product-item-image -->
+        <div class="result-product-item-info">
+        <h3 class="product-item-title">[[& name ]]</h3>
+        [[#subTitle]]
+        <p class="product-item-sub-title">[[&subTitle]]</p>
+        [[/subTitle]]
+        [[#swatches]]
+            <div class="product-item-swatch-group
+            [[#isPrimary]]swatch-group-primary[[/isPrimary]] swatch-group-[[key]]"
+                data-swatchKey="[[key]]">
+            [[#values]]
+                <div data-variationId="[[variationId]]" title="[[#value]][[value]][[/value]]"
+                    class="product-item-swatch-item
+                    [[#isSelected]]swatch-selected[[/isSelected]]
+                    [[#inStock]]swatch-in-stock[[/inStock]]">
+
+[[#isSwatch]]
+<span class="wizzy-facet-item-swatch-wrapper [[#isVisualSwatch]]facet-visual-swatch[[/isVisualSwatch]]
+    [[^isVisualSwatch]]facet-text-swatch[[/isVisualSwatch]]">
+    <span class="wizzy-facet-item-swatch [[#isVisualSwatch]]facet-visual-swatch[[/isVisualSwatch]]
+        [[^isVisualSwatch]]facet-text-swatch[[/isVisualSwatch]]"
+            style="[[#isVisualSwatch]][[#isURLSwatch]]background-image:url([[swatchValue]]);[[/isURLSwatch]]
+            [[^isURLSwatch]]background-color:[[swatchValue]];[[/isURLSwatch]][[/isVisualSwatch]]">
+         [[^swatchValue]]
+                [[#value]]
+                    <span class="wizzy-facet-swatch-individual-value">[[value]]</span>
+                [[/value]]
+        [[/swatchValue]]
+        [[^isVisualSwatch]]
+            <span class="wizzy-facet-swatch-value">[[swatchValue]]</span>
+        [[/isVisualSwatch]]
+    </span>
+</span>
+[[/isSwatch]]
+
+            </div>
+            [[/values]]
+        </div><!-- ending of product-item-swatch-group -->
+        [[/swatches]]
+        <div class="wizzy-product-item-price-reviews-wrapper">
+
+            <div class="wizzy-product-item-reviews">[[#avgRatings]]<span class="product-item-reviews-avgRatings">[[avgRatings]]</span><span class="product-item-review-wrapper">&#x2605;</span>[[#totalReviews]]<span class="product-item-reviews-totalReviews">([[totalReviews]])</span>[[/totalReviews]][[/avgRatings]]</div>
+
+            <div class="[[#discountPercentage]]discounted[[/discountPercentage]] wizzy-product-item-price [[#hasSwatches]]with-swatches[[/hasSwatches]]">
+                <span class="wizzy-pro-price">[[#priceWithCurrency]][[ sellingPrice ]][[/priceWithCurrency]]
+                [[#price]]
+                </span>
+                <br>
+                <span class="product-item-original-price">
+                                [[#priceWithCurrency]][[ price ]][[/priceWithCurrency]]
+                            </span>
+                <span class="product-item-discount">
+                                [[#discountPercentage]]
+                                    ([[discountPercentage]]% off)
+                                [[/discountPercentage]]
+                            </span>
+                [[/price]]
+            </div>
+{% comment %}
+                 <div class='product-item-review-container'>
+                 <div class="product-item-reviews">
+                            [[#star]]
+                     <span class="stars-wizzy-container-before" data-star=[[star]]%>
+                      ★★★★★          
+                    </span>
+                     <span class="stars-wizzy-container" data-star=[[star]]%>
+                      ★★★★★          
+                    </span>
+                    <span class="stars-wizzy-container-after" data-star=[[star]]%>
+                      ★★★★★          
+                    </span>
+                                  
+            [[/star]]
+                 </div>
+                     <span class="stars-wizzy-review-count" >
+                                 [[#reviewCount]]
+                      [[reviewCount]] review(s)    
+                                   [[/reviewCount]]
+                    </span>
+                                     </div>
+
+            {% endcomment %}
+ 
+<div style="" class="jdgm-widget jdgm-preview-badge jdgm-preview-badge--with-link jdgm--done-setup" data-id="[[id]]" data-template="product" data-auto-install="false">{% comment %}<div style="display:none" class="jdgm-prev-badge" data-average-rating="[[star]]" data-number-of-reviews="[[reviewCount]]" data-number-of-questions="0"> <span class="jdgm-prev-badge__stars" data-score="[[star]]" full=[[noOfFullStars]] half=[[noOfHalfStars]] empty=[[noOfEmptyStars]] starMarkup="[[starMarkup]]"  tabindex="0" aria-label="[[star]] stars" role="button">  </span> <span class="jdgm-prev-badge__text">[[(reviewCount)]]</span></div>{% endcomment %}</div>
+                                  
+<p class="wizzy-offer-available">[[#isOfferAvailable]]Offer Available[[/isOfferAvailable]]</p>
+            <div class="wizzy-product-actions">
+                <div class="product_item-actions actions">
+
+                  {% comment %}
+
+                    <div class="actions-primary">
+                            <div class="wizzy-product-add-to-cart">
+                                <form data-role="tocart-form" class="wizzy-tocart-form" method="post" action="/cart/add">
+                                    <input type="hidden" name="id" value="[[id]]"/>
+                                    <input min="1" type="hidden" id="quantity" name="quantity" value="1"/>
+                                    <input type="submit" value="Add to Cart"
+                                           class="wizzy-tocart-button btn button"/>
+                                </form>
+                            </div>
+                        </div>
+                  
+  <button class=' btn button  wizzy-tocart-button' data-section-id=[[id]] value=[[id]]></button>
+                  {% endcomment %}
+
+                <button class=' btn button [[#hasSwatches]]quickview[[/hasSwatches]] [[^hasSwatches]]wizzy-tocart-button[[/hasSwatches]]' data-group-id=[[groupId]] data-section-id=[[id]] value=[[id]]>
+                <svg width="31" height="31" viewBox="0 0 31 31" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle class="BGred" cx="15.5" cy="15.5" r="15.5" fill="#F7F4ED"/>
+                <path class="Wred" d="M6.64453 11.4569H21.2536V22.2623C21.2536 23.316 20.399 24.1735 19.3471 24.1735H8.75559C7.58687 24.1735 6.64453 23.2215 6.64453 22.0516V11.4569Z" stroke="#96865D" stroke-width="0.782828" stroke-miterlimit="10"/>
+                <path class="Wred" d="M10.459 13.8002V9.94674C10.459 9.56381 10.5439 9.18882 10.6906 8.83781C12.1732 5.24766 17.0686 6.30078 17.4083 10.2579C17.4237 10.4493 17.4315 10.6409 17.4315 10.8323V13.8002" stroke="#96865D" stroke-width="0.782828" stroke-miterlimit="10"/>
+                <circle class="Wred BGred" cx="21.3412" cy="20.2298" r="3.8568" fill="#F9F6F1" stroke="#96865D" stroke-width="0.861111"/>
+                <path class="Wred" d="M18.7715 20.2285H23.9139" stroke="#96865D" stroke-width="0.861111"/>
+                <path class="Wred" d="M21.3398 17.6562L21.3398 22.7986" stroke="#96865D" stroke-width="0.861111"/>
+                </svg>
+                  </button>
+                </div>
+            </div><!-- ending of wizzy-product-actions -->
+
+        </div><!-- ending of wizzy-product-item-price-reviews-wrapper -->
+        </div><!-- ending of result-product-item-info -->
+    </a><!-- ending of wizzy-result-product-item -->
+</li><!-- ending of wizzy-result-product -->

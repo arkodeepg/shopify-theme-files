@@ -1,0 +1,130 @@
+{% if page.metafields.custom.festive_offer != blank %}
+<style>
+  @media screen and (min-width: 1200px){
+    #swiper-carousel-{{ section.id }} .swiper-wrapper{
+        justify-content: center;
+    }    
+  }
+
+</style>
+  <div
+    data-section-id="{{ section.id }}"
+    data-section-type="custom-collection-silder"
+    class="clearfix custom-silder-section collection-container margin-30 offertopCarousel">
+
+    <div class="container grid clearfix">
+
+
+
+      {% if page.metafields.custom.festive_carousel_heading != blank %}
+        <div class="twelve text-center offerHead">
+          <h2>{{ page.metafields.custom.festive_carousel_heading }}</h2>
+        </div>
+      {% endif %}
+
+      <div>
+        <div class="tab-body swiper-container-wrapper tab-body-badge">
+
+          <div>
+            <div class="swiper-container plus-slider product-loop text-left" id="swiper-carousel-{{ section.id }}">
+              <div class="swiper-wrapper swiper-wrapper-{{ section.id }}">
+                {%- assign releases = page.metafields.custom.festive_offer -%}
+                {% assign collectionMaincontainer = releases | split: "::" %}
+                {%- for technical_details in collectionMaincontainer %}
+
+                  {% assign collectionSubcontainer = technical_details | split: "|" %}
+                  <div class="animate-loop-{{ forloop.index0 }} swiper-slide swiper-slide-active three">
+                    <div class="innercollectionsImg">
+                      <a href="{{collectionSubcontainer[1]}}">
+                        <img
+                          src="{{collectionSubcontainer[0]}}"
+                          alt=""
+                          class="img-fluid">
+                      </a>
+                    </div>
+
+                  </div>
+
+                {% endfor %}
+
+
+              </div>
+
+              {% comment %} <div id="swiper-scrollbar-{{ section.id }}" class="swiper-scrollbar"></div> {% endcomment %}
+
+            </div>
+
+            {% comment %} <div id="swiper-pagination-{{ section.id }}" class="swiper-pagination relative hidden">
+              <div
+                id="swiper-button-prev-{{ section.id }}"
+                class="swiper-button-prev icon icon-chevron-left svg-icon "
+                role="button"
+                aria-label="{{ 'products.general.previous' | t }}">
+                <span class="arrow"></span>
+              </div>
+              <div
+                id="swiper-button-next-{{ section.id }}"
+                class="swiper-button-next icon icon-chevron-right svg-icon"
+                role="button"
+                aria-label="{{ 'products.general.next' | t }}">
+                <span class="arrow"></span>
+              </div>
+            </div> {% endcomment %}
+
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+{% endif %}
+
+<script defer>
+  $(document).ready(function() {
+
+    var slides = document.querySelectorAll('.collection-container .swiper-wrapper .swiper-slide');
+    var arrowPrev = document.getElementsByClassName('swiper-button-prev')[0];
+    var arrowNext = document.getElementsByClassName('swiper-button-next')[0];
+
+
+
+    if ($(window).width() > 767 && slides.length < 8) {
+      $('.swiper-button-prev').css('display', 'none');
+      $('.swiper-button-next').css('display', 'none');
+      $('.collection-container .swiper-wrapper').css('justify-content', 'center');
+    }
+
+    const collectionTile = new Swiper('#swiper-carousel-{{ section.id }}', {
+      slidesPerView: 3.5,
+      draggable: 'true',
+      breakpoints: {
+        // When the window width is 800px or greater (desktop)
+        800: {
+          slidesPerView: 8,
+        }
+      }
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Offer top Carousal",
+  "tag": "section",
+  "settings": [],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "Offer top Carousal"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

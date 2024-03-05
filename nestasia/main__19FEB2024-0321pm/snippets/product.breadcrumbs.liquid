@@ -1,0 +1,148 @@
+<nav class="breadcrumbs breadcrumb_text{% if alt %} bottompad-half{% endif %}" aria-label="{{ 'general.breadcrumbs.breadcrumbs' | t | escape }}">
+  
+  {%- liquid
+    assign linkCt = 0
+    assign linkCt1 = 0
+    assign linkCt2 = 0
+    assign linkCt3 = 0
+    if settings.menu != blank
+      for link in linklists[settings.menu].links
+        if link.active
+          capture linkCt1
+              increment linkCt
+          endcapture
+        endif
+        if link.links != blank
+          for sub_link in link.links
+            if sub_link.active 
+              capture linkCt2
+                increment linkCt
+              endcapture
+            endif
+            if sub_link.links != blank
+              for sub_sub_link in sub_link.links
+                if sub_sub_link.active
+                  capture linkCt3
+                    increment linkCt
+                  endcapture
+                endif
+              endfor
+            endif
+          endfor
+        endif
+      endfor
+      assign finalCt = linkCt1 | plus:linkCt2 | plus:linkCt3
+    endif
+  -%}
+  
+  <span><a href="{{ routes.root_url }}" title="{{ 'general.breadcrumbs.home_link_title' | t | escape }}">{{ 'general.breadcrumbs.home' | t }}</a></span> 
+
+  {%- liquid
+    if finalCt > 0
+    echo '<span class="separator" aria-hidden="true"></span>'
+    echo '<span>'
+    if collection
+      echo '<a href="'
+      echo collection.url
+      echo '" title="'
+      echo collection.title | escape
+      echo '">'
+      echo collection.title
+      echo '</a>'
+    else
+      echo '<a href="'
+      echo routes.all_products_collection_url
+      echo '" title="'
+      echo collections.all.title | escape
+      echo '">'
+      echo collections.all.title
+      echo '</a>'
+    endif
+    echo '</span>'
+
+    else
+    
+    for link in linklists[settings.menu].links
+      if link.active or link.child_active or sub_link.child_active
+        unless link.url == product.url
+          echo '<span class="separator" aria-hidden="true"></span>'
+          echo '<span>'
+          echo '<a href="'
+          echo link.url
+          echo '" title="'
+          echo link.title | escape
+          echo '"><span>'
+          echo link.title
+          echo '</span></a>'
+          echo '</span>'
+          if link.links != blank
+            for sub_link in link.links
+              if sub_link.active or sub_link.child_active or sub_sub_link.child_active
+                unless sub_link.url == product.url
+                  echo '<span class="separator" aria-hidden="true"></span>'
+                  echo '<span>'
+                  echo '<a href="'
+                  echo sub_link.url
+                  echo '" title="'
+                  echo sub_link.title | escape
+                  echo '">'
+                  echo sub_link.title
+                  echo '</a>'
+                  echo '</span>'
+                  if sub_link.links != blank
+                    for sub_sub_link in sub_link.links
+                      if sub_sub_link.active and sub_sub_link.url != product.url
+                        echo '<span class="separator" aria-hidden="true"></span>'
+                        echo '<span>'
+                        echo '<a href="'
+                        echo sub_sub_link.url
+                        echo '" title="'
+                        echo sub_sub_link.title | escape
+                        echo '">'
+                        echo sub_sub_link.title
+                        echo '</a>'
+                        echo '</span>'
+                        assign current = true
+                      endif
+                    endfor
+                  endif
+                  assign current = true
+                endunless
+              endif
+            endfor
+          endif
+          assign current = true 
+        endunless
+      endif
+    endfor
+    
+    unless current
+      echo '<span class="separator" aria-hidden="true"></span>'
+      echo '<span>'
+      if collection
+      	echo '<a href="'
+        echo collection.url
+        echo '" title="'
+        echo collection.title | escape
+        echo '">'
+        echo collection.title
+        echo '</a>'
+      else
+      	echo '<a href="'
+        echo routes.all_products_collection_url
+        echo '" title="'
+        echo collections.all.title | escape
+        echo '">'
+        echo collections.all.title
+        echo '</a>'
+      endif
+      echo '</span>'
+    endunless
+    
+    endif
+  -%}
+
+  <span class="separator" aria-hidden="true"></span>
+  <span class="active" aria-current="page">{{ product.title }}</span>
+
+</nav>

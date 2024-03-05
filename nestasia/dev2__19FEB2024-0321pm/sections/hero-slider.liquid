@@ -1,0 +1,67 @@
+{% comment %} hero slider = hs {% endcomment %}
+<div class="hs-outer-cont">
+  <div class="hs-cont swiper">
+    <div class="hs-img-cont swiper-wrapper">
+      {% for block in section.blocks %}
+        <picture class="swiper-slide">
+          <source
+            media="(max-width:800px)"
+            height="{{ block.settings.imagemobile.height }}"
+            width="{{ block.settings.imagemobile.width }}"
+            srcset="{{ block.settings.imagemobile | image_url }}"
+          >
+          <img
+            src="{{ block.settings.imagedesktop | image_url}}"
+            alt="{{ block.settings.imagedesktop.alt }}"
+            width="{{ block.settings.imagedesktop.width }}"
+            height="{{ block.settings.imagedesktop.height }}"
+            class="hs-img"
+          >
+        </picture>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+<script>
+  const swiper{{section.index}}= new Swiper('.hs-cont', {
+    slidesPerView: 1,
+    loop: 'true',
+    draggable: 'true',
+    });
+</script>
+{% schema %}
+{
+  "name": "hero slider",
+  "tag": "section",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "slider",
+      "name": "slider",
+      "settings": [
+        {
+          "type": "image_picker",
+          "label": "image desktop",
+          "id": "imagedesktop"
+        },
+        {
+          "type": "image_picker",
+          "label": "image mobile",
+          "id": "imagemobile"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "hero slider"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

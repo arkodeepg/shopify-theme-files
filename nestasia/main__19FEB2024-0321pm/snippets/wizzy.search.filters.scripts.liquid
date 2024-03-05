@@ -1,0 +1,19 @@
+<script type='text/template' id='wizzy-search-results-product-new'>{% render 'wizzy.search.results.products.js' %}</script>
+<script type='text/template' id='wizzy-autocomplete-topproducts-new'>{% render 'wizzy.autocomplete.results.js' %}</script>
+<script type='text/template' id='wizzy-search-wrapper-new'>{% render 'wizzy.search.wrapper.js' %}</script>
+<script type='text/template' id='wizzy-selected-facets-block-new'>{% render 'wizzy.selected.facets.blocks.js' %}</script>
+<script type='text/template' id='wizzy-progress-new'>{%- render 'wizzy_progress.js' -%}</script>
+<script type='text/template' id='wizzy-search-summary-new'>{%- render 'wizzy_search_summary.js' -%}</script>
+<script type='text/template' id='wizzy-facet-block-new'>{%- render 'wizzy.filters.facet.block.js' -%}</script>
+
+<!-- edited -->
+{{ 'wizzyCustom.js' | asset_url | script_tag }}
+{% comment %}
+{% endcomment %}
+
+{% render 'wizzy.search.mobile.modal' %} 
+{% assign page = template.name | split : '.' | last %}
+{% if page contains 'product' %}
+{% else %}
+{% render 'wizzy.quick.view' %}
+{% endif %}

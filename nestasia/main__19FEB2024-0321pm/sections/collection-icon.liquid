@@ -1,0 +1,75 @@
+{% comment %}
+-------------------------------------------------------------------------------
+home collection slider
+-------------------------------------------------------------------------------
+Usage
+{% section 'hoem collection slider' %}
+-------------------------------------------------------------------------------
+{% endcomment %}
+
+
+{% if section.blocks.size > 0 %}
+<div class="collection-icon">
+    <div class="collection-icon_inner container">
+        {% for block in section.blocks %}
+            <a href="{{ block.settings.link }}" class="collection-icon_child">
+                <div class="collection-icon_image"></div>
+                <img src="{{block.settings.image | img_url: '150x'}}" alt="" class="collection-icon_image">
+                <div class="collection-icon_name">
+                    {{block.settings.name}}
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<script defer>
+   const swiper = new Swiper('.collection-icon_inner', {
+  speed: 400,
+  spaceBetween: 100,
+}); 
+</script>
+
+
+{% schema %}
+{
+  "name": "collection icons",
+  "tag": "section",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "slide",
+      "settings": [
+        {
+            "type": "collection",
+            "id": "link",
+            "label": "link"
+        },
+        {
+          "type": "text",
+          "label": "name",
+          "id": "name"
+        },
+        {
+          "type": "image_picker",
+          "label": "image",
+          "id": "image"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "collection icons"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

@@ -1,0 +1,495 @@
+<style>
+  .blog_filter_wrap {
+    text-align: center;
+    margin-bottom: 10px;
+    white-space: nowrap;
+    overflow-x: auto;
+  }
+  .blog_filter_wrap .blog_filter_item {
+    padding: 15px 10px;
+    display: inline-block;
+    vertical-align: middle;
+    text-transform: capitalize;
+  }
+  .blog_filter_wrap .blog_filter_item {
+    padding: 15px 10px;
+    display: inline-block;
+    vertical-align: middle;
+    text-transform: capitalize;
+  }
+  .blog_filter_wrap .blog_filter_item {
+    padding: 15px 10px;
+    display: inline-block;
+    vertical-align: middle;
+    text-transform: capitalize;
+  }
+  .blog_filter_wrap .blog_filter_item.active a {
+    color: #96865d;
+    border-bottom: 2px solid;
+  }
+  .blog_filter_wrap a {
+    font-size: 17px;
+    text-transform: capitalize;
+  }
+  .template-name-blog .articles_row {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    -moz-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    margin-left: -10px;
+    margin-right: -10px;
+  }
+  .template-name-blog .articles_grid {
+    -webkit-flex-direction: column;
+    -moz-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    width: calc(25% - 20px);
+    padding: 10px;
+  }
+  .articles_grid_wrap {
+    background-color: #fff;
+    height: 100%;
+    padding: 1.25rem;
+  }
+  .template-name-blog .articles_grid_wrap .bottompad {
+    margin-bottom: 15px;
+  }
+  .articles_grid_wrap .articles_info .blog-title {
+    font-size: 16px;
+    word-break: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    line-height: 1.3em;
+    max-height: 3.9em;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    margin-bottom: 10px;
+    text-align: left;
+  }
+  .blog_title_line:after {
+    background-color: #292929;
+    color: #fff;
+    content: '';
+    display: block;
+    height: 0.0625rem;
+    margin: 0.625rem 0;
+    width: 1.875rem;
+  }
+  .blog_filter_wrap a:hover {
+    color: #96865d;
+    text-decoration: none;
+    border-bottom: 2px solid;
+  }
+  .custom-loader-wrap {
+    text-align: center;
+    margin: 50px 0;
+  }
+  .custom-loader {
+    border-image: none;
+    border-style: solid;
+    display: inline-block;
+    border-color: #677e87 #677e87 #677e87 rgba(103, 126, 135, 0.2);
+    border-radius: 25px;
+    border-width: 2px;
+    height: 32px;
+    width: 32px;
+    -moz-transform: rotate(360deg);
+    -moz-animation-name: ssw-spin;
+    -moz-animation-duration: 0.75s;
+    -moz-animation-iteration-count: infinite;
+    -moz-animation-timing-function: linear;
+    -webkit-transform: rotate(360deg);
+    -webkit-animation-name: ssw-spin;
+    -webkit-animation-duration: 0.75s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+  }
+  .bottompad-section[data-section-type='blog-page'] {
+    margin-bottom: 0;
+  }
+  @media screen and (max-width: 800px){
+    .template-name-blog .articles_row {
+        margin-left: -5px;
+        margin-right: -5px;
+        justify-content: space-evenly;
+    }
+    .template-name-blog .articles_grid {
+        width: calc(50% - 1rem);
+        padding: 0.5rem;
+    }
+    .blog_filter_wrap a {
+        font-size: 15px;
+    }
+    .articles_grid_wrap .articles_info .blog-title {
+        font-size: 14px;
+    }
+  }
+</style>
+
+{%- assign full_width = section.settings.full_width -%}
+{% assign full_url = request.host | append: request.path %}
+{% if full_url contains 'tagged' %}
+  <meta name="robots" content="noindex,nofollow">
+{% endif -%}
+<div data-section-id="{{ section.id }}" data-section-type="blog-page" class="bottompad-section clearfix">
+  <div class="blog_header_section">
+    {% if section.settings.banner_image and section.settings.include_image %}
+      {%- assign img_src = section.settings.banner_image -%}
+      {{ img_src | image_url: width: 1920 | image_tag }}
+      {%- comment -%}
+        {%- capture image_data -%}{%- render 'image-background-src', img_src: img_src -%}{%- endcapture -%}
+        {%- assign img_size = '1x' -%}
+        {%- assign padding_bottom = 1 | divided_by: section.settings.banner_image.aspect_ratio | times: 100 -%}
+
+        <div
+          class="{% if full_width %}background-cover lazyload {% endif %}relative-{{ section.id }} clearfix"
+          {% if full_width %}
+            data-bgset="{{ image_data | strip }}"
+            data-sizes="auto"
+            style="background:url({{ img_src | img_url: img_size }}) center center no-repeat;padding-bottom: {{padding_bottom}}%"
+          {% endif %}
+        >
+          {% if full_width %}
+            <noscript>
+              <div
+                class="no-js-bg background-cover content-height-{{ section.id }} relative-{{ section.id }}"
+                style="background:url({{ img_src | img_url: '1900x' }}) center center no-repeat;"
+              ></div>
+            </noscript>
+          {% endif %}
+
+
+            <div {% if full_width %} class="relative-{{ section.id }} background-overlay-{{ section.id }}"{% endif %}>
+              <div class="container text-center clearfix">
+                <div {% if full_width == false %} class="twelve"{% endif %}>
+                  <div class="{% if full_width == false %}background-cover lazyload relative-{{ section.id }} {% endif %}{% if section.settings.font_color %}white {% endif %}clearfix"
+                       {% if full_width == false %}
+                       data-bgset="{{ image_data | strip }}"
+                       data-sizes="auto"
+                       style="background:url({{ img_src | img_url: img_size }}) center center no-repeat;"
+                       {% endif %}>
+                    {% if full_width == false %}
+                    <noscript>
+                      <div class="no-js-bg background-cover content-height-{{ section.id }} relative-{{ section.id }}" style="background:url({{ img_src | img_url: '1200x' }}) center center no-repeat;"></div>
+                    </noscript>
+                    {% endif %}
+
+                    <div class="{% if full_width == false %}relative-{{ section.id }} background-overlay-{{ section.id }}{% endif %}">
+                      <div class="container {% if full_width %}remove-pad {% else %}no-pad {% endif %}clearfix">
+                        <div class="table content-height-{{ section.id }} {% if full_width == false %}twelve{% endif %}">
+                          <div class="table-cell">
+                            <div class="twelve text-center">
+                              {%- render 'blog-header' -%}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+      {%- endcomment -%}
+      </div>
+
+    {% else %}
+      <div class="relative-{{ section.id }} clearfix">
+        <div
+          {% if full_width %}
+            class="relative-{{ section.id }} background-colored color-primary"
+          {% endif %}
+        >
+          <div class="container text-center clearfix">
+            <div
+              {% if full_width == false %}
+                class="twelve"
+              {% endif %}
+            >
+              <div class="{% if full_width == false %}relative-{{ section.id }} {% endif %}{% if section.settings.font_color %}white {% endif %}clearfix">
+                <div class="{% if full_width == false %}relative-{{ section.id }} background-colored color-primary{% endif %}">
+                  <div class="container {% if full_width %}remove-pad {% else %}no-pad {% endif %}clearfix">
+                    <div class="table content-height-{{ section.id }} {% if full_width == false %}twelve{% endif %}">
+                      <div class="table-cell">
+                        <div class="twelve text-center">
+                          {%- render 'blog-header' -%}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  {%- comment -%}
+    <div class="container clearfix">
+      <div{% if full_width == false %} class="twelve"{% endif %}>
+        <div{% if full_width == false %} class="twelve"{% endif %}>
+          <div class="eight background-white needed text-center center">
+            <div class="row">
+              <div class="no-img">
+                {%- render 'blog-details', article: article -%}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {%- endcomment -%}
+
+  {% if blog.articles.size > 0 %}
+    <div class="blog_filter_section">
+      <div class="container">
+        <div class="blog_filter_wrap">
+          <div class="blog_filter_item{% if current_tags == blank %} active{% endif %}">
+            <a href="{{blog.url}}">All Blog</a>
+          </div>
+          {%- assign customFilterTags = section.settings.tag_list | split: ',' -%}
+          {%- assign current_tags_handle = current_tags | handle -%}
+          {%- for customFilter in customFilterTags -%}
+            {%- for tag in blog.all_tags -%}
+              {%- assign tag_handle = tag | handle -%}
+              {%- assign customFilter_handle = customFilter | handle -%}
+              {%- if tag_handle == customFilter_handle -%}
+                <div class="blog_filter_item{% if current_tags_handle == customFilter_handle %} active{% endif %}">
+                  <a href="{{blog.url}}/tagged/{{ customFilter | handle }}">{{ customFilter }}</a>
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+
+    {% paginate blog.articles by section.settings.number_of_articles %}
+      <div class="container clearfix">
+        <div class="articles_row">
+          {% for article in blog.articles %}
+            <div class="articles_grid">
+              <div class="articles_grid_wrap">
+                {% if article.image and section.settings.include_image %}
+                  <div class="bottompad">
+                    <a href="{{ article.url }}" title="{{ article.title | escape }}">
+                      {%- capture alt -%}{% if article.image.alt %}{{ article.image.alt }}{% else %}{{ article.title }}{% endif %}{%- endcapture -%}
+                      <img
+                        id="{{ article.image.id }}"
+                        src="{{ article.image | image_url: width: 780 }}"
+                        alt="{{ alt }}"
+                      >
+                    </a>
+                  </div>
+                {% endif %}
+                <div class="articles_info">
+                  {%- render 'blog-details', article: article -%}
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        {% if paginate.pages > 1 %}
+          <div class="pagination">
+            <div>
+              {%- render 'pagination', paginate: paginate -%}
+            </div>
+          </div>
+          <div class="custom-loader-wrap hidden">
+            <div class="custom-loader"></div>
+          </div>
+        {% endif %}
+      </div>
+
+      {% assign dm_paginate_by = paginate.page_size -%}
+    {%- endpaginate %}
+
+  {% else %}
+    <div class="container toppad clearfix">
+      <div
+        {% if full_width == false %}
+          class="twelve"
+        {% endif %}
+      >
+        <div class="toppad clearfix">
+          {%- render 'blog-header' -%}
+        </div>
+        <div
+          {% if full_width == false %}
+            class="twelve"
+          {% endif %}
+        >
+          <div class="twelve clearfix">
+            <h3 class="blog-title">{{ 'homepage.onboarding.no_blog_body' | t }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+{%- style -%}
+  .content-height-{{ section.id }} {height:{{ section.settings.padding | times: 0.75 }}vh;min-height:{{ section.settings.padding | times: 0.75 }}vh}
+  {%- comment -%}.relative-{{ section.id }}{margin-bottom:-{{ section.settings.padding | divided_by: 4 }}vh;padding-bottom:{{ section.settings.padding | divided_by: 4 }}vh;}{%- endcomment -%}
+  {% if section.settings.background_img_overlay != blank %}{%- assign alpha = section.settings.background_img_overlay_opacity | times: 0.01 -%}.background-overlay-{{ section.id }}{background:{{ section.settings.background_img_overlay |  color_modify: 'alpha', alpha }};}{% endif %}
+  body.template-name-blog .pagination{display: none;}
+{%- endstyle -%}
+
+<script defer>
+    $(document).ready(function(){
+      let AjaxLoding = true;
+      $(window).on('scroll', function(){
+        let winScroll = $(this).scrollTop();
+        let paginationTop = $('body.template-name-blog .articles_row').offset().top + $('body.template-name-blog .articles_row').height() - $(window).height();
+        if($('body.template-name-blog .pagination').length > 0){
+  //         console.log('paginationTop',paginationTop);
+  //         console.log('winScroll',winScroll);
+          if(paginationTop < winScroll && AjaxLoding){
+            let pageURL = {{blog.url | json}};
+            AjaxLoding = false;
+            let nextPage = $('body.template-name-blog .pagination .next').attr('data-next-page');
+            pageURL += '?page='+nextPage;
+            console.log('pageURL',pageURL);
+  //           $('html,body').animate({ scrollTop: $('.articles_grid:last-child').offset().top}, 'slow');
+            $('.custom-loader-wrap').removeClass('hidden');
+            $.ajax({
+              url: pageURL,
+              dataType: "html",
+              success: function(data){
+                $('.custom-loader-wrap').addClass('hidden');
+                let blogGrid = $(data).find('.articles_row').html();
+                let paginationHTML = $(data).find('.pagination').html();
+                $('.template-name-blog .articles_row').append(blogGrid);
+                $('.template-name-blog .pagination').html(paginationHTML);
+                if($(data).find('.pagination .next').length > 0){
+                	AjaxLoding = true;
+                }
+              },
+              error: function(e){
+                alert('Error: ' + e);
+              }
+            });
+          }
+        }
+      })
+    })
+</script>
+
+{% if dm_paginate_by %}{% render 'spurit_dmr_collection_template_snippet', paginate_by: dm_paginate_by %}{% endif -%}
+{% schema %}
+{
+  "name": "Custom blog page",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Banner"
+    },
+    {
+      "type": "image_picker",
+      "id": "banner_image",
+      "label": "Banner image"
+    },
+    {
+      "type": "textarea",
+      "id": "tag_list",
+      "label": "Tag List"
+    },
+    {
+      "type": "checkbox",
+      "id": "include_image",
+      "label": "Show image",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "include_rss",
+      "label": "Show RSS",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "font_color",
+      "label": "White text",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width banner",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "%",
+      "label": "Banner height",
+      "default": 50
+    },
+    {
+      "type": "color",
+      "id": "background_img_overlay",
+      "label": "Overlay"
+    },
+    {
+      "type": "range",
+      "id": "background_img_overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Opacity",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Options"
+    },
+    {
+      "type": "range",
+      "id": "number_of_articles",
+      "min": 4,
+      "max": 16,
+      "step": 4,
+      "label": "Number of articles",
+      "default": 4
+    },
+    {
+      "type": "checkbox",
+      "id": "include_author",
+      "label": "Show author",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "include_date",
+      "label": "Show date",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "include_tags",
+      "label": "Show tags",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom blog page"
+    }
+  ]
+}
+{% endschema %}

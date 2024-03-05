@@ -1,0 +1,120 @@
+{%- liquid
+  assign formatted_initial_value = gift_card.initial_value | money_without_trailing_zeros: gift_card.currency
+  assign formatted_initial_value_stripped = formatted_initial_value | strip_html
+-%}
+
+<main role="main">
+  <div id="gift-card-outer-container" {% if gift_card.expired or gift_card.enabled != true %}class="disabled"{% endif %}>
+    <div id="gift-card-inner-container">
+      <header id="gift-card-header" class="text-center">
+        <h2 class="bottompad-half">{{ 'gift_cards.issued.subtext' | t: shop: shop.name }}</h2>
+      </header>
+      <div id="gift-card-holder">
+        <div id="gift-card" class="relative{% if settings.gift_card != blank %} lazycontainer{% endif %}">
+          {% if settings.gift_card != blank %}          
+          {%- liquid
+  			capture alt
+            	if settings.gift_card.alt != blank
+                	echo settings.gift_card.alt
+                else
+                	echo 'gift_cards.issued.subtext' | t: shop: shop.name
+                endif
+            endcapture          
+  			render 'image.load', img_src: settings.gift_card, size: 580, alt: alt, lazy: 'eager', sizes: '(min-width: 600px) 580px, calc(95% - 20px)'
+		  -%}
+          {% else %}
+          {%- assign shop = shop.name | escape -%}
+          <img src="{{ 'gift-card/card.svg' | shopify_asset_url }}" id="gift-card" alt="{{ 'gift_cards.issued.subtext' | t: shop: shop | escape }}">
+          {% endif %}
+          {%- assign code_size = gift_card.code | format_code | size -%}
+          <div id="gift-card-code-outer" class="{% if code_size <= 25 %}large{% elsif code_size > 25 and code_size <= 30 %}medium{% else %}small{% endif %}">
+            <div id="gift-card-code-inner">
+              {%- assign initial_value_size = formatted_initial_value | size -%}
+              <div id="gift-card-amount" class="{% if initial_value_size > 6 %}medium{% endif %}">
+                <h3>{% if settings.currency_enable %}{{ gift_card.initial_value | money_with_currency }}{% else %}{{ gift_card.initial_value | money }}{% endif %}</h3>
+                {% if gift_card.balance != gift_card.initial_value %}   
+                  {%- liquid
+                    if settings.currency_enable
+                      assign gift_card_balance = gift_card.balance | money_with_currency
+                    else
+                      assign gift_card_balance = gift_card.balance | money
+                    endif
+                  -%}
+                  <p class="half-pad">{{ 'gift_cards.issued.remaining_html' | t: balance: gift_card_balance }}</p>       
+                {% endif %}                
+               </div>          
+              <div id="gift-card-code-digits">
+                {%- render 'icons.theme', icon: 'copy', size: 20 -%}
+                <input
+                  type="text"
+                  class="gift-card-code-number"
+                  value="{{ gift_card.code | format_code }}"
+                  data-customizer="{{ 'gift_cards.issued.customizer' | t | escape }}"
+                  aria-label="{{ 'gift_cards.issued.code' | t | escape }}"
+                  readonly
+                >
+              </div>
+            </div>
+            <p class="no-pad"><small id="gift-card-code-copy">{{ 'gift_cards.issued.redeem' | t }}</small></p>
+          </div>
+        </div>
+      </div>
+      
+      {% if gift_card.enabled and gift_card.expired != true %}
+        <div class="table-center center">
+          <div id="gift-card-actions" class="four bottompad">
+            <div>              
+              {% if gift_card.enabled %}
+                {% if gift_card.expired %} 
+                	<div class="btn outline disabled bottompad-quarter">{{ 'gift_cards.issued.expired' | t }} {{ gift_card.expires_on | date: format: settings.month_day_year }}</div>
+                {% else %}
+                	<a href="{{ routes.root_url }}" title="{{ 'gift_cards.issued.shop_link' | t }}" class="btn bottompad-quarter">{{ 'gift_cards.issued.shop_link' | t }}</a>
+                {% endif %}
+                  {% if gift_card.expired != true and gift_card.expires_on %}
+                    <div class="bottompad-quarter"><small>{{ 'gift_cards.issued.active' | t }} {{ gift_card.expires_on | date: format: settings.month_day_year }}</small></div>
+                  {% endif %}
+              {% else %}
+              <span class="btn outline disabled bottompad-quarter">{{ 'gift_cards.issued.disabled' | t }}</span>
+              {% endif %}
+              <br/><button type="button" class="btn outline" onclick="window.print();">{{ 'gift_cards.issued.print' | t }}</button>
+            </div>
+          </div>
+          <div class="eight bottompad">
+            <div id="qrCode">
+              <div id="gift-card-instructions">
+                <h3>{{ 'gift_cards.issued.qr' | t }}</h3>
+                <p class="no-pad"><strong>{{ 'gift_cards.issued.qr_scan' | t }}</strong></p>
+              </div>
+              <div id="qr-code"></div>              
+            </div>
+          </div>
+        </div>
+      {% endif %}
+      
+    </div>
+  </div>
+  {% if gift_card.pass_url and gift_card.enabled and gift_card.expired != true %}<p><a href="{{ gift_card.pass_url }}" title="{{ 'gift_cards.issued.add_to_apple_wallet' | t | escape }}"><img id="apple-wallet-badge" src="{{ 'gift-card/add-to-apple-wallet.svg' | shopify_asset_url }}" width="120" height="40" alt="{{ 'gift_cards.issued.add_to_apple_wallet' | t | escape }}"/></a></p>{% endif %}
+   
+</main>
+
+<script>  
+  new QRCode(document.getElementById('qr-code'), {
+    text: '{{ gift_card.qr_identifier }}',
+    width: 120,
+    height: 120
+  });
+  var digits = document.querySelector('#gift-card-code-digits'),
+      copy = document.getElementById('gift-card-code-copy');
+  digits.addEventListener('click', () => {
+    if (Shopify.designMode) {  
+      copy.textContent = digits.querySelector('input').getAttribute('data-customizer');
+    } else {
+      var copyText = document.querySelector('.gift-card-code-number');
+      navigator.clipboard.writeText(copyText.value).then(() => {
+        copy.textContent = theme.language.gift_cards_issued_copied;
+      }).catch(() => {
+        copy.textContent = theme.language.gift_cards_issued_copied_failed;
+      });
+    }
+  });
+</script>

@@ -1,0 +1,72 @@
+<div class="twelve">
+	{% if section.settings.title != blank %}
+		<h1 class="page-title">{{ section.settings.title }}</h1>
+	{% else %}
+		<h1 class="page-title">{{page.title}}</h1>
+	{% endif %}
+	<div class="content-description">
+		{% if section.settings.page_description != blank %}
+			{{section.settings.page_description}}
+		{% else %}
+			{{ page.content }}
+		{% endif %}
+	</div>
+</div>
+<style type="text/css">
+	.custom-page .content-description {
+		{% if section.settings.description_font_size != blank %}
+			font-size: {{section.settings.description_font_size}}px;
+		{% endif %}
+		{% if section.settings.description_font_color != blank %}
+			color: {{section.settings.description_font_color}};
+		{% endif %}
+	}
+	.custom-page .page-title {
+		{% if section.settings.title_font_size != blank %}
+			font-size: {{section.settings.title_font_size}}px;
+		{% endif %}
+		{% if section.settings.title_font_color != blank %}
+			color: {{section.settings.title_font_color}};
+		{% endif %}
+	}
+</style>
+{% schema %}
+{
+	"name": "Custom Page Content",
+	"class": "content-wrap",
+	"settings": [
+		{
+			"type": "text",
+			"id": "title",
+			"label": "Page Title"
+		},
+		{
+			"type": "number",
+			"id": "title_font_size",
+			"label": "Title Font Size",
+			"default": 25
+		},
+		{
+			"type": "color",
+			"id": "title_font_color",
+			"label": "Title Font Color"
+		},
+		{
+			"type": "richtext",
+			"id": "page_description",
+			"label": "Pageg Description"
+		},
+		{
+			"type": "number",
+			"id": "description_font_size",
+			"label": "Description Font Size",
+			"default": 16
+		},
+		{
+			"type": "color",
+			"id": "description_font_color",
+			"label": "Description Font Color"
+		}
+	]
+}
+{% endschema %}

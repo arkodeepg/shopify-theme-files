@@ -1,0 +1,203 @@
+<div class="item{% if forloop.last == true %} last{% endif %} relative product-id item-row table-center clearfix">
+
+  {%- liquid
+    if settings.swatch_color != blank
+      assign var_color = settings.swatch_color | handleize
+      assign swatch_color = settings.swatch_color
+    else
+      assign var_color = 'products.general.color' | t | handleize
+      assign swatch_color = 'products.general.color' | t
+    endif    
+    if settings.single_swatch
+      assign single_swatch = 0
+    else
+      assign single_swatch = 1
+    endif
+    if canon    
+      assign prod_opt_1 = product.options[0] | handleize
+      assign prod_opt_2 = product.options[1] | handleize
+      assign prod_opt_3 = product.options[2] | handleize
+      for variant in product.variants
+        if prod_opt_1 contains var_color and canon contains prod_opt_1
+          assign var_opt = variant.option1 | handleize
+        elsif prod_opt_2 contains var_color and canon contains prod_opt_2
+          assign var_opt = variant.option2 | handleize
+        elsif prod_opt_3 contains var_color and canon contains prod_opt_
+          assign var_opt = variant.option3 | handleize
+        else
+          assign var_opt = 'Default'
+        endif
+        if canon contains var_opt
+          if variant.featured_media
+            assign img_src = variant.featured_media.preview_image
+          else
+            assign img_src = product.featured_media.preview_image
+          endif
+          break
+        else
+          assign img_src = product.featured_media.preview_image
+        endif
+      endfor    
+    else
+      assign img_src = product.featured_media.preview_image
+    endif 
+    if forloop.index < 5
+      assign lazy = lazy
+    else
+      assign lazy = 'lazy'
+    endif
+  -%}
+  
+  {% if product.media.size > 0 or settings.compare_enable or settings.badge_enable and product.compare_at_price > product.price %}
+  <div class="product-thumb{% if settings.image_hover and product.media.size > 1 %} enable-thumb-hover{% endif %} item-thumb title-align title-align-left two negative-left">
+    <div class="relative ignore">
+      {%- render 'product.saleBadge', product: product -%}
+      {% if product.media.size > 0 %}
+      <div class="relative lazycontainer"> 
+        <a href="{{ product.url | within: collection }}" title="{{ 'layout.general.buy' | t | escape }} {{ product.title | escape }}" class="img-align product-thumb-main{% if settings.image_hover and product.media.size > 1 %} product-thumb-load{% endif %}" data-group="{{ product.id }}{{ section.id }}">
+          {%- liquid
+          capture alt
+            if img_src.alt != blank
+              echo img_src.alt
+            else
+              echo product.title
+            endif
+          endcapture
+          render 'image.load', img_src: img_src, size: 310, alt: alt, nopad: true, lazy: lazy, sizes: '(min-width: 320px) 310px, (min-width: 768px) 170px, calc(100vw - 100px)'
+		-%}        
+        </a>
+        {% if settings.image_hover and product.media.size > 1 %} 
+        <a href="{{ product.url | within: collection }}" title="{{ 'layout.general.buy' | t | escape }} {{ product.title | escape }}" class="img-align product-thumb-hover">
+          {%- liquid
+            capture alt
+              if product.media[1].preview_image.alt != blank
+                echo product.media[1].preview_image.alt
+              else
+                echo product.title
+              endif
+            endcapture
+            render 'image.load', img_src: product.media[1].preview_image, size: 310, alt: alt, nopad: true, lazy: lazy, sizes: '(min-width: 320px) 310px, (min-width: 768px) 170px, calc(100vw - 100px)'
+  		-%}
+        </a>
+        {% endif %}      
+        {%- liquid
+        if settings.variant_color_enable != 'none' and product.options_by_name[swatch_color].values.size > single_swatch
+          render 'product.swatches' with swatch_color as swatch, var_color: var_color, swatch_color: swatch_color, product: product, block: true, ignore: true, img_size: size, lazy: lazy, sizes: sizes
+        endif
+	  -%}      
+      </div>
+      {% endif %}
+      {% if settings.compare_enable %}
+      <p class="comparison-p comparison-row center{% unless product.media.size > 0 %} no-image{% endunless %}">
+        <label for="compare-{{ product.id }}{{ section.id }}{{ block.id }}" class="visually-hidden">{{ 'products.general.compare_add' | t }}</label>
+        <input id="compare-{{ product.id }}{{ section.id }}{{ block.id }}" type="checkbox" id="check-{{ product.id }}" class="comparison" name="comparison" title="{{ 'products.general.compare_add' | t }}" value="{{ product.id }}">
+        <button class="compare-modal" title="{{ 'products.general.compare_total' | t: total: '5' }}">{{ 'products.general.compare' | t }}</button>
+      </p>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+  
+  <span class="item-details{% if product.media.size > 0 or settings.compare_enable or settings.badge_enable and product.compare_at_price > product.price %} half{% else %} full{% endif %}">
+    <div class="{% if product.media.size > 0 or settings.compare_enable or settings.badge_enable and product.compare_at_price > product.price %}four{% else %}six{% endif %}">
+      <div class="item-title">
+        <h4><a href="{{ product.url | within: collection }}" title="{{ product.title | escape }}">{{ product.title }}</a></h4>
+        {% if settings.vendor_enable %}
+          <p id="product-logistics-{{ product.id }}" class="product-logistics">
+          <span class="vendors">
+            {%- liquid
+            assign product_vendor_handle = product.vendor | handle
+            if collections[product_vendor_handle].handle == product_vendor_handle
+            	assign vendor_url = collections[product_vendor_handle].url
+            else
+            	assign vendor_url = product.vendor | url_for_vendor
+            endif
+            echo product.vendor | link_to: vendor_url, product.vendor
+		  -%}
+          </span>
+        </p>
+        {% endif %}
+        {%- liquid
+          if settings.reviews_enable
+            render 'product.rating', product: product
+          endif
+          if settings.variant_color_enable != 'none' and product.options_by_name[swatch_color].values.size > single_swatch
+          	assign variant_color_enable = settings.variant_color_enable
+            if variant_color_enable == 'var-img-zoom-block'
+              assign img_size = 100
+            else
+              assign img_size = 52
+            endif
+          	render 'product.swatches' with swatch_color as swatch, var_color: var_color, swatch_color: swatch_color, product: product, block_width: 'clearfix ', grid: true, hide: true, block: true, variant_color_enable: variant_color_enable, img_size: img_size, lazy: lazy
+          endif
+          if settings.meta_enable
+            echo '<div class="product-meta">'
+            echo product.metafields.custom.display_data | metafield_tag
+            echo '</div>'
+          endif
+          if product.price_min > 0
+            assign variant = product.variants | sort: 'price' | first
+          else
+            if product.price_varies
+              assign variant = product.variants | sort: 'price' | last
+            endif
+          endif
+		-%}
+        {% if settings.product_availability_enable and product.available == false and variant.incoming %}<p class="error-text"><small><span class="icon icon-bell"></span>{%- assign today_date = 'now' | date: '%s' -%}{%- assign delivery_date = variant.next_incoming_date | date: '%s' -%}{% if variant.next_incoming_date != blank and delivery_date > today_date %}{{ 'products.product.stock_in' | t }} {{ variant.next_incoming_date | date: '%b %e'  }}{% else %}{{ 'products.product.stock_soon' | t }}{% endif %}</small></p>{% endif %}
+      </div>
+    </div>
+    <div class="three text-center">
+      <h5 class="offers">
+        {%- liquid
+          echo '<span class="price-preview price price-field">'
+          if product.price_min > 0
+            if product.price_varies
+              echo '<small>'
+              echo 'products.product.from' | t
+              echo '<br/></small>'
+            endif
+            if settings.currency_enable
+              echo product.price | money_with_currency
+            else
+              echo product.price | money
+            endif
+            if product.compare_at_price > product.price
+              echo '<del>'
+              if settings.currency_enable
+                echo product.compare_at_price | money_with_currency
+              else
+                echo product.compare_at_price | money
+              endif            
+              echo '</del>'
+            endif
+          else
+            if product.price_varies
+              echo 'products.product.free' | t
+              echo ' - '
+              if settings.currency_enable
+                echo product.price_max | money_with_currency
+              else
+                echo product.price_max | money
+              endif            
+              assign variant_free = true
+            else
+              echo '<span style="display:none">'
+              if settings.currency_enable
+                echo product.price | money_with_currency
+              else
+                echo product.price | money
+              endif
+              echo '</span>'
+              echo 'products.product.free' | t
+            endif
+          endif
+          echo '</span>'
+          render 'product.unitPrice', variant: product.selected_or_first_available_variant, variant_free: false, variant_slash: 'true'
+		-%}
+      </h5>
+    </div>
+    <div class="three text-center bottompad-quarter">
+      {%- render 'product.loop.buttons', product: product -%}
+    </div>
+  </span>
+</div>

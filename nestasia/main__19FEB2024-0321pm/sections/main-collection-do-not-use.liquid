@@ -1,0 +1,60 @@
+{%- liquid
+  if settings.filtering
+    for tag in collection.tags
+      if tag contains '_'
+        echo '<option class="item selected" data-id="'
+        echo collection.id
+        echo '" data-group="'
+        echo tag | split: '_' | first
+        echo '" value="'
+        echo tag | handle | append: '+'
+        echo '">'
+        echo tag | split: '_' | last | split:'^' | last
+        echo '</option>'
+        echo '<li class="item" data-group="'
+        echo tag | split: '_' | first
+        echo '"><button type="button" data-id="'
+        echo collection.id
+        echo '" rel="'
+        echo tag | handle | append: '+'
+        echo '">'
+        echo tag | split: '_' | last | split:'^' | last
+        echo '</button></li>'
+      endif
+    endfor    
+  else
+    for filter in collection.filters
+      case filter.type
+        when 'boolean' or 'list'
+          for value in filter.values          
+            unless value.count == 0 and value.active == false          
+              echo '<option class="item selected" data-id="'
+              echo forloop.index
+              echo '" data-group="'
+              echo filter.label | escape
+              echo '" value="'
+              echo filter.param_name
+              echo '='
+              echo value.value
+              echo '&'
+              echo '">'
+              echo value.label | escape
+              echo '</option>'
+              echo '<li class="item" data-group="'
+              echo filter.label | escape
+              echo '"><button type="button" data-id="'
+              echo forloop.index
+              echo '" rel="'
+              echo filter.param_name
+              echo '='
+              echo value.value
+              echo '&'
+              echo '">'
+              echo value.label | escape
+              echo '</button></li>'          
+            endunless
+          endfor
+      endcase
+    endfor
+  endif
+-%}

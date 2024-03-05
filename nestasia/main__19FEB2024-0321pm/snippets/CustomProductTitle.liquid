@@ -1,0 +1,27 @@
+<style>
+  .custom-product_title{
+    margin-bottom: 5px;
+    letter-spacing: .78px;
+    font-size: calc(var(--x_large) - 3px);
+    font-family: var(--body_font);
+    font-weight: var(--body_font_weight);
+    text-transform: capitalize;
+    line-height: 40px;
+    color: #343333;
+  }
+  @media screen and (max-width: 800px){
+    .custom-product_title {
+        text-align: left;
+        line-height: 24px;
+        /* margin-bottom: 5px; */
+        font-size: 18px;
+        text-shadow: 0 0 #000;
+        /* margin-top: 10px; */
+        margin: 0;
+    }
+  }
+</style>
+
+<div class="custom-product_title">
+  {{product.title}}
+</div>

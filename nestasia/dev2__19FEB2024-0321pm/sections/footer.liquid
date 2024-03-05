@@ -1,0 +1,1065 @@
+{%- liquid
+  assign blocks = false
+  if section.blocks.size > 0
+    assign blocks = true
+  endif  
+  assign published_languages = false
+  assign enabled_currencies = false
+  if localization.available_languages.size > 1 and section.settings.enable_languages
+    for language in localization.available_languages
+      if language.iso_code == localization.language.iso_code
+        capture language_name
+          echo language.endonym_name
+        endcapture
+      endif
+    endfor
+    assign published_languages = true
+  endif
+  if localization.available_countries.size > 1 and section.settings.enable_multiple_currencies  
+  	assign enabled_currencies = true
+  endif  
+  assign text_color = false
+  if section.settings.section_color != 'rgba(0,0,0,0)' and section.settings.section_color != blank
+    assign text_color = true
+    assign text_color_section = section.settings.section_color
+  endif    
+  assign text_color_hover = false
+  if section.settings.section_color_hover != 'rgba(0,0,0,0)' and section.settings.section_color_hover != blank
+    assign text_color_hover = true
+    assign text_color_hover_section = section.settings.section_color_hover
+  endif    
+  assign background_color = false
+  if section.settings.background != 'rgba(0,0,0,0)' and section.settings.background != blank
+    assign background_color = true
+    assign background_color_section = section.settings.background
+  endif  
+  if section.settings.background_gradient != 'rgba(0,0,0,0)' and section.settings.background_gradient != blank
+    assign background_color = true
+    assign background_color_section = section.settings.background_gradient
+  endif
+  assign text_color_sub = false
+  if section.settings.section_color_sub != 'rgba(0,0,0,0)' and section.settings.section_color_sub != blank
+    assign text_color_sub = true
+    assign text_color_sub_section = section.settings.section_color_sub
+  endif      
+  assign text_color_sub_hover = false
+  if section.settings.section_color_sub_hover != 'rgba(0,0,0,0)' and section.settings.section_color_sub_hover != blank
+    assign text_color_sub_hover = true
+    assign text_color_sub_section_hover = section.settings.section_color_sub_hover
+  endif    
+  assign background_color_sub = false
+  if section.settings.background_sub != 'rgba(0,0,0,0)' and section.settings.background_sub != blank
+    assign background_color_sub = true
+    assign background_color_section_sub = section.settings.background_sub
+  endif    
+  if section.settings.background_gradient_sub != 'rgba(0,0,0,0)' and section.settings.background_gradient_sub != blank
+    assign background_color_sub = true
+    assign background_color_section_sub = section.settings.background_gradient_sub
+  endif
+  capture classes
+    echo 'dynamic-section dynamic-section-footer section-padding-top section-padding-bottom section-margin-bottom '
+    if section.settings.padding_border
+      echo 'section-border '
+    endif
+  endcapture
+  capture classes_sub
+    echo 'dynamic-section dynamic-section-sub-footer section-padding-top section-padding-bottom section-margin-bottom '
+    if section.settings.padding_border
+      echo 'section-border '
+    endif
+  endcapture
+-%}
+
+{% style %}
+  .dynamic-section-footer { 
+    --section-padding-top-mobile: {{ section.settings.padding_top_mobile }}px;
+    --section-padding-top-desktop: {{ section.settings.padding_top_desktop }}px;
+    --section-padding-bottom-mobile: {{ section.settings.padding_bottom_mobile }}px;
+    --section-padding-bottom-desktop: {{ section.settings.padding_bottom_desktop }}px;
+    --section-margin-bottom-mobile: {{ section.settings.margin_bottom_mobile }}px;
+    --section-margin-bottom-desktop: {{ section.settings.margin_bottom_desktop }}px;
+    {%- if text_color -%}
+    --accent_color:{{ text_color_section }};
+    --headline_font_color:{{ text_color_section }};
+    --body_font_color:{{ text_color_section }};
+    --line_color:{{ text_color_section }};
+    --button_primary_background:{{ text_color_section }};
+    --button_primary_border:{{ text_color_section }};
+    --button_primary_text:var(--background);
+    {%- endif -%}
+    {%- if text_color_hover -%}
+    --body_font_hover_color:{{ text_color_hover_section }};
+    {%- endif -%}
+    {%- if background_color -%}
+    --background:{{ background_color_section }};
+    --button_primary_text:{{ section.settings.background }};
+    --button_secondary_hover:{{ section.settings.background }};
+    {%- endif -%} 
+  }
+  .dynamic-section-sub-footer {
+    --section-padding-top-mobile: {{ section.settings.padding_top_mobile_sub }}px;
+    --section-padding-top-desktop: {{ section.settings.padding_top_desktop_sub }}px;
+    --section-padding-bottom-mobile: {{ section.settings.padding_bottom_mobile_sub }}px;
+    --section-padding-bottom-desktop: {{ section.settings.padding_bottom_desktop_sub }}px;
+    --section-margin-bottom-mobile: {{ section.settings.margin_bottom_mobile_sub }}px;
+    --section-margin-bottom-desktop: {{ section.settings.margin_bottom_desktop_sub }}px;
+    {%- if text_color_sub -%}
+    --accent_color:{{ text_color_sub_section }};
+    --body_font_color:{{ text_color_sub_section }};
+    --line_color: {{ text_color_sub_section }};
+    {%- endif -%} 
+    {%- if text_color_sub_hover -%}
+    --accent_color:{{ text_color_sub_section_hover }};
+    --body_font_hover_color:{{ text_color_sub_section_hover }};
+    {%- endif -%}
+    {%- if background_color_sub -%}
+    --background: {{ background_color_section_sub }};
+    {% endif %}
+  }
+{% endstyle %}
+
+<section data-section-id="{{ section.id }}" 
+         data-section-type="footer"
+         data-url="{{ 'script.footer.js' | asset_url }}"
+         data-multi="{% if enabled_currencies or published_languages and language_name != blank %}true{% else %}false{% endif %}"
+         class="clearfix">
+
+  <footer>
+    {% if blocks %}
+    
+    <div class="{{ classes }} footer table-center">
+      <div class="container half-pad clearfix">
+        <div{% if section.settings.horizontal_content_alignment %} class="center"{% endif %}>
+
+          {% for block in section.blocks %}
+
+            {%- liquid
+              assign block_width = block.settings.block_width
+              case block_width
+                when '2'
+                  assign block_width = 'two'
+                  assign size = 580
+                  assign sizes = '(min-width: 600px) calc(50vw - 20px), (min-width: 1220px) 180px, calc(100vw - 140px)'
+                when '3'
+                  assign block_width = 'three'
+                  assign size = 580
+                  assign sizes = '(min-width: 600px) calc(50vw - 20px), (min-width: 1220px) 280px, calc(100vw - 140px)'
+                when '4'
+                  assign block_width = 'four'
+                  assign size = 580
+                  assign sizes = '(min-width: 600px) calc(50vw - 20px), (min-width: 1220px) 380px, calc(100vw - 140px)'
+                when '6'
+                  assign block_width = 'six'
+                  assign size = 580
+                  assign sizes = '(min-width: 600px) calc(50vw - 20px), (min-width: 1220px) 580px, calc(100vw - 140px)'
+                when '8'
+                  assign block_width = 'eight'
+                  assign size = 880
+                  assign sizes = '(min-width: 600px) calc(66.66vw - 20px), (min-width: 1220px) 780px, calc(100vw - 140px)'
+                when '9'
+                  assign block_width = 'nine'
+                  assign size = 880
+                  assign sizes = '(min-width: 600px) calc(75vw - 20px), (min-width: 1220px) 880px, calc(100vw - 140px)'
+                when '10'
+                  assign block_width = 'ten'
+                  assign size = 1180
+                  assign sizes = '(min-width: 600px) calc(83.33vw - 20px), (min-width: 1220px) 980px, calc(100vw - 140px)'
+                when '12'
+                  assign block_width = 'twelve'
+                  assign size = 1180
+                  assign sizes = '(min-width: 600px) calc(100vw - 20px), (min-width: 1220px) 1180px, calc(100vw - 140px)'
+              endcase
+            -%}
+  
+            {% case block.type %}
+  
+              {% when 'content' %}
+    
+                {%- liquid
+                  if block.settings.title == blank and block.settings.body == blank
+                    assign section_onboarding = true
+                  else
+                    assign section_onboarding = false
+                  endif
+                  assign body_first = ''
+                  assign body_last = ''
+                -%}
+      
+                <div class="{{ block_width }} top {{ block.settings.text_alignment}} relative bottompad" {{ block.shopify_attributes }}>
+                  {% if section_onboarding %}
+                    <h4 class="h5">{{ 'homepage.onboarding.no_title' | t }}</h4>
+                    <p>{{ 'homepage.onboarding.no_block_body' | t }}</p>
+                  {% else %}
+                    {% if block.settings.title != blank %}<h4 class="h5">{{ block.settings.title }}</h4>{% endif %}
+                    {% if block.settings.body != blank %}
+                      {%- assign body_first = block.settings.body | split: '</p>' | first | append: '</p>' -%}
+                      {%- assign body_last = block.settings.body | remove: body_first -%}
+                      {{ body_first }}
+                      {% if body_last != blank %}
+                      <div class="open-container desktop">
+                        {% if block.settings.enable_open %}<details open>{% endif %}
+                        {% if block.settings.enable_open %}
+                        <summary class="open open-btn open-{{ section.id }}" 
+                                 title="{{ 'collections.general.open' | t | escape }}" 
+                                 role="button" 
+                                 aria-label="{{ 'collections.general.open' | t | escape }}">
+                          {%- render 'icons.theme', icon: 'plus', size: 18 -%}
+                        </summary>
+                        {% endif %}
+                        {% if block.settings.enable_open %}</details>{% endif %}
+                        <div class="open-slide">
+                          <div>{{ body_last }}</div>
+                        </div>
+                      </div>
+                      {% endif %}
+                    {% endif %}
+                  {% endif %}
+                </div>
+    
+              {% when 'menu' %}
+    
+                {%- liquid
+                  if block.settings.title == blank and block.settings.body == blank and block.settings.menu_1 == blank and block.settings.menu_2 == blank
+                    assign section_onboarding = true
+                  else
+                    assign section_onboarding = false
+                  endif        
+                  assign menu_1 = block.settings.menu_1
+                  assign menu_2 = block.settings.menu_2
+                  assign body_first = ''
+                  assign body_last = ''
+                -%}      
+      
+                <div class="{{ block_width }} top {{ block.settings.text_alignment }} relative bottompad" {{ block.shopify_attributes }}>
+                  {% if section_onboarding or block.settings.title != blank or block.settings.body != blank %}
+                    {% if section_onboarding %}
+                      <h4 class="h5">{{ 'homepage.onboarding.no_title' | t }}</h4>
+                      <p>{{ 'homepage.onboarding.no_block_body' | t }}</p>
+                    {% else %}
+                      {% if block.settings.title != blank %}<h4 class="h5">{{ block.settings.title }}</h4>{% endif %}
+                      {% if block.settings.body != blank %}
+                        {%- assign body_first = block.settings.body | split: '</p>' | first -%}
+                        {%- assign body_last = block.settings.body | remove: body_first | remove_first: '</p>' -%}
+                        {{ body_first }}
+                      {% endif %}
+                    {% endif %}
+                  {% endif %}
+      
+                  {%- liquid
+                    if block.settings.menu_1_title != blank
+                      assign menu_1_title = block.settings.menu_1_title
+                    else
+                      assign menu_1_title = linklists[menu_1].title
+                    endif
+                    if block.settings.menu_2_title != blank
+                      assign menu_2_title = block.settings.menu_2_title
+                    else
+                      assign menu_2_title = linklists[menu_2].title
+                    endif
+                  -%}
+      
+                  {% unless section_onboarding or block.settings.title != blank or block.settings.body != blank  %}
+                    <h5 span class="desktop-hide">
+                      {%- liquid
+                        assign hide1 = false
+                        assign hide2 = false
+                        if linklists[menu_1].links.size > 0 and linklists[menu_2].links.size > 0
+                          echo menu_1_title
+                          echo ' &amp; '
+                          echo menu_2_title
+                        elsif linklists[menu_1].links.size > 0
+                          echo menu_1_title
+                          assign hide1 = true
+                        elsif linklists[menu_2].links.size > 0
+                          echo menu_2_title
+                          assign hide2 = true
+                        endif
+                      -%}
+                    </h5>
+                  {% endunless %}
+      
+                  {% if linklists[menu_1].links.size > 0 or linklists[menu_2].links.size > 0 or body_last != blank %}
+                    <div class="open-container desktop">
+                      {% if block.settings.enable_open %}<details open>{% endif %}
+                      {% if block.settings.enable_open %}
+                        <summary class="open open-btn open-{{ section.id }}" 
+                                 title="{{ 'collections.general.open' | t | escape }}" 
+                                 role="button" 
+                                 aria-label="{{ 'collections.general.open' | t | escape }}">
+                          {%- render 'icons.theme', icon: 'plus', size: 18 -%}
+                        </summary>
+                      {% endif %}
+                      {% if block.settings.enable_open %}</details>{% endif %}
+                        <div class="open-slide">
+                          <div id="menu-{{ block.id }}">
+                            {% if body_last != blank %}{{ body_last }}{% endif %}
+                            {% if linklists[menu_1].links.size > 0 %}
+                            <div class="footer-menu{% if linklists[menu_2].links.size > 0 %} six negative-left{% endif %} first">
+                              <h5 class="{% if block.settings.title != blank or block.settings.body != blank %}desktop-hide{% endif %}{% if hide1 %} mobile-hide{% else %} dual-titles{% endif %}">{{ menu_1_title }}</h5>
+                              <ul>
+                                {% for link in linklists[menu_1].links %}
+                                <li>
+                                  <a href="{{ link.url }}" title="{{ link.title | escape }}"{% if link.url contains 'http://' or link.url contains 'https://' %} target="_blank"{% endif %}>{{ link.title }}</a>
+                                </li>
+                                {% endfor %}
+                              </ul>
+                            </div>
+                            {% endif %}
+                            {% if linklists[menu_2].links.size > 0 %}
+                            <div class="footer-menu{% if linklists[menu_1].links.size > 0 %} six negative-right last{% else %} first{% endif %}">
+                              <h5 class="{% if block.settings.title != blank or block.settings.body != blank %}desktop-hide{% endif %}{% if hide2 %} mobile-hide{% else %} dual-titles{% endif %}">{{ menu_2_title }}</h5>
+                              <ul>
+                                {% for link in linklists[menu_2].links %}
+                                <li>
+                                  <a href="{{ link.url }}" title="{{ link.title | escape }}"{% if link.url contains 'http://' or link.url contains 'https://' %} target="_blank"{% endif %}>{{ link.title }}</a>
+                                </li>
+                                {% endfor %}
+                              </ul>
+                            </div>
+                          {% endif %}
+                        </div>
+                      </div>
+                    </div>
+                  {% endif %}
+      
+                </div>
+    
+              {% when 'image' %}      
+    
+                <div class="{{ block_width }} relative{% if block.settings.block_img != blank %} lazycontainer{% endif %} top {{ block.settings.text_alignment }} img bottompad" {{ block.shopify_attributes }}>
+                  {%- liquid
+                    if block.settings.block_img != blank
+                      capture alt
+                        if block.settings.block_img.alt != blank
+                          echo block.settings.block_img.alt
+                        else
+                          echo block.settings.block_img | split: '/' | last | replace: '-', ' ' | replace: '_', ' ' | split: '.' | first | capitalize
+                        endif
+                      endcapture
+                      render 'image.load', img_src: block.settings.block_img, size: size, alt: alt, lazy: 'lazy', sizes: sizes
+                    else
+                      echo 'image' | placeholder_svg_tag: 'placeholder-svg'
+                    endif
+                  -%}
+                </div>
+    
+              {% when 'social' %}
+    
+                {%- liquid
+                  if block.settings.title == blank and block.settings.body == blank and block.settings.include_newsletter == false and block.settings.include_shop == false and block.settings.include_social == false
+                    assign section_onboarding = true
+                  else
+                    assign section_onboarding = false
+                  endif
+                -%}
+        
+                  <div class="{{ block_width }} top {{ block.settings.text_alignment }} bottompad" {{ block.shopify_attributes }}> 
+                    {% if section_onboarding or block.settings.title != blank or block.settings.body != blank %}         
+                    <div class="inline-container">
+                      {% if section_onboarding %}
+                      <h4 class="h5">{{ 'homepage.onboarding.no_title' | t }}</h4>
+                      <p>{{ 'homepage.onboarding.no_block_body' | t }}</p>
+                      {% else %}
+                      {% if block.settings.title != blank %}<h4 class="h5">{{ block.settings.title }}</h4>{% endif %}
+                      {% if block.settings.body != blank %}{{ block.settings.body }}{% endif %}
+                      {% endif %}
+                    </div>
+                    {% endif %}
+        
+                    {%- liquid
+                      if block.settings.include_newsletter
+                        render 'newsletter'
+                      endif
+                      if block.settings.include_social
+                        render 'social.follow'
+                      endif
+                      if shop.features.follow_on_shop? and block.settings.include_shop
+                        # theme-check-disable
+                        echo shop | login_button: action: 'follow'
+                        # theme-check-enable
+                      endif
+                    -%}
+        
+                  </div>
+  
+            {% endcase %}
+          {% endfor %}
+
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    <div class="{{ classes_sub }} sub-footer{% if section.settings.horizontal_content_alignment %} text-center{% endif %}">
+      <div class="container half-pad clearfix">
+        <div class="twelve brands">
+
+          {% if published_languages or enabled_currencies %}
+          <div class="product-loop text-left{% if section.settings.horizontal_content_alignment %} center{% endif %}">
+            {% form 'localization', id: "localization_form-footer", class: "currency-selector" %}
+            {% if published_languages and language_name != blank %}
+            <span class="form auto-width new-select currency">
+              <span class="select open-container">
+                <details>
+                  <summary class="styledSelect currencies" title="{{ 'general.language.language' | t | escape }}" aria-label="{{ 'general.language.language' | t | escape }}" data-multi="language"><small>{% if language_name == blank %}{{ 'general.language.change' | t }}{% else %}{{ language_name | capitalize }}{% endif %}</small></summary>
+                </details>
+                <div class="open-slide">
+                  <ul class="options language-width open-slide-footer unformatted" aria-label="{{ 'layout.general.nav_sub' | t | escape }}">
+                    {% for language in localization.available_languages %}
+                      <li><button type="submit" 
+                                  name="language_code"
+                                  value="{{ language.iso_code }}"
+                                  {% if language.iso_code == localization.language.iso_code %} class="active"{% endif %} 
+                                  data-multi="language" 
+                                  data-footer_symbol="{{ language.endonym_name | capitalize }}" 
+                                  data-header_symbol="{{ language.iso_code | upcase }}"><small>{{ language.endonym_name | capitalize }}</small></button></li>
+                    {% endfor %}
+                  </ul>
+                </div>
+                {%- render 'icons.theme', icon: 'arrow-down', size: 14 -%}
+                </span>
+            </span>
+            {% endif %}
+            {% if enabled_currencies %}
+            <span class="form auto-width new-select currency">              
+              <span class="select open-container">
+                <details>
+                  <summary class="styledSelect currencies" title="{{ 'general.language.currency' | t }}" aria-label="{{ 'general.language.currency' | t }}" data-multi="currency"><small>{{ localization.country.name }} ({{ localization.country.currency.symbol }}) {{ localization.country.currency.iso_code }}</small></summary>
+                </details>
+                <div class="open-slide">                  
+                  <ul class="options currency-width open-slide-footer unformatted" aria-label="{{ 'layout.general.nav_sub' | t | escape }}">
+                    {% for country in localization.available_countries %}
+                    <li><button type="submit" 
+                                name="country_code"
+                                value="{{ country.iso_code }}"
+                                {% if country.iso_code == localization.country.iso_code %} class="active"{% endif %} 
+                                data-multi="currency"
+                                data-footer_symbol="{{ country.name }} ({{ country.currency.symbol }}) {{ country.currency.iso_code }}" 
+                                data-header_symbol="{{ country.iso_code }} ({{ country.currency.symbol }})">
+                      <small>{{ country.name }} ({{ country.currency.symbol }}) {{ country.currency.iso_code }}</small></button></li>
+                    {% endfor %}
+                  </ul>
+                </div>
+                {%- render 'icons.theme', icon: 'arrow-down', size: 14 -%}
+              </span>
+            </span>
+            {% endif %}
+            {% endform %}
+          </div>
+          {% endif %}
+
+          <p>{{ shop.name | link_to: '/' }} &copy; {{ 'now' | date: '%Y' }}</p>
+          {% if section.settings.body %}<span class="small">{{ section.settings.body }}</span>{% endif %}
+          <p>{{ powered_by_link | replace: 'nofollow','nofollow noopener noreferrer' }}</p>
+          {% if section.settings.display_payments %}
+          {% unless shop.enabled_payment_types == empty %}
+          <ul class="inline-list payment-icons unformatted">
+            {% for type in shop.enabled_payment_types %}
+            <li>{{ type | payment_type_svg_tag: class:'payment-icon' }}</li>
+            {% endfor %}
+          </ul>
+          {% endunless %}
+          {% endif %}  
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</section> 
+
+{% schema %}
+  {
+    "name": "t:sections.footer.name",
+    "class": "shopify-section-footer",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "horizontal_content_alignment",
+        "label": "t:sections.horizontal_centering.label",
+        "default": true
+      },
+      {
+        "id": "section_color",
+        "type": "color",
+        "label": "t:sections.text.color"
+      },
+      {
+        "id": "section_color_hover",
+        "type": "color",
+        "label": "t:sections.text.hover"
+      },
+      {
+        "id": "background",
+        "type": "color",
+        "label": "t:sections.section.settings.background_color.label"
+      },
+      {
+        "id": "background_gradient",
+        "type": "color_background",
+        "label": "t:sections.section.settings.background_gradient.label"
+      },
+      {
+        "type": "paragraph",
+        "content": "t:sections.section.settings.mobile.content"
+      },
+      {
+        "id": "padding_top_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.top_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 20
+      },
+      {
+        "id": "padding_bottom_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 20
+      },
+      {
+        "id": "margin_bottom_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_margin.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 20
+      },
+      {
+        "type": "paragraph",
+        "content": "t:sections.section.settings.desktop.content"
+      },
+      {
+        "id": "padding_top_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.top_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "padding_bottom_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "margin_bottom_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_margin.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "padding_border",
+        "type": "checkbox",
+        "label": "t:sections.section.settings.border.label",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "t:sections.sub_footer.name"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_languages",
+        "label": "t:sections.enable_language.label",
+        "default": true,
+        "info": "t:sections.enable_language.info"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_multiple_currencies",
+        "label": "t:sections.enable_country_region.label",
+        "default": true,
+        "info": "t:sections.enable_country_region.info"
+      },
+      {
+        "type": "richtext",
+        "id": "body",
+        "label": "t:sections.text.label"
+      }, 
+      {
+        "type": "checkbox",
+        "id": "display_payments",
+        "label": "t:sections.show_payment.label"
+      },
+      {
+        "id": "section_color_sub",
+        "type": "color",
+        "label": "t:sections.text.color"
+      },
+      {
+        "id": "section_color_sub_hover",
+        "type": "color",
+        "label": "t:sections.text.hover"
+      },
+      {
+        "id": "background_sub",
+        "type": "color",
+        "label": "t:sections.section.settings.background_color.label"
+      },
+      {
+        "id": "background_gradient_sub",
+        "type": "color_background",
+        "label": "t:sections.section.settings.background_gradient.label"
+      },
+      {
+        "type": "paragraph",
+        "content": "t:sections.section.settings.mobile.content"
+      },
+      {
+        "id": "padding_top_mobile_sub",
+        "type": "range",
+        "label": "t:sections.section.settings.top_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 20
+      },
+      {
+        "id": "padding_bottom_mobile_sub",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 20
+      },
+      {
+        "id": "margin_bottom_mobile_sub",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_margin.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 20
+      },
+      {
+        "type": "paragraph",
+        "content": "t:sections.section.settings.desktop.content"
+      },
+      {
+        "id": "padding_top_desktop_sub",
+        "type": "range",
+        "label": "t:sections.section.settings.top_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "padding_bottom_desktop_sub",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "margin_bottom_desktop_sub",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_margin.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "padding_border_sub",
+        "type": "checkbox",
+        "label": "t:sections.section.settings.border.label",
+        "default": true
+      }
+    ],
+    "blocks": [
+      {
+        "type": "content",
+        "name": "t:sections.text.name",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "t:sections.heading.label",
+			"default": "Text"
+          },
+          {
+            "type": "text",
+            "id": "contact_heading",
+            "label": "Contact Heading",
+            "default": "Contact us"
+          },
+          {
+            "type": "richtext",
+            "id": "body",
+            "label": "t:sections.text.label",
+			"default": "<p>Show custom content to provide a brand overview, the story behind the business or other creative ideas.</p>"
+          },  
+          {
+            "type": "select",
+            "id": "text_alignment",
+            "label": "t:sections.alignment.label",
+            "default": "text-left",
+            "options": [
+                {
+                "value": "text-left",
+                "label": "t:sections.alignment.left"
+              },
+              {
+                "value": "text-center",
+                "label": "t:sections.alignment.center"
+              },
+              {
+                "value": "text-right",
+                "label": "t:sections.alignment.right"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "enable_open",
+            "label": "t:sections.enable_condensed_mobile_text.label",
+            "default": true
+          },
+          {
+            "type": "select",
+            "id": "block_width",
+            "label": "t:sections.container_width.label",
+            "default": "4",
+            "options": [
+              {
+                "value": "3",
+                "label": "25%"
+              },
+              {
+                "value": "4",
+                "label": "33%"
+              },
+              {
+                "value": "6",
+                "label": "50%"
+              },
+              {
+                "value": "8",
+                "label": "66%"
+              },
+              {
+                "value": "9",
+                "label": "75%"
+              },
+              {
+                "value": "10",
+                "label": "87.5%"
+              },
+              {
+                "value": "12",
+                "label": "100%"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "menu",
+        "name": "t:sections.menu.name",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "t:sections.heading.label",
+			"default": "Menu"
+          },
+          {
+            "type": "richtext",
+            "id": "body",
+            "label": "t:sections.text.label",
+			"default": "<p>Highlight the importance of the links in this block</p>"
+          },
+          {
+            "type": "select",
+            "id": "text_alignment",
+            "label": "t:sections.alignment.label",
+            "default": "text-left",
+            "options": [
+              {
+                "value": "text-left",
+                "label": "t:sections.alignment.left"
+              },
+              {
+                "value": "text-center",
+                "label": "t:sections.alignment.center"
+              },
+              {
+                "value": "text-right",
+                "label": "t:sections.alignment.right"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "enable_open",
+            "label": "t:sections.enable_condensed_mobile_menus.label",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "menu_1_title",
+            "label": "t:sections.menu_title.label"
+          },
+          {
+            "type": "link_list", 
+            "id": "menu_1",
+            "label": "t:sections.menu.label",
+            "default": "footer",
+			"info": "t:sections.this_menu.info"
+          }, 
+          {
+            "type": "text",
+            "id": "menu_2_title",
+            "label": "t:sections.menu_title.label"
+          }, 
+          {
+            "type": "link_list",
+            "id": "menu_2",
+            "label": "t:sections.menu.label",
+            "default": "footer",
+			"info": "t:sections.this_menu.info"
+          },
+          {
+            "type": "select",
+            "id": "block_width",
+            "label": "t:sections.container_width.label",
+            "default": "4",
+            "options": [
+              {
+                "value": "3",
+                "label": "25%"
+              },
+              {
+                "value": "4",
+                "label": "33%"
+              },
+              {
+                "value": "6",
+                "label": "50%"
+              },
+              {
+                "value": "8",
+                "label": "66%"
+              },
+              {
+                "value": "9",
+                "label": "75%"
+              },
+              {
+                "value": "10",
+                "label": "87.5%"
+              },
+              {
+                "value": "12",
+                "label": "100%"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "image",
+        "name": "t:sections.image.name",
+        "settings": [  
+          {
+            "type": "image_picker",
+            "id": "block_img",
+            "label":"t:sections.choose_image.label"
+          },
+          {
+            "type": "select",
+            "id": "text_alignment",
+            "label": "t:sections.alignment.label",
+            "default": "text-center",
+            "options": [
+                {
+                "value": "text-left",
+                "label": "t:sections.alignment.left"
+              },
+              {
+                "value": "text-center",
+                "label": "t:sections.alignment.center"
+              },
+              {
+                "value": "text-right",
+                "label": "t:sections.alignment.right"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "block_width",
+            "label": "t:sections.container_width.label",
+            "default": "4",
+            "options": [
+              {
+                "value": "3",
+                "label": "25%"
+              },
+              {
+                "value": "4",
+                "label": "33%"
+              },
+              {
+                "value": "6",
+                "label": "50%"
+              },
+              {
+                "value": "8",
+                "label": "66%"
+              },
+              {
+                "value": "9",
+                "label": "75%"
+              },
+              {
+                "value": "10",
+                "label": "87.5%"
+              },
+              {
+                "value": "12",
+                "label": "100%"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "social",
+        "name": "t:sections.social.name",
+		"limit": 1,
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "t:sections.heading.label",
+			"default": "Social media"
+          },
+          {
+            "type": "richtext",
+            "id": "body",
+            "label": "t:sections.text.label",
+			"default": "<p>Show a newsletter sign up and social icons.</p>"
+          },  
+          {
+            "type": "select",
+            "id": "text_alignment",
+            "label": "t:sections.alignment.label",
+            "default": "text-left",
+            "options": [
+                {
+                "value": "text-left",
+                "label": "t:sections.alignment.left"
+              },
+              {
+                "value": "text-center",
+                "label": "t:sections.alignment.center"
+              },
+              {
+                "value": "text-right",
+                "label": "t:sections.alignment.right"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "include_newsletter",
+            "label": "t:sections.show_newsletter.label",
+            "default": true
+          },
+          {
+            "type": "checkbox",
+            "id": "include_social",
+            "label": "t:sections.show_social_follow.label",
+            "info": "t:sections.show_social_follow.info",
+        	"default": true
+          },
+          {
+            "type": "checkbox",
+            "id": "include_shop",
+            "label": "t:sections.show_shop.label",
+            "info": "t:sections.show_shop.info",
+        	"default": true
+          },
+          {
+            "type": "select",
+            "id": "block_width",
+            "label": "t:sections.container_width.label",
+            "default": "4",
+            "options": [
+              {
+                "value": "3",
+                "label": "25%"
+              },
+              {
+                "value": "4",
+                "label": "33%"
+              },
+              {
+                "value": "6",
+                "label": "50%"
+              },
+              {
+                "value": "8",
+                "label": "66%"
+              },
+              {
+                "value": "9",
+                "label": "75%"
+              },
+              {
+                "value": "10",
+                "label": "87.5%"
+              },
+              {
+                "value": "12",
+                "label": "100%"
+              }
+            ]
+          }  
+        ]
+      }
+    ],
+    "default": {
+      "blocks": [
+        {
+          "type": "menu"
+        },
+        {
+          "type": "menu"
+        },
+        {
+          "type": "social"
+        }
+      ]
+    }
+  }
+{% endschema %}

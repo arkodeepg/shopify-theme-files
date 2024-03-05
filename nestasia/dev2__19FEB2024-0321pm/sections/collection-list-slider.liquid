@@ -1,0 +1,105 @@
+<style>
+.collection-list_container{
+    margin: calc(var(--master_spacing)*1.5) auto;
+}
+.collection-list_child{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.collection-list_child span{
+    text-align: center;
+    color: var(--button_color);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 16px;
+    font-family: var(--body_font);
+    text-decoration: none;
+    font-weight: inherit;
+}
+.collection-list_child img{
+    border-radius: 50%;
+}
+@media screen and (max-width: 640px) {
+  .container.collection-list_container {
+    padding: 0;
+    padding-left: 8px;
+}
+  .collection-list_child span{
+    font-size:14px;
+  }
+}
+</style>
+
+<div class="container collection-list_container swiper">
+      <div class="swiper-wrapper">
+    {%- for block in section.blocks -%}
+      <a href="{{block.settings.url.url}}" class="swiper-slide collection-list_child">
+        <img {% if section.index > 2 %}loading="lazy" class="lazy" data-{% endif %}src="{{block.settings.image | image_url: width: 128}}" width="128" height="128" alt="">
+        <span>{{block.settings.title | escape}}</span>
+      </a>
+    {%- endfor -%}
+     </div>
+</div>
+
+<script defer>
+const collectionlistcontainer = new Swiper('.collection-list_container', {
+  slidesPerView: 3.5,
+  loop: 'true',
+  draggable: 'true',
+  spaceBetween: 16,
+  breakpoints: {
+    // When the window width is 800px or greater (desktop)
+    800: {
+      slidesPerView: 8,
+      spaceBetween: 32
+    }
+  }
+});
+</script>
+
+
+{% schema %}
+{
+  "name": "collection list custom",
+  "tag": "section",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "collection_item",
+      "name": "collection item",
+      "settings": [
+        {
+          "type": "text",
+          "label": "title",
+          "id": "title",
+          "default": "title"
+        },
+        {
+          "type": "image_picker",
+          "label": "image",
+          "id": "image"
+        },
+        {
+          "type": "collection",
+          "label": "url",
+          "id": "url"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "collection list custom"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

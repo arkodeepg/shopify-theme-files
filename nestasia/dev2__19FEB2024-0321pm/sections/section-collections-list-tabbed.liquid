@@ -1,0 +1,709 @@
+{% if section.blocks.size > 0 %}
+
+  {%- liquid
+    assign full_width = section.settings.full_width
+    assign screen = ''
+    if section.settings.background_img_d != blank or section.settings.background_img_m != blank
+      assign background_img = true
+    else
+      assign background_img = false
+    endif         
+    if background_img
+      capture alt_d
+        if section.settings.background_img_d.alt != blank
+          echo section.settings.background_img_d.alt
+        elsif section.settings.title != blank
+          echo section.settings.title
+        elsif section.settings.sub_title != blank
+          echo section.settings.sub_title
+        else
+          echo section.settings.background_img_d | split: '/' | last | replace: '-', ' ' | replace: '_', ' ' | split: '.' | first | capitalize
+        endif
+      endcapture 
+      capture alt_m
+        if section.settings.background_img_m.alt != blank
+          echo section.settings.background_img_m.alt
+        elsif section.settings.title != blank
+          echo section.settings.title
+        elsif section.settings.sub_title != blank
+          echo section.settings.sub_title
+        else
+          echo section.settings.background_img_m | split: '/' | last | replace: '-', ' ' | replace: '_', ' ' | split: '.' | first | capitalize
+        endif
+      endcapture 
+    endif
+    assign text_color = false
+    if section.settings.section_color != 'rgba(0,0,0,0)' and section.settings.section_color != blank
+      assign text_color = true
+      assign text_color_section = section.settings.section_color
+    endif
+    assign background_color = false
+    if section.settings.background != 'rgba(0,0,0,0)' and section.settings.background != blank
+      assign background_color = true
+      assign background_color_section = section.settings.background
+    endif    
+    if section.settings.background_gradient != 'rgba(0,0,0,0)' and section.settings.background_gradient != blank
+      assign background_color = true
+      assign background_color_section = section.settings.background_gradient
+    endif
+    capture classes
+      echo 'dynamic-section dynamic-section-'
+      echo section.id 
+      echo ' section-padding-top section-padding-bottom section-margin-bottom '
+      if section.settings.padding_border
+        echo 'section-border '
+      endif
+    endcapture
+    assign overlay_color = false
+    if section.settings.background_img_overlay != 'rgba(0,0,0,0)' and section.settings.background_img_overlay != blank
+      assign overlay_color = true
+      assign overlay_color_section = section.settings.background_img_overlay
+    endif
+    if section.settings.background_img_overlay_gradient != 'rgba(0,0,0,0)' and section.settings.background_img_overlay_gradient != blank
+      assign overlay_color = true
+      assign overlay_color_section = section.settings.background_img_overlay_gradient
+    endif
+    assign slider_color = false
+    if section.settings.use_slider_color != 'rgba(0,0,0,0)' and section.settings.use_slider_color != blank
+      assign slider_color = true
+      assign slider_color_section = section.settings.use_slider_color
+    endif
+    if section.settings.enable_lazy
+      assign lazy = 'lazy'
+    else
+      assign lazy = 'eager'
+    endif
+  -%}
+  
+  {% style %}
+    .dynamic-section-{{ section.id }} { 
+      {%- if background_color -%}
+      --background:{{ background_color_section }};
+      --button_primary_text:{{ section.settings.background }};
+      --button_secondary_hover:{{ section.settings.background }};
+      {%- endif -%}
+      {% if slider_color %}
+      --arrow_color:{{ slider_color_section }};
+      {% endif %}
+      --section-padding-top-mobile: {{ section.settings.padding_top_mobile }}px;
+      --section-padding-top-desktop: {{ section.settings.padding_top_desktop }}px;
+      --section-padding-bottom-mobile: {{ section.settings.padding_bottom_mobile }}px;
+      --section-padding-bottom-desktop: {{ section.settings.padding_bottom_desktop }}px;
+      --section-margin-bottom-mobile: {{ section.settings.margin_bottom_mobile }}px;
+      --section-margin-bottom-desktop: {{ section.settings.margin_bottom_desktop }}px;
+    }
+    .dynamic-section-{{ section.id }} .banner-container { 
+      --margin_padding_desktop: {{ section.settings.padding_desktop }}vh;
+      --margin_padding_mobile: {{ section.settings.padding_mobile }}vh;
+      {%- if text_color -%}
+      --headline_font_color:{{ text_color_section }};
+      {%- endif -%}
+      {%- if overlay_color -%}
+      --overlay_background: {{ overlay_color_section }};
+      --overlay_opacity: {{ section.settings.background_img_overlay_opacity | times: 0.01 }};
+      {%- endif -%}
+    }
+  {% endstyle %}
+  
+  <section data-section-id="{{ section.id }}" 
+           data-section-type="tabbed"
+           data-url="{{ 'script.tabbed.js' | asset_url }}"
+           data-carousel-type="block"
+           class="{{ classes }}{% if settings.animation_enable %}animate-section-div {% endif %}clearfix">
+  
+    {% if section.settings.title != blank or section.settings.sub_title != blank or background_img %}
+      {%- liquid
+        assign block_width = section.settings.block_width
+        case block_width
+          when '4'
+            assign block_width = 'four'
+          when '6'
+            assign block_width = 'six'
+          when '8'
+            assign block_width = 'eight'
+          when '9'
+            assign block_width = 'nine'
+        endcase
+      -%}
+      <div class="banner-container {% if full_width %}bottompad{% if section.blocks.size > 1 %}-quarter {% else %}-half {% endif %}{% if background_img or overlay_color %}relative {% if background_img %}lazycontainer {% endif %}{% if overlay_color %}background-overlay {% endif %}{% endif %}{% endif %}clearfix">
+        {%- liquid
+          if full_width and section.settings.background_img_d != blank
+            if section.settings.background_img_m != blank
+              assign screen = 'desktop-image '
+            endif
+          render 'image.load', img_src: section.settings.background_img_d, size: section.settings.background_img_d.width, alt: alt_d, background: true, screen: screen, full_width: true, lazy: lazy, sizes: '100vw'
+          endif
+          if full_width and section.settings.background_img_m != blank
+            if section.settings.background_img_d != blank
+              assign screen = 'mobile-image '
+            endif
+          render 'image.load', img_src: section.settings.background_img_m, size: section.settings.background_img_m.width, alt: alt_m, background: true, screen: screen, full_width: true, lazy: lazy, sizes: '100vw'
+          endif
+        -%}
+        <div class="relative container{% if full_width %} half-pad{% else %} {% if background_img or overlay_color %}inner-container{% else %}half-pad{% endif %}{% endif %}{% if settings.animation_enable %} animate-section load{% endif %} clearfix">
+          <div class="{% if full_width == false %}bottompad{% if section.blocks.size > 1 %}-quarter {% else %}-half {% endif %}{% if background_img or overlay_color %}inner-container-pad relative {% if background_img %}lazycontainer {% endif %}{% if overlay_color %}background-overlay {% endif %}{% endif %}{% endif %}clearfix">
+            {%- liquid
+              if full_width == false and section.settings.background_img_d != blank
+                if section.settings.background_img_m != blank
+                  assign screen = 'desktop-image '
+                endif
+                render 'image.load', img_src: section.settings.background_img_d, size: section.settings.background_img_d.width, alt: alt_d, background: true, screen: screen
+              endif
+              if full_width == false and section.settings.background_img_m != blank
+                if section.settings.background_img_d != blank
+                  assign screen = 'mobile-image '
+                endif
+                render 'image.load', img_src: section.settings.background_img_m, size: section.settings.background_img_m.width, alt: alt_m, background: true, screen: screen
+              endif
+            -%}
+            <div class="relative table content-height content-height-options">
+              <div class="table-cell {{ section.settings.vertical_content_alignment }}">
+                <div class="{{ block_width }} animate {{ section.settings.text_alignment }} {{ section.settings.horizontal_content_alignment }} bottompad-quarter">
+                  {%- liquid
+                    if section.settings.title_h1
+                      assign title = 1
+                    else
+                      assign title = 2
+                    endif
+                  -%}
+                  {% if section.settings.title != blank%}<h{{ title }} class="section-title-{{ section.settings.title_size }}">{{ section.settings.title | escape }}</h{{ title }}>{% endif %}
+                  {% if section.settings.sub_title != blank %}<h3 class="section-title-{{ section.settings.title_sub_size }}">{{ section.settings.sub_title | escape }}</h3>{% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>  
+    {% endif %}
+  
+    {% if section.blocks.size > 1 %}
+      <div class="container no-pad {% if settings.animation_enable %}animate-section animate-section-margin load {% endif %}clearfix">
+        <div class="glider-contain tab-body tabs tabs-id-{{ section.id }} text-center">
+          <div id="tabs-carousel-{{ section.id }}" data-limit="{{ section.blocks.size | minus: 0.5 }}" class="glider {% if list_count < 5 %}no-drag {% endif %}load table-center text-center clearfix">
+            <div class="product-loop{% if section.blocks.size < 5 %} center{% endif %} glider-track glider-tabs center" role="tablist">
+              {% for block in section.blocks %}
+                {%- liquid
+                  capture title
+                    if block.settings.title != blank
+                      echo block.settings.title
+                    else
+                      echo 'homepage.onboarding.collection_title' | t
+                    endif
+                  endcapture
+                -%}
+                <a href="#{{ title | handle }}-{{ block.id }}" 
+                   class="glider-slide{% if forloop.first %} first{% endif %} parent" 
+                   id="tab-{{ block.id }}"  
+                   title="{{ title | escape }}" 
+                   role="tab"
+                   aria-controls="{{ title | handle }}-{{ block.id }}"
+                   {% if forloop.first %}aria-selected="true"{% endif %}
+                   {{ block.shopify_attributes }}>
+                  <span class="h5 underline">{{ title }}</span>
+                </a>          
+              {% endfor %}
+            </div>
+          </div>
+          <button id="tabs-button-prev-{{ section.id }}" class="glider-button-prev disabled" type="button" aria-label="{{ 'products.general.previous' | t | escape }}">{%- render 'icons.theme', icon: 'left', size: '16' -%}</button>
+          <button id="tabs-button-next-{{ section.id }}" class="glider-button-next disabled" type="button" aria-label="{{ 'products.general.next' | t | escape }}">{%- render 'icons.theme', icon: 'right', size: '16' -%}</button>        
+        </div>
+      </div>
+    {% endif %}
+  
+    {% for block in section.blocks %}
+    
+      {%- liquid
+        unless forloop.first
+          assign lazy = 'lazy'
+        endunless
+        if block.settings.collection_list.count == 0
+          assign list_count = section.settings.product_row | times: 2
+        else
+          assign list_count = block.settings.collection_list.count
+        endif
+        if section.settings.use_slider and list_count > 2
+          assign slider = true
+        else
+          assign slider = false
+        endif
+        capture title
+          if block.settings.title != blank
+            echo block.settings.title
+          else
+            echo 'homepage.onboarding.collection_title' | t
+          endif
+        endcapture
+        if slider
+          case section.settings.product_row
+            when 2
+              assign block_width = 'six'
+              assign size = 880
+              assign sizes = 'calc(66.66vw - 30px)'
+            when 3
+              assign block_width = 'four'
+              assign size = 460
+              assign sizes = '(min-width: 600px) calc(40vw - 30px), calc(66.66vw - 30px)'
+            when 4
+              assign block_width = 'three'
+              assign size = 400
+              assign sizes = '(min-width: 600px) calc(40vw - 30px), (min-width: 768px) calc(28.57vw - 30px), calc(66.66vw - 30px)'
+            else
+              assign block_width = 'two-half'
+              assign size = 400
+              assign sizes = '(min-width: 600px) calc(40vw - 30px), (min-width: 768px) calc(22.22vw - 30px), calc(66.66vw - 30px)'
+          endcase
+        else
+          case section.settings.product_row
+            when 2
+              assign block_width = 'six'
+              assign size = 580
+              assign sizes = '(min-width: 768px) calc(50vw - 40px), calc(50vw - 40px)'
+            when 3
+              assign block_width = 'four'
+              assign size = 380
+              assign sizes = '(min-width: 768px) calc(33.33vw - 40px), calc(50vw - 40px)'
+            when 4
+              assign block_width = 'three'
+              assign size = 360
+              assign sizes = '(min-width: 768px) calc(25vw - 40px), calc(50vw - 40px)'
+            else
+              assign block_width = 'two-half'
+              assign size = 360
+              assign sizes = '(min-width: 768px) calc(20.833vw - 40px), calc(50vw - 40px)'
+          endcase
+        endif
+      -%}
+      
+      <div class="container {% if slider %}no-pad{% else %}half-pad{% endif %} {% if settings.animation_enable %}animate-section animate-section-margin load {% endif %}clearfix">
+        <div id="{{ title | handle }}-{{ block.id }}" 
+             class="{% if slider %}glider-contain {% else %}tab-body-content {% endif %}tab-body tab-body-id-{{ section.id }}{% unless forloop.first %} hide{% endunless %}" 
+             role="tabpanel" 
+             tabindex="{% if forloop.first %}0{% else %}-1{% endif %}"
+             aria-labelledby="tab-{{ block.id }}">
+          <div{% if slider %} id="glider-carousel-{{ block.id }}" data-limit="{{ section.settings.product_row | minus: 0.5 }}" {% endif %} class="{% if slider %}glider {% if list_count < 5 %}no-drag {% endif %}{% endif %}table-center text-center clearfix">
+            <div class="product-loop{% if list_count < 5 %} {{ section.settings.horizontal_content_alignment }}{% endif %}{% if slider %} glider-track{% endif %}" data-block-id="{{ block.id }}" data-glider="{% if forloop.first %}loaded{% else %}unloaded{% endif %}">
+              {%- liquid
+                if block.settings.collection_list.count > 0
+                  for collection in block.settings.collection_list
+                    capture current
+                        cycle 1, 2, 3, 4, 5, 6
+                    endcapture
+                    if section.settings.use_product_image or collection.image == blank
+                      assign img_src = collection.products.first.featured_media.preview_image
+                    else
+                      assign img_src = collection.image
+                    endif
+                    capture alt
+                      if img_src.alt != blank
+                        echo img_src.alt
+                      else
+                        echo collection.title
+                      endif
+                    endcapture
+                    render 'collection.loop', block_width: block_width, forloop_index0: forloop.index0, collection: collection, collection_url: collection.url, current: current, images_enable: true, img_src: img_src, alt: alt, size: size, lazy: lazy, sizes: sizes, collection_title_size: section.settings.collection_title_size
+                  endfor
+                else
+                  for i in (1..section.settings.product_row) limit: section.settings.product_row
+                    capture current
+                      cycle 1, 2, 3, 4, 5, 6
+                    endcapture
+                    render 'collection.loop', block_width: block_width, forloop_index0: forloop.index0, collection: empty, current: current, images_enable: true, size: size, lazy: lazy, sizes: sizes, collection_title_size: section.settings.collection_title_size
+                  endfor
+                endif
+              -%}
+            </div>
+          </div>
+          {% if slider %}
+            <div id="glider-pagination-{{ block.id }}" class="glider-pagination {% if section.settings.product_row > list_count %}hidden {% endif %}tab-body relative">
+              <button id="glider-button-prev-{{ block.id }}" class="glider-button-prev" type="button" aria-label="{{ 'products.general.previous' | t | escape }}">{%- render 'icons.theme', icon: 'left', size: '16' -%}</button>
+              <button id="glider-button-next-{{ block.id }}" class="glider-button-next" type="button" aria-label="{{ 'products.general.next' | t | escape }}">{%- render 'icons.theme', icon: 'right', size: '16' -%}</button>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+    
+  </section>
+
+{% endif %}
+
+{% schema %}
+  {
+    "name": "t:sections.tabbed_collections.name",
+    "settings": [
+      {
+        "type": "header",
+        "content": "t:sections.banner.label"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "t:sections.heading.label",
+		"default": "Tabbed collections"
+      },
+      {
+        "id": "title_h1",
+        "type": "checkbox",
+        "label": "t:sections.heading.heading_one",
+        "default": false
+      },
+      {
+        "id": "title_size",
+        "type": "range",
+        "label": "t:sections.heading.heading_size",
+        "min": 12,
+        "max": 96,
+        "step": 6,
+        "unit": "px",
+        "default": 48
+      },
+      {
+        "type": "text",
+        "id": "sub_title",
+        "label": "t:sections.subheading.label",
+		"default": "Group collections by primary and secondary interests"
+      },
+      {
+        "id": "title_sub_size",
+        "type": "range",
+        "label": "t:sections.subheading.subheading_size",
+        "min": 12,
+        "max": 96,
+        "step": 6,
+        "unit": "px",
+        "default": 24
+      },
+      {
+        "id": "section_color",
+        "type": "color",
+        "label": "t:sections.text.color"
+      },
+      {
+        "type": "select",
+        "id": "text_alignment",
+        "label": "t:sections.text_alignment.label",
+        "default": "text-center",
+        "options": [
+          {
+            "value": "text-left",
+            "label": "t:sections.alignment.left"
+          },
+          {
+            "value": "text-center",
+            "label": "t:sections.alignment.center"
+          },
+          {
+            "value": "text-right",
+            "label": "t:sections.alignment.right"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "block_width",
+        "label": "t:sections.content_width.label",
+        "default": "6",
+        "options": [
+          {
+            "value": "4",
+            "label": "33%"
+          },
+          {
+            "value": "6",
+            "label": "50%"
+          },
+          {
+            "value": "8",
+            "label": "66%"
+          },
+          {
+            "value": "9",
+            "label": "75%"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "horizontal_content_alignment",
+        "label": "t:sections.horizontal_position.label",
+        "default": "center",
+        "options": [
+          {
+            "value": "left",
+            "label": "t:sections.alignment.left"
+          },
+          {
+            "value": "center",
+            "label": "t:sections.alignment.center"
+          },
+          {
+            "value": "right",
+            "label": "t:sections.alignment.right"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "vertical_content_alignment",
+        "label": "t:sections.vertical_position.label",
+        "default": "middle",
+        "options": [
+          {
+            "value": "top",
+            "label": "t:sections.vertical_position.top"
+          },
+          {
+            "value": "middle",
+            "label": "t:sections.vertical_position.middle"
+          },
+          {
+            "value": "bottom",
+            "label": "t:sections.vertical_position.bottom"
+          }
+        ]
+      },
+      {
+        "type": "image_picker",
+        "id": "background_img_d",
+        "label": "t:sections.image.desktop.label",
+        "info": "t:sections.image.desktop.info"
+      },
+      {
+        "type": "image_picker",
+        "id": "background_img_m",
+        "label": "t:sections.image.mobile.label",
+        "info": "t:sections.image.mobile.info"
+      },
+	  {
+       "type": "checkbox",
+       "id": "full_width",
+       "label": "t:sections.full_width.label",
+       "default": true
+      },
+      {
+        "type": "range",
+        "id": "padding_desktop",
+        "min": 5,
+        "max": 100,
+        "step": 5,
+        "unit": "%",
+        "label": "t:sections.height.desktop.label",
+        "default": 25
+      },
+      {
+        "type": "range",
+        "id": "padding_mobile",
+        "min": 5,
+        "max": 100,
+        "step": 5,
+        "unit": "%",
+        "label": "t:sections.height.mobile.label",
+        "default": 25
+      },
+	  {
+        "type": "color",
+        "id": "background_img_overlay",
+        "label": "t:sections.overlay.label"
+      },
+      {
+        "type": "color_background",
+        "id": "background_img_overlay_gradient",
+        "label": "t:sections.overlay.gradient"
+      },
+      {
+        "type": "range",
+        "id": "background_img_overlay_opacity",
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "unit": "%",
+        "label": "t:sections.opacity.label",
+        "default": 0
+      },
+      {
+        "type": "header",
+        "content": "t:sections.options.label"
+      },
+      {
+        "type": "range",
+        "id": "product_row",
+        "min": 2,
+        "max": 5,
+        "step": 1,
+        "label": "t:sections.collections_per_row.label",
+        "default": 5
+      },
+      {
+        "type": "checkbox",
+        "id": "use_product_image",
+        "label": "t:sections.show_first.label",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "image_fit",
+        "label": "t:settings_schema.products.settings.options_ratio.label",
+        "info": "t:settings_schema.products.settings.options_ratio.info_2",
+        "default": true
+      },
+      {
+        "id": "collection_title_size",
+        "type": "range",
+        "label": "t:sections.heading.heading_size",
+        "min": 12,
+        "max": 48,
+        "step": 6,
+        "unit": "px",
+        "default": 18
+      },
+      {
+        "type": "checkbox",
+        "id": "use_slider",
+        "label": "t:sections.use_slider_collections.label",
+        "default": true
+      },
+      {
+        "id": "use_slider_color",
+        "type": "color",
+        "label": "t:sections.multi_slide_color.label"
+      },
+      {
+        "type": "header",
+        "content": "t:sections.section.name.content"
+      },
+      {
+        "id": "enable_lazy",
+        "type": "checkbox",
+        "label": "t:sections.section.settings.lazy.multiple.label",
+        "default": true
+      },
+      {
+        "id": "background",
+        "type": "color",
+        "label": "t:sections.section.settings.background_color.label"
+      },
+      {
+        "id": "background_gradient",
+        "type": "color_background",
+        "label": "t:sections.section.settings.background_gradient.label"
+      },
+      {
+        "type": "paragraph",
+        "content": "t:sections.section.settings.mobile.content"
+      },
+      {
+        "id": "padding_top_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.top_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 20
+      },
+      {
+        "id": "padding_bottom_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 20
+      },
+      {
+        "id": "margin_bottom_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_margin.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 20
+      },
+      {
+        "type": "paragraph",
+        "content": "t:sections.section.settings.desktop.content"
+      },
+      {
+        "id": "padding_top_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.top_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "padding_bottom_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "margin_bottom_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_margin.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "padding_border",
+        "type": "checkbox",
+        "label": "t:sections.section.settings.border.label",
+        "default": true
+      }
+    ],
+    "blocks": [
+      {
+        "type": "collection",
+        "name": "t:sections.collection.label",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "t:sections.heading.label",
+        	"default": "Tab title"
+          },
+          {
+            "type": "collection_list",
+            "id": "collection_list",
+            "label": "t:sections.collections.label",
+            "limit": 16
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "t:sections.tabbed_collections.name",
+        "blocks": [
+          {
+            "type": "collection"
+          },
+          {
+            "type": "collection"
+          },
+          {
+            "type": "collection"
+          },
+          {
+            "type": "collection"
+          }
+        ]
+      }
+    ],
+    "disabled_on": {
+	  "templates": ["password"],
+      "groups": ["custom.overlay"]
+    }
+  }
+{% endschema %}

@@ -1,0 +1,447 @@
+<style>
+  .gift-coupen-popup {
+    position: fixed;
+    top: 0;
+    /* right: 0; */
+    /* float: right; */
+    bottom: 0;
+    right: -428px;
+    max-width: 100%;
+    width: 428px;
+    z-index: 999999;
+    transition: all 0.5s;
+    height: 100%;
+    background-color: white;
+  }
+  .cart_offer_input_wrap {
+    padding: 15px 20px;
+    background-color: #f1ece3;
+    position: relative;
+  }
+  .gift-popup-inner .cart_offer_input_wrap .cart_offer_input {
+    border-color: #d5d5d5;
+    box-shadow: none !important;
+    height: 50px;
+    padding-left: 20px;
+    padding-right: 75px;
+    outline: 0 !important;
+    font-size: var(--small);
+    color: #171717;
+    background: var(--white);
+    border: 1px solid var(--line_color);
+    appearance: none;
+    line-height: calc(var(--small) * 1.25);
+    font-family: var(--body_font);
+    min-height: 40px;
+    /* padding: 11px var(--xx_small) 10px; */
+    position: relative;
+    width: 100%;
+    font-weight: var(--body_font_weight_medium);
+  }
+  .gift-popup-inner .cart_offer_input_wrap .cart_offer_apply_btn {
+    font-size: var(--small);
+    line-height: normal;
+    letter-spacing: normal;
+    font-family: var(--body_font) !important;
+    font-weight: 600;
+    color: var(--button_color);
+    position: absolute;
+    right: 35px;
+    top: 29px;
+  }
+  .coupen-list-part {
+    padding: 20px;
+    height: calc(100% - 180px);
+    overflow: auto;
+    position: relative;
+  }
+  .coupen-list-inner {
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(241, 236, 227);
+    margin-bottom: 15px;
+    position: relative;
+  }
+  .coupen-list-inner .note {
+    max-width: 75%;
+    padding-bottom: 10px;
+    font-family: var(--body_font) !important;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: #000;
+    font-size: var(--small);
+    padding: 0 0 calc(var(--small) * 1.25);
+  }
+  .coupen-list-part .coupen .exp-date {
+    fill: rgba(96, 96, 96);
+    font-size: 11px;
+    display: block;
+    margin-top: 3px;
+  }
+  .coupen-list-part .coupen {
+    background-color: rgba(250, 248, 244);
+    border: 1px solid #96865d;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    align-items: center;
+  }
+  .coupen-list-part .coupen::before {
+    content: '';
+    position: absolute;
+    left: -7px;
+    top: 24px;
+    border-radius: 50%;
+    width: 20px;
+    height: 10px;
+    background-color: #fff;
+    border-top-left-radius: 110px;
+    border-top-right-radius: 110px;
+    border: 1.5px solid #96865d;
+    border-bottom: 0;
+    transform: rotate(90deg);
+  }
+  .coupen-list-part .coupen .left-part {
+    width: 50%;
+  }
+  .coupen-list-part .coupen .right-part {
+    width: 50%;
+    text-align: right;
+    position: relative;
+  }
+  .coupen-list-part .coupen::after {
+    content: '';
+    position: absolute;
+    right: -7px;
+    top: 24px;
+    border-radius: 50%;
+    width: 20px;
+    height: 10px;
+    background-color: #fff;
+    border-top-left-radius: 110px;
+    border-top-right-radius: 110px;
+    border: 1.5px solid #96865d;
+    border-bottom: 0;
+    transform: rotate(-90deg);
+  }
+  .coupen-list-inner .note,
+  .coupen-list-part .coupen .exp-date,
+  .coupen-list-part .coupen .code {
+    font-family: var(--body_font) !important;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: #000;
+  }
+  .coupen .apply-btn {
+    color: #96865d !important;
+    font-family: var(--body_font) !important;
+    font-weight: 600;
+    min-width: 86px;
+    padding: 8px 15px;
+    border-radius: 23px;
+    background-color: #fff;
+    border: 1px solid #96865d;
+    font-size: 14px !important;
+    text-transform: capitalize;
+  }
+  .coupen .apply-btn:hover,
+  .coupen .apply-btn.active {
+    color: #fff !important;
+    background: #96865d !important;
+  }
+  .coupen .apply-btn.active::before {
+    content: '';
+    display: inline-block;
+    transform: rotate(45deg);
+    height: 13px;
+    width: 6px;
+    border-bottom: 2px solid #fff;
+    border-right: 2px solid #fff;
+    margin-left: 5px;
+    margin-right: 10px;
+  }
+  .cart_offer_input_wrap_inner p.error {
+    color: red;
+    padding-top: 4px;
+    padding-bottom: 0;
+  }
+  .couponloading {
+    display: none;
+  }
+</style>
+
+<div class="gift-coupen-popup">
+  {%- if template == 'cart' -%}
+    <div class="gift-coupen-back"></div>
+  {%- endif -%}
+  <div class="gift-popup-inner">
+    <div class="gift-coupen-header cart_drawer_header">
+      <span class="gift-popup-close cursor-pointer">{% render 'svg-icons', icon: 'close-icon' %}</span>
+      <div class="cart_drawer_heading">Coupons</div>
+    </div>
+
+    <div class="cart_offer_input_wrap">
+      <div class="cart_offer_input_wrap_inner">
+        <input type="text" class="cart_offer_input" placeholder="Enter Coupon code">
+        <a href="javascript:void(0)" class="cart_offer_apply_btn" data-cart-token="{{cart.token}}">
+          <span>Apply</span>
+          {% include 'dots-loading', custom_class: 'couponloading' %}
+        </a>
+        <div class="snippet" data-title=".dot-flashing" style="display:none;">
+          <div class="stage">
+            <div class="dot-flashing"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="coupen-list-part"></div>
+  </div>
+</div>
+
+<script defer>
+
+    $(document).on('click', '.gift-popup-close', function () {
+        $('.gift-coupen-popup').css('right', '-428px');
+    });
+
+    // loading up the side cart
+    function popupLoad() {
+        $this = '';
+        var cart_token,
+        subtotal,
+        customer_id,
+        product_ids = '',
+        variant_ids = '',
+        collection_ids = '',
+        total_quantity,
+        coupons_html = '',
+        coupons_row_html = '',
+        line_items = [],
+        line_product_arr = [];
+        jQuery.getJSON('/cart.js', function (cart) {
+        console.log('popup function called');
+        $('.apply-coupon-btn_right').hide();
+        $('.apply-coupon-btn_left').hide();
+        $('.snippet.applyCouponCart').show();
+        cart_token = cart.token;
+        subtotal = cart.items_subtotal_price;
+        customer_id = theme.customer_id;
+        total_quantity = cart.item_count;
+
+        /* Change in subtotal */
+        $.each(cart.items, function (index, item) {
+            if (item.product_type == 'Gift Card' && subtotal != 0) {
+            subtotal = subtotal - item.line_price;
+            }
+        });
+        if (subtotal < 0) {
+            subtotal = 0;
+        }
+
+//adding code
+            cart_token = cart.token;
+            subtotal = cart.items_subtotal_price;
+            customer_id = {{customer.id | json}};
+            total_quantity = cart.item_count;
+
+            /* Change in subtotal */
+            $.each(cart.items, function (index, item) {
+                if (item.product_type == 'Gift Card' && subtotal != 0) {
+                subtotal = subtotal - item.line_price;
+                }
+            });
+            if (subtotal < 0) {
+                subtotal = 0;
+            }
+            let temppid = [],
+            tempcid = [],
+            templineitem = [],
+            tempvid = [];
+            $('.my-cart__item').each(function (index) {
+                templineitem.push({
+                    id: $(this).attr('data-variantid'),
+                    qty: $(this).attr('data-qty'),
+                    price: ($(this).attr('data-itemprice')/100).toFixed(2),
+                })
+                line_items.push({
+                id: $(this).attr('data-product-id'),
+                {% comment %} variant_ids: $(this).attr('data-variantid'), {% endcomment %}
+                variant_ids: templineitem,
+                collection_ids: $(this).attr('data-collectionid'),
+                });
+                temppid.push($(this).attr('data-product-id').split(':')[0]);
+                tempvid.push($(this).attr('data-variantid'));
+                $(this).attr('data-collectionid').split(',').forEach(function(ele) {
+                    tempcid.push(ele)
+                });
+
+            });
+            let collection_ids_arr_new = tempcid.filter(function(elem, index, self) {
+                return index === self.indexOf(elem);
+            });
+            product_ids = temppid.join(',');
+            variant_ids = tempvid.join(',');
+        var data = {
+            cart_token: cart_token,
+            subtotal: (subtotal / 100).toFixed(2),
+            customer_id: customer_id,
+            line_items: line_items,
+            product_ids: product_ids,
+            variant_ids: variant_ids,
+            collection_ids: collection_ids_arr_new.toString(),
+            total_quantity: total_quantity,
+        };
+        $.ajax({
+            type: 'POST',
+            url: 'https://support.nestasia.in/api/get-codes-demo',
+            data: data,
+            dataType: 'json',
+            success: function (data) {
+            let storedCoupen = '',
+                coupenloc,
+                act = '',
+                msg = 'apply';
+                
+            console.log('sections/coupen-code-popup.liquid');
+            // checking if some coupon is already applied
+            if (
+                localStorage.getItem('discountCode') != null &&
+                localStorage.getItem('discountCode') != undefined &&
+                localStorage.getItem('discountCode').trim() != ''
+            ) {
+                // gets the data stating that coupon code is added
+                storedCoupen = localStorage.getItem('discountCode');
+                console.log(`discount code ${cart_token} is present`, storedCoupen);
+                console.log($(coupenloc));
+                // theme.getDiscountApply('',cart_token,localStorage.getItem("discountCode"))
+            }
+            let items = data.available_coupons;
+            theme.getDiscountCodesData = data;
+            var getDiscountCodes = false;
+            items.forEach((item) => {
+                if (item.code == storedCoupen) {
+                  act = 'active';
+                  msg = 'applied'
+                }
+              let dateui;
+              if (item.ends_at != null) {
+                  var get_end_date = item.ends_at.split(' ');
+                  var ends_date = new Date(get_end_date[0]);
+                  dateui = `<span class="exp-date">Expires on ${ends_date.getDate()} ${theme.monthNames[ends_date.getMonth()]
+                    } ${ends_date.getFullYear()}</span>`;
+                }
+              else{
+                  dateui = ''
+              }
+                coupons_html += `<div class="coupen-list-inner" bis_skin_checked="1">
+                                <p class="note">${item.summary}</p>
+                                <div class="coupen" bis_skin_checked="1">
+                                    <div class="left-part" bis_skin_checked="1">
+                                    <span class="code">${item.code}</span>
+                                    ${dateui}
+                                    </div>
+                                    <div class="right-part" bis_skin_checked="1"><button data-coupon="${item.code}" data-cart-token="${cart.token}" class="${act} apply-btn ">${msg}</button></div>
+                                </div>
+                                </div>`;
+                act = '';
+                msg = 'apply';
+            });
+            $('.coupen-list-part').html(coupons_html);
+
+            $('.gift-coupen-popup').css('right', '0px');
+            $('.apply-coupon-btn_right').show();
+            $('.apply-coupon-btn_left').show();
+            $('.snippet.applyCouponCart').hide();
+            },
+        });
+        });
+
+        $('.apply-coupon-btn_right').show();
+        $('.apply-coupon-btn_left').show();
+        $('.snippet.applyCouponCart').hide();
+    }
+
+    // applying the coupon
+    $(document).on('click', '.apply-btn:not(.active)', function () {
+        let cart_token = theme.cart_token;
+        let coupen_code = $(this).data('coupon');
+        console.log('cart token', cart_token);
+        console.log('coupen code', coupen_code);
+
+        $this = $(this);
+        console.log('$(this)', $(this));
+        console.log('$this', $this);
+        var data = {
+        cart_token: cart_token,
+        code: coupen_code,
+        };
+
+        $.ajax({
+        type: 'POST',
+        url: 'https://support.nestasia.in/api/assign-code',
+        data: data,
+        dataType: 'json',
+        success: function (data) {
+            if(data.status){
+                console.log("assign-code is successfull")
+                if(location.path == '/cart') $(".cart_overlay").hide();
+            }
+            else{
+                console.log("assign-code caused error")
+            }
+            // $('.gift-coupen-popup').css('right', '-428px');
+            // coupon code added to local storage
+            localStorage.setItem('discountCode', coupen_code);
+            
+            theme.applyCodes(coupen_code);
+        },
+        });
+    });
+
+    // remove coupon code button
+    $(document).on('click', '.apply-btn.active', function () {
+        let cart_token = theme.cart_token;
+        let coupon_code = $(this).data('coupon');
+        console.log('cart token', cart_token);
+        console.log('coupen code', coupon_code);
+
+        $this = $(this);
+        console.log('$(this)', $(this));
+        console.log('$this', $this);
+
+
+        theme.removeCoupon(coupon_code);
+    });
+
+    //apply coupon code button
+    $(document).on('click', '.cart_offer_apply_btn', function () {
+        jQuery.getJSON('/cart.js', function (cart) {
+        let cart_token = cart.token;
+        let coupon_code = $('.cart_offer_input').val();
+        $('.couponloading').show();
+        $('.cart_offer_apply_btn span').hide();
+        console.log(coupon_code)
+        theme.applyCodes(coupon_code);
+        });
+    });
+</script>
+
+{% schema %}
+{
+  "name": "coupon code popup",
+  "settings": [],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "coupon code popup"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

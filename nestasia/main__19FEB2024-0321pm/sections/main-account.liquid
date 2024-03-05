@@ -1,0 +1,1362 @@
+<style>
+  
+  {% comment %} .ratingBtn_sm {
+    background: none !important;
+    border: 1px solid #96865d !important;
+    color: #96865d !important;
+    font-size: 14px !important;
+    text-align: center;
+    padding: 11px var(--xx_small) 10px;
+    padding-top: 11px;
+    min-height: 40px;
+}
+.ratingBtn_sm:hover {
+    background: #96865D !important;
+    color: white !important;
+} {% endcomment %}
+  .account-page-main-wrapper .main-content-wrapper .order-history-wrapper .order-item-wrap {
+    border-radius: 3px;
+    box-shadow: 0 2px 4px 0 rgb(0 0 0/10%);
+    -moz-box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
+    -o-box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
+    min-height: 200px;
+    background: #fff;
+    margin-top: 2px;
+    margin-bottom: 10px;
+    padding: 15px;
+    display: block;
+    align-items: flex-start;
+}
+.account-page-main-wrapper .main-content-wrapper .order-history-wrapper .order-item-wrap .order-extra-info {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
+.account-page-main-wrapper .main-content-wrapper .order-history-wrapper .order-item-wrap .order-extra-info p {
+    line-height: 30px;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    display: inline;
+}
+.account-page-main-wrapper .main-content-wrapper .order-history-wrapper .order-item-wrap .line-item-img {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 100%;
+    margin: 0 -5px;
+}
+  .account-page-main-wrapper .content.customers-page-wrapper {
+    padding-top: calc(var(--master_spacing)*3);
+    padding-bottom: calc(var(--master_spacing)*3);
+    margin: 0;
+    background-color: #f3f3f3;
+}
+.account-page-main-wrapper .main-content-wrapper .order-history-wrapper .order-item-wrap .line-item-img .item-image img {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    border-radius: 3px;
+    margin: 0;
+}
+  .modal {
+    padding-top: 8vh;
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    padding-top: 50px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, .4);
+  }
+  .modal-content{
+    height: auto;
+    max-height: 84vh;
+    margin: auto;
+    border: 1px solid #888;
+    width: 100%;
+    max-width: 439px;
+    position: relative;
+  }
+  .modalForReview .close {
+    background: transparent;
+    color: #4C4C4C;
+    top: 0px;
+    right: 2px;
+    font-size: 28px;
+    font-weight: 700;
+    position: absolute;
+    height: 40px;
+    text-align: center;
+    line-height: 30px;
+    width: 40px;
+    cursor: pointer;
+}
+.modalForReview h2 {
+    background: white;
+    margin: 0;
+    padding-bottom: 10px;
+    font-size: 16px;
+    line-height: 32px;
+    letter-spacing: .01em;
+    text-transform: capitalize;
+    font-family: var(--body_font);
+    color: #171717;
+    text-align: center;
+}
+.modalForReview .orderRateSmTotal {
+    background: white;
+    padding-bottom: 16px;
+}
+.orderRateSmTotal {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+}
+.review_starts {
+    margin-bottom: 5px;
+}
+.modelContentImg .item-image {
+    margin-bottom: 60px;
+    position: relative;
+}
+.modelContentImg .item_image_sm_wraper {
+    display: flex;
+    margin-bottom: 10px;
+}
+.modelImg {
+    height: 100%;
+}
+.modelImg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    max-width: 155px;
+    margin: 0;
+}
+.modelContent {
+    padding-left: 10px;
+    padding-right: 12px;
+}
+.modelContent p {
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: .01em;
+    text-transform: capitalize;
+    color: #171717;
+    padding: 0;
+    margin-bottom: 5px;
+}
+.modelContent .form-group input {
+    height: 25px !important;
+    min-height: 25px;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+.modelContent .form-group textarea {
+    margin-bottom: 5px;
+    font-size: 12px;
+    color: #999;
+    height: 45px;
+}
+.order_page_pro_review_form textarea {
+    padding: 5px;
+}
+
+  .modelContentImg {
+    overflow-y: auto;
+    height: auto;
+    max-height: 59vh;
+  }
+  .review_starts.disabled{
+    pointer-events: none;
+  }
+  .review_starts:not(.disabled) svg {
+    cursor: pointer;
+  }
+  .review_starts svg.active {
+    fill: #96865D !important;
+  }
+  .review_starts svg.active path{
+    stroke:#96865D !important;
+  }
+  .order_page_pro_review_form input[type="text"] {
+    padding: 3px 5px;
+  }
+  .order_page_pro_review_form textarea {
+    padding: 5px;
+  }
+  .thank_you_msg {
+    color: #96865D;
+    font-size: 13px;
+    padding-top: 5px;
+  }
+    .modalForReview{
+    background:#fffdf9;
+    padding:0;
+  }
+  .modalForReview .modelContentImg{
+    background: #fffdf9;
+    padding:20px;
+    padding-bottom: 60px;
+  }
+  .modalForReview h2{
+    background:white;
+    margin: 0;
+    padding-bottom: 10px;
+  }
+  .modalForReview .orderRateSmTotal{
+   background:white;
+  padding-bottom: 16px;
+  }
+  .BtnForReviewEach{
+    display:none;
+  }
+  .modalForReview .close{
+    background: transparent;
+    color: #4C4C4C;
+    top: 0px;
+    right: 2px;
+    font-size: 28px;
+  }
+  .formGtextarea{
+    position: absolute;
+    width: 100%;
+    right: 0;
+    bottom: -55px;
+}
+  .totalButtonSub{
+    text-align: center;
+    padding: 12px 0;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: #96865D;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .account-page-main-wrapper .main-content-wrapper .order-history-wrapper .order-item-wrap .order-number-wrap .label {
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 10px;
+    /* font-size: 14px; */
+    font-size: 14px;
+    padding-right: 10px;
+    /* margin-bottom: 0; */
+    color: #171717;
+    letter-spacing: .1rem;
+}
+.account-page-main-wrapper .main-content-wrapper .order-history-wrapper .order-item-wrap .order-number-wrap .order-number {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+    font-family: var(--body_font);
+}
+.account-page-main-wrapper .main-content-wrapper .order-history-wrapper .order-item-wrap .order-number-wrap {
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.account-page-main-wrapper .main-content-wrapper .order-history-wrapper .order-item-wrap .order-details-wrap {
+    display: flex;
+    width: 350px;
+    gap: 8px;
+    justify-content: flex-end;
+}
+.arrowSeparator {
+    position: relative;
+    padding: 0 8px;
+    vertical-align: middle;
+    font-size: 16px;
+}
+.arrowSeparator:before {
+    border-left: 1px solid var(--line_color_darken_10);
+    display: block;
+    width: 6px;
+    height: 6px;
+    border: 1px solid var(--a11ygrey);
+    position: absolute;
+    top: 3px;
+    left: 2px;
+    border-color: transparent var(--a11ygrey) var(--a11ygrey) transparent;
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+    content: "";
+}
+.account-page-main-wrapper .main-content-wrapper .order-history-wrapper .order-item-wrap .line-item-img .item-image {
+    max-width: 133px;
+    display: inline-block;
+    overflow: hidden;
+    border-radius: 3px;
+    border: 1px solid #96865d;
+    padding: 10px;
+    margin: 5px;
+    position: relative;
+}
+.Rating_Btn {
+    margin-top: 15px;
+}
+.defbtnw {
+    font-size: 16px!important;
+    color: var(--button_color);
+    border: 1px solid var(--button_color);
+    border-radius: 0;
+    text-transform: uppercase;
+    /* height: 54px; */
+    /* line-height: 54px; */
+    font-weight: 700;
+    padding-block: 14px;
+    text-align: center;
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 8px;
+}
+.defbtnw:hover{
+  color: var(--white);
+  background: var(--button_color);
+}
+.defbtnw:hover .svg-colors path{
+  fill: var(--white);
+}
+.orderProductTitle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+    background: rgba(0, 0, 0, .5);
+    bottom: 0;
+    color: #fff;
+    transform: translate(-50%, -50%);
+    display: none;
+    padding: 0;
+}
+.account-page-main-wrapper .main-content-wrapper .order-history-wrapper .order-item-wrap .line-item-img .item-image:hover .orderProductTitle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.order-details-child{
+  flex-basis: 50%;
+}
+.Rating_Btn a {
+    width: 136.86px;
+    text-transform: uppercase;
+    border-radius: 0 !important;
+    font-weight: 700;
+}
+
+.orderonlydesktop{
+  display: flex !important;
+}
+.orderonlymobile{
+  display: none !important;
+}
+@media screen and (max-width:800px){
+  .modal-content {
+    max-width: 308px;
+  }
+  .orderonlydesktop{
+    display: none !important;
+  }
+  .orderonlymobile{
+    display: flex !important;
+  }
+.account-page-main-wrapper .content.customers-page-wrapper {
+    background: 0 0;
+    padding: 15px;
+    padding-right: 0;
+    padding-left: 0;
+}
+.Rating_Btn {
+    margin-top: 0px;
+}
+  .account-page-main-wrapper .main-content-wrapper .order-history-wrapper .order-item-wrap .order-number-wrap {
+    margin-bottom: 0;
+    background: rgba(241, 207, 191, .4);
+    padding: 11px;
+  }
+.orderFlex .label, .orderFlex h4 {
+    display: inline-block !important;
+    font-size: 14px !important;
+    padding-right: 2px !important;
+}
+.account-page-main-wrapper .main-content-wrapper .order-history-wrapper .order-item-wrap .order-number-wrap .label {
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 10px;
+    font-size: 14px;
+    letter-spacing: .1rem;
+}
+.account-page-main-wrapper .main-content-wrapper .order-history-wrapper .order-item-wrap .order-number-wrap .label {
+    font-size: 14px;
+    padding-right: 10px;
+    margin-bottom: 0;
+    color: #171717;
+}
+.account-page-main-wrapper .main-content-wrapper .order-history-wrapper .order-item-wrap .order-number-wrap .label {
+    font-size: 14px;
+    padding-right: 5px;
+    color: #171717;
+    letter-spacing: 0;
+}
+.account-page-main-wrapper .main-content-wrapper .order-history-wrapper .order-item-wrap .order-extra-info p {
+    line-height: 25px;
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    color: #1e1e1e;
+    width: 100%;
+}
+.order-extra-info_count_orderdetail {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+.order-extra-info_count_orderdetail a {
+    text-decoration: underline;
+    font-size: 10px;
+    color: #343333;
+    text-wrap: nowrap;
+}
+.account-page-main-wrapper .main-content-wrapper .order-history-wrapper .order-item-wrap .order-extra-info {
+    background: #f9f9f9;
+    padding: 20px 10px 10px;
+}
+.arrowSeparator{
+    display: none;
+}
+.account-page-main-wrapper .main-content-wrapper .order-history-wrapper .order-item-wrap .line-item-img {
+    display: none;
+}
+.Rating_Btn a {
+    width: 120px;
+    height: 32px;
+    font-size: 10px !important;
+    text-wrap: nowrap;
+    line-height: normal;
+    align-items: center;
+}
+}
+</style>
+
+
+{%- liquid
+  assign full_width = section.settings.full_width
+  if section.settings.background_img != blank
+    capture alt
+      if section.settings.background_img.alt != blank
+        echo section.settings.background_img.alt
+      elsif section.settings.title != blank
+        echo section.settings.title
+      else
+        echo 'customer.account.title' | t
+      endif
+    endcapture  
+  endif
+  assign text_color = false
+  if section.settings.section_color != 'rgba(0,0,0,0)' and section.settings.section_color != blank
+    assign text_color = true
+    assign text_color_section = section.settings.section_color
+  endif
+  assign background_color = false
+  if section.settings.background != 'rgba(0,0,0,0)' and section.settings.background != blank
+    assign background_color = true
+    assign background_color_section = section.settings.background
+  endif    
+  if section.settings.background_gradient != 'rgba(0,0,0,0)' and section.settings.background_gradient != blank
+    assign background_color = true
+    assign background_color_section = section.settings.background_gradient
+  endif
+  capture classes
+    echo 'dynamic-section dynamic-section-'
+    echo section.id 
+    echo ' section-padding-top section-padding-bottom section-margin-bottom '
+    if section.settings.padding_border
+      echo 'section-border '
+    endif
+  endcapture
+  assign overlay_color = false
+  if section.settings.background_img_overlay != 'rgba(0,0,0,0)' and section.settings.background_img_overlay != blank
+    assign overlay_color = true
+    assign overlay_color_section = section.settings.background_img_overlay
+  endif
+  if section.settings.background_img_overlay_gradient != 'rgba(0,0,0,0)' and section.settings.background_img_overlay_gradient != blank
+    assign overlay_color = true
+    assign overlay_color_section = section.settings.background_img_overlay_gradient
+  endif
+  assign banner = false
+  if section.settings.enable_lazy
+    assign lazy = 'lazy'
+  else
+    assign lazy = 'eager'
+  endif
+-%}
+
+{% style %}
+  .dynamic-section-{{ section.id }} { 
+    --margin_padding: {{ section.settings.padding }}vh;
+    {%- if background_color -%}
+    --background:{{ background_color_section }};
+    --button_primary_text:{{ section.settings.background }};
+    --button_secondary_hover:{{ section.settings.background }};
+    {%- endif -%}
+    --section-padding-top-mobile: {{ section.settings.padding_top_mobile }}px;
+    --section-padding-top-desktop: {{ section.settings.padding_top_desktop }}px;
+    --section-padding-bottom-mobile: {{ section.settings.padding_bottom_mobile }}px;
+    --section-padding-bottom-desktop: {{ section.settings.padding_bottom_desktop }}px;
+    --section-margin-bottom-mobile: {{ section.settings.margin_bottom_mobile }}px;
+    --section-margin-bottom-desktop: {{ section.settings.margin_bottom_desktop }}px;
+  }
+  .dynamic-section-{{ section.id }} .banner-section { 
+    {%- if text_color -%}
+    --headline_font_color:{{ text_color_section }};
+    {%- endif -%}
+    {%- if overlay_color -%}
+    --overlay_background: {{ overlay_color_section }};
+    --overlay_opacity: {{ section.settings.background_img_overlay_opacity | times: 0.01 }};
+    {%- endif -%}
+  }
+{% endstyle %}
+
+<section data-section-id="{{ section.id }}" 
+         data-section-type="customer" 
+         class="{{ classes }}{% if settings.animation_enable %}animate-section-div {% endif %}clearfix">
+
+  {% if section.settings.title_enable or section.settings.sub_title != blank or section.settings.background_img != blank %}
+  {%- liquid
+    assign block_width = section.settings.block_width
+    case block_width
+      when '4'
+        assign block_width = 'four'
+      when '6'
+        assign block_width = 'six'
+      when '8'
+        assign block_width = 'eight'
+      when '9'
+        assign block_width = 'nine'
+    endcase
+  -%}
+  <div class="banner-section {% if full_width %}bottompad-half {% if section.settings.background_img != blank or overlay_color %}relative {% if section.settings.background_img != blank %}lazycontainer lazyignore {% endif %}{% if overlay_color %}background-overlay {% endif %}{% endif %}{% endif %}clearfix">
+    {%- liquid
+      if full_width and section.settings.background_img != blank
+        assign banner = true
+        render 'image.load', img_src: section.settings.background_img, size: section.settings.background_img.width, alt: alt, background: true, full_width: true, lazy: lazy, sizes: '100vw'
+      endif
+    -%}
+    <div class="relative container{% if full_width %} half-pad{% else %} {% if section.settings.background_img != blank or overlay_color %}inner-container{% else %}half-pad{% endif %}{% endif %}{% if settings.animation_enable %} animate-section load{% endif %} clearfix">
+      <div class="{% if full_width == false %}{% if section.settings.background_img != blank or overlay_color %}inner-container-pad relative {% if section.settings.background_img != blank %}lazycontainer lazyignore {% endif %}{% if overlay_color %}background-overlay {% endif %}{% endif %}{% endif %}clearfix">
+        {%- liquid
+          if full_width == false and section.settings.background_img != blank
+            assign banner = true
+            render 'image.load', img_src: section.settings.background_img, size: section.settings.background_img.width, alt: alt, background: true, lazy: lazy, sizes: '(min-width: 1220px) 1180px, calc(100vw - 40px)'
+          endif
+        -%}
+        <div class="relative table content-height">
+          <div class="table-cell {{ section.settings.vertical_content_alignment }}">
+            <div class="{{ block_width }} animate {{ section.settings.text_alignment }} {{ section.settings.horizontal_content_alignment }} bottompad-quarter section-height clearfix">
+              {%- liquid
+                if section.settings.title_h1
+                  assign title = 1
+                else
+                  assign title = 2
+                endif
+              -%}
+              {% if section.settings.title_enable %}<h{{ title }} class="section-title-{{ section.settings.title_size }}">{% if section.settings.title != blank%}{{ section.settings.title | escape }}{% else %}{{ 'customer.account.title' | t }}{% endif %}</h{{ title }}>{% if overlay_color %}{%- assign banner = true -%}{% endif %}{% endif %}
+              {% if section.settings.sub_title != blank %}<h3 class="section-title-{{ section.settings.title_sub_size }}">{{ section.settings.sub_title | escape }}</h3>{% if overlay_color %}{%- assign banner = true -%}{% endif %}{% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>  
+  {% endif %}
+
+  <div class="container {% if banner %}inner-container {% else %}half-pad {% endif %}{% if settings.animation_enable %}animate-section animate-section-margin load {% endif %}clearfix">
+    <div{% if banner %}{% unless full_width %} class="inner-container-grid"{% endunless %}{% endif %}>
+      <div class="{% if banner %}background-white {% endif %}clearfix">
+
+        {% comment %}
+        <div class="five left account-user">  
+          <div class="user-name">
+            <h3>{{ customer.name }}</h3>
+            <div class="clearfix">{% form 'recover_customer_password' %}{%- render 'form.errors', errors: form.errors -%}<a href="{{ routes.account_logout_url }}" title="{{ 'layout.customer.log_out' | t | escape }}" class="btn auto-width bottompad-half">{{ 'layout.customer.log_out' | t }}</a>&nbsp;&nbsp;<label for="recover-email" class="visually-hidden">{{ 'customer.recover_password.title' | t }}</label><input type="email" name="email" id="recover-email" class="hidden" value="{{ customer.email }}" /><button class="btn outline auto-width bottompad-half" type="submit" aria-label="{{ 'customer.recover_password.title' | t | escape }}">{{ 'customer.recover_password.title' | t }}</button>{% endform %}</div>
+            <p>{{ customer.email }}<span class="arrowSeparator" aria-hidden="true"></span><small class="emailupdate"><a href="mailto:{{ shop.email }}?Subject=E-Mail%20Update" title="{{ 'customer.account.email_update' | t | escape }}" target="_blank">{{ 'customer.account.email_update' | t }}</a></small></p>
+          </div>
+      
+          {% if customer.default_address != blank %}
+          <div class="user-name">
+            {{ customer.default_address | format_address }}
+          </div>
+          {% endif %}
+      
+          <a class="btn outline auto-width bottompad-half" href="{{ routes.account_addresses_url }}" title="{{ 'customer.account.view_addresses' | t | escape }}">{{ 'customer.account.view_addresses' | t }} ({{ customer.addresses_count }})</a>
+      
+        </div>
+        {% endcomment %}
+      <div class="three account-sidebar-wrap">
+        {%- render 'account-sidebar' -%}
+      </div>
+        <div class="nine main-content-wrapper right account-table customer-column clearfix">
+          {%- comment -%}
+          <h3>{{ 'customer.orders.title' | t }}</h3>
+          {% if customer.orders.size > 0 %}
+          {% paginate customer.orders by 5 %}
+          {% for order in customer.orders %}
+          <div class="row summary{% if forloop.last %} last{% endif %}">
+            <h4>{{ order.name | link_to: order.customer_url, order.name }}{% if order.cancelled %}: {{ 'customer.order.cancelled' | t }}{% endif %}</h4>
+            <p class="capitalize"><small>{{ 'customer.orders.date' | t }}: {{ order.created_at | time_tag: format: settings.month_day_year }}<span class="arrowSeparator" aria-hidden="true"></span>{{ 'customer.orders.total' | t }}: {% if settings.currency_enable %}{{ order.total_price | money_with_currency }}{% else %}{{ order.total_price | money }}{% endif %}<span class="arrowSeparator" aria-hidden="true"></span>{{ 'customer.orders.payment_status' | t }}: <span><strong>{{ order.financial_status_label }}</strong></span><span class="arrowSeparator" aria-hidden="true"></span>{{ 'customer.orders.fulfillment_status' | t }}: <span class="captitalize"><strong>{{ order.fulfillment_status_label }}</strong></span></small></p>
+            <a class="btn outline auto-width" href="{{ order.customer_url }}" title="{{ 'customer.order.title' | t | escape }} {{ order.name }}">{{ 'customer.orders.review' | t }}</a>
+          </div>
+          {% endfor %}
+          {% if paginate.pages > 1 %}
+          <div class="pagination">
+            {%- render 'pagination', paginate: paginate -%}
+          </div>
+          {% endif %}
+          {% endpaginate %}
+          {% else %}
+          <p>{{ 'customer.orders.none' | t }}</p>
+          {% endif %}
+          {%- endcomment -%}
+          
+              <div class="twelve right account-table bottompad-section order-history-wrapper ReadMoreFeature">
+      <h3 style="display: none;">{{ 'customer.orders.title' | t }}</h3>
+      {% if customer.orders.size > 0 %}
+        {% for order in customer.orders %}
+        {% assign itemAwbs = '' %}
+        {% for line_item in order.line_items %}
+          {% unless itemAwbs contains line_item.fulfillment.tracking_number %}
+            {% if itemAwbs != blank %}
+              {% assign itemAwbs = itemAwbs | append:"," | append:line_item.fulfillment.tracking_number  %}
+            {% else %}
+              {% assign itemAwbs = line_item.fulfillment.tracking_number %} 
+            {% endif %} 
+          {% endunless %}
+        {% endfor %}
+        <div class="summary{% if forloop.last %} last{% endif %}">
+        <div class="order-item-wrap">
+          <div class="order-info">
+            <div class="order-number-wrap">
+              <div class="orderFlex">
+              <span class="label">Order Number</span>
+              <h4 class="order-number">#{{ order.name }}</h4>
+             </div>
+
+              <div class="order-details-wrap orderonlydesktop">
+                {% if order.fulfillment_status_label !='Fulfilled' and order.cancelled == 'false'%}<a href="javascript:void(0);" class="order_track_btn" data-ids="{{itemAwbs}}" data-orderId="{{order.id}}"{% if order.cancelled or itemAwbs == blank %} style="opacity:0;visibility:hidden;"{% endif %}>Track Order</a>{% endif %}
+                <a class="defbtnw order-details-child" href="{{ order.customer_url }}" title="{{ 'customer.order.title' | t }} {{ order.name }}">
+                  {{ 'customer.orders.review' | t }}
+                </a>
+                {% if order.fulfillment_status_label =='Fulfilled' %}
+                  {% render 'return-form', ordername: order.name, order:order, customclass: 'defbtnw order-details-child' %}
+              {% endif %}
+                </div>
+              {%- comment -%}<p>{% if order.cancelled %}: {{ 'customer.order.cancelled' | t }}{% endif %}</p>{%- endcomment -%}
+            </div>
+            <!-- desktop view -->
+            <div class="order-extra-info orderonlydesktop">
+              <p>Date: <strong>{{ order.created_at | date: "%d %B, %Y" }}</strong><span class="arrowSeparator" aria-hidden="true"></span></p>
+              <p>Total Price: <strong>{{ order.total_price | money }}</strong><span class="arrowSeparator" aria-hidden="true"></span></p>
+              <p>{{ 'customer.orders.payment_status' | t }}: <strong>{{ order.financial_status_label }}</strong><span class="arrowSeparator" aria-hidden="true"></span></p>
+              <p>{{ 'customer.orders.fulfillment_status' | t }}: <strong>{{ order.fulfillment_status_label }}</strong></p>
+            </div>
+            <!-- mobile view -->
+            <div class="order-extra-info orderonlymobile">
+                <div class="order-extra-info_count_orderdetail"><p>Qty: <strong>{{ order.item_count }}</strong><span class="arrowSeparator" aria-hidden="true"></span></p> <a class="orderonlymobile" href="{{ order.customer_url }}" title="{{ 'customer.order.title' | t }} {{ order.name }}">VIEW DETAILS</a></div>
+              <p>Total Price: <strong>{{ order.total_price | money }}</strong><span class="arrowSeparator" aria-hidden="true"></span></p>
+              <p>Ordered On: <strong>{{ order.created_at | date: "%d %B, %Y" }}</strong><span class="arrowSeparator" aria-hidden="true"></span></p>
+              <p>{{ 'customer.orders.payment_status' | t }}: <strong>{{ order.financial_status_label }}</strong><span class="arrowSeparator" aria-hidden="true"></span></p>
+              <p>{{ 'customer.orders.fulfillment_status' | t }}: <strong>{{ order.fulfillment_status_label }}</strong></p>
+            </div>
+
+            
+            <div class="line-item-img">
+              {% for line_item in order.line_items %}
+              	<a href="{{ line_item.url }}" class="item-image">
+              		{{ line_item | image_url: width: 100, height: 100 | image_tag: srcset: nil }}
+                  <p class="orderProductTitle">{{line_item.title}}</p>
+              	</a>
+              {% endfor %}
+            </div>
+            <div class="Rating_Btn RatingWithTrackMob flex">
+              <a href="#" class="defbtnw mymodalbtn ratingBtn_sm" id="myBtn_{{order.id}}" data-order-id="{{order.id}}">Rate <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" class="svg-colors" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15.622 5.87234C15.7154 5.95267 15.7847 6.05702 15.822 6.17389L15.8307 6.18246C15.8668 6.30001 15.8694 6.4252 15.8381 6.54412C15.8068 6.66303 15.7429 6.77103 15.6534 6.85613L12.2732 10.1185L13.0761 14.7239C13.0969 14.846 13.083 14.9714 13.0358 15.0861C12.9886 15.2008 12.91 15.3001 12.8089 15.3729C12.7078 15.4458 12.5882 15.4891 12.4636 15.4982C12.339 15.5073 12.2142 15.4817 12.1035 15.4243L7.92893 13.2555L3.75437 15.4243C3.64363 15.4817 3.51891 15.5073 3.39428 15.4982C3.26964 15.4891 3.15005 15.4458 3.04895 15.3729C2.94786 15.3001 2.86928 15.2008 2.82208 15.0861C2.77487 14.9714 2.76092 14.846 2.78178 14.7239L3.58578 10.1185L0.205504 6.85613C0.11498 6.7697 0.0507695 6.65983 0.0201789 6.539C-0.0104117 6.41817 -0.00615096 6.29126 0.03248 6.17272C0.071111 6.05417 0.142557 5.94875 0.238681 5.86848C0.334804 5.78822 0.45174 5.73632 0.57617 5.7187L5.22297 5.04503L7.33241 0.868033C7.38796 0.757477 7.47351 0.664477 7.57946 0.599461C7.68541 0.534444 7.80756 0.5 7.93217 0.5C8.05679 0.5 8.17893 0.534444 8.28488 0.599461C8.39083 0.664477 8.47639 0.757477 8.53194 0.868033L10.6327 5.04503L15.2925 5.7187C15.4145 5.73884 15.5285 5.79201 15.622 5.87234Z" fill="#96865D"/>
+                </svg></a>
+              {% if order.fulfillment_status_label =='Fulfilled' %}
+                  <span class="ismobile">{% render 'return-form', ordername: order.name, order:order, customclass: 'defbtnw orderonlymobile' %}</span>
+                {% else %}
+                  <a href="javascript:void(0);" class="Track_order order_track_btn orderonlymobile trackOrder_sm_mobile" data-ids="{{itemAwbs}}" data-orderId="{{order.id}}"{% if order.cancelled or itemAwbs == blank %} style="opacity:0;visibility:hidden;"{% endif %}>Track Order</a>
+              {% endif %}
+            </div>
+
+              <!-- The Modal -->
+            <div id="myModal_{{order.id}}" class="modal">
+              <!-- Modal content -->
+              <div class="modal-content modalForReview">
+                <span class="close">&times;</span>
+                <h2>Rate Order</h2>
+                <div class="review_starts orderRateSmTotal">
+                              <svg data-number="1" width="30" height="30" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M15.2751 6.37234C15.3635 6.45267 15.4289 6.55702 15.4643 6.67389L15.4724 6.68246C15.5066 6.80001 15.5091 6.9252 15.4795 7.04412C15.4499 7.16303 15.3894 7.27103 15.3048 7.35613L12.1078 10.6185L12.8672 15.2239C12.8869 15.346 12.8737 15.4714 12.8291 15.5861C12.7844 15.7008 12.7101 15.8001 12.6145 15.8729C12.5189 15.9458 12.4058 15.9891 12.2879 15.9982C12.17 16.0073 12.0521 15.9817 11.9473 15.9243L7.99909 13.7555L4.05084 15.9243C3.9461 15.9817 3.82814 16.0073 3.71026 15.9982C3.59239 15.9891 3.47928 15.9458 3.38366 15.8729C3.28805 15.8001 3.21373 15.7008 3.16908 15.5861C3.12444 15.4714 3.11124 15.346 3.13098 15.2239L3.89139 10.6185L0.694363 7.35613C0.608746 7.2697 0.548017 7.15983 0.519085 7.039C0.490153 6.91817 0.494183 6.79126 0.530719 6.67272C0.567256 6.55417 0.634829 6.44875 0.725741 6.36848C0.816653 6.28822 0.92725 6.23632 1.04493 6.2187L5.43982 5.54503L7.4349 1.36803C7.48744 1.25748 7.56836 1.16448 7.66856 1.09946C7.76877 1.03444 7.88429 1 8.00215 1C8.12001 1 8.23553 1.03444 8.33574 1.09946C8.43594 1.16448 8.51686 1.25748 8.5694 1.36803L10.5563 5.54503L14.9635 6.2187C15.0789 6.23884 15.1867 6.29201 15.2751 6.37234Z" stroke="#96865D1A"/>
+                              </svg>
+                              <svg data-number="2" width="30" height="30" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M15.2751 6.37234C15.3635 6.45267 15.4289 6.55702 15.4643 6.67389L15.4724 6.68246C15.5066 6.80001 15.5091 6.9252 15.4795 7.04412C15.4499 7.16303 15.3894 7.27103 15.3048 7.35613L12.1078 10.6185L12.8672 15.2239C12.8869 15.346 12.8737 15.4714 12.8291 15.5861C12.7844 15.7008 12.7101 15.8001 12.6145 15.8729C12.5189 15.9458 12.4058 15.9891 12.2879 15.9982C12.17 16.0073 12.0521 15.9817 11.9473 15.9243L7.99909 13.7555L4.05084 15.9243C3.9461 15.9817 3.82814 16.0073 3.71026 15.9982C3.59239 15.9891 3.47928 15.9458 3.38366 15.8729C3.28805 15.8001 3.21373 15.7008 3.16908 15.5861C3.12444 15.4714 3.11124 15.346 3.13098 15.2239L3.89139 10.6185L0.694363 7.35613C0.608746 7.2697 0.548017 7.15983 0.519085 7.039C0.490153 6.91817 0.494183 6.79126 0.530719 6.67272C0.567256 6.55417 0.634829 6.44875 0.725741 6.36848C0.816653 6.28822 0.92725 6.23632 1.04493 6.2187L5.43982 5.54503L7.4349 1.36803C7.48744 1.25748 7.56836 1.16448 7.66856 1.09946C7.76877 1.03444 7.88429 1 8.00215 1C8.12001 1 8.23553 1.03444 8.33574 1.09946C8.43594 1.16448 8.51686 1.25748 8.5694 1.36803L10.5563 5.54503L14.9635 6.2187C15.0789 6.23884 15.1867 6.29201 15.2751 6.37234Z" stroke="#96865D1A"/>
+                              </svg>
+                              <svg data-number="3" width="30" height="30" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M15.2751 6.37234C15.3635 6.45267 15.4289 6.55702 15.4643 6.67389L15.4724 6.68246C15.5066 6.80001 15.5091 6.9252 15.4795 7.04412C15.4499 7.16303 15.3894 7.27103 15.3048 7.35613L12.1078 10.6185L12.8672 15.2239C12.8869 15.346 12.8737 15.4714 12.8291 15.5861C12.7844 15.7008 12.7101 15.8001 12.6145 15.8729C12.5189 15.9458 12.4058 15.9891 12.2879 15.9982C12.17 16.0073 12.0521 15.9817 11.9473 15.9243L7.99909 13.7555L4.05084 15.9243C3.9461 15.9817 3.82814 16.0073 3.71026 15.9982C3.59239 15.9891 3.47928 15.9458 3.38366 15.8729C3.28805 15.8001 3.21373 15.7008 3.16908 15.5861C3.12444 15.4714 3.11124 15.346 3.13098 15.2239L3.89139 10.6185L0.694363 7.35613C0.608746 7.2697 0.548017 7.15983 0.519085 7.039C0.490153 6.91817 0.494183 6.79126 0.530719 6.67272C0.567256 6.55417 0.634829 6.44875 0.725741 6.36848C0.816653 6.28822 0.92725 6.23632 1.04493 6.2187L5.43982 5.54503L7.4349 1.36803C7.48744 1.25748 7.56836 1.16448 7.66856 1.09946C7.76877 1.03444 7.88429 1 8.00215 1C8.12001 1 8.23553 1.03444 8.33574 1.09946C8.43594 1.16448 8.51686 1.25748 8.5694 1.36803L10.5563 5.54503L14.9635 6.2187C15.0789 6.23884 15.1867 6.29201 15.2751 6.37234Z" stroke="#96865D1A"/>
+                              </svg>
+                              <svg data-number="4" width="30" height="30" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M15.2751 6.37234C15.3635 6.45267 15.4289 6.55702 15.4643 6.67389L15.4724 6.68246C15.5066 6.80001 15.5091 6.9252 15.4795 7.04412C15.4499 7.16303 15.3894 7.27103 15.3048 7.35613L12.1078 10.6185L12.8672 15.2239C12.8869 15.346 12.8737 15.4714 12.8291 15.5861C12.7844 15.7008 12.7101 15.8001 12.6145 15.8729C12.5189 15.9458 12.4058 15.9891 12.2879 15.9982C12.17 16.0073 12.0521 15.9817 11.9473 15.9243L7.99909 13.7555L4.05084 15.9243C3.9461 15.9817 3.82814 16.0073 3.71026 15.9982C3.59239 15.9891 3.47928 15.9458 3.38366 15.8729C3.28805 15.8001 3.21373 15.7008 3.16908 15.5861C3.12444 15.4714 3.11124 15.346 3.13098 15.2239L3.89139 10.6185L0.694363 7.35613C0.608746 7.2697 0.548017 7.15983 0.519085 7.039C0.490153 6.91817 0.494183 6.79126 0.530719 6.67272C0.567256 6.55417 0.634829 6.44875 0.725741 6.36848C0.816653 6.28822 0.92725 6.23632 1.04493 6.2187L5.43982 5.54503L7.4349 1.36803C7.48744 1.25748 7.56836 1.16448 7.66856 1.09946C7.76877 1.03444 7.88429 1 8.00215 1C8.12001 1 8.23553 1.03444 8.33574 1.09946C8.43594 1.16448 8.51686 1.25748 8.5694 1.36803L10.5563 5.54503L14.9635 6.2187C15.0789 6.23884 15.1867 6.29201 15.2751 6.37234Z" stroke="#96865D1A"/>
+                              </svg>
+                              <svg data-number="5" width="30" height="30" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M15.2751 6.37234C15.3635 6.45267 15.4289 6.55702 15.4643 6.67389L15.4724 6.68246C15.5066 6.80001 15.5091 6.9252 15.4795 7.04412C15.4499 7.16303 15.3894 7.27103 15.3048 7.35613L12.1078 10.6185L12.8672 15.2239C12.8869 15.346 12.8737 15.4714 12.8291 15.5861C12.7844 15.7008 12.7101 15.8001 12.6145 15.8729C12.5189 15.9458 12.4058 15.9891 12.2879 15.9982C12.17 16.0073 12.0521 15.9817 11.9473 15.9243L7.99909 13.7555L4.05084 15.9243C3.9461 15.9817 3.82814 16.0073 3.71026 15.9982C3.59239 15.9891 3.47928 15.9458 3.38366 15.8729C3.28805 15.8001 3.21373 15.7008 3.16908 15.5861C3.12444 15.4714 3.11124 15.346 3.13098 15.2239L3.89139 10.6185L0.694363 7.35613C0.608746 7.2697 0.548017 7.15983 0.519085 7.039C0.490153 6.91817 0.494183 6.79126 0.530719 6.67272C0.567256 6.55417 0.634829 6.44875 0.725741 6.36848C0.816653 6.28822 0.92725 6.23632 1.04493 6.2187L5.43982 5.54503L7.4349 1.36803C7.48744 1.25748 7.56836 1.16448 7.66856 1.09946C7.76877 1.03444 7.88429 1 8.00215 1C8.12001 1 8.23553 1.03444 8.33574 1.09946C8.43594 1.16448 8.51686 1.25748 8.5694 1.36803L10.5563 5.54503L14.9635 6.2187C15.0789 6.23884 15.1867 6.29201 15.2751 6.37234Z" stroke="#96865D1A"/>
+                              </svg>
+                    </div>
+                <div class="modelContentImg">
+                    {% for line_item in order.line_items %}
+                      <div class="item-image">
+                        <div class="item_image_sm_wraper">
+                        <div class="modelImg">
+                        {{ line_item | image_url: width: 100, height: 100 | image_tag: srcset: nil }}
+                        </div>
+                        <div class="modelContent">
+                          <p>{{line_item.title}}</p>
+                          <form class="order_page_pro_review_form" data-product-id="{{line_item.product.id}}">
+                            <div class="review_starts totalRevewSmch">
+                              <svg class="totalRevewSmchsvg1" width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M15.2751 6.37234C15.3635 6.45267 15.4289 6.55702 15.4643 6.67389L15.4724 6.68246C15.5066 6.80001 15.5091 6.9252 15.4795 7.04412C15.4499 7.16303 15.3894 7.27103 15.3048 7.35613L12.1078 10.6185L12.8672 15.2239C12.8869 15.346 12.8737 15.4714 12.8291 15.5861C12.7844 15.7008 12.7101 15.8001 12.6145 15.8729C12.5189 15.9458 12.4058 15.9891 12.2879 15.9982C12.17 16.0073 12.0521 15.9817 11.9473 15.9243L7.99909 13.7555L4.05084 15.9243C3.9461 15.9817 3.82814 16.0073 3.71026 15.9982C3.59239 15.9891 3.47928 15.9458 3.38366 15.8729C3.28805 15.8001 3.21373 15.7008 3.16908 15.5861C3.12444 15.4714 3.11124 15.346 3.13098 15.2239L3.89139 10.6185L0.694363 7.35613C0.608746 7.2697 0.548017 7.15983 0.519085 7.039C0.490153 6.91817 0.494183 6.79126 0.530719 6.67272C0.567256 6.55417 0.634829 6.44875 0.725741 6.36848C0.816653 6.28822 0.92725 6.23632 1.04493 6.2187L5.43982 5.54503L7.4349 1.36803C7.48744 1.25748 7.56836 1.16448 7.66856 1.09946C7.76877 1.03444 7.88429 1 8.00215 1C8.12001 1 8.23553 1.03444 8.33574 1.09946C8.43594 1.16448 8.51686 1.25748 8.5694 1.36803L10.5563 5.54503L14.9635 6.2187C15.0789 6.23884 15.1867 6.29201 15.2751 6.37234Z" stroke="#96865D"/>
+                              </svg>
+                              <svg class="totalRevewSmchsvg2" width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M15.2751 6.37234C15.3635 6.45267 15.4289 6.55702 15.4643 6.67389L15.4724 6.68246C15.5066 6.80001 15.5091 6.9252 15.4795 7.04412C15.4499 7.16303 15.3894 7.27103 15.3048 7.35613L12.1078 10.6185L12.8672 15.2239C12.8869 15.346 12.8737 15.4714 12.8291 15.5861C12.7844 15.7008 12.7101 15.8001 12.6145 15.8729C12.5189 15.9458 12.4058 15.9891 12.2879 15.9982C12.17 16.0073 12.0521 15.9817 11.9473 15.9243L7.99909 13.7555L4.05084 15.9243C3.9461 15.9817 3.82814 16.0073 3.71026 15.9982C3.59239 15.9891 3.47928 15.9458 3.38366 15.8729C3.28805 15.8001 3.21373 15.7008 3.16908 15.5861C3.12444 15.4714 3.11124 15.346 3.13098 15.2239L3.89139 10.6185L0.694363 7.35613C0.608746 7.2697 0.548017 7.15983 0.519085 7.039C0.490153 6.91817 0.494183 6.79126 0.530719 6.67272C0.567256 6.55417 0.634829 6.44875 0.725741 6.36848C0.816653 6.28822 0.92725 6.23632 1.04493 6.2187L5.43982 5.54503L7.4349 1.36803C7.48744 1.25748 7.56836 1.16448 7.66856 1.09946C7.76877 1.03444 7.88429 1 8.00215 1C8.12001 1 8.23553 1.03444 8.33574 1.09946C8.43594 1.16448 8.51686 1.25748 8.5694 1.36803L10.5563 5.54503L14.9635 6.2187C15.0789 6.23884 15.1867 6.29201 15.2751 6.37234Z" stroke="#96865D"/>
+                              </svg>
+                              <svg class="totalRevewSmchsvg3" width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M15.2751 6.37234C15.3635 6.45267 15.4289 6.55702 15.4643 6.67389L15.4724 6.68246C15.5066 6.80001 15.5091 6.9252 15.4795 7.04412C15.4499 7.16303 15.3894 7.27103 15.3048 7.35613L12.1078 10.6185L12.8672 15.2239C12.8869 15.346 12.8737 15.4714 12.8291 15.5861C12.7844 15.7008 12.7101 15.8001 12.6145 15.8729C12.5189 15.9458 12.4058 15.9891 12.2879 15.9982C12.17 16.0073 12.0521 15.9817 11.9473 15.9243L7.99909 13.7555L4.05084 15.9243C3.9461 15.9817 3.82814 16.0073 3.71026 15.9982C3.59239 15.9891 3.47928 15.9458 3.38366 15.8729C3.28805 15.8001 3.21373 15.7008 3.16908 15.5861C3.12444 15.4714 3.11124 15.346 3.13098 15.2239L3.89139 10.6185L0.694363 7.35613C0.608746 7.2697 0.548017 7.15983 0.519085 7.039C0.490153 6.91817 0.494183 6.79126 0.530719 6.67272C0.567256 6.55417 0.634829 6.44875 0.725741 6.36848C0.816653 6.28822 0.92725 6.23632 1.04493 6.2187L5.43982 5.54503L7.4349 1.36803C7.48744 1.25748 7.56836 1.16448 7.66856 1.09946C7.76877 1.03444 7.88429 1 8.00215 1C8.12001 1 8.23553 1.03444 8.33574 1.09946C8.43594 1.16448 8.51686 1.25748 8.5694 1.36803L10.5563 5.54503L14.9635 6.2187C15.0789 6.23884 15.1867 6.29201 15.2751 6.37234Z" stroke="#96865D"/>
+                              </svg>
+                              <svg class="totalRevewSmchsvg4" width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M15.2751 6.37234C15.3635 6.45267 15.4289 6.55702 15.4643 6.67389L15.4724 6.68246C15.5066 6.80001 15.5091 6.9252 15.4795 7.04412C15.4499 7.16303 15.3894 7.27103 15.3048 7.35613L12.1078 10.6185L12.8672 15.2239C12.8869 15.346 12.8737 15.4714 12.8291 15.5861C12.7844 15.7008 12.7101 15.8001 12.6145 15.8729C12.5189 15.9458 12.4058 15.9891 12.2879 15.9982C12.17 16.0073 12.0521 15.9817 11.9473 15.9243L7.99909 13.7555L4.05084 15.9243C3.9461 15.9817 3.82814 16.0073 3.71026 15.9982C3.59239 15.9891 3.47928 15.9458 3.38366 15.8729C3.28805 15.8001 3.21373 15.7008 3.16908 15.5861C3.12444 15.4714 3.11124 15.346 3.13098 15.2239L3.89139 10.6185L0.694363 7.35613C0.608746 7.2697 0.548017 7.15983 0.519085 7.039C0.490153 6.91817 0.494183 6.79126 0.530719 6.67272C0.567256 6.55417 0.634829 6.44875 0.725741 6.36848C0.816653 6.28822 0.92725 6.23632 1.04493 6.2187L5.43982 5.54503L7.4349 1.36803C7.48744 1.25748 7.56836 1.16448 7.66856 1.09946C7.76877 1.03444 7.88429 1 8.00215 1C8.12001 1 8.23553 1.03444 8.33574 1.09946C8.43594 1.16448 8.51686 1.25748 8.5694 1.36803L10.5563 5.54503L14.9635 6.2187C15.0789 6.23884 15.1867 6.29201 15.2751 6.37234Z" stroke="#96865D"/>
+                              </svg>
+                              <svg class="totalRevewSmchsvg5" width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M15.2751 6.37234C15.3635 6.45267 15.4289 6.55702 15.4643 6.67389L15.4724 6.68246C15.5066 6.80001 15.5091 6.9252 15.4795 7.04412C15.4499 7.16303 15.3894 7.27103 15.3048 7.35613L12.1078 10.6185L12.8672 15.2239C12.8869 15.346 12.8737 15.4714 12.8291 15.5861C12.7844 15.7008 12.7101 15.8001 12.6145 15.8729C12.5189 15.9458 12.4058 15.9891 12.2879 15.9982C12.17 16.0073 12.0521 15.9817 11.9473 15.9243L7.99909 13.7555L4.05084 15.9243C3.9461 15.9817 3.82814 16.0073 3.71026 15.9982C3.59239 15.9891 3.47928 15.9458 3.38366 15.8729C3.28805 15.8001 3.21373 15.7008 3.16908 15.5861C3.12444 15.4714 3.11124 15.346 3.13098 15.2239L3.89139 10.6185L0.694363 7.35613C0.608746 7.2697 0.548017 7.15983 0.519085 7.039C0.490153 6.91817 0.494183 6.79126 0.530719 6.67272C0.567256 6.55417 0.634829 6.44875 0.725741 6.36848C0.816653 6.28822 0.92725 6.23632 1.04493 6.2187L5.43982 5.54503L7.4349 1.36803C7.48744 1.25748 7.56836 1.16448 7.66856 1.09946C7.76877 1.03444 7.88429 1 8.00215 1C8.12001 1 8.23553 1.03444 8.33574 1.09946C8.43594 1.16448 8.51686 1.25748 8.5694 1.36803L10.5563 5.54503L14.9635 6.2187C15.0789 6.23884 15.1867 6.29201 15.2751 6.37234Z" stroke="#96865D"/>
+                              </svg>
+                            </div>
+                            <div class="form_group_body">
+                              <div class="form-group">
+                                <input type="text" name="review" placeholder="Review Title">
+                              </div>
+                                                      
+                            <div class="form-group formGtextarea">
+                                <textarea rows="1" cols="50" placeholder="Write Review Here..."></textarea>
+                              </div>
+                              
+                              <button class="btn BtnForReviewEach" type="button" style="font-size:10px!important">Submit</button>
+                            </div>
+                          </form>
+                          <div class="hide thank_you_msg">Thank you for review!</div>
+                        </div>
+
+                                
+                        </div>
+                                
+                      </div>
+                    {% endfor %}
+                </div>
+                                <div class="totalButtonSub">SUBMIT</div>
+              </div>
+            </div>
+
+            <div id="order_trackModal_{{order.id}}" class="order_trackModal modal">
+              <!-- Modal content -->
+              <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Track Order</h2>
+                <div class="modelContentImg">
+                  {%- assign itemAwbsArr = itemAwbs | split:"," -%}
+                  {%- for itemAwb in itemAwbsArr  -%}
+                    <div id="group-awb-{{itemAwb}}">
+                      <div class="orderTrcingMain">
+                        <div class="ShipingPage">
+                          <div class="order-item-wrap">
+                            <div class="trackingBar">
+                              <h1>Shipment {{forloop.index}}</h1>
+                              <p>Tracking Number:<span>{{ itemAwb }}</span></p>
+                            </div>    
+                            {% assign qty = 0 %}    
+                            {% for line_item in order.line_items %}
+                              {% if line_item.fulfillment.tracking_number ==  itemAwb %}
+                                {% assign qty = qty | plus: line_item.quantity %}   
+                              {% endif %}
+                            {% endfor %}
+                            <ul>
+                              <li>Qty:<span> {{qty}}</span></li>
+                              <li>Payment:<span> {{ order.financial_status_label }}</span></li>
+                              <!-- <li>Mode Of Payment:<span> {{ order.transactions }}</span></li> -->
+                            </ul>
+                            <div class="shipingAddress">
+                              {% for line_item in order.line_items %}
+                              {% if line_item.fulfillment.tracking_number ==  itemAwb %}
+                                {% if line_item.variant.featured_media %}
+                                  {% assign line_item_featured_media = line_item.variant.featured_media %}
+                                {% else %}
+                                  {% assign line_item_featured_media = line_item.product.featured_media %}
+                                {% endif %}
+                                <a href="{{ line_item.variant.url | within: collections.all }} " title="{{ line_item.title | escape }} " class="item-image" tabindex="-1">
+                                  {%- render 'image-load', img_src: line_item_featured_media, size: 180, id: line_item_featured_media.id, alt: line_item.title -%}
+                                </a>
+                              {% endif %}
+                              {% endfor %}
+                            </div>            
+                            <div class="trckingHead">
+                              <div class="trackingBar ShippedStatusBar">
+                                <h3>Status: <span class="shipment_status"><strong>{{ order.fulfillment_status_label }}</strong></span></h3>
+                                <p><b>Last updated at :</b> <b class="last_updated_dasta"></b></p>
+                              </div>
+                              <div class="trcking-bar">
+                                <div class="trackingrow">
+                                  <div class="order-tracking confirmed completed"> <span class="is-complete"></span>
+                                    <p>Order Confirmed
+                                      <br><span>{{ order.created_at | date: "%d %B %Y" }}</span></p>
+                                  </div>
+                                  <div class="order-tracking shipped completed"> <span class="is-complete"></span>
+                                    <p>Shipped
+                                      <br><span>{{ order.created_at | date: "%d %B %Y" }}</span></p>
+                                  </div>
+                                  <div class="order-tracking outDelivery"> <span class="is-complete"></span>
+                                    <p><i class="text" style="font-style: normal;">Out For Delivery</i>
+                                    <br><span class="OutDate" style="display:none"></span></p>
+                                  </div>
+                                  <div class="order-tracking arriving"> <span class="is-complete"></span>
+                                    <p>Delivered
+                                      <br><span class="ariveDate"></span></p>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="OrderHelp"><p>Need Help With your Order?<a href="https://nestasia.in/pages/contact-us"> Talk to Us Now</a></p></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  {%- endfor -%}
+                </div>
+              </div>
+            </div>
+
+            <!-- <div class="order-details-wrap orderonlymobile">
+            </div> -->
+
+          </div>
+        
+        </div>
+      </div>
+      {% endfor %}
+        
+      {% else %}
+        <div class="order-empty-wraper">
+          <span class="empty-cart-icon">
+            <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M27.72 20.3l3.6-10.72c.19-.52.05-.8-.1-1-.37-.53-1.14-.51-1.29-.51H9.55L9 5.34C8.86 4.74 8.42 4 7.55 4H1.82C1.22 4 1 4.59 1 5.15v1.49c0 .53.22.36.84.36h4.83l3.7 15.87c-.58.63-.9 1.61-.9 2.46a3.44 3.44 0 0 0 3.38 3.46c1.79 0 3.13-1.79 3.35-2.79h7.2c.23 1 1.31 2.87 3.36 2.87a3.4 3.4 0 0 0 3.38-3.4c0-1.84-1.13-3.6-3.36-3.6-.93 0-2.03.13-2.55 1.13h-8.86a2.8 2.8 0 0 0-2.4-1.34l-.13-.66h13.48c1.02 0 1.22-.21 1.4-.7zM11.54 25.5a1.29 1.29 0 1 1 2.57 0 1.29 1.29 0 0 1-2.57 0zm15.24 1.27a1.27 1.27 0 1 1 0-2.54 1.27 1.27 0 0 1 0 2.54z" fill="#515151"></path></svg>
+          </span>
+          <h4 class="text-center no-order--text">{{ 'customer.orders.none' | t }}</h4>
+          <div class="text-center continue-shipping">
+            <a class="inline-block" href="/">Start Shopping</a>
+          </div>
+        </div>
+      {% endif %}   
+    </div> 
+      {% if customer.orders.size > 0 %}
+         <div class="text-center moreless-button">View More <svg xmlns="http://www.w3.org/2000/svg" width="9" height="6" viewBox="0 0 9 6" fill="none"><path d="M0.5 0.5L4.5 4.5L8.5 0.5" stroke="#6C6F7F"/></svg></div>
+        {% endif %}                   
+  </div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+  
+</section>
+<script defer>
+  $(document).ready(function(){
+    $('.back-btn').click(function(e){
+      e.preventDefault();
+      $('.orderTrcingMain').hide();
+      $('.summary').show();
+      $('.hide').show();
+    });
+    $('.mymodalbtn').click(function(e){
+      let order_id = $(this).attr('data-order-id');
+      $(`#myModal_${order_id}`).fadeIn();
+    });
+    $('.modal .close').click(function(e){
+      $(this).closest('.modal').fadeOut();
+    });
+    $('.review_starts:not(.disabled) svg').click(function(e){
+      $(this).addClass('active');
+      $(this).prevAll().addClass('active');
+      $(this).nextAll().removeClass('active');
+    });
+    $('.orderRateSmTotal:not(.disabled) svg').click(function(e){
+      let dataNumber = parseInt($(this).attr("data-number"));
+      console.log(dataNumber);
+      console.log($(`.totalRevewSmchsvg${dataNumber}`));
+      $(`.totalRevewSmchsvg${dataNumber}`).addClass('active');
+      $(`.totalRevewSmchsvg${dataNumber}`).prevAll().addClass('active');
+      $(`.totalRevewSmchsvg${dataNumber}`).nextAll().removeClass('active');
+    });
+    
+     $('.totalButtonSub').click(function(e){
+       $(".BtnForReviewEach").click();
+     });
+                                                 
+    $(document).on('click','.order_page_pro_review_form .btn',function(){
+      let $form = $(this).closest('form');
+      let counts = 0;
+      let count = 0;
+      $form.find('.review_starts svg').each(function(e){
+        if($(this).hasClass('active')){
+          counts++;
+        }
+      });
+      if(counts==0){
+        count++;
+        $form.find('.review_starts svg').each(function(e){
+          $(this).find('path').css('stroke','red');
+        });
+        setTimeout(function(){
+          $form.find('.review_starts svg').each(function(e){
+            $(this).find('path').css('stroke','#96865D');
+          });
+        },3000);
+      }
+      let review_title = $form.find('input[name="review"]').val();
+      if(review_title == ''){
+        count++;
+        $form.find('input[name="review"]').css('border-color','red');
+        setTimeout(function(){
+          $form.find('input[name="review"]').css('border-color','#dedede');
+        },3000);
+      }
+      let review_body = $form.find('textarea').val();
+      if(review_body == ''){
+        count++;
+        $form.find('textarea').css('border-color','red');
+        setTimeout(function(){
+          $form.find('textarea').css('border-color','#dedede');
+        },3000);
+      }
+      if(count!=0){
+        return false;
+      }
+      let productId = $form.attr('data-product-id');
+      var reviewData = {
+        name:`{{customer.name}}`,
+        email: `{{customer.email}}`,
+        rating: parseInt(counts),
+        title: review_title,
+        body:review_body,
+        id:productId,
+        url:document.domain,
+        shop_domain:Shopify.shop
+      };
+      $.ajax({
+        type: "POST",
+        url: "https://judge.me/reviews",
+        data: reviewData,
+        dataType: "json",
+        success: function (data) {
+          $form.find('.review_starts').addClass('disabled');
+          $form.find('.form_group_body').hide();
+          $form.siblings('.thank_you_msg').removeClass('hide');
+        },
+        error: function (error) {
+          console.log('error',error);
+        }
+      });
+    });
+  });
+  function dateModified (OrderDate){
+    let dateFilter = OrderDate.toDateString().split(" ");
+    let year = dateFilter[3];
+    let day = dateFilter[2];
+    var months = {
+        "Jan": "January",
+        "Fab": "February",
+        "Mar": "March",
+        "Apr": "April",
+        "May": "May",
+        "Jun": "June",
+        "July": "July",
+        "Aug": "August",
+        "Sep": "September",
+        "Oct": "October",
+        "Nov": "November",
+        "Dec": "December"
+    }
+    return `${day} ${months[dateFilter[1]]}, ${year}`;
+  }
+
+  $(document).on('click','.order_track_btn',function(e){
+    e.preventDefault();
+    let orderId = $(this).attr('data-orderid');
+    let TrackorderIds = $(this).attr('data-ids');
+    TrackorderArr = '';
+    if(TrackorderIds.includes(',')){
+      TrackorderArr = TrackorderIds.split(',');
+    }else{
+      TrackorderArr = [TrackorderIds];
+    }
+    for(var o = 0; o < TrackorderArr.length; o++){
+      let awbNo = TrackorderArr[o];
+      let groupId = `group-awb-${awbNo}`;
+      let itemsdata = {
+        waybill_no: awbNo
+      };
+      $.ajax({
+        type: "POST",
+        url: "https://support.nestasia.in/api/track-delivery",
+        data: itemsdata,
+        dataType: "json",
+        success: function (data) {
+          console.log("data",data)
+          for(var i=1; i <= data.response.ShipmentData.length; i++){
+            let Count = i - 1;
+            var statusDateTime = new Date(data.response.ShipmentData[Count].Shipment.Status.StatusDateTime).toDateString();
+            $(`#${groupId} .last_updated_dasta`).html(statusDateTime);
+            var shipmentStatus = data.response.ShipmentData[Count].Shipment.Status.Status;
+            var outDateTime = new Date(data.response.ShipmentData[Count].Shipment.Status.StatusDateTime);   
+            var PickUpDate = new Date(data.response.ShipmentData[Count].Shipment.PickUpDate);            
+            var ExpectedDeliveryDate = new Date(data.response.ShipmentData[Count].Shipment.ExpectedDeliveryDate);
+            var shipmentInstructions =  data.response.ShipmentData[Count].Shipment.Status.Instructions;
+            if(shipmentStatus == 'Delivered' && outDateTime != undefined ){
+              $(`#${groupId} .shipment_status`).html(shipmentStatus);
+              $(`#${groupId} .order-tracking:eq(2)`).addClass('completed');
+              $(`#${groupId} .order-tracking:eq(3)`).addClass('completed');
+              $(`#${groupId} .OutDate`).css('display','block');
+              $(`#${groupId} .OutDate`).html(dateModified(PickUpDate)); 
+              $(`#${groupId} .arriving .ariveDate`).html(dateModified(outDateTime)); 
+              $(`#${groupId} .last_updated_dasta`).html(dateModified(outDateTime));
+            } else{
+              $(`#${groupId} .shipment_status`).html(`${shipmentStatus} (${shipmentInstructions})`);
+              $(`#${groupId} .order-tracking:eq(2)`).addClass('completed');
+              $(`#${groupId} .order-tracking:eq(3)`).removeClass('completed');
+              $(`#${groupId} .outDelivery .text`).html(shipmentStatus);
+              $(`#${groupId} .OutDate`).css('display','block');
+              $(`#${groupId} .OutDate`).html(`${dateModified(PickUpDate)} (${shipmentInstructions})`); 
+              $(`#${groupId} .arriving .ariveDate`).html(dateModified(ExpectedDeliveryDate)); 
+            }
+          }
+        },
+        error: function (error) {
+          console.log('error',error);
+        }
+      });
+    }
+    $(`#order_trackModal_${orderId}`).fadeIn();
+  });
+
+  if ($(window).width() < 767) {
+  $(document).ready(function() {
+  $(".moreless-button").on("click", function() {
+    var content = $(this).prev(".ReadMoreFeature");
+    var maxHeight = 785;
+    var buttonText = $(this).text();
+
+    if (content.height() <= maxHeight) {
+      content.css("max-height", "none");
+      $(this).html(`View Less <svg xmlns="http://www.w3.org/2000/svg" width="9" height="6" viewBox="0 0 9 6" fill="none"><path d="M0.5 0.5L4.5 4.5L8.5 0.5" stroke="#6C6F7F"/></svg>`);
+    } else {
+      content.css("max-height", maxHeight + "px");
+      $(this).html(`View More <svg xmlns="http://www.w3.org/2000/svg" width="9" height="6" viewBox="0 0 9 6" fill="none"><path d="M0.5 0.5L4.5 4.5L8.5 0.5" stroke="#6C6F7F"/></svg>`);
+    }
+  });
+});
+}
+  </script>
+{% schema %}
+  {
+    "name": "t:sections.customers.account.name",
+    "settings": [
+      {
+        "type": "header",
+        "content": "t:sections.banner.label"
+      },
+      {
+        "id": "title_enable",
+        "type": "checkbox",
+        "label": "t:sections.heading.show_heading",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "t:sections.heading.label"
+      },
+      {
+        "id": "title_h1",
+        "type": "checkbox",
+        "label": "t:sections.heading.heading_one",
+        "default": true
+      },
+      {
+        "id": "title_size",
+        "type": "range",
+        "label": "t:sections.heading.heading_size",
+        "min": 12,
+        "max": 96,
+        "step": 6,
+        "unit": "px",
+        "default": 48
+      },
+      {
+        "type": "text",
+        "id": "sub_title",
+        "label": "t:sections.subheading.label"
+      },
+      {
+        "id": "title_sub_size",
+        "type": "range",
+        "label": "t:sections.subheading.subheading_size",
+        "min": 12,
+        "max": 96,
+        "step": 6,
+        "unit": "px",
+        "default": 24
+      },
+      {
+        "id": "section_color",
+        "type": "color",
+        "label": "t:sections.text.color"
+      },
+      {
+        "type": "select",
+        "id": "text_alignment",
+        "label": "t:sections.text_alignment.label",
+        "default": "text-center",
+        "options": [
+          {
+            "value": "text-left",
+            "label": "t:sections.alignment.left"
+          },
+          {
+            "value": "text-center",
+            "label": "t:sections.alignment.center"
+          },
+          {
+            "value": "text-right",
+            "label": "t:sections.alignment.right"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "block_width",
+        "label": "t:sections.content_width.label",
+        "default": "9",
+        "options": [
+          {
+            "value": "4",
+            "label": "33%"
+          },
+          {
+            "value": "6",
+            "label": "50%"
+          },
+          {
+            "value": "8",
+            "label": "66%"
+          },
+          {
+            "value": "9",
+            "label": "75%"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "horizontal_content_alignment",
+        "label": "t:sections.horizontal_position.label",
+        "default": "center",
+        "options": [
+          {
+            "value": "left",
+            "label": "t:sections.alignment.left"
+          },
+          {
+            "value": "center",
+            "label": "t:sections.alignment.center"
+          },
+          {
+            "value": "right",
+            "label": "t:sections.alignment.right"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "vertical_content_alignment",
+        "label": "t:sections.vertical_position.label",
+        "default": "middle",
+        "options": [
+          {
+            "value": "top",
+            "label": "t:sections.vertical_position.top"
+          },
+          {
+            "value": "middle",
+            "label": "t:sections.vertical_position.middle"
+          },
+          {
+            "value": "bottom",
+            "label": "t:sections.vertical_position.bottom"
+          }
+        ]
+      },
+      {
+        "type": "image_picker",
+        "id": "background_img",
+        "label": "t:sections.image.label",
+        "info": "t:sections.image.desktop.info"
+      },
+	  {
+       "type": "checkbox",
+       "id": "full_width",
+       "label": "t:sections.full_width.label",
+       "default": true
+      },
+      {
+        "type": "range",
+        "id": "padding",
+        "min": 5,
+        "max": 100,
+        "step": 5,
+        "unit": "%",
+        "label": "t:sections.height.label",
+        "default": 25
+      },
+	  {
+        "type": "color",
+        "id": "background_img_overlay",
+        "label": "t:sections.overlay.label"
+      },
+      {
+        "type": "color_background",
+        "id": "background_img_overlay_gradient",
+        "label": "t:sections.overlay.gradient"
+      },
+      {
+        "type": "range",
+        "id": "background_img_overlay_opacity",
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "unit": "%",
+        "label": "t:sections.opacity.label",
+        "default": 0
+      },
+      {
+        "type": "header",
+        "content": "t:sections.section.name.content"
+      },
+      {
+        "id": "enable_lazy",
+        "type": "checkbox",
+        "label": "t:sections.section.settings.lazy.multiple.label",
+        "default": false
+      },
+      {
+        "id": "background",
+        "type": "color",
+        "label": "t:sections.section.settings.background_color.label"
+      },
+      {
+        "id": "background_gradient",
+        "type": "color_background",
+        "label": "t:sections.section.settings.background_gradient.label"
+      },
+      {
+        "type": "paragraph",
+        "content": "t:sections.section.settings.mobile.content"
+      },
+      {
+        "id": "padding_top_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.top_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "id": "padding_bottom_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "margin_bottom_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_margin.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "type": "paragraph",
+        "content": "t:sections.section.settings.desktop.content"
+      },
+      {
+        "id": "padding_top_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.top_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "id": "padding_bottom_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "margin_bottom_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_margin.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "id": "padding_border",
+        "type": "checkbox",
+        "label": "t:sections.section.settings.border.label",
+        "default": false
+      }
+    ]
+  }
+{% endschema %}

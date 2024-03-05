@@ -1,0 +1,145 @@
+{%- liquid
+  assign current = false
+  assign link_handle = link.url | split: '/' | last | url_decode
+  if link_handle == collection.handle
+  	assign current = true
+  endif
+-%}
+
+{% if current %}
+
+  {%- liquid
+    assign sub_linksCt = 0
+    for link in link.links
+      if link.type == 'collection_link' or link.type == 'catalog_link'
+        capture sub_links
+        	increment sub_linksCt
+        endcapture
+      endif
+    endfor
+    assign sub_links = sub_links | plus:1
+  -%}
+  
+  {% if sub_links > 1 %}
+  
+    {%- liquid
+      assign list_count = sub_links   
+      if section.settings.use_slider and list_count > 2
+        assign slider = true
+        case section.settings.sub_collection_row
+          when 2
+            assign block_width = 'six'
+            assign size = 880
+            assign sizes = 'calc(66.66vw - 30px)'
+            assign lazy_total = 4
+          when 3
+            assign block_width = 'four'
+            assign size = 460
+            assign sizes = '(min-width: 600px) calc(40vw - 30px), calc(66.66vw - 30px)'
+            assign lazy_total = 5
+          when 4
+            assign block_width = 'three'
+            assign size = 400
+            assign sizes = '(min-width: 600px) calc(40vw - 30px), (min-width: 768px) calc(28.57vw - 30px), calc(66.66vw - 30px)'
+            assign lazy_total = 6
+          else
+            assign block_width = 'two-half'
+            assign size = 400
+            assign sizes = '(min-width: 600px) calc(40vw - 30px), (min-width: 768px) calc(22.22vw - 30px), calc(66.66vw - 30px)'
+            assign lazy_total = 7
+        endcase
+      else
+        assign slider = false
+        case section.settings.sub_collection_row
+          when 2
+            assign block_width = 'six'
+            assign size = 580
+            assign sizes = 'calc(50vw - 40px)'
+          when 3
+            assign block_width = 'four'
+            assign size = 380
+            assign sizes = '(min-width: 768px) calc(33.33vw - 40px), calc(50vw - 40px)'
+          when 4
+            assign block_width = 'three'
+            assign size = 360
+            assign sizes = '(min-width: 768px) calc(25vw - 40px), calc(50vw - 40px)'
+          else
+            assign block_width = 'two-half'
+            assign size = 360
+            assign sizes = '(min-width: 768px) calc(20.833vw - 40px), calc(50vw - 40px)'
+        endcase
+      endif
+      if slider
+        assign lazy_total = lazy_total
+      else
+        assign lazy_total = 0    
+      endif
+    -%}
+        
+    <div class="container {% if banner %}inner-container {% else %}{% if slider %}no-pad {% else %}half-pad {% endif %}{% endif %}{% if settings.animation_enable %}animate-section animate-section-margin load {% endif %}clearfix">
+      <div class="sub-collections {% if slider %}glider-contain {% unless full_width %}inner-container-grid-slider {% else %}inner-container-pad {% endunless %}{% else %}{% if banner %}{% unless full_width %}inner-container-grid {% endunless %}{% endif %}{% endif %}tab-body">
+        <div{% if slider %} id="glider-carousel-{{ section.id }}" data-limit="{{ section.settings.sub_collection_row | minus: 0.5 }}" {% endif %} class="{% if banner %}background-white {% endif %}{% if slider %}glider {% if list_count < 5 %}no-drag {% endif %}{% endif %}table-center text-center clearfix">
+          <div class="product-loop{% if list_count < 5 %} center{% endif %}{% if slider %} glider-track{% endif %}">
+            {% for link in link.links %}
+            {% if link.type == 'collection_link' or link.type == 'catalog_link' %}
+            <div class="product {{ block_width }} animate animate-loop-{{ forloop.index0 }} brands top">
+              <a href="{{ link.url }}" title="{{ link.title | escape }}" class="collection{% if section.settings.image_fit %} img-align{% endif %}">
+                {%- liquid
+                  assign sub_collection_url = link.url | split: 'collections/' | last | split: '/' | first | url_decode
+                  assign sub_collection = collections[sub_collection_url]
+                  assign images_enable = false
+                  if section.settings.use_product_image and sub_collection.products.first.featured_media.preview_image != blank or sub_collection.image == blank
+                    assign img_src = sub_collection.products.first.featured_media.preview_image
+                    assign images_enable = true
+                  else
+                    assign img_src = sub_collection.image
+                    assign images_enable = true
+                  endif
+                -%}
+              
+                {% if images_enable %}
+                  <div class="product-thumb{% if section.settings.image_fit %} title-align{% endif %}">
+                    <div class="relative lazycontainer">
+                      {%- liquid
+                        capture alt
+                          if img_src.alt != blank
+                            echo img_src.alt
+                          else
+                            echo link.title
+                          endif
+                        endcapture
+                        if lazy_total > 0
+                          if forloop.index < lazy_total
+                            assign lazy = lazy
+                          else
+                            assign lazy = 'lazy'
+                          endif
+                        endif
+                        render 'image.load', img_src: img_src, size: size, alt: alt, nopad: section.settings.image_fit, lazy: lazy, sizes: sizes
+                      -%}
+                    </div>
+                  </div>
+                {% endif %}
+              
+                <div class="product-details{% if images_enable == false %} toppad{% endif %}">
+                  <div class="product-title collection">
+                    <h5 class="section-title-{{ collection_title_size }}">{{ link.title }}</h5>
+                  </div>
+                </div>
+              </a>
+            </div>
+            {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+        {% if slider %}
+        <div id="glider-pagination-{{ section.id }}" class="glider-pagination {% if section.settings.sub_collection_row > list_count %}hidden {% endif %}tab-body relative">
+          <button id="glider-button-prev-{{ section.id }}" class="glider-button-prev" type="button" aria-label="{{ 'products.general.previous' | t | escape }}">{%- render 'icons.theme', icon: 'left', size: '16' -%}</button>
+          <button id="glider-button-next-{{ section.id }}" class="glider-button-next" type="button" aria-label="{{ 'products.general.next' | t | escape }}">{%- render 'icons.theme', icon: 'right', size: '16' -%}</button>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+
+{% endif %}

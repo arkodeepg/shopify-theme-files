@@ -1,0 +1,70 @@
+  <!------------- Sale Timelin Section---------- -->
+  {% if page.metafields.custom.datepicker !=blank %}
+  <div class="timer-sec" id="timer">
+    <div class="container">
+        
+                <!-- <div id="days"></div> -->
+                <div class="counthead"><b>Nest Fest</b> <span style="font-weight:300">Starts in</span> </div>
+                <div class="time-val" id="days">days</div>
+                <div class="time-val" id="hours">Hrs</div>
+                <div class="time-val" id="minutes">Mins</div>
+                <div class="time-val" id="seconds">Secs</div>
+     
+    </div>
+</div>
+{% endif %}
+<!------------- Sale Timelin Section---------- -->
+{% assign date = page.metafields.custom.datepicker | date: "%Y %m %d %H:%M"   %}
+
+<script defer>
+function makeTimer() {
+     {% if date %}
+      var endTime = new Date("{{date}}");
+      {% else %}
+      var endTime = new Date("2023-01-16 00:00:00");
+     {% endif %}
+      endTime = (Date.parse(endTime) / 1000);
+      var now = new Date();
+      now = (Date.parse(now) / 1000);
+      var timeLeft = endTime - now;
+      var days = Math.floor(timeLeft / 86400);
+      var hours = Math.floor((timeLeft - (days * 86400)) / 3600);
+      var minutes = Math.floor((timeLeft - (days * 86400) - (hours * 3600)) / 60);
+      var seconds = Math.floor((timeLeft - (days * 86400) - (hours * 3600) - (minutes * 60)));
+      if(hours < "10") {
+          hours = "0" + hours;
+      }
+      if(minutes < "10") {
+          minutes = "0" + minutes;
+      }
+      if(seconds < "10") {
+          seconds = "0" + seconds;
+      }
+      $("#days").html(`<span class="numbrSquare">${days}</span> ` + " <span>Days</span>:");
+      $("#hours").html(`<span class="numbrSquare">${hours}</span> ` + " <span>Hrs</span>:");
+      $("#minutes").html(`<span class="numbrSquare">${minutes}</span> ` + " <span>Mins</span>:");
+      $("#seconds").html(`<span class="numbrSquare">${seconds}</span> ` + " <span>Secs</span>:");
+  }
+  setInterval(function() {
+      makeTimer();
+  }, 1000);
+</script>
+{% schema %}
+{
+  "name": "countdown",
+  "settings": [],
+    "presets":[
+  {
+    "name":"countdown",
+    "category":"timer"
+  }
+]
+
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

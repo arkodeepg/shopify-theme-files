@@ -1,0 +1,273 @@
+<section class="collection-products comparison-products clearfix">
+  
+  {% if search.results_count > 0 %}  
+  
+  <h3 class="text-center bottompad">{{ 'products.general.compare_total' | t: total: '5' }}</h3>
+  
+  {% capture image %}
+    {% for product in search.results %}
+      <td class="remove-product-{{ product.id }} relative">      
+        {%- render 'product.saleBadge', product: product -%}
+        {% if product.media.size > 0 or product.image.size > 0 %}
+          <div class="product-thumb-container text-center">
+            <div class="product-thumb title-align">
+              <div class="relative lazycontainer image-align">
+                <a href="{{ product.url }}" title="{{ 'layout.general.buy' | t | escape }} {{ product.title | escape }}" class="img-align product-thumb-main keyed">
+                  {%- liquid
+                    capture alt
+                      if product.featured_media.preview_image.alt != blank
+                        echo product.featured_media.preview_image.alt
+                      else
+                        echo product.title
+                      endif
+                    endcapture
+                    render 'image.load', img_src: product.featured_media.preview_image, size: 160, alt: alt, nopad: true, lazy: 'eager', sizes: '160px'
+                  -%}
+                </a>
+              </div>
+            </div>
+          </div>
+        {% else %}
+          &nbsp;
+        {% endif %}    
+      </td>
+    {% endfor %}
+  {% endcapture %}
+  
+  {% capture title %}
+    {% for product in search.results %}
+      <td class="remove-product-{{ product.id }}">
+        <div class="product-title">
+          <h4><a href="{{ product.url }}" title="{{ product.title | escape }}">{{ product.title }}</a></h4>
+        </div> 
+      </td>
+    {% endfor %}
+  {% endcapture %}
+  
+  {% if settings.compare_enable_vendor %}
+    {% capture vendor %}
+      {% for product in search.results %}
+        <td class="remove-product-{{ product.id }}">
+          <p class="product-logistics">
+              <span class="vendors">
+                {%- liquid
+                  assign product_vendor_handle = product.vendor | handle
+                  if collections[product_vendor_handle].handle == product_vendor_handle
+                    assign vendor_url = collections[product_vendor_handle].url
+                  else
+                    assign vendor_url = product.vendor | url_for_vendor
+                  endif
+                  echo product.vendor | link_to: vendor_url
+                -%}
+              </span>
+            </p>
+        </td>
+      {% endfor %}
+    {% endcapture %}
+  {% endif %}
+  
+  {% if settings.compare_enable_reviews %}
+    {% capture reviews %}
+      {% for product in search.results %}
+        <td class="remove-product-{{ product.id }}">
+          {%- render 'product.rating', product: product, comparison: true -%}
+        </td>
+      {% endfor %}
+    {% endcapture %}
+  {% endif %}
+  
+  {% if settings.compare_enable_price %}
+    {% capture price %}
+      {% for product in search.results %}
+        <td class="remove-product-{{ product.id }}">
+          <div class="product-price">
+            {%- liquid
+              if product.price_min > 0
+                assign variant = product.variants | sort: 'price' | first
+              else
+                if product.price_varies
+                  assign variant = product.variants | sort: 'price' | last
+                endif
+              endif
+              if product.price_min > 0
+                if product.price_varies
+                  echo 'products.product.from' | t
+                endif
+                echo '<h6>'            
+                if settings.currency_enable
+                  echo product.price | money_with_currency
+                else
+                  echo product.price | money
+                endif            
+                if product.compare_at_price > product.price
+                  echo ' | <del>'              
+                  if settings.currency_enable
+                    echo product.compare_at_price | money_with_currency
+                  else
+                    echo product.compare_at_price | money
+                  endif              
+                  echo '</del>'
+                endif
+                render 'product.unitPrice', variant: product.selected_or_first_available_variant, variant_free: false, variant_slash: 'true'
+                echo '</h6>'
+              else
+                if product.price_varies
+                  echo '<h6>'
+                  echo 'products.product.free' | t
+                  echo ' - '              
+                  if settings.currency_enable
+                    echo product.price_max | money_with_currency
+                  else
+                    echo product.price_max | money
+                  endif              
+                  assign variant_free = true
+                  render 'product.unitPrice', variant: product.selected_or_first_available_variant, variant_free: false, variant_slash: 'true'
+                  echo '</h6>'
+                else
+                  echo '<h6 style="display:none">'
+                  if settings.currency_enable
+                    echo product.price | money_with_currency
+                  else
+                    echo product.price | money
+                  endif
+                  echo '</h6><h6'
+                  unless settings.quick_collection_hover == false
+                    echo ' class="no-pad"'
+                  endunless
+                  echo '>'
+                  echo 'products.product.free' | t
+                  echo '</h6>'
+                endif
+              endif
+            -%}
+          </div>
+        </td>
+      {% endfor %}
+    {% endcapture %}
+  {% endif %}
+  
+  {% if settings.compare_enable_variants %}
+    {% capture variants %}
+      {% for product in search.results %}
+        <td class="remove-product-{{ product.id }}">
+          <p><small>
+            {%- if product.has_only_default_variant -%}
+            --
+            {%- else -%}
+            {% for option in product.options_with_values %}
+            <strong>{{ option.name }}:</strong> {% for value in option.values %}{{ value }}{% unless forloop.last %}, {% endunless %}{% endfor %}{% unless forloop.last %}<br/>{% endunless %}
+            {% endfor %}
+            {%- endif -%}
+          </small></p>
+        </td>
+      {% endfor %}
+    {% endcapture %}
+  {% endif %}
+  
+  {% capture metas %}
+    {% for i in (1..20) %}
+      {%- liquid
+        capture meta_number
+          echo 'compare_enable_meta_'
+          echo i
+        endcapture
+        assign meta = settings[meta_number]          
+        assign metafirst = settings[meta_number] | split:':' | last | split:'.' | first
+        assign metalast = settings[meta_number] | split:':' | last | split:'.' | last
+        assign metatext = product.metafields[metafirst][metalast]
+        assign meta_td_count = 0
+      -%}
+
+      {%- capture meta_td -%}
+        {% for product in search.results %}
+          {%- liquid
+            capture meta_number
+              echo 'compare_enable_meta_'
+              echo i
+            endcapture
+            assign meta = settings[meta_number]
+            assign metafirst = settings[meta_number] | split:':' | last | split:'.' | first
+            assign metalast = settings[meta_number] | split:':' | last | split:'.' | last
+            assign metatext = product.metafields[metafirst][metalast]
+            if metatext
+              assign meta_td_count = meta_td_count | plus: 1 
+            endif
+          -%}
+          <td class="remove-product-{{ product.id }}">
+            <p><small>{% if metatext %}{{ metatext.value }}{% else %}--{% endif %}</small></p>
+          </td>
+        {% endfor %}
+      {%- endcapture -%}
+      
+      {% if settings[meta_number] != blank and settings[meta_number] contains ':' and meta_td_count > 0 %}
+        <tr>
+          <td class="remove-product-{{ product.id }}"><h6>{{ settings[meta_number] | split:':' | first }}</h6></td>
+          {{ meta_td }}
+        </tr>
+      {% endif %}
+    {% endfor %}
+  {% endcapture %}
+    
+  {% capture link %}
+    {% for product in search.results %}
+      <td class="remove-product-{{ product.id }}"><h6 class="compare-link"><a href="{{ product.url }}" title="{{ 'products.general.compare_link' | t | escape }}">{{ 'products.general.compare_link' | t | escape }}</a></h6></td>
+    {% endfor %}
+  {% endcapture %}
+    
+  {% capture remove %}
+    {% for product in search.results %}
+      <td class="remove-product-{{ product.id }}"><button type="button" class="compare-remove" data-id="{{ product.id }}"><small>{{ 'products.general.compare_remove' | t }}</small></button></td>
+    {% endfor %}
+  {% endcapture %}
+  
+  <table>
+    <tr>
+      <td>&nbsp;</td>
+      {{ image }}
+    </tr>
+    <tr>
+      <td><h6>{{ 'products.general.compare_title' | t }}</h6></td>
+      {{ title }}
+    </tr>
+    {% if settings.compare_enable_vendor %}
+      <tr>
+        <td><h6>{{ 'products.general.compare_vendor' | t }}</h6></td>
+        {{ vendor }}
+      </tr>
+    {% endif %}
+    {% if settings.compare_enable_reviews %}
+      <tr>
+        <td><h6>{{ 'products.general.compare_reviews' | t }}</h6></td>
+        {{ reviews }}
+      </tr>
+    {% endif %}
+    {% if settings.compare_enable_price %}
+      <tr>
+        <td><h6>{{ 'products.general.compare_price' | t }}</h6></td>
+        {{ price }}
+      </tr>
+    {% endif %}
+    {% if settings.compare_enable_variants %}
+      <tr>
+        <td><h6>{{ 'products.general.compare_variants' | t }}</h6></td>
+        {{ variants }}
+      </tr>
+    {% endif %}
+    {{ metas }}
+    <tr>
+      <td>&nbsp;</td>
+      {{ link }}
+    </tr>    
+    <tr>
+      <td>&nbsp;</td>
+      {{ remove }}
+    </tr>
+  </table>
+  
+  {% else %}  
+  <div class="text-center toppad">
+    <h4>{{ 'products.general.compare_empty_message' | t }}</h4>
+  </div>  
+  {% endif %}
+  
+</section>

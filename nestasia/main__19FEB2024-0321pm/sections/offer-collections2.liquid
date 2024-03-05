@@ -1,0 +1,49 @@
+{% if page.metafields.custom.offers_collections2 !=blank %}
+  <section class="offer-collection margin-30">
+    <div class="container clearfix">
+
+      {% if page.metafields.custom.offers_collections2_heading !=blank %}
+        <div class="twelve text-center offerHead">
+          <h2>{{ page.metafields.custom.offers_collections2_heading }}</h2>
+        </div>
+      {% endif %}
+
+      <div class="tab-body divided_col">
+        {% assign offercollection = page.metafields.custom.offers_collections2 %}
+        {% assign collectionMaincontainer = offercollection | split: "::" %}
+        {%- for technical_details in collectionMaincontainer %}
+          {% assign collectionSubcontainer = technical_details | split: "|" %}
+          <div class="three">
+            <div class="categoryImg">
+              <a href="{{ collectionSubcontainer[1] }}">
+                <img src="{{ collectionSubcontainer[0] }}" alt="" width="100%"></a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+    </div>
+
+  </section>
+
+{% endif %}
+
+{% schema %}
+{
+  "name": "Offer Collections2",
+  "tag": "section",
+  "settings": [],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "Offer Collections2"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

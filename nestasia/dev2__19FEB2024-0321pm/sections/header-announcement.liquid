@@ -1,0 +1,118 @@
+{% style %}
+  .header-announcement,
+  .header-announcement p,
+  .header-announcement a {    
+    --xx_small: {{ section.settings.promo_size }}px;
+    --small: {{ section.settings.promo_size }}px;
+  }  
+  span.announcement-text {
+    text-transform: uppercase;
+    letter-spacing: 2.4px;
+    font-family: var(--body_font);
+    width: 100%;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: normal;
+    /* padding: 0 25px; */
+  }
+  @media screen and (max-width: 800px) {
+.header-announcement .container {
+    padding-inline: 25px;
+}
+  }
+{% endstyle %}
+
+<section data-section-id="{{ section.id }}" 
+         data-section-type="header_announcement">
+  <div class="header banner header-announcement{% if section.settings.include_bar_border %} include-border{% endif %} announcement_color_scheme {{ section.settings.text_alignment }}">  
+    <div class="container inner-container clearfix">
+      {% if section.settings.promo_link != blank %}<a href="{{ section.settings.promo_link }}" title="{% if section.settings.promo_text != blank %}{{ section.settings.promo_text | escape }}{% else %}{{ 'homepage.onboarding.no_title' | t | escape }}{% endif %}">{% endif %}
+        <span class="announcement-text ">
+        {%- liquid
+          if section.settings.promo_msg == 'text'
+            if section.settings.promo_text != blank
+              echo section.settings.promo_text
+            else
+              echo 'homepage.onboarding.no_title' | t
+            endif
+          else
+            render 'shipping', size: 26, color: settings.announcement_font_color, color_h: settings.announcement_font_color
+          endif
+        -%}
+        </span>
+      {% if section.settings.promo_link != blank %}</a>{% endif %}
+    </div>
+  </div>  
+</section>
+
+{% schema %}
+  {
+    "name": "t:sections.announcement.name",
+    "settings": [
+      {
+        "type": "select",
+        "id": "promo_msg",
+        "label": "t:sections.announcement_msg.label",
+        "default": "text",
+        "options": [
+          {
+            "value": "text",
+            "label": "t:sections.text.label"
+          },
+          {
+            "value": "free",
+            "label": "t:settings_schema.general.settings.shipping.content"
+          }
+        ]
+      },
+      {
+        "type": "text", 
+        "id": "promo_text",
+        "label": "t:sections.text.label",
+        "default": "Display an announcement, sale or event"
+      },
+      {
+        "type": "range",
+        "id": "promo_size",
+        "min": 12,
+        "max": 22,
+        "step": 2,
+        "unit": "px",
+        "label": "t:sections.announcement_size.label",
+        "default": 12
+      },
+      {
+        "type": "select",
+        "id": "text_alignment",
+        "label": "t:sections.alignment.label",
+        "default": "text-center",
+        "options": [
+          {
+            "value": "text-left",
+            "label": "t:sections.alignment.left"
+          },
+          {
+            "value": "text-center",
+            "label": "t:sections.alignment.center"
+          },
+          {
+            "value": "text-right",
+            "label": "t:sections.alignment.right"
+          }
+        ]
+      },
+      {
+        "type": "url",
+        "id": "promo_link",
+        "label": "t:sections.link.label"
+      },
+      {
+        "type": "checkbox",
+        "id": "include_bar_border",
+        "label": "t:sections.show_border.label",
+        "default": false
+      }
+    ]
+  }
+{% endschema %}

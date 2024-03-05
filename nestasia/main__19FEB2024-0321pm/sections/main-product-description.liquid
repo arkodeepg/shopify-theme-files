@@ -1,0 +1,302 @@
+{%- liquid
+  assign background_color = false
+  if section.settings.background != 'rgba(0,0,0,0)' and section.settings.background != blank
+    assign background_color = true
+    assign background_color_section = section.settings.background
+  endif    
+  if section.settings.background_gradient != 'rgba(0,0,0,0)' and section.settings.background_gradient != blank
+    assign background_color = true
+    assign background_color_section = section.settings.background_gradient
+  endif
+  capture classes
+    echo 'dynamic-section dynamic-section-'
+    echo section.id 
+    echo ' section-padding-top section-padding-bottom section-margin-bottom '
+    if section.settings.padding_border
+      echo 'section-border '
+    endif
+    if settings.animation_enable
+      echo 'animate-section-div '
+    endif
+  endcapture
+  assign block_width = section.settings.block_width
+  case block_width
+    when '4'
+      assign block_width = 'four center'
+    when '6'
+      assign block_width = 'six center'
+    when '8'
+      assign block_width = 'eight center'
+    when '9'
+      assign block_width = 'nine center'
+    when '12'
+      assign block_width = 'twelve center'
+  endcase
+  assign product_desc = false
+  assign product_tabs = false
+  for block in section.blocks                  
+    case block.type
+      when 'description'          
+        if product.description and block.settings.desc
+          assign product_desc = true
+        endif
+      when 'page'
+        if block.settings.tag != blank
+          if product.tags contains block.settings.tag
+            assign product_tabs = true
+          endif
+        else
+          assign product_tabs = true
+        endif
+      when 'text'
+        if block.settings.tag != blank
+          if product.tags contains block.settings.tag
+            assign product_tabs = true
+          endif
+        else
+          assign product_tabs = true
+        endif
+      when 'html'
+        if block.settings.tag != blank
+          if product.tags contains block.settings.tag
+            assign product_tabs = true
+          endif
+        else
+          assign product_tabs = true
+        endif
+    endcase
+  endfor
+-%}
+
+{%- if product_tabs or product.description.size > 0 -%}
+
+  {% style %}
+    .dynamic-section-{{ section.id }} { 
+      --margin_padding: {{ section.settings.padding }}vh;
+      {%- if background_color -%}
+      --background:{{ background_color_section }};
+      --button_primary_text:{{ section.settings.background }};
+      --button_secondary_hover:{{ section.settings.background }};
+      {%- endif -%}
+      --section-padding-top-mobile: {{ section.settings.padding_top_mobile }}px;
+      --section-padding-top-desktop: {{ section.settings.padding_top_desktop }}px;
+      --section-padding-bottom-mobile: {{ section.settings.padding_bottom_mobile }}px;
+      --section-padding-bottom-desktop: {{ section.settings.padding_bottom_desktop }}px;
+      --section-margin-bottom-mobile: {{ section.settings.margin_bottom_mobile }}px;
+      --section-margin-bottom-desktop: {{ section.settings.margin_bottom_desktop }}px;
+    }
+  {% endstyle %}
+  
+  <section data-section-id="{{ section.id }}" 
+           data-section-type="tabbed"
+           data-carousel-type="section"
+           data-url="{{ 'script.tabbed.js' | asset_url }}">
+  
+    <div class="container half-pad{% if settings.animation_enable %} animate-section animate-section-margin load{% endif %} clearfix">
+      {%- render 'product.description', classes: classes, block_width: block_width, product_desc: product_desc, product_tabs: product_tabs -%}
+    </div>
+  
+  </section>
+  
+{%- endif -%}
+
+{% schema %}
+  {
+    "name": "t:sections.product_tabs.name",
+    "settings": [
+      {
+        "type": "select",
+        "id": "block_width",
+        "label": "t:sections.content_width.label",
+        "default": "6",
+        "options": [
+          {
+            "value": "4",
+            "label": "33%"
+          },
+          {
+            "value": "6",
+            "label": "50%"
+          },
+          {
+            "value": "8",
+            "label": "66%"
+          },
+          {
+            "value": "9",
+            "label": "75%"
+          }
+        ]
+      },      
+      {
+        "type": "header",
+        "content": "t:sections.section.name.content"
+      },
+      {
+        "id": "background",
+        "type": "color",
+        "label": "t:sections.section.settings.background_color.label"
+      },
+      {
+        "id": "background_gradient",
+        "type": "color_background",
+        "label": "t:sections.section.settings.background_gradient.label"
+      },
+      {
+        "type": "paragraph",
+        "content": "t:sections.section.settings.mobile.content"
+      },
+      {
+        "id": "padding_top_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.top_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "id": "padding_bottom_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "id": "margin_bottom_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_margin.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "type": "paragraph",
+        "content": "t:sections.section.settings.desktop.content"
+      },
+      {
+        "id": "padding_top_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.top_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "id": "padding_bottom_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "id": "margin_bottom_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_margin.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "id": "padding_border",
+        "type": "checkbox",
+        "label": "t:sections.section.settings.border.label",
+        "default": false
+      }
+    ],
+	"blocks": [
+      {
+        "type": "description",
+        "name": "t:sections.description.name",
+        "settings": [
+          {            
+            "type": "checkbox",
+            "id": "desc",
+            "label": "t:sections.description.info",
+            "default": true
+          }
+        ],
+        "limit": 1
+      },
+      {
+        "type": "text",
+        "name": "t:sections.text.name",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "t:sections.title.label"
+          },
+          {
+            "type": "richtext",
+            "id": "body",
+            "label": "t:sections.text.label",
+			"default": "<p>Add custom text to promote products, specials or offers</p>"
+          },
+          {
+            "type": "text",
+            "id": "tag",
+            "label": "t:sections.tag_filter.label"
+          }
+        ]
+      },
+      {
+        "type": "page",
+        "name": "t:sections.page.name",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "t:sections.title.label",
+			"info": "t:sections.title.info"
+          },
+          {
+            "id": "page",
+            "type": "page",
+            "label": "t:sections.page.label"
+          },
+          {
+            "type": "text",
+            "id": "tag",
+            "label": "t:sections.tag_filter.label"
+          }
+        ]
+      },
+      {
+        "type": "html",
+        "name": "t:sections.html.name",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "t:sections.title.label"
+          },
+          {
+            "type": "liquid",
+            "id": "html",
+            "label": "t:sections.custom_html.label",
+         	"default": "<div class='text-center'><h2>Customize your content with HTML and Liquid</h2><p>{{ powered_by_link }}</p></div>"
+          },
+          {
+            "type": "text",
+            "id": "tag",
+            "label": "t:sections.tag_filter.label"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,74 @@
+<style>
+  #back-to-top {
+    position: fixed;
+    bottom: 120px;
+    right: 22px;
+    background-color: #96865d;
+    color: #fff;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    z-index: 99999;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: url(//nestasia.in/cdn/shop/t/293/assets/up-arrow.png?v=171021152164651870851693576109);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 15px;
+    transition: visibility 0s, opacity 0.5s linear;
+}
+</style>
+<span id="back-to-top" style="visibility:hidden;opacity:0"></span>
+
+{%- comment -%}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous"></script> 
+{%- endcomment -%}
+<script defer="defer">
+document.addEventListener('DOMContentLoaded', function() {
+  var btn = document.getElementById('back-to-top');
+  var btnOffset = window.innerHeight / 2;
+
+  window.addEventListener('scroll', function() {
+    if (window.scrollY > 500) {
+      btn.style.visibility = 'visible';
+      btn.style.opacity = '1';
+    } else {
+      btn.style.visibility = 'hidden';
+      btn.style.opacity = '0';
+    }
+  });
+
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
+    window.scroll({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
+});
+
+</script>
+
+{% schema %}
+{
+  "name": "back to top",
+  "tag": "section",
+  "settings": [],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "back to top"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

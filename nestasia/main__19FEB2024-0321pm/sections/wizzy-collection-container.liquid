@@ -1,0 +1,82 @@
+<!-- Wizzy Code Starts -->
+<style>
+  .wizzy-tocart-button:hover .BGred, .quickview:hover .BGred {
+    fill: #96865d;
+  }
+  .wizzy-tocart-button:hover .Wred, .quickview:hover .Wred {
+    stroke: #fff;
+  }
+  .loaderSMSMSMS{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 70px;
+  }
+  .loaderSMSMSMS:before {
+    content: '';
+    animation: fancybox-rotate 1s linear infinite;
+    background: transparent;
+    border: 2px solid var(--button_color_25);
+    border-bottom-color: var(--button_color);
+    border-radius: 50%;
+    -webkit-box-sizing: border-box;
+    -khtml-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -o-box-sizing: border-box;
+    box-sizing: border-box;
+    height: calc(var(--master_spacing) * 2.5);
+/*     left: 50%; */
+/*     margin-left: calc(-1 * var(--master_spacing) * 1.25); */
+    margin-top: calc(-1 * var(--master_spacing) * 1.25);
+    opacity: 0.75;
+    filter: alpha(opacity=75);
+    padding: 0;
+/*     position: absolute;
+    top: 50%; */
+    width: calc(var(--master_spacing) * 2.5);
+    z-index: 999;
+}
+</style>
+<div class="loaderSMSMSMS">
+</div>
+<div id="wizzy-shopify-collection-page-wrapper">
+</div>
+<!-- Wizzy Code Ends -->
+<script defer>
+  // Select the target element
+const targetElement = document.getElementById('wizzy-shopify-collection-page-wrapper');
+let entryCount = 0;
+
+// Create a new Mutation Observer
+const mutationObserver = new MutationObserver(entries => {
+  entries.forEach(entry => {
+    var loaderElement=document.querySelector(".loaderSMSMSMS");loaderElement&&(loaderElement.style.display="none");
+    entryCount++,20===entryCount&&(mutationObserver.disconnect(),console.log("Observer disconnected after 20 entries."));
+  });
+});
+
+// Configure the observer to watch for changes in child elements
+const observerConfig = { childList: true, subtree: true };
+
+// Start observing the target element with the specified configuration
+mutationObserver.observe(targetElement, observerConfig);
+</script>
+{% schema %}
+  {
+    "name": "Wizzy Collection Grid",
+    "tag": "section",
+    "settings": [],
+      "presets": [
+    {
+      "name": "wizzy collection"
+    }
+  ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

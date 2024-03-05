@@ -1,0 +1,38 @@
+{%liquid
+  if show_desktop==true and show_mobile==true
+    assign cl = ''
+  elsif show_desktop==false and show_mobile==true
+    assign cl = 'onlymobile'
+  elsif show_desktop==true and show_mobile==false
+    assign cl = 'onlydesktop'
+  else
+    assign cl = 'hidden'
+  endif
+%}
+{% if settings.share_facebook or settings.share_twitter or settings.share_pinterest %}
+<div class="socials {% if alignment %}{{ alignment }}{% else %}text-center{% endif %} {{ cl }}">
+  <ul>
+    {% if settings.share_facebook %}
+    <li>
+      <a target="_blank" href="//www.facebook.com/sharer.php?u={{ shop.url | append: share_permalink }}" role="button" title="{{ 'general.social.facebook_share' | t | escape }}" aria-label="{{ 'general.social.facebook_share' | t | escape }}">
+        {%- render 'icons.social', icon: 'facebook', icon_class: icon_class -%}
+      </a>
+    </li>
+    {% endif %}
+    {% if settings.share_x %}
+    <li>
+      <a target="_blank" href="//x.com/share?text={{ share_title | url_param_escape }}&amp;url={{ shop.url | append: share_permalink }}" role="button" title="{{ 'general.social.x_share' | t | escape }}" aria-label="{{ 'general.social.x_share' | t | escape }}">
+        {%- render 'icons.social', icon: 'x', icon_class: icon_class -%}
+      </a>
+    </li>
+    {% endif %}
+    {% if settings.share_pinterest %}
+    <li>
+      <a target="_blank" href="//pinterest.com/pin/create/button/?url={{ shop.url | append: share_permalink }}&amp;media={{ share_image | image_url: width: 1024 }}&amp;description={{ share_title | url_param_escape }}" role="button" title="{{ 'general.social.pinterest_share' | t | escape }}" aria-label="{{ 'general.social.pinterest_share' | t | escape }}">
+        {%- render 'icons.social', icon: 'pinterest', icon_class: icon_class -%}
+      </a>
+    </li>
+    {% endif %}
+  </ul>
+</div>
+{% endif %}

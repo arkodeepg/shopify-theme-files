@@ -1,0 +1,221 @@
+<div tabindex="0" class="modal-close" aria-label="{{ 'layout.general.close' | t | escape }}">{%- render 'icons.theme', icon: 'times', size: 24 -%}</div>
+<div id="predictive-search-results">
+  <ul id="predictive-search-results-list" class="search-list" role="listbox" aria-labelledby="predictive-search-products">
+    {%- liquid
+      assign search_results = 0 
+      assign block_width = 'six'
+      assign block_width_collections = 'three'
+    -%}
+        
+    {% if predictive_search.performed %}
+    {% assign search_terms = predictive_search.terms %}
+
+    {% if predictive_search.resources.queries.size > 0 %}
+      {%- liquid
+        assign block_width = 'twelve'
+        assign block_width_collections = 'six'
+      -%}
+      <span class="four">
+        <li class="twelve table-center page title suggestions">
+          <h6>{{ 'general.search.suggestions' | t }}</h6>
+        </li>
+        {% for query in predictive_search.resources.queries %}
+          <li class="twelve key" role="option">
+            <a href="{{ query.url }}" title="{{ query.text }}">
+              <p aria-label="{{ query.text }}">{{ query.styled_text }}</p>
+            </a>
+          </li>
+        {% endfor %}
+      </span>
+    {% endif %}
+
+    {% if predictive_search.resources.queries.size > 0 %}<span class="eight">{% endif %}
+    {% if predictive_search.resources.products.size > 0 %}
+      {%- assign search_results = search_results | plus: 1 -%}
+      {%- for product in predictive_search.resources.products -%}
+      <li id="search-product-{{ forloop.index }}" class="twelve product key" role="option">
+        <a href="{{ product.url }}" title="{{ product.title }}">
+          {% if product.featured_media != blank %}
+          <span class="thumbnail relative lazycontainer lazyignore title-align">
+            <div class="relative lazycontainer image-align">
+            {%- liquid
+              assign img_src = product.featured_media
+              capture alt
+                if img_src.alt != blank
+                  echo img_src.alt
+                else
+                  echo product.title
+                endif
+              endcapture
+              render 'image.load', img_src: img_src, size: 120, alt: alt, lazy: 'eager', sizes: '120px'
+            -%}
+            </div>
+          </span>
+          {% endif %}
+          <span>
+            <h4>{{ product.title }}</h4>
+            {% if settings.vendor_enable %}<p class="product-logistics"><span class="vendor">{{ product.vendor }}</span></p>{% endif %}
+            <span class="product-variants purchase-section multiple">
+              {%- liquid
+                if settings.reviews_enable
+                   render 'product.rating', product: product
+                endif
+              -%}
+              <span class="product-price">
+                {%- liquid
+                  if product.price_min > 0
+                    if product.price_varies
+                      echo 'products.product.from' | t
+                    endif
+                    echo '<h6>'            
+                    if settings.currency_enable
+                      echo product.price | money_with_currency
+                    else
+                      echo product.price | money
+                    endif            
+                    if product.compare_at_price > product.price
+                      echo ' | <del>'              
+                      if settings.currency_enable
+                        echo product.compare_at_price | money_with_currency
+                      else
+                        echo product.compare_at_price | money
+                      endif              
+                      echo '</del>'
+                    endif
+                    render 'product.unitPrice', variant: product.selected_or_first_available_variant, variant_free: false, variant_slash: 'true'
+                    echo '</h6>'
+                  else
+                    if product.price_varies
+                      echo '<h6>'
+                      echo 'products.product.free' | t
+                      echo ' - '              
+                      if settings.currency_enable
+                        echo product.price_max | money_with_currency
+                      else
+                        echo product.price_max | money
+                      endif              
+                      assign variant_free = true
+                      render 'product.unitPrice', variant: product.selected_or_first_available_variant, variant_free: false, variant_slash: 'true'
+                      echo '</h6>'
+                    else
+                      echo '<h6 style="display:none">'
+                      if settings.currency_enable
+                        echo product.price | money_with_currency
+                      else
+                        echo product.price | money
+                      endif
+                      echo '</h6><h6>'
+                      echo 'products.product.free' | t
+                      echo '</h6>'
+                    endif
+                  endif
+                -%}
+              </span>
+            </span>
+          </span>
+        </a>
+      </li>
+      {%- endfor -%}      
+    {% endif %}
+
+    {% if predictive_search.resources.collections.size > 0 %}
+      {%- assign search_results = search_results | plus: 1 -%}
+      <li class="twelve first table-center collection title">
+        <h6>{{ 'general.search.collections' | t }}</h6>
+      </li>
+      {%- for collection in predictive_search.resources.collections -%}
+      <li id="search-collection-{{ forloop.index }}" class="{{ block_width_collections }} mobile collection key" role="option">
+        <a href="{{ collection.url }}" title="{{ collection.title }}">
+          {%- liquid
+            assign img_src = blank
+            if collection.image == blank
+              assign img_src = collection.products.first.featured_media.preview_image
+            else
+              assign img_src = collection.image
+            endif
+          -%}
+          {% if img_src != blank %}
+          <div class="thumbnail relative lazycontainer lazyignore">
+            {%- liquid
+              capture alt
+                if img_src.alt != blank
+                  echo img_src.alt
+                else
+                  echo product.title
+                endif
+              endcapture
+              render 'image.load', img_src: img_src, size: 350, alt: alt, lazy: 'eager', sizes: '(min-width: 600px) 350px, calc(50vw - 70px)'
+            -%}
+          </div>
+          {% endif %}
+          <h5>{{ collection.title }}</h5>
+        </a>
+      </li>
+      {%- endfor -%}
+    {% endif %}
+
+    {% if predictive_search.resources.articles.size > 0 %}
+      {%- assign search_results = search_results | plus: 1 -%}
+      <li class="twelve first article title">
+        <h6>{{ 'general.search.articles' | t }}</h6>
+      </li>
+      {%- for article in predictive_search.resources.articles -%}
+      <li id="search-article-{{ forloop.index }}" class="twelve article" role="option">
+        <a href="{{ article.url }}" title="{{ article.title }}">
+          {% if article.image != blank %}
+          <span class="thumbnail relative lazycontainer lazyignore">
+            {%- liquid
+              assign img_src = article.image
+              capture alt
+                if img_src.alt != blank
+                  echo img_src.alt
+                else
+                  echo product.title
+                endif
+              endcapture
+              render 'image.load', img_src: img_src, size: 120, alt: alt, lazy: 'eager', sizes: '120px'
+            -%}
+          </span>
+          {% endif %}
+          <span>
+            <h4>{{ article.title }}</h4> 
+          </span>
+        </a>
+      </li>
+      {%- endfor -%}
+    {% endif %}
+
+    {% if predictive_search.resources.pages.size > 0 %}
+      {%- assign search_results = search_results | plus: 1 -%}
+      <li class="twelve first table-center page title">
+        <h6>{{ 'general.search.pages' | t }}</h6>
+      </li>
+      {% for page in predictive_search.resources.pages %}
+      <li id="search-page-{{ forloop.index }}" class="twelve page" role="option">
+        <a href="{{ page.url }}" title="{{ page.title }}">
+          <span>
+            <h4>{{ page.title }}</h4> 
+          </span>
+        </a>
+        <p><small>{{ page.content | strip_html | truncatewords: 40 | highlight: predictive_search.terms }}</small></p>
+      </li>
+      {% endfor %}
+    {% endif %} 
+    {% if predictive_search.resources.queries.size > 0 %}</span>{% endif %}
+    
+    {% endif %}
+
+    <li class="see-all product twelve text-center key" role="option">
+      <button class="key">
+        {%- liquid
+          if search_results > 0
+            echo 'general.search.see_results_html' | t: terms: search_terms
+          else
+            echo 'general.search.no_results_html' | t: terms: search_terms
+          endif
+        -%}
+      </button>
+    </li>
+
+  </ul>
+</div>

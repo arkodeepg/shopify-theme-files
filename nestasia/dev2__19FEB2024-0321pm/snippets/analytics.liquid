@@ -1,0 +1,202 @@
+   <!-- Google Tag Manager -->
+  <script async>
+    (function(w, d, s, l, i) {
+      w[l] = w[l] || [];
+      w[l].push({'gtm.start': new Date().getTime(), event: 'gtm.js'});
+      var f = d.getElementsByTagName(s)[0],
+        j = d.createElement(s),
+        dl = l != 'dataLayer'
+          ? '&l=' + l
+          : '';
+      j.async = true;
+      j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+      f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-WJCV5N6');
+  </script>
+    <!-- End Google Tag Manager -->
+    
+    <script async>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', 'AW-803681812');
+    </script>
+    <!-- End Global site tag (gtag.js)-->
+    {% if template contains 'product' %}
+      <script type="text/javascript">
+        var json_product = {{ product | json }};
+      </script>
+      <script>
+        var ecomm_prodid = [];
+        for (var i = 0; i < json_product.variants.length; i++) 
+          ecomm_prodid.push('{{product.selected_or_first_available_variant.sku}}');
+        
+      </script>
+      <script type="text/javascript">
+        var google_tag_params = {
+        ecomm_prodid: ecomm_prodid,
+                                                                                              ecomm_pagetype: 'product',
+                                                                                              ecomm_totalvalue: parseFloat('{{ product.price | money_without_currency | remove: "," }}')
+        };
+      </script>
+    {% elsif template contains 'collection' %}
+      <script type="text/javascript">
+        var google_tag_params = {
+        ecomm_pagetype: 'category'
+                                                                                                                                      };
+      </script>
+    {% elsif template contains 'cart' %}
+      <script type="text/javascript">
+        var id = new Array();
+        {% for item in cart.items %}
+          id.push('{{ item.product.selected_or_first_available_variant.sku }}');
+        {% endfor %}
+
+        var google_tag_params = {
+        ecomm_prodid: id,
+        ecomm_pagetype: 'cart',
+        ecomm_totalvalue: parseFloat('{{ cart.total_price | money_without_currency | remove: "," }}')
+        };
+      </script>
+    {% elsif template contains 'search' %}
+      <script type="text/javascript">
+        var google_tag_params = {
+        ecomm_pagetype:'searchresults'                                                                                                                          };
+      </script>
+    {% elsif template contains 'index' %}
+      <script type="text/javascript">
+        var google_tag_params = {
+        ecomm_pagetype: 'home'
+                                                                                                                                      };
+      </script>
+    {% else %}
+      <script type="text/javascript">
+        var google_tag_params = {
+        ecomm_pagetype: 'other'
+                                                                                                                                      };
+      </script>
+    {% endif %}
+    {%- assign productCategory = '' -%}
+    {%- assign productPrice = '' -%}
+    {%- assign productTitle = cart.items | map: 'title' | join: ', ' -%}
+    {%- assign itemCount = 0 -%}
+    {%- for line in cart.items -%}
+      {%- assign itemCount = itemCount | plus: line.quantity -%}
+      {%- capture productCategory -%}
+        {%- if productCategory == blank -%}
+          {{- line.product.type -}}
+        {%- else -%}
+          {{- productCategory -}}, {{- line.product.type -}}
+        {%- endif -%}
+      {%- endcapture -%}
+      {%- capture productPrice -%}
+        {%- if productPrice == blank -%}
+          {{- line.original_line_price | money -}}
+        {%- else -%}
+          {{- productPrice -}}, {{- line.original_line_price | money -}}
+        {%- endif -%}
+      {%- endcapture -%}
+    {%- endfor -%}
+    <script async>
+      gtag('event', 'page_view', {
+        'send_to': 'AW-803681812',
+        'ecomm_prodid': window.google_tag_params.ecomm_prodid,
+        'ecomm_pagetype': window.google_tag_params.ecomm_pagetype,
+        'ecomm_totalvalue': window.google_tag_params.ecomm_totalvalue
+      });
+      gtag('event', 'conversion', {
+        'allow_custom_scripts': true,
+        'u1':{% if productCategory == blank %}null
+        {% else %}
+          {{ productCategory | json}}
+        {% endif %},
+        'u2':{% if productTitle == blank %}null
+        {% else %}
+          {{ productTitle | json }}
+        {% endif %},
+        'u3': '{{productPrice | json}}',
+        'u4': {{ cart.item_count | json }},
+        'u5': '{{cart.total_price | money}}',
+        'send_to': 'DC-11868793/nes_disp/nesta001+unique'
+      });
+      </script>
+          {%- assign productCategory = '' -%}
+    {%- assign productPrice = '' -%}
+    {%- assign productTitle = cart.items | map: 'title' | join: ', ' -%}
+    {%- assign itemCount = 0 -%}
+    {%- for line in cart.items -%}
+      {%- assign itemCount = itemCount | plus: line.quantity -%}
+      {%- capture productCategory -%}
+        {%- if productCategory == blank -%}
+          {{- line.product.type -}}
+        {%- else -%}
+          {{- productCategory -}}, {{- line.product.type -}}
+        {%- endif -%}
+      {%- endcapture -%}
+      {%- capture productPrice -%}
+        {%- if productPrice == blank -%}
+          {{- line.original_line_price | money -}}
+        {%- else -%}
+          {{- productPrice -}}, {{- line.original_line_price | money -}}
+        {%- endif -%}
+      {%- endcapture -%}
+    {%- endfor -%}
+    <script async>
+      gtag('event', 'page_view', {
+        'send_to': 'AW-803681812',
+        'ecomm_prodid': window.google_tag_params.ecomm_prodid,
+        'ecomm_pagetype': window.google_tag_params.ecomm_pagetype,
+        'ecomm_totalvalue': window.google_tag_params.ecomm_totalvalue
+      });
+      gtag('event', 'conversion', {
+        'allow_custom_scripts': true,
+        'u1':{% if productCategory == blank %}null
+        {% else %}
+          {{ productCategory | json}}
+        {% endif %},
+        'u2':{% if productTitle == blank %}null
+        {% else %}
+          {{ productTitle | json }}
+        {% endif %},
+        'u3': '{{productPrice | json}}',
+        'u4': {{ cart.item_count | json }},
+        'u5': '{{cart.total_price | money}}',
+        'send_to': 'DC-11868793/nes_disp/nesta001+unique'
+      });
+
+// $(window).load(function () {
+// var currentURL = window.location.href;
+// if (currentURL.includes("/account/address")) {
+// window.location.href = '/pages/profile'
+// }
+// })
+    </script>
+    <!-- end of google dynamic remarketing tag for theme.liquid -->
+
+    <!-- Global site tag (gtag.js) - Google Marketing Platform -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=DC-11868793"></script>
+    <script async>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+
+      gtag('config', 'DC-11868793', {
+        'dc_natural_search': {
+          'exclusion_parameters': ['gclid\x3d*'],
+          'engines': {
+            'google': '527599261;335297567;c'
+          }
+        }
+      });
+    </script>
+        <script type="text/lazyload">
+      (function(c,l,a,r,i,t,y){
+      c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+          t=l.createElement(r);t.defer=1;t.src="https://www.clarity.ms/tag/"+i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      })(window, document, "clarity", "script", "dmc5kx06ad");
+    </script>

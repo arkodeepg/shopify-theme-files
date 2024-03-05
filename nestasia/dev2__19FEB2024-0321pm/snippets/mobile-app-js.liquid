@@ -1,0 +1,51 @@
+{%- assign page_url = content_for_header | split:'"pageurl":"' | last | split:'"' | first | split: request.host | last | replace:'\/','/' | replace:'%20',' ' | replace:'\u0026','&'  -%}
+{% assign view_mode = blank %}
+
+{%- for i in (1..1) -%}
+
+  {%- unless page_url contains "?" -%}{% break %}{%- endunless -%}
+  {%- assign query_string = page_url | split:'?' | last -%}
+  {%- assign qry_parts= query_string | split:'&' -%}
+
+  {%- for part in qry_parts -%}
+    {%- assign key_and_value = part | split:'=' -%}
+    {%- if key_and_value.size > 1 -%}
+      {% if key_and_value[0] == 'view_mode' %}
+        {% assign view_mode = key_and_value[1] %}
+      {% endif %}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endfor -%}
+{%- assign templateNames = 'article,blog,page' | split: ","-%}
+{% if view_mode != blank and view_mode == "mobile_view" and templateNames contains template.name  %}
+ {% style %}
+    [data-section-id="header-announcement"],[data-section-id="header"], header, .header-announcement {display:none !important}
+    #shopify-section-header-announcement, #shopify-section-header, footer {display:none !important}
+ {% endstyle  %}
+{% endif  %}
+<script>
+    window.MOBILE_APP_SDK = window.MOBILE_APP_SDK || {};
+    window.MOBILE_APP_SDK.template_name = "{{-template.name-}}";
+    window.MOBILE_APP_SDK.hideForTemplates = ['article','blog','page'];
+    window.MOBILE_APP_SDK.getURLParamsByName = (name) => {
+        let urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(name) || undefined;
+    }
+    window.MOBILE_APP_SDK.hideHeader = (isHidden) => {
+        let _isHidden = isHidden === undefined ? (window.MOBILE_APP_SDK.getURLParamsByName('view_mode') === 'mobile_view' && window.MOBILE_APP_SDK.hideForTemplates.includes(window.MOBILE_APP_SDK.template_name) === true) : false; 
+        _isHidden === true ? (
+            document.getElementById('shopify-section-header-announcement') && document.getElementById('shopify-section-header-announcement').remove(),
+            document.getElementById('shopify-section-header') && document.getElementById('shopify-section-header').remove()
+        ) : undefined;
+    }
+    window.MOBILE_APP_SDK.hideFooter = (isHidden) => {
+        let _isHidden = isHidden === undefined ? (window.MOBILE_APP_SDK.getURLParamsByName('view_mode') === 'mobile_view' && window.MOBILE_APP_SDK.hideForTemplates.includes(window.MOBILE_APP_SDK.template_name) === true) : false; 
+        _isHidden === true ? (
+            document.querySelector('footer') && document.querySelector('footer').remove()
+        ) : undefined;
+    }
+    (() => {
+        window.MOBILE_APP_SDK.hideHeader();
+        window.MOBILE_APP_SDK.hideFooter();
+    })();
+</script>

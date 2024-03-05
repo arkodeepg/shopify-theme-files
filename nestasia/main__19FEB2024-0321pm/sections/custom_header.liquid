@@ -1,0 +1,1063 @@
+<style>
+    .header-wishlist {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+  }
+    .hoverlink1ul.linkSM1.oneline{
+      position: relative;
+    }
+    .hoverlink1ul.linkSM1.oneline .link1ul{
+        padding: calc(var(--master_spacing)/3) 0 !important;
+        text-wrap: nowrap;
+        width: max-content;
+        min-width: 275px;
+        /* z-index: -1; */
+    }
+      .menu-red{
+        color: #c24352 !important;
+      }
+      .link1img {
+          margin: 0;
+          margin-left: calc(var(--master_spacing)/3);
+          /* margin-top: 0; */
+          object-fit: contain;
+          align-self: flex-start;
+      }
+        .header-profile_cont {
+            position: relative;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+        .shopify-section-header {
+          position: -webkit-sticky;
+          position: sticky;
+          top: 0;
+          z-index: 9999;
+          background: white;
+        }
+
+        .p-relative a {
+          text-wrap: nowrap;
+        }
+
+        .link1ul {
+          top: 100%;
+          left: 0;
+          position: absolute;
+          display: none;
+          height: fit-content;
+          width: 100%;
+          list-style: none;
+          padding: 40px 100px !important;
+          margin: 0 auto;
+          flex-direction: row-reverse;
+          justify-content: flex-end;
+        }
+
+        .link1li,
+        .link1ul_sep {
+          width: auto;
+          border-right: 1px solid #e5e5e5;
+          height: auto;
+          box-sizing: border-box;
+        }
+
+        .link1li:last-child,
+        .link1ul_sep:last-child {
+          border-right: none;
+        }
+
+        .hoverlink1ul > a {
+          display: flex;
+          align-items: center;
+          position: relative;
+          color: black;
+        }
+
+        .hoverlink1ul ul {
+          list-style: none;
+          padding: 0;
+        }
+
+        .hoverlink1ul {
+          padding: 0 10px;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .header-logo {
+          padding: calc(var(--master_spacing) / 1.5) 0;
+          margin: 0;
+          cursor: pointer;
+          max-width: 130px;
+        }
+
+        .icon-header svg {
+          width: 19px;
+          height: 19px;
+        }
+
+      .search-form{
+        display: none;
+      }
+
+        .icon-wishlist {
+          margin: 0;
+          width: 17px;
+          height: 17px;
+        }
+
+        .divForCartAndAcc {
+          gap: 10px;
+        }
+
+        .header-center {
+          border-bottom: 0.5px solid #0000001a;
+        }
+
+        .link1ul a {
+          display: flex;
+          padding: calc(var(--master_spacing) / 3) 0;
+          align-items: center;
+          gap: 4px;
+        }
+
+        .link1ul a > img {
+          margin: 0;
+        }
+
+        .DivFrohambergur {
+          display: none;
+        }
+
+        .icon {
+          font-family: var(--icon_font) !important;
+          speak: none;
+          font-style: normal;
+          font-weight: 400;
+          font-variant: normal;
+          text-transform: none;
+          line-height: 1;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+
+        .hambergerIcon:before {
+          border-top: 2px solid;
+          content: '';
+          display: block;
+          -webkit-transform: translate(0, 50%);
+          -moz-transform: translate(0, 50%);
+          -o-transform: translate(0, 50%);
+          -ms-transform: translate(0, 50%);
+          transform: translate(0, 50%);
+          -webkit-transition: all 0.25s ease 0s;
+          -moz-transition: all 0.25s ease 0s;
+          -ms-transition: all 0.25s ease 0s;
+          -o-transition: all 0.25s ease 0s;
+          transition: all 0.25s ease 0s;
+          -webkit-backface-visibility: hidden;
+          -moz-backface-visibility: hidden;
+          -ms-backface-visibility: hidden;
+          backface-visibility: hidden;
+          width: calc(var(--large) - 4px);
+        }
+
+        .hambergerIcon:after {
+          border-top: 2px solid;
+          border-bottom: 2px solid;
+          content: '';
+          display: block;
+          height: 10px;
+          /* position: absolute;
+                  right: 0;
+                  top: 50%; */
+          -webkit-transform: translate(0, -50%);
+          -moz-transform: translate(0, -50%);
+          -o-transform: translate(0, -50%);
+          -ms-transform: translate(0, -50%);
+          transform: translate(0, -50%);
+          width: calc(var(--large) - 4px);
+        }
+
+        .header_outer {
+          border-bottom: 1px solid var(--line_color);
+          z-index: 2;
+          position: relative;
+          background-color: white;
+        }
+
+        .img-align_cont {
+          display: flex;
+          align-items: center;
+          gap: 0px;
+        }
+
+        .link2li > img {
+          margin: 0;
+        }
+        #customer-account ul.profile-dropdown {
+          /* display: block; */
+          display: none;
+          position: absolute;
+          background: #fff;
+          border-top: none;
+          height: auto;
+          left: -132px;
+          min-width: 180px;
+          width: 100%;
+          padding: 0px;
+          right: -1px;
+          top: 70%;
+          white-space: normal;
+          z-index: 999999;
+          text-align: left;
+          visibility: visible;
+          border-radius: 4px;
+          /* box-shadow: 5px 5px 5px 5px #cccccc; */
+          filter: drop-shadow(0px 2px 8px rgba(0, 0, 0, 0.16));
+      }
+      .profile-dropdown:after, .profile-dropdown:before {
+          bottom: 100%;
+          left: 76%;
+          border: solid transparent;
+          content: "";
+          height: 0;
+          width: 0;
+          position: absolute;
+          pointer-events: none;
+          border-left: 6px solid transparent;
+          border-right: 6px solid transparent;
+          border-bottom: 6px solid white;
+      }
+      #customer-account ul.profile-dropdown li{
+          list-style-type: none;
+      }
+      #customer-account ul.profile-dropdown li a, #customer-account ul.profile-dropdown li.customer-name {
+          padding: 12px 16px;
+          display: block;
+          line-height: normal;
+          min-height: auto;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      }
+      #customer-account ul.profile-dropdown li a span {
+          font-size: 14px;
+          font-weight: 500;
+          background: transparent;
+      }
+      #customer-account ul.profile-dropdown li:not(.customer-name):hover {
+          text-decoration: none;
+          background: #F7F4ED;
+          cursor: pointer;
+      }
+      .customer-name span {
+          font-size: 16px;
+          font-weight: 700;
+          color: #343434;
+          display: inline;
+          max-width: 165px;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+      }
+      #customer-account ul.profile-dropdown li:last-child a span {
+          color: #C24352;
+      }
+      /* #customer-account ul.profile-dropdown li {
+      } */
+
+        .hoverlink1ul_child[title='Sale'] > a,
+        .hoverlink1ul_child[title='Sale'] > span {
+          color: #c24352 !important;
+        }
+      a.header-cart.cart-open-btn {
+          position: relative;
+      }
+        span.header__cart-quantity {
+          vertical-align: middle;
+          height: 8px;
+          line-height: 8px;
+          margin-top: 1px;
+          position: absolute;
+          top: 50%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          transform: translate(-50%, -50%);
+          left: 50%;
+          font-size: 10px;
+          text-wrap: nowrap;
+      }
+        .header_outer a:hover{
+            color: var(--button_color);
+          }
+          .hoverlink1ul_child a{
+            color: #292929;
+            transform: translateY(3px);
+          }
+          .hoverlink1ul_child a:focus{
+            text-decoration: none;
+          }
+          .hoverlink1ul_child-title {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+      }
+      .hoverlink1ul_child-title img {
+        margin: 0;
+        padding: 0;
+      }
+      .header-searchbar {
+        width: 100%;
+        background: transparent;
+      }
+      .text-center input[type="text"].search-field {
+        text-align: center;
+        border: 2px solid #96865d !important;
+        border-radius: 0px;
+        outline: 0px !important;
+        height: 40px;
+      }
+
+    .link1ul_sep>li{
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .link1ul_sep>li>img{
+      margin: 0;
+    }
+          .conlymobile{
+          display: block;
+        }
+        .conlydesktop{
+          display: none
+        }
+
+
+      @media screen and (min-width: 1201px) {
+    .conlymobile{
+      display: none;
+    }
+    .conlydesktop{
+      display: block;
+    }
+        .link1ul_sep {
+            font-size: var(--x_small);
+            font-weight: bold;
+            padding: 0 40px !important;
+            {% comment %} display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            height: fit-content;
+            column-gap: 10px;
+            border: none; {% endcomment %}
+        }
+        .hoverlink1ul_child {
+            font-size: 13px;
+            letter-spacing: 0.005em;
+            font-weight: 500;
+            color: var(--headline_font_color);
+            text-transform: uppercase;
+            width: -webkit-fill-available;
+            display: flex;
+        }
+        .link1a > a.link {
+            padding: calc(var(--master_spacing)/3) 30px;
+            font-size: var(--x_small);
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        .link2li {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          {% comment %} padding: 18px 20px 18px calc(var(--master_spacing) * 1.5) !important; {% endcomment %}
+          padding: 0 30px;
+        }
+        .hoverlink1ul:hover .link1ul {
+          display: flex;
+        }
+        {% comment %} .hoverlink1ul:hover a:after {
+          content: '';
+          display: block;
+          height: 3px;
+          width: 100%;
+          background-color: var(--button_color);
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+        } {% endcomment %}
+
+        .header-overlay{
+        display: none;
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        left: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        top: 0;
+        z-index: 1;
+        transition: all 0.5s;
+      }
+
+        .search-overlay{
+        display: none;
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        left: 0;
+        background-color: rgba(0, 0, 0, 0.0);
+        top: 0;
+        z-index: 1;
+        transition: all 0.5s;
+      }
+      .hoverlink1ul:hover {
+          border-bottom: 3px solid var(--button_color);
+      }
+      .hoverlink1ul {
+          border-bottom: 3px solid transparent;
+      }
+      #header-navigation .gift-text-icon {
+          width: 34px;
+          fill: #8b7848;
+      }
+      }
+        @media screen and (max-width: 1281px) {
+          #header-navigation .container {
+              padding-inline: 20px;
+          }
+          .header_outer{
+            z-index:unset;
+          }
+          .link2li {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 18px 20px 18px calc(var(--master_spacing) * 1.5) !important;
+            {% comment %} padding: 0 40px; {% endcomment %}
+          }
+          .header-overlay{
+          display: none;
+          width: 100%;
+          height: 100%;
+          position: fixed;
+          left: 0;
+          background-color: rgba(0, 0, 0, 0.5);
+          top: 0;
+          z-index: 1;
+          transition: all 0.5s;
+        }
+
+          .search-overlay{
+          display: none;
+          width: 100%;
+          height: 100%;
+          position: fixed;
+          left: 0;
+          background-color: rgba(0, 0, 0, 0.0);
+          top: 0;
+          z-index: 1;
+          transition: all 0.5s;
+        }
+          .link1ul {
+            display: none;
+            position: unset;
+            padding: unset !important;
+          }
+
+          .header-center {
+            /* display: none; */
+            flex-direction: column;
+            position: fixed;
+            background-color: white;
+            height: 100vh;
+            top: 0;
+            left: -330px;
+            max-width: 330px;
+            width: 100%;
+            z-index: 9;
+            overflow-y: scroll;
+            transition: all .5s;
+          }
+
+          .hoverlink1ul_child {
+            display: flex;
+            justify-content: space-between;
+            width: -webkit-fill-available;
+            padding: 18px 20px;
+            border-bottom: 0.5px solid #0000001a;
+            font-size: 15px;
+            letter-spacing: 0.005em;
+            font-weight: 500;
+            color: var(--headline_font_color);
+            text-transform: uppercase;
+          }
+
+          .hoverlink1ul {
+            align-items: center;
+            display: flex;
+            margin: 0;
+            /* padding: 18px 20px; */
+            padding: unset;
+            /* position: relative; */
+            text-align: left;
+            border-bottom: 0.5px solid #0000001a;
+            flex-direction: column;
+          }
+          .hoverlink1ul ul {
+            list-style: none;
+            padding: 0;
+            width: -webkit-fill-available;
+          }
+          .DivFrohambergur {
+            display: block;
+            transform: translate(0px, 50%);
+          }
+
+          .header-logo {
+            max-width: 110px;
+          }
+
+          .link1li {
+            background-color: #f7f4ed;
+          }
+          .link2ul {
+            display: none;
+            background: #eee8dd;
+          }
+          .link1ul a {
+            padding: unset;
+            font-size: 15.5px;
+            color: #4c4c4c;
+          }
+          .link1a {
+            display: flex;
+            justify-content: space-between;
+            padding: 18px 20px 18px calc(var(--master_spacing) * 1.5) !important;
+          }
+          ul.link1ul_sep li {
+            padding: 18px 20px 18px calc(var(--master_spacing) * 1.5);
+            background-color: #f7f4ed;
+            display: flex;
+            gap: 4px;
+          }
+          .header-mobile_banner{
+            padding: 0;
+            margin: 0;
+          }
+          .mobMenuActive{
+            left: 0px !important;
+          }
+
+          .hoverlink1ul_child:not(.link1ul_active) .icon-chevron-down:before {
+            content: url('data:image/svg+xml; utf8,{%- render 'svg-icons' icon: 'plus-icon' -%}');
+            scale: 0.66;
+          }
+          .hoverlink1ul_child.link1ul_active .icon-chevron-down:before {
+            content: url('data:image/svg+xml; utf8,{%- render 'svg-icons' icon: 'minus-icon' -%}');
+            scale: 0.66;
+          }
+          .link1a:not(.link1a_active) .link1a_icon:before {
+            content: url('data:image/svg+xml; utf8,{%- render 'svg-icons' icon: 'plus-icon' -%}');
+            scale: 0.66;
+          }
+          .link1a.link1a_active .link1a_icon:before {
+            content: url('data:image/svg+xml; utf8,{%- render 'svg-icons' icon: 'minus-icon' -%}');
+            scale: 0.66;
+          }
+          {% comment %}.hoverlink1ul_child:not(.link1ul_active) .icon-chevron-down:before {
+            content: '+';
+          }
+          .hoverlink1ul_child.link1ul_active .icon-chevron-down:before {
+                content: '-';
+          } {% endcomment %}
+          .hoverlink1ul_child-title .conlymobile > img{
+            width: 22px;
+          }
+          .menu-gold{
+            color: rgb(150, 134, 93) !important;
+          }
+          .hoverlink1ul.linkSM1.oneline .link1ul {
+              padding: 0 !important;
+              text-wrap: nowrap;
+              width: -webkit-fill-available;
+              min-width: unset;
+          }
+          .hoverlink1ul_child a{
+            transform: none;
+          }
+          .hambergerIcon {
+              margin-right: 10px;
+          }
+      }
+
+      /* sauvik changes */
+   @media screen and (min-width: 1100px) and (max-width: 1300px) {
+      .hoverlink1ul {
+          padding: 0 7px;
+        }
+   }
+
+
+    @media screen and (min-width: 1280px) and (max-width: 1400px) {
+       {% comment %}
+     /* sauvik changes */
+        .link1ul{
+        padding: 70px !important;
+     }
+     .link2li a{
+        white-space: nowrap;
+     }
+     .link1ul a{
+        white-space: nowrap;
+     }   {% endcomment %}
+
+      .link1ul {
+         padding: 50px !important;
+      }
+    }
+</style>
+<div class="header_outer" id="header-navigation">
+  <div class="container flex justify-between">
+    <div title="{{ shop.name | escape }}" class="img-align_cont">
+      <div class="DivFrohambergur">
+        <div class="hambergerIcon"></div>
+      </div>
+      <img
+        onclick="window.location.href = '{{ shop.url }}';"
+        class="width-100 header-logo"
+        width="{{ section.settings.logo.width }}"
+        height="{{ section.settings.logo.height }}"
+        src="{{ section.settings.logo | img_url:'x200'}}"
+      >
+    </div>
+
+    <div class="flex header-center">
+      {% if section.settings.mob_banner %}
+        <a href="{{ section.settings.mob_banner_url }}" class="conlymobile">
+          <img
+            loading="lazy"
+            class="header-mobile_banner header-mobile_banner-top lazy"
+            width="{{ section.settings.mob_banner.width }}"
+            height="{{ section.settings.mob_banner.height }}"
+            data-src="{{section.settings.mob_banner | image_url: width: '600' }}"
+            alt="{{section.settings.mob_banner.alt }}"
+          >
+        </a>
+      {% endif %}
+
+      {%- for link in linklists[section.settings.menu].links -%}
+        {% comment %}
+          <script defer>
+          console.log(`
+          ------------------
+          {% assign msc = 0 %}
+          {% if link.links != blank %}
+            {% for sub_link in link.links %}
+                {% if sub_link.links != blank %}
+                  {% assign msc = msc | plus: 1 %}
+                  {{ sub_link.title }}
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+
+              {% assign blk = 0 %}
+                {% for sub_link in link.links %}
+                    {% if sub_link.links == blank %}
+                      {% assign blk = blk | plus: 1 %}}
+                      {{ sub_link.title }}
+                      {% endif %}{% endfor %}
+          {% liquid
+            if blk > 0
+              assign msc = msc | plus: 1
+            endif
+          %}
+
+          final msc - {{msc}}
+          ------------------
+
+          `)
+
+
+          </script>
+        {% endcomment %}
+
+        {% assign msc = 0 %}
+        {% if link.links != blank %}
+          {% for sub_link in link.links %}
+            {% if sub_link.links != blank %}
+              {% assign msc = msc | plus: 1 %}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+
+        {% assign blk = 0 %}
+        {% for sub_link in link.links %}
+          {% if sub_link.links == blank %}
+            {% assign blk = blk | plus: 1 %}
+          {% endif -%}
+        {%- endfor %}
+        {% liquid
+          if blk > 0
+            assign msc = msc | plus: 1
+          endif
+        %}
+
+        <div class="hoverlink1ul linkSM1 flex {{ displayMegamenuCheck }} {% if msc == 1 %}oneline{% endif %}">
+          <div class="hoverlink1ul_child {% if link.links != blank %}header_dropdown{% endif %}" title="{{link.title}}">
+            <div class="hoverlink1ul_child-title">
+              {% if link.title == 'Gifts' -%}
+                <a href="{{ link.url }}" class="conlydesktop">{%- render 'svg-icons', icon: 'gift-text' -%}</a>
+              {%- endif %}
+
+              <span class="conlymobile">
+                {%- if link.title == 'Sale' -%}
+                  <img
+                    class="lazy"
+                    loading="lazy"
+                    src="//nestasia.in/cdn/shop/files/1_c2409236-0b6f-4102-bb8b-535ef3d834aa.png?v=1687709585"
+                  >
+                {%- endif %}
+                {% if link.title == 'Luxe' -%}
+                  <img
+                    class="lazy"
+                    loading="lazy"
+                    src="//nestasia.in/cdn/shop/files/Revamp_Icons_by_Arijit_square-59_1.png?v=1687553319"
+                  >
+                {%- endif %}
+                {% if link.title == 'Gifts' -%}
+                  <img
+                    class="lazy"
+                    loading="lazy"
+                    src="//nestasia.in/cdn/shop/files/gift-box-svgrepo-com_1.png?v=1687708417"
+                  >
+                {%- endif %}
+              </span>
+              <a
+                class="{% if link.title == 'Gifts' %}conlymobile{% endif %} {% if link.title == 'Sale' %}menu-red{% endif %} {% if link.title == 'Gifts' or link.title == 'Luxe' %}menu-gold{% endif %}"
+                href="{{ link.url }} "
+              >
+                {{ link.title }}
+              </a>
+              <span class="conlymobile">
+                {%- if link.object.metafields.custom.menu_img -%}
+                  {{- link.object.metafields.custom.menu_img | image_url: height: 12 | image_tag -}}
+                {%- endif -%}
+              </span>
+            </div>
+            {% if link.links != blank -%}
+              <span class="conlymobile smIcon icon icon-chevron-down"></span>
+            {%- endif %}
+          </div>
+
+          {% if link.links != blank %}
+            <ul class="link1ul bg-white">
+              {% for sub_link in link.links %}
+                {% if sub_link.links != blank %}
+                  <li class="link1li">
+                    <div class="link1a">
+                      <a class="link" href="{{ sub_link.url }}">
+                        {{- sub_link.title }}
+                        {% if sub_link.object.metafields.custom.menu_img %}
+                          {{
+                            sub_link.object.metafields.custom.menu_img
+                            | image_url: height: 12
+                            | image_tag: class: 'tagimg'
+                          }}
+                        {% endif -%}
+                      </a>
+                      <span class="conlymobile link1a_icon icon"></span>
+                    </div>
+                    <ul class="link2ul">
+                      {% for sub_link_grand in sub_link.links %}
+                        {% if sub_link_grand != blank %}
+                          <li class="link2li">
+                            {% assign subtext = sub_link_grand.title | split: ' ' | slice: 0, 2 | join: '' | upcase %}
+                            {% assign sa = 'SHOPALL' %}
+                            <a href="{{ sub_link_grand.url }}">{{ sub_link_grand.title }}</a>
+                            {% if sub_link_grand.object.metafields.custom.menu_img and subtext != sa %}
+                              {% comment %}{{ sub_link_grand.object.metafields.custom.menu_img | image_url: height: 12 | image_tag }}{% endcomment %}
+                              <img
+                                loading="lazy"
+                                class="lazy tagimg"
+                                data-src="{{ sub_link_grand.object.metafields.custom.menu_img | image_url: height: 12  }}"
+                                height="{{ sub_link_grand.object.metafields.custom.menu_img.height }}"
+                                width="{{ sub_link_grand.object.metafields.custom.menu_img.width }}"
+                                alt="{{ sub_link_grand.title }}"
+                              >
+                            {% endif %}
+                          </li>
+                        {% endif %}
+                      {% endfor %}
+                    </ul>
+                  </li>
+                {% endif %}
+              {% endfor %}
+
+              <ul class="link1ul_sep">
+                {% for sub_link in link.links %}
+                  {% if sub_link.links == blank %}
+                    <li>
+                      <a href="{{ sub_link.url }}">{{ sub_link.title }}</a>
+                      {% if sub_link.object.metafields.custom.menu_img %}
+                        <img
+                          loading="lazy"
+                          class="lazy tagimg"
+                          data-src="{{ sub_link.object.metafields.custom.menu_img | image_url: height: 12 }}"
+                          height="{{ sub_link.object.metafields.custom.menu_img.height }}"
+                          width="{{ sub_link.object.metafields.custom.menu_img.width }}"
+                          alt="{{ sub_link.title }}"
+                        >
+                      {% endif %}
+                    </li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
+
+              {% if link.object.featured_image %}
+                <img
+                  loading="lazy"
+                  class="link1img conlydesktop lazy"
+                  height="200"
+                  width="200"
+                  data-src="{{ link.object.featured_image | image_url: width: 200 }}"
+                >
+              {% endif %}
+            </ul>
+          {% endif %}
+        </div>
+      {% endfor %}
+      <div class="hoverlink1ul linkSM1 flex conlymobile">
+        <div class="hoverlink1ul_child " title="New In 🆕">
+          <a href="/pages/store-locator" class="hoverlink1ul_child-title hamburger-store-locator-cont">
+            <img
+              src="//nestasia.in/cdn/shop/files/store-ecommerce-shop-svgrepo-com_1.svg?v=1704847658&amp;width=26"
+              alt=""
+              srcset="//nestasia.in/cdn/shop/files/store-ecommerce-shop-svgrepo-com_1.svg?v=1704847658&amp;width=26 26w"
+              width="26"
+              height="26"
+              class="store-locator-icon"
+            >
+            <span class="menu-gold">Find A Store</span>
+          </a>
+        </div>
+      </div>
+      {% if section.settings['mob_banner-bot'] %}
+        <a class="conlymobile" href="{{ section.settings.mob_banner-bot_url }}">
+          <img
+            class="header-mobile_banner header-mobile_banner-bot lazy"
+            loading="lazy"
+            height="{{ section.settings.mob_banner-bot.height }}"
+            width="{{ section.settings.mob_banner-bot.width }}"
+            data-src="{{section.settings.mob_banner-bot | image_url: width : 330 }}"
+            alt="{{section.settings.mob_banner-bot.alt }}"
+          >
+        </a>
+      {% endif %}
+    </div>
+
+    <div class="divForCartAndAcc flex align-center">
+      <a href="javascript:void(0)" class="header-search"
+        ><span class="icon icon-header icon-search" aria-label="Search">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-6 h-6"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+          </svg></span
+      ></a>
+      <a href="/pages/wishlist" class="header-wishlist">
+        <svg
+          class="icon-wishlist"
+          width="17"
+          height="17"
+          viewBox="0 0 20 20"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path d="M19 7.79181C18.9373 8.14101 18.8939 8.49618 18.8103 8.83643C18.5718 9.73362 18.153 10.5729 17.5795 11.3032C16.7206 12.4538 15.6751 13.4268 14.5922 14.3654C13.3285 15.4697 12.0529 16.5681 10.7713 17.6694C10.2799 18.0917 9.75264 18.1171 9.27765 17.7008C7.61669 16.2562 5.94974 14.8206 4.3067 13.3566C3.45402 12.6101 2.70637 11.7516 2.08411 10.8048C0.975797 9.09908 0.675568 7.26651 1.3776 5.33844C2.01241 3.59541 3.24021 2.45527 5.09984 2.09861C7.01922 1.72851 8.56517 2.41647 9.79297 3.88939C9.85272 3.96102 9.90799 4.03863 9.96624 4.11026L10.0125 4.14756C10.0798 4.06399 10.1455 3.97744 10.2127 3.89387C10.9252 3.02832 11.793 2.38961 12.9028 2.12696C13.8561 1.90782 14.8533 1.98068 15.7645 2.33604C16.6757 2.69141 17.4586 3.3128 18.0112 4.11921C18.5516 4.91645 18.881 5.83753 18.9686 6.79643C18.9686 6.85911 18.9895 6.92179 19 6.98446V7.79181ZM9.9991 16.9307C10.0454 16.8949 10.0827 16.868 10.1171 16.8382C11.5391 15.61 12.97 14.3863 14.3786 13.1507C15.3629 12.2836 16.2994 11.3599 17.0298 10.2615C17.7244 9.21697 18.0665 8.06938 17.9081 6.80389C17.7289 5.43991 17.1508 4.30575 15.9365 3.59242C14.8058 2.92834 13.6123 2.84626 12.4114 3.4223C11.7019 3.76404 11.1776 4.31769 10.7385 4.96088C10.6772 5.0534 10.6205 5.14891 10.5547 5.23845C10.4947 5.32927 10.4131 5.40379 10.3172 5.45535C10.2212 5.50692 10.114 5.5339 10.0051 5.5339C9.89615 5.5339 9.78892 5.50692 9.69299 5.45535C9.59706 5.40379 9.51543 5.32927 9.4554 5.23845C9.21439 4.8901 8.95304 4.55623 8.67272 4.2386C7.7317 3.23725 6.56813 2.85074 5.2268 3.14174C3.78092 3.45364 2.82945 4.36992 2.34401 5.74733C1.78537 7.34859 2.04527 8.85583 2.97583 10.2601C3.55762 11.124 4.24897 11.909 5.03263 12.5955C6.30823 13.7416 7.60922 14.8594 8.89975 15.9861C9.25674 16.298 9.62718 16.6114 9.9991 16.9307Z" fill="#4C4C4C"/>
+        </svg>
+      </a>
+      <div class="header-profile_cont" id="customer-account">
+        <a
+          class="header-profile"
+          href="javascript:void(0);"
+          {% unless customer %}
+            onclick="theme.loginWithPhoneOpen()"
+          {% endunless %}
+          ><span
+            class="icon icon-header icon-user"
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9.99913 11.1662C12.4537 11.1662 14.4436 9.17639 14.4436 6.72179C14.4436 4.26719 12.4537 2.27734 9.99913 2.27734C7.54453 2.27734 5.55469 4.26719 5.55469 6.72179C5.55469 9.17639 7.54453 11.1662 9.99913 11.1662Z" stroke="#4C4C4C" stroke-width="1.11111"/>
+              <path d="M3 19.4673C3 19.4673 3.00029 12 10.0006 12C17.0009 12 17 19.4673 17 19.4673" stroke="#4C4C4C"/>
+            </svg></span
+        ></a>
+        {% if customer %}
+          <ul class="profile-dropdown">
+            <li class="customer-name">
+              Hi, <span>{{ customer.first_name }}</span>
+            </li>
+            <li>
+              <a href="/account"><span>My Orders</span></a>
+            </li>
+            <li>
+              <a href="/pages/reward"><span>My Rewards</span></a>
+            </li>
+            <li>
+              <a href="/pages/my-profile"><span>My Profile</span></a>
+            </li>
+            <li>
+              <a href="/pages/wishlist"><span>My Wishlist</span></a>
+            </li>
+            <li>
+              <a href="/account/logout"><span>Logout</span></a>
+            </li>
+          </ul>
+        {% endif %}
+      </div>
+      <a href="javascript:void(0)" class="header-cart cart-open-btn">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g clip-path="url(#clip0_16_216)">
+          <path d="M14.0559 4.375C14.0559 3.80208 13.9329 3.2487 13.6868 2.71484C13.4407 2.19401 13.1169 1.73177 12.7154 1.32812C12.3138 0.924479 11.8476 0.598959 11.3165 0.351562C10.7984 0.117188 10.2609 0 9.70395 0C9.147 0 8.60948 0.117188 8.09139 0.351562C7.56034 0.598959 7.09406 0.924479 6.69254 1.32812C6.29102 1.73177 5.96721 2.19401 5.72111 2.71484C5.47502 3.2487 5.35197 3.80208 5.35197 4.375H1V16.875C1 17.8125 1.32381 18.5677 1.97142 19.1406C2.61904 19.7135 3.33141 20 4.10855 20H15.2993C16.0765 20 16.7889 19.7103 17.4365 19.1309C18.0841 18.5514 18.4079 17.7995 18.4079 16.875V4.375H14.0559ZM17.1645 16.875C17.1645 17.6562 16.9054 18.1641 16.3873 18.3984C15.8692 18.6328 15.2993 18.75 14.6776 18.75H4.73026C4.1215 18.75 3.55484 18.6328 3.03027 18.3984C2.50571 18.1641 2.24342 17.6562 2.24342 16.875V5.625H5.35197V8.125H6.59539V5.625H12.8125V8.125H14.0559V5.625H17.1645V16.875ZM6.59539 4.375C6.59539 3.6849 6.84149 2.99154 7.33368 2.29492C7.82586 1.59831 8.61595 1.25 9.70395 1.25C10.7919 1.25 11.582 1.59831 12.0742 2.29492C12.5664 2.99154 12.8125 3.6849 12.8125 4.375H6.59539Z" fill="#4C4C4C"/>
+          </g>
+          <defs>
+          <clipPath id="clip0_16_216">
+          <rect width="18" height="20" fill="white" transform="matrix(1 0 0 -1 1 20)"/>
+          </clipPath>
+          </defs>
+        </svg>
+
+        <span data-ajax-cart-bind="item_count" class="header__cart-quantity">
+          {{ cart.item_count }}
+        </span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="header-searchbar search open-slide">
+  <div class="container clearfix">
+    <div class="twelve">
+      {%- render 'search', search_class: 'header text-center' -%}
+    </div>
+  </div>
+</div>
+
+<div class="header-overlay"></div>
+<div class="search-overlay"></div>
+
+<script defer>
+  $(document).ready(function () {
+
+  $('.hoverlink1ul').hover(
+    function () {
+      if (!ccheckMobile()) $('.header-overlay').css('display', 'block');
+    },
+    function () {
+      if (!ccheckMobile()) $('.header-overlay').css('display', 'none');
+    }
+  );
+  });
+
+  $(document).on('click', '.hoverlink1ul .hoverlink1ul_child.header_dropdown', function (e) {
+    console.log('clicked');
+    if (ccheckMobile()) {
+      e.preventDefault();
+      $($(this)).parent().find('.link1ul').slideToggle();
+      $(this).toggleClass('link1ul_active');
+    }
+  });
+
+  $(document).on('click', '.link1a', function (e) {
+    console.log('clicked');
+    if (ccheckMobile()) {
+      e.preventDefault();
+      $($(this)).parent().find('.link2ul').slideToggle();
+      $(this).toggleClass('link1a_active');
+    }
+  });
+
+  // show hide the side navigation
+  $(document).on('click', '.DivFrohambergur', function () {
+    console.log('hamburger clicked');
+    $('.header-center').toggleClass('mobMenuActive');
+    $('.header-overlay').toggle();
+    $('body').css('overflow', 'hidden');
+  });
+
+  $(document).on('click', '.header-overlay', function () {
+    console.log('mobile overlay clicked');
+    $('.header-center').toggleClass('mobMenuActive');
+    $('.header-overlay').toggle();
+    $('body').css('overflow', '');
+  });
+  $(function () {
+    $('#customer-account').hover(
+      function () {
+        $('ul.profile-dropdown').css('display', 'block');
+      },
+      function () {
+        $('ul.profile-dropdown').css('display', 'none');
+      }
+    );
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Custom Header",
+  "class": "shopify-section-header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Company Logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "mob_banner",
+      "label": "Mobile banner top image"
+    },
+    {
+      "type": "url",
+      "id": "mob_banner_url",
+      "label": "Mobile banner top image url"
+    },
+    {
+      "type": "image_picker",
+      "id": "mob_banner-bot",
+      "label": "Mobile banner bottom image"
+    },
+    {
+      "type": "url",
+      "id": "mob_banner-bot_url",
+      "label": "Mobile banner bottom image url"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu"
+    }
+  ],
+  "presets": [
+    {
+      "name": "header"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

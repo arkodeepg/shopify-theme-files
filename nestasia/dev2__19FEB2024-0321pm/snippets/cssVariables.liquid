@@ -1,0 +1,232 @@
+{% style %}
+  	
+  {{ settings.header_type | font_face: font_display: 'swap' }}
+  {{ settings.base_type | font_face: font_display: 'swap' }}
+      @font-face {
+      font-family: 'Red_Plug_Design_v4';
+      src:
+      url({{ 'Red_Plug_Design_v4.woff2' | asset_url }}) format('woff2'),
+      url({{ 'Red_Plug_Design_v4.woff' | asset_url }}) format('woff');
+      font-display: swap;
+      font-weight: normal;
+      font-style: normal;
+    }
+  :root {
+    
+    /* DEFAULT COLORS */
+
+	--white:#fff;
+    --black:#000;
+    --background:{{ settings.background_color }};
+    --background_85:{{ settings.background_color | color_modify: 'alpha', 0.85 }};
+    --background_search:{{ settings.background_color }};
+    --body_font_color:{{ settings.body_font_color }};
+    --body_font_color_05:{{ settings.body_font_color | color_modify: 'alpha', 0.05 }};
+    --body_font_color_25:{{ settings.body_font_color | color_modify: 'alpha', 0.25 }};
+    --body_font_color_50:{{ settings.body_font_color | color_modify: 'alpha', 0.50 }};
+    --body_font_color_lighten_15:{{ settings.body_font_color | color_lighten: 15 }};
+    --body_font_color_darken_10:{{ settings.body_font_color | color_darken: 10 }};
+    --body_font_hover_color:{{ settings.hover_font_color }};
+    --headline_font_color:{{ settings.headline_font_color }};
+    --headline_font_color_00:{{ settings.headline_font_color | color_modify: 'alpha', 0.00 }};
+    --headline_font_color_05:{{ settings.headline_font_color | color_modify: 'alpha', 0.05 }};
+    --headline_font_color_08:{{ settings.headline_font_color | color_modify: 'alpha', 0.08 }};
+    --customer_background_color:{{ settings.customer_background_color }};
+    --customer_hover_background_color:{{ settings.customer_hover_background_color }};
+    --customer_font_color:{{ settings.customer_font_color }};
+    --customer_hover_font_color:{{ settings.customer_hover_font_color }};
+    --header_background_color:{{ settings.header_background_color }};
+    --header_background_color_75:{{ settings.header_background_color | color_modify: 'alpha', 0.75 }};
+    --header_font_color:{{ settings.header_font_color }};
+    --header_font_color_darken_15:{{ settings.header_font_color | color_darken: 15 }};
+    --header_hover_font_color:{{ settings.header_hover_font_color }};
+    --header_hover_font_color_darken_15:{{ settings.header_hover_font_color | color_darken: 15 }};
+    --announcement_background_color:{{ settings.announcement_background_color }};
+    --announcement_font_color:{{ settings.announcement_font_color }};
+    --announcement_hover_font_color:{{ settings.announcement_hover_font_color }};
+    --price_color:{{ settings.price_color }};
+    --rating_color:{{ settings.rating_color }};
+    --rating_background_color:{{ settings.rating_background_color }};
+
+    --button_border:{{ settings.button_border }}px;
+    --button_corner:{{ settings.button_corner }}px;
+    --button_primary_border:{{ settings.button_primary_border }};
+    --button_primary_background:{{ settings.button_primary_background }};
+    --button_primary_text:{{ settings.button_primary_text }};
+    --button_secondary_border:{{ settings.button_secondary_border }};
+    --button_secondary_text:{{ settings.button_secondary_text }};
+    --button_secondary_hover:{{ settings.button_secondary_hover }};
+  
+    --shipping_border_px:{{ settings.shipping_border_px }}px;
+    --shipping_border:{{ settings.shipping_border }};
+    --shipping_background:{{ settings.shipping_background }};
+    --shipping_text:{{ settings.shipping_text }};
+    
+    --accent_color:{{ settings.accent_color }};
+    --accent_color_25:{{ settings.accent_color | color_modify: 'alpha', 0.25 }};
+    --accent_color_lighten_30:{{ settings.accent_color | color_lighten: 30 }};
+    --accent_color_darken_15:{{ settings.accent_color | color_darken: 15 }};
+    --hover_accent_color:{{ settings.hover_accent_color }};
+    
+    --line_color:{{ settings.line_color }};
+    --line_color_05:{{ settings.line_color | color_modify: 'alpha', 0.05 }};
+    --line_color_darken_10:{{ settings.line_color | color_darken: 10 }};
+    --line_color_section:{{ settings.line_color }};
+    --success_color:{{ settings.success_color }};
+    --error_color:{{ settings.error_color }};
+    --error_color_00:{{ settings.error_color | color_modify: 'alpha', 0.00 }};
+    --error_color_75:{{ settings.error_color | color_modify: 'alpha', 0.75 }};
+    --section_color_primary:{{ settings.section_color_primary }};
+    --section_color_secondary:{{ settings.section_color_secondary }};
+    --badge_color:{{ settings.badge_color }};
+    --badge_background_color:{{ settings.badge_background_color }};
+    --a11ygrey:#767676;
+    
+    /* DEFAULT FONTS */
+
+    /* --headline_font:{{ settings.header_type.family }}, {{ settings.header_type.fallback_families }}; */
+    --headline_font:'garamond-premr-pro';
+    /* --headline_font_fallback:{{ settings.header_type.fallback_families }}; */
+    --headline_font_fallback:'garamond-premr-pro';
+    --headline_font_weight:{{ settings.header_type.weight }};
+  	--headline_font_weight_bold:700;
+  	--headline_font_weight_medium:500;
+  	--headline_font_style:{{ settings.header_type.style }};
+    --headline_font_uppercase:{% if settings.header_case %}uppercase{% else %}none{% endif %};
+
+    --body_font:{{ settings.base_type.family }}, {{ settings.base_type.fallback_families }};
+    --body_font_fallback:{{ settings.base_type.fallback_families }};        
+    --body_font_weight:{{ settings.base_type.weight }};
+    --body_font_weight_bold:700;
+    --body_font_weight_medium:500;
+  	--body_font_style:{{ settings.base_type.style }};
+    
+    /* SHOP PAY */
+    
+    --payment-terms-background-color: #fff;
+    --color-body-text: {{ settings.body_font_color }};
+    --color-body: #fff;
+    --color-bg: #fff;
+    
+    /* DEFAULT ICONS */
+
+    --icon_font:'Red_Plug_Design_v4';
+
+    --menu_plus: '\e904';
+    --menu_minus: '\e925';
+    --menu_times: '\e90c';
+
+    {%- liquid
+      assign line_color = settings.line_color | color_darken: 10 | replace: '#','%23'
+      assign accent_color = settings.accent_color | replace: '#','%23'
+      assign success_color = settings.success_color | replace: '#','%23'
+      assign error_color = settings.error_color | replace: '#','%23'
+    -%}
+    
+    --box: url("data:image/svg+xml,%3Csvg height='16' width='16' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.com/svgjs'%3E%3Cg%3E%3Cpath d='M0.500 0.499 L23.500 0.499 L23.500 23.499 L0.500 23.499 Z' fill='none' stroke='{{ line_color }}'/%3E%3C/g%3E%3C/svg%3E");
+    --square_solid: url("data:image/svg+xml,%3Csvg height='16' width='16' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.com/svgjs'%3E%3Cg%3E%3Crect x='7' y='7' width='10' height='10' fill='{{ accent_color }}' stroke='{{ accent_color }}'/%3E%3C/g%3E%3C/svg%3E");
+	--square_crossed: url("data:image/svg+xml,%3Csvg height='16' width='16' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.com/svgjs'%3E%3Cg%3E%3Cpath fill='none' stroke='{{ line_color }}' d='M7 16.999L17 6.999'/%3E%3Crect x='7' y='7' width='10' height='10' fill='none' stroke='{{ line_color }}'/%3E%3C/g%3E%3C/svg%3E");
+    --x_only: url("data:image/svg+xml,%3Csvg height='16' width='16' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.com/svgjs'%3E%3Cg%3E%3Cpath fill='none' stroke='{{ accent_color }}' d='M7 16.999L17 6.999' style='stroke-linecap: square;'/%3E%3Cpath fill='none' stroke='{{ accent_color }}' d='M17 16.999L7 6.999' style='stroke-linecap: square;'/%3E%3Crect x='-110' y='4.058' width='5.57' height='5.57' style='fill: rgb(216, 216, 216); stroke-linecap: square;'/%3E%3C/g%3E%3C/svg%3E");
+    --check: url("data:image/svg+xml,%3Csvg height='var(--x_small)' width='var(--x_small)' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.com/svgjs'%3E%3Cg transform='matrix(1,0,0,1,0,0)'%3E%3Cpath d='M18 6.999L11 16.499 6 12.499' fill='none' stroke='{{ accent_color }}' style='stroke-width: 4px;'%3E%3C/path%3E%3C/g%3E%3C/svg%3E");
+    --bell: url("data:image/svg+xml,%3Csvg height='14' width='14' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.com/svgjs'%3E%3Cg%3E%3Cpath d='M18.5,19.5V15a6.5,6.5,0,0,0-4-6,2.5,2.5,0,0,0-5,0,6.5,6.5,0,0,0-4,6v4.5a2,2,0,0,1-2,2h17A2,2,0,0,1,18.5,19.5Z' fill='none' stroke='{{ error_color }}' stroke-linecap='round' stroke-linejoin='round'%3E%3C/path%3E%3Cpath d='M14,21.5a2,2,0,1,1-4,0' fill='none' stroke='{{ error_color }}' stroke-linecap='round' stroke-linejoin='round'%3E%3C/path%3E%3Cpath d='M3.5,9A5.5,5.5,0,0,1,9,3.5' fill='none' stroke='{{ error_color }}' stroke-linecap='round' stroke-linejoin='round'%3E%3C/path%3E%3Cpath d='M.5,9A8.5,8.5,0,0,1,9,.5' fill='none' stroke='{{ error_color }}' stroke-linecap='round' stroke-linejoin='round'%3E%3C/path%3E%3Cpath d='M20.5,9A5.5,5.5,0,0,0,15,3.5' fill='none' stroke='{{ error_color }}' stroke-linecap='round' stroke-linejoin='round'%3E%3C/path%3E%3Cpath d='M23.5,9A8.5,8.5,0,0,0,15,.5' fill='none' stroke='{{ error_color }}' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/g%3E%3C/svg%3E");
+    --box_check: url("data:image/svg+xml,%3Csvg width='15px' height='15px' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 12.6111L8.92308 17.5L20 6.5' stroke='%2396865d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    --arrow_color:{{ settings.accent_color }};
+
+    --box: '\e901';
+    /* --box_check: '\e907'; */
+
+    --master_spacing:20px;
+    --swatches:36px;
+    --stars:{{ settings.font_size }};
+    --star_spacing: 2;
+  	--star_size: calc(var(--stars) * 1.5);
+    --vis_hid: 0;
+    --logo_width: 0;
+    --margin_padding: 0vh;
+    --margin_padding_desktop: 0vh;
+    --margin_padding_mobile: 0vh;
+    --overlay_background: {{ settings.background_color }};
+    --overlay_opacity: 1;
+  
+    /* DEFAULT SIZES */
+  
+	--base:{{ settings.font_size_body }}px;
+    --xx_small:calc(var(--base) * 0.75);	/* p  / 12 */
+    --x_small:calc(var(--base) * 0.875);	/* h6 / 14 */
+    --small:var(--base);					/* h5 / 16 */
+    --medium:calc(var(--base) * 1.125);		/* h4 / 18 */
+    --large:calc(var(--base) * 1.625);		/* h3 / 26 */
+    --x_large:calc(var(--base) * 2.125);	/* h2 / 34 */
+    --xx_large:calc(var(--base) * 3);		/* h1 / 48 */
+
+    --headline_font_size_12: calc(12px + (12 - 12) * ((100vw - 320px) / (1220 - 320)));
+    --headline_font_size_14: calc(12px + (14 - 12) * ((100vw - 320px) / (1220 - 320)));
+    --headline_font_size_16: calc(14px + (16 - 14) * ((100vw - 320px) / (1220 - 320)));
+    --headline_font_size_18: calc(16px + (18 - 16) * ((100vw - 320px) / (1220 - 320)));
+    --headline_font_size_24: calc(18px + (24 - 18) * ((100vw - 320px) / (1220 - 320)));
+    --headline_font_size_30: calc(24px + (30 - 24) * ((100vw - 320px) / (1220 - 320)));
+    --headline_font_size_36: calc(24px + (36 - 24) * ((100vw - 320px) / (1220 - 320)));
+    --headline_font_size_42: calc(36px + (42 - 36) * ((100vw - 320px) / (1220 - 320)));
+    --headline_font_size_48: calc(36px + (48 - 36) * ((100vw - 320px) / (1220 - 320)));
+    --headline_font_size_54: calc(36px + (54 - 36) * ((100vw - 320px) / (1220 - 320)));
+    --headline_font_size_60: calc(36px + (60 - 36) * ((100vw - 320px) / (1220 - 320)));
+    --headline_font_size_66: calc(36px + (66 - 36) * ((100vw - 320px) / (1220 - 320)));
+    --headline_font_size_72: calc(36px + (72 - 36) * ((100vw - 320px) / (1220 - 320)));
+    --headline_font_size_78: calc(36px + (78 - 36) * ((100vw - 320px) / (1220 - 320)));
+    --headline_font_size_84: calc(36px + (84 - 36) * ((100vw - 320px) / (1220 - 320)));
+    --headline_font_size_90: calc(36px + (90 - 36) * ((100vw - 320px) / (1220 - 320)));
+    --headline_font_size_96: calc(36px + (96 - 36) * ((100vw - 320px) / (1220 - 320)));
+
+    /* CUSTOM DEFINATION */
+    --button_color:{{ settings.button_color }};
+    --button_color_25:{{ settings.button_color | color_modify: 'alpha', 0.25 }};
+    --button_color_lighten_30:{{ settings.button_color | color_lighten: 30 }};
+    --button_color_darken_15:{{ settings.button_color | color_darken: 15 }};
+    --hover_button_color:{{ settings.hover_button_color }};
+  }
+
+  
+  @media only screen and (min-width: 1220px) {
+    :root {
+      --headline_font_size_12: 12px;
+      --headline_font_size_14: 14px;
+      --headline_font_size_16: 16px;
+      --headline_font_size_18: 18px;
+      --headline_font_size_24: 24px;
+      --headline_font_size_30: 30px;
+      --headline_font_size_36: 36px;
+      --headline_font_size_42: 42px;
+      --headline_font_size_48: 48px;
+      --headline_font_size_54: 54px;
+      --headline_font_size_60: 60px;
+      --headline_font_size_66: 66px;
+      --headline_font_size_72: 72px;
+      --headline_font_size_78: 78px;
+      --headline_font_size_84: 84px;
+      --headline_font_size_90: 90px;
+      --headline_font_size_96: 96px;
+    }
+  }
+  
+  {%- liquid
+    capture char_count
+    	echo 'products.product.savings' | t
+    endcapture
+    assign char_count = char_count.size
+    if char_count > 5
+    	assign char_count_final = 6
+    else
+    	assign char_count_final = 9
+    endif
+    assign img_src = 'lifestyle-2' | placeholder_svg_tag | prepend: 'data:image/svg+xml,' | replace: '\n', ' ' | replace: '\r', ' ' | replace: '%', '%25' | replace: '"', '%22' | replace: "'", '%27' | replace: '&', '%26' | replace: '#', '%23' | replace: '{', '%7B' | replace: '}', '%7D' | replace: '<', '%3C' | replace: '>', '%3E'
+  -%}
+
+  .badge {
+    height:{{ 'products.product.savings' | t | size | times: char_count_final }}px;
+    padding:{{ 'products.product.savings' | t | size | at_most: 6 }}px;
+    width:{{ 'products.product.savings' | t | size | times: char_count_final }}px;
+  }
+  
+  .placeholder-svg-background {background-image:url('{{ img_src }}');}
+  
+{% endstyle %}

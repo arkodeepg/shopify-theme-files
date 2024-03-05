@@ -1,0 +1,213 @@
+<style>
+  .IND{{ section.id }} .INDHead p, .IND{{ section.id }} .INDsubehad, .IND{{ section.id }} .INDDesc{
+    color:#000000;
+  }
+  .IND{{ section.id }} .INDHead p{
+        margin-bottom: 20px;
+    margin-top: 40px;
+    font-size:40px;
+    font-family:{{ section.settings.IndHeadFont.family }};
+    font-weight:{{section.settings.HeadingFontweight}};
+    padding: 0;
+    line-height: normal;
+  }
+  .IND{{ section.id }} .INDsubehad p{
+    font-size:20px;
+    font-family:{{ section.settings.IndSubHeadFont.family }};
+    font-weight:{{section.settings.SubHeadingFontweight}};
+  }
+  .IND{{ section.id }} .INDDesc{
+    font-size:16px;
+    line-height:26px;
+    margin-bottom:30px;
+    font-family:{{ section.settings.IndDescFont.family }};
+    font-weight:{{section.settings.DescriptionFontweight}};
+  }
+  .IND{{ section.id }} .INDButtonText{
+    display: flex;
+    justify-content: center;
+    background: #96865D;
+    width: fit-content;
+    padding: 8px 20px !important;
+    color: white;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-size:14px;
+    font-family:{{ section.settings.BTN.family }};
+    font-weight:{{section.settings.ButtonFontweight}};
+  }
+
+  @media(max-width:640px){
+    .IND{{ section.id }} .INDHead p{
+    font-size:24px;
+  }
+  .IND{{ section.id }} .INDsubehad p{
+    font-size:16px;
+  }
+  .IND{{ section.id }} .INDDesc{
+    font-size:14px;
+    margin-bottom:0;
+  }
+  .IND{{ section.id }} .INDButtonText{
+    font-size:12px;
+  }
+  }
+</style>
+
+<div class="IND{{ section.id }} INDTw_individual_section">
+{% for block in section.blocks %}
+{% if block.type == 'head' %}
+    {% if block.settings.INDHead != blank %}<div class="container INDHead {% if block.settings.centerHead %}text-center{% endif %}">{{ block.settings.INDHead }}</div>{% endif %}
+{% endif %}
+{% endfor %}
+
+{% for block in section.blocks %}
+{% if block.type == 'subhead' %}
+{% if block.settings.INDsubehad != blank %}<div class="container INDsubehad {% if block.settings.centerSubHead %}text-center{% endif %}">{{ block.settings.INDsubehad }}</div>{% endif %}
+{% endif %}
+{% endfor %}
+
+{% for block in section.blocks %}
+{% if block.type == 'desc' %}
+    <div class="container INDDesc {% if block.settings.centerTextdesc %}text-center{% endif %}">{{ block.settings.INDDesc }}</div>
+{% endif %}
+{% endfor %}
+
+{% for block in section.blocks %}
+{% if block.type == 'Button' %}
+    {% if block.settings.INDButtonText != blank %}<a class="container INDButtonText" href="{{ block.settings.INDButtonTextURL }}">{{ block.settings.INDButtonText }}</a>{% endif %}
+{% endif %}
+{% endfor %}
+</div>
+
+{% schema %}
+  {
+    "name": "TW Individual Section",
+    "settings": [
+      {
+        "type": "font_picker",
+        "id": "IndHeadFont",
+        "label": "Heading Fontfamily",
+        "default": "lato_n4"
+        },
+        {
+          "type": "text",
+          "id": "HeadingFontweight",
+          "label": "Font weight"
+        },
+         {
+        "type": "font_picker",
+        "id": "IndSubHeadFont",
+        "label": "Heading Fontfamily",
+        "default": "lato_n4"
+        },
+         {
+          "type": "text",
+          "id": "SubHeadingFontweight",
+          "label": "Font weight"
+        },
+         {
+        "type": "font_picker",
+        "id": "IndDescFont",
+        "label": "Heading Fontfamily",
+        "default": "lato_n4"
+        },
+         {
+          "type": "text",
+          "id": "DescriptionFontweight",
+          "label": "Font weight"
+        },
+         {
+        "type": "font_picker",
+        "id": "BTN",
+        "label": "Heading Fontfamily",
+        "default": "lato_n4"
+        },
+         {
+          "type": "text",
+          "id": "ButtonFontweight",
+          "label": "Font weight"
+        }
+    ],
+    "blocks": [
+    {
+       "name": "head",
+       "type": "head",
+       "settings": [
+         {
+            "type": "richtext",
+            "id": "INDHead",
+            "label": "Text"
+        },
+       {
+          "type": "checkbox",
+          "id": "centerHead",
+          "label": "Align Center",
+         "default": true
+        }
+       ]
+     },
+      {
+       "name": "subhead",
+       "type": "subhead",
+       "settings": [
+         {
+            "type": "richtext",
+            "id": "INDsubehad",
+            "label": "Text"
+        },
+       {
+          "type": "checkbox",
+          "id": "centerSubHead",
+          "label": "Align Center",
+         "default": true
+        }
+       ]
+     },
+      {
+       "name": "desc",
+       "type": "desc",
+       "settings": [
+         {
+            "type": "text",
+            "id": "INDDesc",
+            "label": "Text"
+        },
+       {
+          "type": "checkbox",
+          "id": "centerTextdesc",
+          "label": "Align Center",
+         "default": true
+        }
+       ]
+     },
+      {
+       "name": "Button",
+       "type": "Button",
+       "settings": [
+         {
+            "type": "text",
+            "id": "INDButtonText",
+            "label": "Text"
+        },
+       {
+          "type": "url",
+          "id": "INDButtonTextURL",
+          "label": "URL"
+        }
+       ]
+     }
+    ],
+    "presets": [
+      {
+      "name": "TW Individual Section"
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

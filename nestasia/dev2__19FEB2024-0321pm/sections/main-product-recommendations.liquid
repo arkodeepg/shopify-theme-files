@@ -1,0 +1,573 @@
+<div id="recommended">
+  {%- liquid
+    assign full_width = section.settings.full_width
+    if section.settings.background_img != blank
+      capture alt
+        if section.settings.background_img.alt != blank
+          echo section.settings.background_img.alt
+        elsif section.settings.title != blank
+          echo section.settings.title
+        elsif section.settings.sub_title != blank
+          echo section.settings.sub_title
+        else
+          echo section.settings.background_img | split: '/' | last | replace: '-', ' ' | replace: '_', ' ' | split: '.' | first | capitalize
+        endif
+      endcapture  
+    endif
+    assign text_color = false
+    if section.settings.section_color != 'rgba(0,0,0,0)' and section.settings.section_color != blank
+      assign text_color = true
+      assign text_color_section = section.settings.section_color
+    endif
+    assign background_color = false
+    if section.settings.background != 'rgba(0,0,0,0)' and section.settings.background != blank
+      assign background_color = true
+      assign background_color_section = section.settings.background
+    endif    
+    if section.settings.background_gradient != 'rgba(0,0,0,0)' and section.settings.background_gradient != blank
+      assign background_color = true
+      assign background_color_section = section.settings.background_gradient
+    endif
+    capture classes
+      echo 'dynamic-section dynamic-section-'
+      echo section.id 
+      echo ' section-padding-top section-padding-bottom section-margin-bottom '
+      if section.settings.padding_border
+        echo 'section-border '
+      endif
+    endcapture
+    assign overlay_color = false
+    if section.settings.background_img_overlay != 'rgba(0,0,0,0)' and section.settings.background_img_overlay != blank
+      assign overlay_color = true
+      assign overlay_color_section = section.settings.background_img_overlay
+    endif
+    if section.settings.background_img_overlay_gradient != 'rgba(0,0,0,0)' and section.settings.background_img_overlay_gradient != blank
+      assign overlay_color = true
+      assign overlay_color_section = section.settings.background_img_overlay_gradient
+    endif
+    assign slider_color = false
+    if section.settings.use_slider_color != 'rgba(0,0,0,0)' and section.settings.use_slider_color != blank
+      assign slider_color = true
+      assign slider_color_section = section.settings.use_slider_color
+    endif
+    if slider
+        case section.settings.product_row
+          when 2
+            assign block_width = 'six'
+            assign size = 880
+            assign sizes = 'calc(66.66vw - 30px)'
+          when 3
+            assign block_width = 'four'
+            assign size = 460
+            assign sizes = '(min-width: 600px) calc(40vw - 30px), calc(66.66vw - 30px)'
+          when 4
+            assign block_width = 'three'
+            assign size = 400
+            assign sizes = '(min-width: 600px) calc(40vw - 30px), (min-width: 768px) calc(28.57vw - 30px), calc(66.66vw - 30px)'
+          else
+            assign block_width = 'two-half'
+            assign size = 400
+            assign sizes = '(min-width: 600px) calc(40vw - 30px), (min-width: 768px) calc(22.22vw - 30px), calc(66.66vw - 30px)'
+        endcase
+      else
+        case section.settings.product_row
+          when 2
+            assign block_width = 'six'
+            assign size = 580
+            assign sizes = 'calc(50vw - 40px)'
+          when 3
+            assign block_width = 'four'
+            assign size = 380
+            assign sizes = '(min-width: 768px) calc(33.33vw - 40px), calc(50vw - 40px)'
+          when 4
+            assign block_width = 'three'
+            assign size = 360
+            assign sizes = '(min-width: 768px) calc(25vw - 40px), calc(50vw - 40px)'
+          else
+            assign block_width = 'two-half'
+            assign size = 360
+            assign sizes = '(min-width: 768px) calc(20.833vw - 40px), calc(50vw - 40px)'
+        endcase
+      endif
+    if section.settings.enable_lazy
+      assign lazy = 'lazy'
+    else
+      assign lazy = 'eager'
+    endif
+  -%}
+
+  {% style %}
+    .dynamic-section-{{ section.id }} { 
+      --margin_padding: {{ section.settings.padding }}vh;
+      {%- if background_color -%}
+      --background:{{ background_color_section }};
+    --button_primary_text:{{ section.settings.background }};
+    --button_secondary_hover:{{ section.settings.background }};
+      {%- endif -%}
+      {%- if overlay_color -%}
+      --overlay_background: {{ overlay_color_section }};
+      --overlay_opacity: {{ section.settings.background_img_overlay_opacity | times: 0.01 }};
+      {%- endif -%}
+      {% if slider_color %}
+      --arrow_color:{{ slider_color_section }};
+      {% endif %}
+      --section-padding-top-mobile: {{ section.settings.padding_top_mobile }}px;
+      --section-padding-top-desktop: {{ section.settings.padding_top_desktop }}px;
+      --section-padding-bottom-mobile: {{ section.settings.padding_bottom_mobile }}px;
+      --section-padding-bottom-desktop: {{ section.settings.padding_bottom_desktop }}px;
+      --section-margin-bottom-mobile: {{ section.settings.margin_bottom_mobile }}px;
+      --section-margin-bottom-desktop: {{ section.settings.margin_bottom_desktop }}px;
+    }
+    .dynamic-section-{{ section.id }} .section-color { 
+      {%- if text_color -%}
+      --headline_font_color:{{ text_color_section }};
+      {%- endif -%}
+    }
+  {% endstyle %}
+
+  <section data-section-id="{{ section.id }}" 
+           data-product-id="{{ product.id }}"
+           data-id="recommended"
+           data-section-type="product_recommendations" 
+           data-carousel-type="section"
+           data-url="{{ 'script.product.recommendations.js' | asset_url }}"
+           data-address="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ section.settings.product_limit }}"
+           class="product-recommendations">
+  
+    <div class="container loading clearfix">
+      <div class="product-loop glider">
+        {%- liquid
+          assign onboarding_block_width = block_width | prepend: 'loading '
+          for i in (1..4) limit: 4
+            capture current
+              cycle 1, 2, 3, 4
+            endcapture
+            render 'product.loop.onboarding', block_width: onboarding_block_width, slider: true, forloop_index0: forloop.index0, current: current
+          endfor
+        -%}
+      </div>
+    </div>
+    
+    {% if recommendations.products_count > 0 and recommendations.performed %}  
+      <div class="{{ classes }}{% if settings.animation_enable %}animate-section-div {% endif %}clearfix">
+  
+        {%- liquid
+          if recommendations.products_count == 0
+            assign list_count = section.settings.product_limit
+          else
+            if recommendations.products_count > section.settings.product_limit
+              assign list_count = section.settings.product_limit
+            else
+              assign list_count = recommendations.products_count
+            endif
+          endif
+          if section.settings.use_slider and list_count > 2
+            assign slider = true
+          else
+            assign slider = false
+          endif
+        -%}
+    
+        {% if section.settings.title != blank or section.settings.sub_title != blank or section.settings.background_img != blank %}
+          {%- liquid
+            case section.settings.block_width
+              when '4'
+                assign block_width_content = 'four'
+              when '6'
+                assign block_width_content = 'six'
+              when '8'
+                assign block_width_content = 'eight'
+              when '9'
+                assign block_width_content = 'nine'
+            endcase
+          -%}
+          <div class="{% if full_width %}bottompad{% if slider %}-quarter {% else %}-half {% endif %}{% if section.settings.background_img != blank or overlay_color %}relative {% if section.settings.background_img != blank %}lazycontainer {% endif %}{% if overlay_color %}background-overlay {% endif %}{% endif %}{% endif %}clearfix">
+            {%- liquid
+              if full_width and section.settings.background_img != blank
+                render 'image.load', img_src: section.settings.background_img, size: section.settings.background_img.width, alt: alt, background: true, full_width: true, lazy: lazy, sizes: '100vw'
+              endif
+            -%}
+            <div class="relative container{% if full_width %} half-pad{% else %} {% if section.settings.background_img != blank or overlay_color %}inner-container{% else %}half-pad{% endif %}{% endif %}{% if settings.animation_enable %} animate-section load{% endif %} clearfix">
+              <div class="{% if full_width == false %}bottompad{% if slider %}-quarter {% else %}-half {% endif %}{% if section.settings.background_img != blank or overlay_color %}inner-container-pad relative {% if section.settings.background_img != blank %}lazycontainer {% endif %}{% if overlay_color %}background-overlay {% endif %}{% endif %}{% endif %}clearfix">
+                {%- liquid
+                  if full_width == false and section.settings.background_img != blank
+                    render 'image.load', img_src: section.settings.background_img, size: section.settings.background_img.width, alt: alt, background: true, lazy: lazy, sizes: '(min-width: 1220px) 1180px, calc(100vw - 40px)'
+                  endif
+                -%}
+                <div class="relative table content-height">
+                  <div class="table-cell {{ section.settings.vertical_content_alignment }}">
+                    <div class="{{ block_width_content }} animate {{ section.settings.text_alignment }} {{ section.settings.horizontal_content_alignment }} bottompad-quarter">
+                      {%- liquid
+                        if section.settings.title_h1
+                          assign title = 1
+                        else
+                          assign title = 2
+                        endif
+                      -%}
+                      {% if section.settings.title != blank%}<h{{ title }} class="section-color section-title-{{ section.settings.title_size }}">{{ section.settings.title | escape }}</h{{ title }}>{% endif %}
+                      {% if section.settings.sub_title != blank %}<h3 class="section-color section-title-{{ section.settings.title_sub_size }}">{{ section.settings.sub_title | escape }}</h3>{% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>  
+        {% endif %}
+  
+        <div class="container {% if slider %}no-pad{% else %}half-pad{% endif %}{% if settings.animation_enable %} animate-section animate-section-margin load{% endif %} clearfix">
+          <div class="{% if slider %}glider-contain {% endif %}tab-body">
+            <div{% if slider %} id="glider-carousel-{{ section.id }}" data-limit="{{ section.settings.product_row | minus: 0.5 }}" {% endif %} class="{% if slider %}glider {% if list_count < 5 %}no-drag {% endif %}{% endif %}table-center text-center clearfix">
+              <div class="product-loop{% if list_count < 5 %} {{ section.settings.horizontal_content_alignment }}{% endif %}{% if slider %} glider-track{% endif %}">
+                {%- liquid
+                  for product in recommendations.products limit: section.settings.product_limit
+                    render 'product.loop', product: product, block_width: block_width, slider: slider, forloop_index0: forloop.index0, size: size, lazy: lazy, sizes: sizes
+                  endfor
+                -%}
+              </div>
+            </div>
+          </div>
+          {% if slider %}
+            <div id="glider-pagination-{{ section.id }}" class="glider-pagination {% if section.settings.product_row > list_count %}hidden {% endif %}tab-body relative">
+              <button id="glider-button-prev-{{ section.id }}" class="glider-button-prev" type="button" aria-label="{{ 'products.general.previous' | t | escape }}">{%- render 'icons.theme', icon: 'left', size: '16' -%}</button>
+              <button id="glider-button-next-{{ section.id }}" class="glider-button-next" type="button" aria-label="{{ 'products.general.next' | t | escape }}">{%- render 'icons.theme', icon: 'right', size: '16' -%}</button>
+            </div>
+          {% endif %}
+        </div>
+        
+      </div>
+    {% endif %}
+    
+  </section>
+  
+</div>
+  
+{% schema %}
+  {
+    "name": "t:sections.product_recommendations.name",
+    "settings": [
+      {
+        "type": "paragraph",
+    	"content": "t:sections.product_recommendations.info"
+      },
+      {
+        "type": "header",
+        "content": "t:sections.banner.label"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "t:sections.heading.label",
+        "default": "Frequently purchased with the {{ product.title }}"
+      },
+      {
+        "id": "title_h1",
+        "type": "checkbox",
+        "label": "t:sections.heading.heading_one",
+        "default": false
+      },
+      {
+        "id": "title_size",
+        "type": "range",
+        "label": "t:sections.heading.heading_size",
+        "min": 12,
+        "max": 96,
+        "step": 6,
+        "unit": "px",
+        "default": 48
+      },
+      {
+        "type": "text",
+        "id": "sub_title",
+        "label": "t:sections.subheading.label"
+      },
+      {
+        "id": "title_sub_size",
+        "type": "range",
+        "label": "t:sections.subheading.subheading_size",
+        "min": 12,
+        "max": 96,
+        "step": 6,
+        "unit": "px",
+        "default": 24
+      },
+      {
+        "id": "section_color",
+        "type": "color",
+        "label": "t:sections.text.color"
+      },
+      {
+        "type": "select",
+        "id": "text_alignment",
+        "label": "t:sections.text_alignment.label",
+        "default": "text-center",
+        "options": [
+          {
+            "value": "text-left",
+            "label": "t:sections.alignment.left"
+          },
+          {
+            "value": "text-center",
+            "label": "t:sections.alignment.center"
+          },
+          {
+            "value": "text-right",
+            "label": "t:sections.alignment.right"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "block_width",
+        "label": "t:sections.content_width.label",
+        "default": "6",
+        "options": [
+          {
+            "value": "4",
+            "label": "33%"
+          },
+          {
+            "value": "6",
+            "label": "50%"
+          },
+          {
+            "value": "8",
+            "label": "66%"
+          },
+          {
+            "value": "9",
+            "label": "75%"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "horizontal_content_alignment",
+        "label": "t:sections.horizontal_position.label",
+        "default": "center",
+        "options": [
+          {
+            "value": "left",
+            "label": "t:sections.alignment.left"
+          },
+          {
+            "value": "center",
+            "label": "t:sections.alignment.center"
+          },
+          {
+            "value": "right",
+            "label": "t:sections.alignment.right"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "vertical_content_alignment",
+        "label": "t:sections.vertical_position.label",
+        "default": "middle",
+        "options": [
+          {
+            "value": "top",
+            "label": "t:sections.vertical_position.top"
+          },
+          {
+            "value": "middle",
+            "label": "t:sections.vertical_position.middle"
+          },
+          {
+            "value": "bottom",
+            "label": "t:sections.vertical_position.bottom"
+          }
+        ]
+      },
+      {
+        "type": "image_picker",
+        "id": "background_img",
+        "label": "t:sections.image.label",
+        "info": "t:sections.image.desktop.info"
+      },
+	  {
+       "type": "checkbox",
+       "id": "full_width",
+       "label": "t:sections.full_width.label",
+       "default": true
+      },
+      {
+        "type": "range",
+        "id": "padding",
+        "min": 5,
+        "max": 100,
+        "step": 5,
+        "unit": "%",
+        "label": "t:sections.height.label",
+        "default": 5
+      },
+	  {
+        "type": "color",
+        "id": "background_img_overlay",
+        "label": "t:sections.overlay.label"
+      },
+      {
+        "type": "color_background",
+        "id": "background_img_overlay_gradient",
+        "label": "t:sections.overlay.gradient"
+      },
+      {
+        "type": "range",
+        "id": "background_img_overlay_opacity",
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "unit": "%",
+        "label": "t:sections.opacity.label",
+        "default": 0
+      },
+      {
+        "type": "header",
+        "content": "t:sections.options.label"
+      },
+      {
+        "type": "range",
+        "id": "product_limit",
+        "min": 2,
+        "max": 10,
+        "step": 1,
+        "label": "t:sections.products_per_collection.label",
+        "default": 5
+      },
+      {
+        "type": "range",
+        "id": "product_row",
+        "min": 2,
+        "max": 5,
+        "step": 1,
+        "label": "t:sections.products_per_row.label",
+        "default": 5
+      },
+      {
+        "type": "select",
+        "id": "sub_text_alignment",
+        "label": "t:sections.text_alignment.label",
+        "default": "text-left",
+        "options": [
+          {
+            "value": "text-left",
+            "label": "t:sections.alignment.left"
+          },
+          {
+            "value": "text-center",
+            "label": "t:sections.alignment.center"
+          },
+          {
+            "value": "text-right",
+            "label": "t:sections.alignment.right"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "use_slider",
+        "label": "t:sections.use_slider_products.label",
+        "default": true
+      },
+      {
+        "id": "use_slider_color",
+        "type": "color",
+        "label": "t:sections.multi_slide_color.label"
+      },
+      {
+        "type": "header",
+        "content": "t:sections.section.name.content"
+      },
+      {
+        "id": "enable_lazy",
+        "type": "checkbox",
+        "label": "t:sections.section.settings.lazy.multiple.label",
+        "default": true
+      },
+      {
+        "id": "background",
+        "type": "color",
+        "label": "t:sections.section.settings.background_color.label"
+      },
+      {
+        "id": "background_gradient",
+        "type": "color_background",
+        "label": "t:sections.section.settings.background_gradient.label"
+      },
+      {
+        "type": "paragraph",
+        "content": "t:sections.section.settings.mobile.content"
+      },
+      {
+        "id": "padding_top_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.top_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "id": "padding_bottom_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "id": "margin_bottom_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_margin.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 20
+      },
+      {
+        "type": "paragraph",
+        "content": "t:sections.section.settings.desktop.content"
+      },
+      {
+        "id": "padding_top_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.top_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "id": "padding_bottom_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "id": "margin_bottom_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_margin.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "padding_border",
+        "type": "checkbox",
+        "label": "t:sections.section.settings.border.label",
+        "default": false
+      }
+    ]
+  }
+{% endschema %}

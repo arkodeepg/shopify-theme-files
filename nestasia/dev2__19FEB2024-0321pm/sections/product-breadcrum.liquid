@@ -1,0 +1,66 @@
+<style>
+.produt-breadcrum_cont {
+    margin-top: calc(var(--master_spacing) + 10px);
+    font-size: var(--small);
+    font-weight: 400;
+    letter-spacing: .56px;
+    line-height: 21px;
+    text-transform: capitalize;
+}
+.product-breadcrum_sep {
+    /* border: 1px solid; */
+    border-left: 1px solid var(--line_color_darken_10);
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border: 1px solid var(--a11ygrey);
+    /* position: absolute; */
+    /* top: 3px; */
+    left: 2px;
+    border-color: transparent var(--a11ygrey) var(--a11ygrey) transparent;
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+    margin-right: 8px;
+}
+.product-breadcrum_main {
+    user-select: none;
+    color: #96865D;
+}
+  @media screen and (max-width:800px){
+    .produt-breadcrum_cont {
+    font-size: 12px;
+    margin-block: 10px;
+}
+  }
+</style>
+
+<div class="produt-breadcrum_cont container">
+    <a class="product-breadcrum_sub" href="https://nestasia.in/">Home</a>
+    <div class="product-breadcrum_sep"></div>
+    <a href="https://nestasia.in/collections/all" class="product-breadcrum_sub">Collection</a>
+    <div class="product-breadcrum_sep"></div>
+    <a class="product-breadcrum_main">{{product.title}}</a>
+</div>
+
+{% schema %}
+{
+  "name": "product breadcrumbs",
+  "tag": "section",
+  "settings": [],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "product breadcrumbs"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

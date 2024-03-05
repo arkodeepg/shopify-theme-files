@@ -1,0 +1,245 @@
+<style>
+  .store-locator_box {
+    max-width: 475px;
+    margin: auto;
+    display: flex;
+    gap: 12px;
+  }
+
+  .store-locator_input-box {
+    width: 100%;
+    position: relative;
+    height: 100%;
+    max-width: 340px;
+  }
+
+  .store-locator_icon {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translate(-10px, -50%);
+  }
+  .store-locator_input {
+    border: 1px solid #664600 !important;
+    outline: none;
+  }
+
+  .store-locator_top {
+    color: #664600;
+    font-family: Lato;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: 0.28px;
+    text-transform: capitalize;
+  }
+
+  .sl-img {
+    margin: 0;
+    width: 100%;
+}
+
+.sl-body-cont {
+    display: flex;
+    padding: 26px 27px 25px 0px;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sl-name {
+    color: #664600;
+    font-family: "Garamond Premier Pro";
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.sl-body p {
+    color: #4C4C4C;
+    font-family: Lato;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    padding-bottom: 10px;
+}
+
+.sl-map {
+    color: #C24352;
+    font-family: Lato;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    text-decoration-line: underline;
+}
+  #store-locator-main {
+    padding: 0 !important;
+    min-height: 30px;
+    border: none;
+}
+  .store-locator_bot {
+    display: flex;
+    align-items: center;
+}
+  @media screen and (max-width: 800px){
+    .sl-body-cont {
+        align-items: center;
+        padding: 20px 10px !important;
+    }
+    
+    .sl-body p {
+        text-align: center;
+    }
+    .store-locator_box {
+    flex-direction: column-reverse;
+    max-width: 100%;
+    padding: 30px;
+}
+    .offer-categories {
+    margin-top: 0px;
+}
+  }
+</style>
+
+<div class="store-locator_box">
+  <div class="store-locator_input-box">
+    <input type="text" class="store-locator_input" id="sl_input" placeholder="Search" onkeyup="storeSearch()">
+    <svg
+      class="store-locator_icon"
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M12.8 12.7073L18.65 18.5573M8.3 14.5073C4.835 14.5073 2 11.6723 2 8.20723C2 4.74223 4.835 1.90723 8.3 1.90723C11.765 1.90723 14.6 4.74223 14.6 8.20723C14.6 11.6723 11.765 14.5073 8.3 14.5073Z" stroke="#664600" stroke-width="1.125"/>
+    </svg>
+  </div>
+  <div class="store-locator_filter">
+    <div class="store-locator_top">Store Store</div>
+    <div class="store-locator_bot">
+      <select id="store-locator-main" class="store-locator_bot-select">
+        <option value="Location">Location</option>
+        {%- for block in section.blocks %}
+          <option value="{{ block.settings.name }}">{{ block.settings.name }}</option>
+        {% endfor %}
+      </select>
+      <svg class="store-locator_bot-icon" xmlns="http://www.w3.org/2000/svg" width="10" height="5" viewBox="0 0 10 5" fill="none">
+        <path d="M10 0H0L5 5L10 0Z" fill="#664600"/>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<section class="offer-categories margin-30">
+  <div class="container clearfix">
+    <div class="twelve text-center offerHead">
+      <h2>{{ page.metafields.custom.offer_categories_heading }}</h2>
+    </div>
+
+    <div class="tab-body divided_col">
+      {%- for block in section.blocks %}
+        <div class="four sl-item sl-item{{ forloop.index0 }}">
+          <img
+            data-src="{{ block.settings.image | image_url }}"
+            alt="{{block.settings.image.alt }}"
+            class="lazy sl-img"
+            loading="lazy"
+          >
+          <div class="sl-body-cont">
+            <div class="sl-name">{{ block.settings.name }}</div>
+            <div class="sl-body">{{ block.settings.body }}</div>
+            <a href="{{ block.settings.link }}" target="_blank" class="sl-map">Map View</a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+<script defer>
+    let arr = [];
+    let items = $('.sl-item')
+    for(let i=0; i<items.length; i++){
+        let text = $($('.sl-item')[i]).text().trim().toUpperCase()
+      console.log(text)
+      arr.push(text)
+    }
+    let locationFilter = (location) => {
+      console.log(location, arr.length)
+      for(let i=0; i<arr.length; i++){
+        // console.log(`${arr[i].indexOf(location)} - ${i}`)
+        if(arr[i].indexOf(location) != -1) $(`.sl-item${i}`).show();
+        else $(`.sl-item${i}`).hide();
+      }
+    }
+    const storeSearch = () => {
+      // let items = $('.sl-item')
+      // let arr = [];
+      // for(let i=0; i<items.length; i++){
+      //     let text = $($('.sl-item')[i]).text().trim().toUpperCase()
+      //   console.log(text)
+      //   arr.push(text)
+      // }
+      let inp = $('#sl_input').val().toUpperCase();
+      if(inp.trim() != "") $('.sl-item').hide()
+      else $('.sl-item').show()
+      // console.log(inp)
+      locationFilter(inp)
+    }
+    $('#store-locator-main').on('change', function(){
+      let value = $(this).val().toUpperCase();
+      console.log(value)
+      if (value == 'LOCATION') $(`.sl-item`).show();
+      else locationFilter(value)
+    })
+</script>
+{% schema %}
+{
+  "name": "Store locator",
+  "tag": "section",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "location",
+      "name": "location",
+      "settings": [
+        {
+          "type": "image_picker",
+          "label": "image",
+          "id": "image"
+        },
+        {
+          "type": "text",
+          "label": "name",
+          "id": "name"
+        },
+        {
+          "type": "richtext",
+          "label": "body",
+          "id": "body"
+        },
+        {
+          "type": "url",
+          "label": "link",
+          "id": "link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Store locator"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

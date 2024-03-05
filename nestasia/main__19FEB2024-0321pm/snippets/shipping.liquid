@@ -1,0 +1,45 @@
+{% if settings.shipping_amount != blank %}
+  <shipping-message class="icon-grid {% unless settings.shipping_icon == 'none' %}horizontal{% else %}text-center{% endunless %}">
+    {%- liquid
+      if settings.shipping_icon != 'none'
+        if settings.shipping_icon_color == 'rgba(0,0,0,0)' or settings.shipping_icon_color == ''
+          assign icon_color = settings.headline_font_color
+        elsif color != blank
+          assign icon_color = color
+        else
+          assign icon_color = settings.shipping_icon_color
+        endif
+        if settings.shipping_icon_color_h == 'rgba(0,0,0,0)' or settings.shipping_icon_color_h == ''
+          assign icon_color_h = settings.accent_color
+        elsif color_h != blank
+          assign icon_color_h = color_h
+        else
+          assign icon_color_h = settings.shipping_icon_color_h
+        endif
+        if size != blank
+          assign icon_size = size
+        else
+          assign icon_size = settings.shipping_icon_size
+        endif  
+        render 'icons', icon: settings.shipping_icon, size: icon_size, color: icon_color, color_h: icon_color_h, icon_class: 'hiwt'
+      endif
+      assign shipping_value = settings.shipping_amount
+      assign cart_total = cart.total_price
+      assign shipping_value_left = shipping_value | minus: cart_total
+      capture shipping_value_left_formatted
+        if settings.currency_enable
+          echo shipping_value_left | money_with_currency
+        else
+          echo shipping_value_left | money
+        endif
+      endcapture
+      echo '<div class="icon-details"><p>'    
+      if shipping_value_left > 0          
+        echo 'cart.general.shipping_value_left_html' | t: shipping_value_left: shipping_value_left_formatted
+      else
+        echo 'cart.general.shipping_value_met_html' | t
+      endif
+      echo '</p></div>'    
+    -%}
+  </shipping-message>
+{% endif %}

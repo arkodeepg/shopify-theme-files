@@ -1,0 +1,85 @@
+<predictive-search>
+  <form action="{{ routes.search_url }}" method="get" role="search" id="search-{{ id }}" class="search search-form search-form-{{ section.id }} {{ search_class }}{% unless search_enable == false %} relative{% endunless %}">
+    <span>
+      
+      <label for="search-form{{ id }}-{{ section.id }}" class="visually-hidden">{{ 'general.search.placeholder' | t }}</label>
+      
+      <input id="search-form{{ id }}-{{ section.id }}"
+             class="search-field section-color"
+             type="search"
+             name="q"
+             value="{{ search.terms | escape }}"
+             placeholder="{{ 'general.search.placeholder' | t }}"{% if settings.search_predictive_enable %}             
+             role="combobox"
+             aria-expanded="false"
+             aria-owns="predictive-search-results-list"
+             aria-controls="predictive-search-results-list"
+             aria-haspopup="listbox"{% endif %}             
+             aria-autocomplete="list"
+             autocorrect="off"
+             autocomplete="off"
+             autocapitalize="off"
+             spellcheck="false"{% if disabled %} disabled{% endif %}>
+      <input type="hidden" name="options[prefix]" value="last" />        
+      
+      {% if search_enable == false %}
+      <button class="search" aria-label="{{ 'general.search.title' | t | escape }}">
+        <span class="icon">{%- render 'icons.header', icon: 'search' -%}</span>
+      </button>              
+      {% endif %}
+      
+      {% if settings.search_predictive_enable %}
+
+      {%- liquid
+        capture search_fields
+          if settings.search_predictive_author
+            echo 'author'
+            echo ','
+          endif
+          if settings.search_predictive_body
+            echo 'body'
+            echo ','
+          endif
+          if settings.search_predictive_product_type
+            echo 'product_type'
+            echo ','
+          endif
+          if settings.search_predictive_tag
+            echo 'tag'
+            echo ','
+          endif
+          if settings.search_predictive_title
+            echo 'title'
+            echo ','
+          endif
+          if settings.search_predictive_variants_barcode
+            echo 'variants.barcode'
+            echo ','
+          endif
+          if settings.search_predictive_variants_sku
+            echo 'variants.sku'
+            echo ','
+          endif
+          if settings.search_predictive_variants_title
+            echo 'variants.title'
+            echo ','
+          endif
+          if settings.search_predictive_vendor
+            echo 'vendor'
+            echo ','
+          endif
+        endcapture
+      -%}
+      
+      <div class="predictive-search search-results inline text-left unformatted rows-{{ rows }} block-width-{{ block_width }}{% if disabled %} disabled{% endif %}" 
+            tabindex="-1"
+            data-predictive-search
+            data-search-enable="{{ settings.search_predictive_enable }}"
+            data-search-limit="{{ settings.search_predictive_limit }}"
+            data-search-fields="{% if search_fields != blank %}{{ search_fields | remove_last: ',' }}{% else %}title{% endif %}"></div>
+      
+      {% endif %}
+
+    </span>
+  </form>
+</predictive-search>

@@ -1,0 +1,95 @@
+<style>
+  .custom-announcement-cont {
+    background: #b39d6f;
+    color: white;
+    z-index: 99999;
+    position: relative;
+}
+
+.custom-announcement {position: relative;text-align: center;color: #FFF;font-family: Lato;font-size: 12px;font-style: normal;font-weight: 400;line-height: normal;text-transform: uppercase;padding-block: 10px;letter-spacing: 2.4px;}
+
+.custom-announcement > span {}
+
+.store-locator-cont {
+    display: flex;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    gap: 5px;
+    color: #FFF;
+    font-family: Lato;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    text-transform: uppercase;
+    align-items: center;
+    transform: translateY(-50%);
+}
+.store-locator-cont:hover{
+    color: #FFF;
+}
+
+img.store-locator-icon {
+    margin: 0;
+}
+@media screen and (max-width: 800px){
+  .store-locator-cont{
+    display: none;
+  }
+  .custom-announcement-cont{
+    z-index: 999;
+  }
+}
+</style>
+<div class="custom-announcement-cont">
+  <div class="custom-announcement container">
+    <span class="custom-announcement-text">{{ section.settings.announcement_text }}</span>
+    <a href="{{ section.settings.store_locator_link }}" class="store-locator-cont">
+      {{ section.settings.store_locator_icon | image_url: width: 26 | image_tag: class: 'store-locator-icon' }}
+      <span>{{ section.settings.store_locator_text }}</span>
+    </a>
+  </div>
+</div>
+{% schema %}
+{
+  "name": "custom announcement",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "label": "Announcement text",
+      "id": "announcement_text",
+      "default":"make gifting special"
+    },
+    {
+      "type": "image_picker",
+      "label": "store locator icon",
+      "id": "store_locator_icon"
+    },
+    {
+      "type": "text",
+      "label": "store locator text",
+      "id": "store_locator_text",
+      "default":"Find A Store"
+    },
+    {
+      "type": "url",
+      "label": "store locator link",
+      "id": "store_locator_link"
+    }
+  ],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "custom announcement"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

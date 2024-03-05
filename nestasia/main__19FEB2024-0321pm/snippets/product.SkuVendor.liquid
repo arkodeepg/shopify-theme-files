@@ -1,0 +1,53 @@
+{% if vendor_enable or sku_enable or bar_enable %}
+{%- liquid
+   assign hidden = true
+   if vendor_enable
+     assign hidden = false
+   elsif sku_enable and product.selected_or_first_available_variant.sku != blank
+     assign hidden = false
+   elsif bar_enable and product.selected_or_first_available_variant.barcode != blank
+     assign hidden = false
+   endif
+-%}
+<p id="product-logistics-{{ section.id }}" class="product-logistics{% if divider %} form-blocks{% endif %}{% if hidden %} hidden{% endif %}" {{ block.shopify_attributes }}>
+  {% if vendor_enable %}
+    <span class="vendor">
+      {%- liquid
+        assign product_vendor_handle = product.vendor | handle
+        if collections[product_vendor_handle].handle == product_vendor_handle
+          assign vendor_url = collections[product_vendor_handle].url
+        else
+          assign vendor_url = product.vendor | url_for_vendor
+        endif
+        echo product.vendor | link_to: vendor_url, product.vendor
+      -%}
+    </span>
+  {% endif %}
+  {% if sku_enable %}
+    {%- liquid
+      assign divider_2 = false
+      if product.selected_or_first_available_variant.sku != blank
+        if vendor_enable
+          assign divider_2 = true
+        endif
+      endif
+    -%}
+    <span class="separator separator_2{% unless divider_2 %} hidden{% endunless %}" aria-hidden="true"></span>    
+    <span id="sku-{{ section.id }}" class="variant-sku">{% if product.selected_or_first_available_variant.sku != blank %}<span>{{ 'products.product.sku' | t }}</span> {{ product.selected_or_first_available_variant.sku }}{% endif %}</span>
+  {% endif %}
+  {% if bar_enable %}
+    {%- liquid
+      assign divider_3 = false
+      if product.selected_or_first_available_variant.barcode != blank
+        if vendor_enable
+          assign divider_3 = true
+        elsif sku_enable and product.selected_or_first_available_variant.sku != blank
+          assign divider_3 = true
+        endif
+      endif
+    -%}
+    <span class="separator separator_3{% unless divider_3 %} hidden{% endunless %}" aria-hidden="true"></span>
+    <span id="barcode-{{ section.id }}" class="variant-sku">{% if product.selected_or_first_available_variant.barcode != blank %}<span>{{ 'products.product.bar' | t }}</span> {{ product.selected_or_first_available_variant.barcode }}{% endif %}</span>
+  {% endif %}
+</p>
+{% endif %} 

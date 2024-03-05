@@ -1,0 +1,184 @@
+<div id="pid-{{ product.id }}" class="product animate {{class}}{% if forloop.last %} last{% endif %} {% if section.settings.sub_text_alignment %}{{ section.settings.sub_text_alignment }}{% else %}text-left{% endif %}{% if settings.borders_enable %} borders{% endif %}{{ swiper_slide }}{% if template == 'index' %} {% if section.settings.use_slider %}swiper-slide three{% else %} two-half{{ cycle }} animate-loop-{{ forloop_index0 }}{% endif %}{% elsif template == 'product' or template == '404' %} three{{ cycle }} animate-loop-{{ forloop_index0 }}{% else %}{% if menu_count > 0 or filter_count > 0 or vendor_count %} four{{ cycle }}{% elsif template == 'search' %} {{ cycle }}{% else %} three{{ cycle }}{% if section.settings.show_product_recommendations %} animate animate-loop-{{ forloop_index0 }}{% endif %}{% endif %}{% endif %}{% if settings.quick_collection_hover %}{% unless section.settings.layout == 'row' %} hover relative{% endunless %}{% endif %}{% if plus_mobile_row == '2' %} plus-mobile_row{% endif %}">
+  <div class="product-border{% if settings.borders_enable and section.settings.include_color != 'color-none' %} product-border-background{% endif %} relative">
+    
+    {%- if settings.swatch_color != blank -%}
+    {%- assign var_color = settings.swatch_color | handleize -%}
+    {%- assign swatch_color = settings.swatch_color -%}
+    {%- else -%}
+    {%- assign var_color = 'products.general.color' | t | handleize -%}
+    {%- assign swatch_color = 'products.general.color' | t -%}
+    {%- endif -%}
+    
+    {%- comment -%}
+    {%- render 'product-sale-badge', product: product -%}
+    {%- endcomment -%}
+    
+    {% if product.object_type == 'product' %}
+    {%- if template == 'collection' and canon -%}
+
+    {%- assign prod_opt_1 = product.options[0] | handleize -%}
+    {%- assign prod_opt_2 = product.options[1] | handleize -%}
+    {%- assign prod_opt_3 = product.options[2] | handleize -%}
+
+    {%- for variant in product.variants -%}
+
+    {%- if prod_opt_1 contains var_color and canon contains prod_opt_1 -%}
+    {%- assign var_opt = variant.option1 | handleize -%}
+    {%- elsif prod_opt_2 contains var_color and canon contains prod_opt_2 -%}
+    {%- assign var_opt = variant.option2 | handleize -%}
+    {%- elsif prod_opt_3 contains var_color and canon contains prod_opt_3 -%}
+    {%- assign var_opt = variant.option3 | handleize -%}
+    {%- else -%}
+    {%- assign var_opt = 'Default' -%}
+    {%- endif -%}
+
+    {%- if canon contains var_opt -%}
+    {%- if variant.image -%}
+    {%- assign img_src = variant.featured_media.preview_image -%}
+    {%- else -%}
+    {%- assign img_src = product.featured_media.preview_image -%}
+    {%- endif -%}
+    {%- break -%}
+    {%- else -%}
+    {%- assign img_src = product.featured_media.preview_image -%}
+    {%- endif -%}
+
+    {%- endfor -%}
+
+    {%- else -%}
+    {%- assign img_src = product.featured_media.preview_image -%}
+    {%- endif -%} 
+    {%- assign size = 320 -%}
+
+    {% else %}
+    {%- assign img_src = product.image -%}
+    {%- assign size = 600 -%}
+    {% endif %}
+    
+    {% if product.media.size > 0 or product.image.size > 0 %} 
+    <div class="product-thumb{% if settings.image_hover and product.media.size > 1 %} enable-thumb-hover{% endif %}{% if settings.title_align %}{% unless product.object_type != 'product'%} title-align{% endunless %}{% endif %}">
+      
+      <div class="relative">
+        
+        {% unless template contains 'cart' %}
+          {% capture the_snippet_fave_icon %}{% render 'ssw-widget-faveicon' with product.id %}{% endcapture %}
+          {% unless the_snippet_fave_icon contains 'Liquid error' %}
+          {{ the_snippet_fave_icon }}
+          {% endunless %}   
+        {% endunless %}
+        
+
+        <a href="{{ product.url | within: collection }}" class="img-align product-thumb-main{" data-group="{{ product.id }}{{ section.id }}">
+          {%- capture id -%}{{ product.featured_media.id }}{{ section.id }}{{ content.id }}{%- endcapture -%}
+          {%- render 'image.load', img_src: product.featured_image, size: size, id: id, available: product.available, alt: product.title -%}
+        </a>
+        {% if settings.image_hover and product.media.size > 1 %} 
+        <a href="{{ product.url | within: collection }}" class="img-align product-thumb-hover">
+          {%- capture id -%}{{ product.media[1].id }}{{ section.id }}{{ content.id }}{%- endcapture -%}
+          {%- render 'image.load', img_src: product.featured_image, size: size, id: id, available: product.available, alt: product.title -%}
+        </a>
+        {% endif %}
+        {% if settings.variant_color_enable != 'none' %}
+        {% render 'product-swatches' with swatch_color as swatch, var_color: var_color, swatch_color: swatch_color, product: product, block: true, ignore: true, img_size: '280x' %}
+        {% endif %}
+        {% if settings.quick_collection_hover %}{% unless section.settings.layout == 'row' %}{%- render 'product-loop-buttons', product: product -%}{% endunless %}{% endif %}
+      </div>
+    </div>
+    {% endif %}
+    <div class="product-details">
+      <div class="product-title">
+        <p style="{% if settings.collection_product_name_font_size != blank %} font-size: {{settings.collection_product_name_font_size}}px; {% endif %}{% if settings.collection_product_name_font_color != blank %} color: {{settings.collection_product_name_font_color}}; {% endif %} {% if settings.collection_product_name_font_family != blank %} font-family: {{settings.collection_product_name_font_family}};{% endif %}"><a href="{{ product.url | within: collection }}" title ="{{ product.title }}">{{ product.title }}</a></p>
+        {% if settings.variant_color_enable != 'none' %}
+        {%- assign variant_color_enable = settings.variant_color_enable -%}
+        {% if variant_color_enable == 'var-img-zoom-block' %}
+        {%- assign img_size = '100x' -%}
+        {% else %}
+        {%- assign img_size = '52x' -%}
+        {% endif %}
+        {% render 'product-swatches' with swatch_color as swatch, var_color: var_color, swatch_color: swatch_color, product: product, block_width: 'clearfix', hide: false, block: true, variant_color_enable: variant_color_enable, img_size: img_size %}
+        {% endif %}
+      </div> 
+      {% render 'judgeme_widgets', widget_type: 'judgeme_preview_badge', jm_style: '', concierge_install: true, product: product %}
+      {% if product.object_type == 'product' %}
+      <div class="product-price">
+        {% if product.price_min > 0 %}
+        {%- assign variant = product.variants | sort: 'price' | first -%}
+          {% if product.compare_at_price > product.price %}
+            <p style="{% if settings.collection_product_price_font_size != blank %} font-size: {{settings.collection_product_price_font_size}}px; {% endif %}{% if settings.collection_product_price_font_color_with_sale != blank %} color: {{settings.collection_product_price_font_color_with_sale}}; {% endif %} {% if settings.collection_product_price_font_family != blank %} font-family: {{settings.collection_product_price_font_family}};{% endif %}">
+              {% if product.price_varies %}{{ 'products.product.from' | t }} {% endif %}
+              <span class="price-with-discount">{{ product.price | money }}</span>
+              <del>{{ product.compare_at_price | money }}</del>
+              {%- render 'product-unit-price', variant: variant, variant_free: false, variant_slash: 'true' -%}
+              
+              <span class="percentage-tag-custom">({%- if settings.badge_percentage_enable -%}
+              {{ product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round  | append: '%' }}
+              {%- else -%}
+              {{ product.compare_at_price | minus: product.price | money_without_trailing_zeros }}
+                {%- endif -%} Off)</span>
+            </p>
+          {% else %}
+            <p style="{% if settings.collection_product_price_font_size != blank %} font-size: {{settings.collection_product_price_font_size}}px; {% endif %}{% if settings.collection_product_price_font_color != blank %} color: {{settings.collection_product_price_font_color}}; {% endif %} {% if settings.collection_product_price_font_family != blank %} font-family: {{settings.collection_product_price_font_family}};{% endif %}">
+              {% if product.price_varies %}{{ 'products.product.from' | t }} {% endif %}
+              {{ product.price | money }}
+            </p>
+          {% endif %}
+        {% else %}
+        {% if product.price_varies %}    
+        {%- assign variant = product.variants | sort: 'price' | last -%}
+        <h6 style="{% if settings.collection_product_price_font_size != blank %} font-size: {{settings.collection_product_price_font_size}}px; {% endif %}{% if settings.collection_product_price_font_color != blank %} color: {{settings.collection_product_price_font_color}}; {% endif %} {% if settings.collection_product_price_font_family != blank %} font-family: {{settings.collection_product_price_font_family}};{% endif %}">{{ 'products.product.from' | t }} {{ 'products.product.free' | t }} - {{ product.price_max | money }}{%- assign variant_free = true -%}{%- render 'product-unit-price', variant: variant, variant_free: false, variant_slash: 'true' -%}</h6>
+        {% else %}
+        <h6 style="display:none">{{ product.price | money }}</h6><h6>{{ 'products.product.free' | t }}</h6>
+        {% endif %}
+        {% endif %}
+      </div>
+      {% if settings.reviews_enable %}
+      <div class="reviews">
+        <!-- To add a new review app, install code between the comments -->
+        <span class="shopify-product-reviews-badge" data-id="{{ product.id }}"></span>
+        <!-- End comments -->
+      </div>
+      {% endif %}
+      {% if settings.vendor_enable %}
+      <p id="product-logistics-{{ product.id }}-{{ section.id }}{{ block.id }}" class="product-logistics{% unless settings.quick_collection_hover == false %} no-pad{% endunless %}">
+        <span class="vendors">
+          {%- assign product_vendor_handle = product.vendor | handle -%}
+          {% if collections[product_vendor_handle].handle == product_vendor_handle %}
+          {%- assign vendor_url = collections[product_vendor_handle].url -%}
+          {% else %}
+          {%- assign vendor_url = product.vendor | url_for_vendor -%}
+          {% endif %}
+          {{ product.vendor | link_to: vendor_url }}
+        </span>
+      </p>
+      {% endif %}
+      {% if settings.product_availability_enable and product.available == false and variant.incoming %}<p class="error-text"><small><span class="icon icon-bell"></span> {% if variant.next_incoming_date != blank %}{{ 'products.product.stock_in' | t }} {{ variant.next_incoming_date | date: '%b %e'  }}{% else %}{{ 'products.product.stock_soon' | t }}{% endif %}</small></p>{% endif %}
+      
+      {% if settings.quick_collection_hover == false or section.settings.layout == 'row' or settings.quick_collection_hover and product.media.size == 0 %}
+        {% if show_cta_button == true %}
+          {%- render 'product-loop-buttons', product: product -%}
+        {% endif %}
+      {% endif %}
+      
+      {% else %}
+      <p class="product-logistics{% unless settings.quick_collection_hover == false %} no-pad{% endunless %}">
+        <span class="vendors">
+      {% if product.metafields.global.description_tag != blank %}
+      {{ product.metafields.global.description_tag | highlight: search_terms }}
+      {% elsif product.content != blank %}
+      {{ product.content | strip_html | truncatewords: 40 | highlight: search_terms }}
+      {% endif %}
+        </span>
+      </p>
+      <span><a class="btn auto-width" href="{{ product.url }}" title="{{ product.title | escape }}">{{ 'general.search.read_more' | t }}</a></span>
+      {% endif %}
+      
+      {% if template contains 'cart' %}
+         {% capture the_snippet_fave_icon %}{% render 'ssw-widget-faveicon' with product.id %}{% endcapture %}
+          {% unless the_snippet_fave_icon contains 'Liquid error' %}
+          {{ the_snippet_fave_icon }}
+          {% endunless %}   
+      {% endif %}
+    </div>
+
+  </div>
+</div>

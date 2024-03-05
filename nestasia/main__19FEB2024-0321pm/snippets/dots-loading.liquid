@@ -1,0 +1,21 @@
+{% comment %}
+-------------------------------------------------------------------------------
+loading-dots
+-------------------------------------------------------------------------------
+Description
+the three loading dots
+-------------------------------------------------------------------------------
+Accepts
+- custom_class: String - name of the custom class that you want to add to the snippet.
+-------------------------------------------------------------------------------
+Usage
+{% render 'Untitled-2', custom_class: 'cart-drawer' %}
+-------------------------------------------------------------------------------
+{% endcomment %}
+
+
+<div class="snippet {{custom_class}}" data-title=".dot-flashing" style="display: none;">
+  <div class="stage">
+    <div class="dot-flashing"></div>
+  </div>
+</div>

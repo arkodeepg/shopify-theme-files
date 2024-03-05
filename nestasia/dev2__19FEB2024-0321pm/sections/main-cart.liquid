@@ -1,0 +1,1472 @@
+{%- assign full_width = section.settings.full_width -%}
+{%- assign upsell_collection = collections[section.settings.upsell_collection] -%}
+
+{{ 'index.css' | asset_url | stylesheet_tag: preload: true }}
+{% comment %}cp = cart page{% endcomment %}
+<div
+  data-section-id="{{ section.id }}"
+  data-section-type="cart-page"
+  class="clearfix">
+
+  <div class="container clearfix">
+    <h1 class="cart-title">{{ 'cart.general.title' | t }}</h1>
+
+    <div id="cart-table" data-ajax-cart-section {% if cart.items.size == 0 %}class="hidden"{% endif %}>
+      <div class="form">
+        <form action="{{ routes.cart_url }}" method="post">
+          <div class="cart_row">
+            <div class="cart_item_left">
+              {%- if settings.enable_free_gift and settings.free_gift_msg != blank -%}
+                {%- assign free_gift_amount = settings.free_gift_amount | times: 100 -%}
+                <div class="free-gift-item-container{% unless cart.total_price < free_gift_amount %} hide{% endunless %}">
+                  <div class="fgi-msg-box">
+                    <p>{{ settings.free_gift_msg }}</p>
+                  </div>
+                </div>
+              {%- endif -%}
+              <div class="clearfix">
+                {% comment %}<div class="cart-table bottompad">
+                  {% assign bundles = '' %}
+                  {% assign gift_card_total = 0 %}
+                  {% for line_item in cart.items %}
+
+                    {% if line_item.variant.inventory_management == 'shopify' and line_item.variant.inventory_quantity < line_item.quantity %}
+                      {% assign line_item_quantity = line_item.variant.inventory_quantity %}
+                    {% else %}
+                      {% assign line_item_quantity = line_item.quantity %}
+                    {% endif %}
+                    {% assign offerProduct = false %}
+                    {% assign bundle = false %}
+                    {% assign gwp = false %}
+                    {% assign isGift = false %}
+                    {% assign isGiftCard = false %}
+                    {% assign threshold_limit = 0 %}
+                    {% assign lineItemProductTags = line_item.product.tags | join: ',' %}
+                    {% for prop in line_item.properties %}
+                      {% if prop.first == '_bundle_id' %}
+                        {% assign bundle = prop.last %}{% endif %}
+                      {% if prop.first == '_gwp' %}
+                        {% assign gwp = true %}{% endif %}
+                      {% if prop.first == '_giftcard' %}
+                        {% assign isGiftCard = true %}{% endif %}
+                      {% if prop.first == '_freegift' %}
+                        {% assign isGift = true %}{% endif %}
+                      {% if prop.first == '_threshold' %}
+                        {% assign threshold_limit = prop.last %}{% endif %}
+                    {% endfor %}
+                    {% assign line_price = line_item.line_price %}
+                    {% assign product_type = '' %}
+                    {% for collection in line_item.product.collections %}
+                      {% assign coll_title = collection.title | downcase %}
+                      {% if coll_title contains 'gift card' %}
+                        {% assign gift_card_total = gift_card_total | plus: line_price %}
+                        {% assign product_type = "gift-card" %}
+                      {% endif %}
+                    {% endfor %}
+                    {% assign gift_card_total = cart.total_price | minus: gift_card_total | money %}
+                    {% capture isGiftWrap %}
+                      {% if line_item.properties['_giftParentId'] %}data-giftwrap="true"{% endif %}
+                    {% endcapture %}
+
+                    {% capture isGiftCard %}
+                      {% if line_item.properties['_giftcard'] %}
+                        data-giftcard="true" 
+                        data-giftcardmeesage="{{ line_item.properties['message'] }}"{% endif %}
+                    {% endcapture %}
+
+                    {% capture wrap_id %}
+                      {% if line_item.properties['_id'] %}
+                        data-wrapid="{{ line_item.properties['_id'] }}"
+                      {% endif %}
+                    {% endcapture %}
+                    {%- if bundle == false -%}
+                      {%- assign line_item_id = line_item.key -%}
+                      <div
+                        id="product-id-{{ line_item_id }}"
+                        {{ isGiftWrap }}
+                        {{ isGiftCard }}
+                        {{ wrap_id }}
+                        data-lineitem="{{ forloop.index }}"
+                        data-qty="{{ line_item_quantity }}"
+                        data-variantid="{{ line_item.variant_id }}"
+                        data-collectionId="{{ line_item.product.collections | map:'id' | join:',' }}"
+                        data-itemprice="{{ line_item.price }}"
+                        {% if isGift %}data-threshold="{{ threshold_limit }}"data-gift="true"{% endif %}class="item relative product-id item-row table-center clearfix{% unless line_item.variant.available %} item_unavailable{% endunless %}"data-linekey="{{ line_item.key }}"data-product-id="{{ line_item_id }}"{% if product_type != '' and isGiftCard %}data-prodprice="{{ line_item.line_price | money}}"data-prodtype="{{product_type}}"data-exclude="true"{% endif %}>
+                        {%- if settings.badge_enable -%}
+                          {%- if line_item.line_level_discount_allocations != blank or line_item.product.compare_at_price > line_item.original_price -%}
+                            <div class="badge" style="display:none;">
+                              <span class="badge-total">
+                                {{ 'products.product.savings' | t }}<br/>
+                                {% if line_item.line_level_discount_allocations != blank %}
+                                  {%- if settings.badge_percentage_enable -%}
+                                    {{ line_item.original_line_price | minus: line_item.final_line_price | times: 100 | divided_by: line_item.original_line_price | append: '%' }}
+                                  {%- else -%}
+                                    {{ line_item.original_line_price | minus: line_item.final_line_price | money_without_trailing_zeros }}
+                                  {%- endif -%}
+                                {% elsif line_item.product.compare_at_price > line_item.original_price %}
+                                  {%- if settings.badge_percentage_enable -%}
+                                    {{ line_item.product.compare_at_price | minus: line_item.product.price | times: 100 | divided_by: line_item.product.compare_at_price | append: '%' }}
+                                  {%- else -%}
+                                    {{ line_item.product.compare_at_price | times: line_item_quantity | minus: line_item.original_line_price | money_without_trailing_zeros }}
+                                  {%- endif -%}
+                                {% endif %}
+                              </span>
+                            </div>
+                          {%- endif -%}
+                        {%- endif -%}
+                        {% if line_item.variant.featured_media %}
+                          {% assign line_item_featured_media = line_item.variant.featured_media %}
+                        {% elsif line_item.product.featured_media %}
+                          {% assign line_item_featured_media = line_item.product.featured_media %}
+                        {% else %}
+                          {% assign line_item_featured_media = false %}
+                        {% endif %}
+                        {% if line_item_featured_media %}
+                          <div class="cart-item-media two item-thumb title-align title-align-left">
+                            {% if line_item.line_level_discount_allocations != blank %}
+                              {% for discount_allocation in line_item.line_level_discount_allocations %}
+                                {%- unless discount_allocation.discount_application.title == 'Buy one, get one free!' -%}
+                                  <span class="item-discount">{{ discount_allocation.discount_application.title }}</span>
+                                  <span class="discount-amt" style="display:none;">: {{ discount_allocation.amount | money | prepend: '-' }}</span>
+                                {%- endunless -%}
+                              {% endfor %}
+                            {% endif %}
+                            <div class="relative">
+                              <a
+                                href="{{ line_item.variant.url | within: collections.all }}"
+                                title="{{ line_item.title }}"
+                                class="img-align">
+                                {%- render 'image.load', id: line_item.id, img_src: line_item_featured_media, size: 260, alt: line_item.title -%}
+                              </a>
+                            </div>
+                          </div>
+                        {% endif %}
+                        <span class="item-details{% if line_item_featured_media %} half{% else %} full{% endif %} table-center">
+                          <div class="{% if line_item_featured_media %}nine{% else %}eleven{% endif %}">
+                            <div class="item-title">
+                              <h5>
+                                <a href="{{ line_item.variant.url | within: collections.all }}" title="{{ line_item.title }}">{{ line_item.product.title }}</a>
+                              </h5>
+                            </div>
+                            <h5 class="offers mt-5">
+                              <span class="price-preview price price-field" style="display:none;">
+                                {% if line_item.original_price != line_item.final_price %}
+                                  {% if line_item.final_price > 0 %}
+                                    {{ line_item.final_price | money }}
+                                  {% else %}
+                                    {{ 'cart.general.free' | t }}{% endif %}
+                                  <del>
+                                    {% if line_item.original_price > 0 %}
+                                      {{ line_item.original_price | money }}
+                                    {% else %}
+                                      {{ 'cart.general.free' | t }}{% endif %}
+                                  </del>
+                                {% else %}
+                                  {% if line_item.original_price > 0 %}
+                                    {{ line_item.original_price | money }}
+                                    {% if line_item.product.compare_at_price > line_item.original_price %}
+                                      <del>{{ line_item.product.compare_at_price | money }}</del>
+                                    {% else %}
+                                      {{ 'cart.general.each' | t }}{% endif %}
+                                  {% else %}
+                                    {{ 'cart.general.free' | t }}{% endif %}
+                                {% endif %}
+                              </span>
+                              {%- render 'product-unit-price', variant: line_item, variant_slash: 'true' -%}
+                            </h5>
+                            {% comment %}
+                              <h5 class="hidden total-item">                            
+                              {{ 'cart.general.carttotal' | t }}
+                              {% if line_item.original_line_price != line_item.final_line_price %}
+                              <span class="total-item total-discount-item">{{ line_item.final_line_price | money }}<del>{{ line_item.original_line_price | money }}</del></span>
+                              {% else %}
+                              <span class="total-item total{% if line_item.product.compare_at_price > line_item.original_price %}-sale{% else %}-price{% endif %}-item"{% if line_item.product.compare_at_price > line_item.original_price %} data-sale="{{ line_item.product.compare_at_price }}"{% endif %}>{{ line_item.original_line_price | money }}{% if line_item.product.compare_at_price > line_item.original_price %} <del>{{ line_item.product.compare_at_price | times: line_item_quantity | money }}</del>{% endif %}</span>
+                              {% endif %}
+                              </h5>
+                            {% endcomment %}
+                            {% unless line_item.variant.title == 'Default Title' %}
+                              <h6 class="variant-options mt-5">
+                                <span class="variants-title">{{ 'cart.general.item_options' | t }}:
+                                </span>
+                                <span class="variants">{{ line_item.variant.title }}</span>
+                              </h6>
+                            {% endunless %}
+                            {%- assign property_size = line_item.properties | size -%}
+                            {% if property_size > 0 %}
+                              <p class="cart-product-info">
+                                <small class="item-properties">
+                                  {% assign hide_prop = '_giftParentId, _giftcard, _gwp, _freegift, _threshold, _id' %}
+
+                                  {% for p in line_item.properties %}
+                                    {% if hide_prop contains p.first %}
+                                      {% continue %}
+                                    {% endif %}
+                                    {%- if p.first == 'Name' and p.last == 'bogo_product' -%}
+                                      {%- continue -%}
+                                    {%- endif -%}
+                                    {%- if p.first == 'value' and p.last == 'true' -%}
+                                      {%- continue -%}
+                                    {%- endif -%}
+
+                                    {% unless p.last == blank %}
+                                      {% if p.first != 'message' %}
+                                        {{ p.first }}:
+                                      {% endif %}
+                                      {% if p.last contains '/uploads/' %}
+                                        <a href="{{ p.last }}">
+                                          {{ p.last | split: '/' | last }}
+                                        </a>
+                                      {% else %}
+                                        {{ p.last }}
+                                      {% endif %}
+                                    {% endunless %}
+                                    <br/>
+                                  {% endfor %}
+                                </small>
+                              </p>
+                            {% endif %}
+
+                            <div class="total-item-hidden">
+                              <div class="custom_loading">
+                                <div class="custom-loader-wrap">
+                                  <div class="custom-loader"></div>
+                                </div>
+                              </div>
+                              <h5 class="price-cont cart_price_display">
+                                {% if line_item.original_line_price != line_item.final_line_price %}
+                                  <span class="total-item total-discount-item">{{ line_item.final_line_price | money }}
+                                    <del style="padding-right:5px;">{{ line_item.original_line_price | money }}</del>
+                                  </span>
+                                {% else %}
+                                  <span class="total-item total{% if line_item.product.compare_at_price > line_item.original_price %}-sale{% else %}-price{% endif %}-item"{% if line_item.product.compare_at_price > line_item.original_price %}data-sale="{{ line_item.product.compare_at_price }}"{% endif %}>{{ line_item.original_line_price | money }}{% if line_item.product.compare_at_price > line_item.original_price %}
+                                      <del>{{ line_item.product.compare_at_price | times: line_item_quantity | money }}</del>
+                                    {% endif %}
+                                  </span>
+                                {% endif %}
+                              </h5>
+                            </div>
+
+                            {% if line_item.line_level_discount_allocations != blank %}
+                              {% for discount_allocation in line_item.line_level_discount_allocations %}
+                                <div class="item-discount-wrap">
+                                  {%- if discount_allocation.discount_application.title == 'Buy one, get one free!' -%}
+                                    <span class="item-discount">{{ discount_allocation.discount_application.title }}</span>
+                                    {% assign offerProduct = true %}
+                                  {%- endif -%}
+                                </div>
+                              {% endfor %}
+                            {% endif %}
+
+                            <div class="quntity-gift{% if offerProduct %} bogo_free_item{% endif %}">
+                              <div class="mob-qunat">
+                                <span class="quantity form">
+                                  {% unless isGift %}
+                                    {% if isGiftWrap == blank and isGiftCard == blank %}
+                                      <button
+                                        type="button"
+                                        {{ isGiftWrap }}
+                                        {{ wrap_id }}
+                                        class="icon icon-minus btn qtybtn qtyminus_multi text-center{% if line_item.quantity == 1 %} disable_qtybtn{% endif %}"
+                                        field="updates_{{ line_item_id }}"
+                                        aria-label="{{ 'products.general.minus' | t }}"></button>
+                                    {% endif %}
+                                  {% endunless %}
+
+                                  <input name="updates[]" {% if isGiftWrap != blank or isGiftCard != blank %}disabled="disabled"{{ isGiftWrap }}{{ wrap_id }}{% endif %}type="number"inputmode="numeric"aria-label="Subtract"pattern="[0-9]*"data-value="{{ line_item_quantity }}"data-value="{{ line_item_quantity }}"value="{{line_item_quantity}}"min="0"class="quantity item-qty text-center{% if lineItemProductTags contains 'bogo_free' and settings.enable_bogo_offer %} bogo_free{% endif %}"field="error_{{ line_item_id }}"id="updates_{{ line_item_id }}"{% if line_item.variant.inventory_management and line_item.variant.inventory_policy != 'continue' %}{% unless isGift %}max="{% if lineItemProductTags contains 'bogo_free' and settings.enable_bogo_offer %}{{ line_item.variant.inventory_quantity | divided_by: 2 }}{% else %}{{ line_item.variant.inventory_quantity }}{% endif %}"{% endunless %}{% endif %}{% if isGift %}maxlen="1"disabled="disabled"data-gift="true"{% endif %}data-lineitem="{{ forloop.index }}"data-item-id="{{ line_item.variant_id }}"data-linekey="{{line_item.key}}" />
+
+                                  {% unless isGift %}
+                                    {% if isGiftWrap == blank and isGiftCard == blank %}
+                                      {% if lineItemProductTags contains 'bogo_free' and settings.enable_bogo_offer %}
+                                        {%- assign maxQty = line_item.variant.inventory_quantity | divided_by: 2 -%}
+                                      {% else %}
+                                        {%- assign maxQty = line_item.variant.inventory_quantity -%}
+                                      {% endif %}
+                                      <button
+                                        type="button"
+                                        {{ isGiftWrap }}
+                                        {{ wrap_id }}
+                                        class="icon icon-plus btn qtybtn qtyplus_multi text-center{% if line_item.quantity == maxQty %} disable_qtybtn{% endif %}"
+                                        data-line_item-inventory_quantity="{% if lineItemProductTags contains 'bogo_free' and settings.enable_bogo_offer %}{{ line_item.variant.inventory_quantity | divided_by: 2 }}{% else %}{{ line_item.variant.inventory_quantity }}{% endif %}"
+                                        field="updates_{{ line_item_id }}"
+                                        aria-label="{{ 'products.general.plus' | t }}"></button>
+                                    {% endif %}
+                                  {% endunless %}
+                                  <label class="stock error hidden" id="error_{{ line_item_id }}"></label>
+                                </span>
+                              </div>
+                              {% unless isGift %}
+                                {% if line_item.properties['_giftParentId'] or line_item.properties['_giftcard'] %}
+                                  {% else %}
+                                    {% if product_type == '' %}
+                                      <div class="gift-wrap-cart-page{% if line_item.properties['_id'] and line_item.properties['_id'] != '' %} hide{% endif %}">
+                                        <label class="label-giftcard">
+                                          <!--<i class="btn-round-gift icon icon-plus"></i> -->
+                                          {% render 'svg-icons' icon: 'gift-box-icon' %}
+                                          <input
+                                            type="checkbox"
+                                            class="btn-adon addtocart-adon"
+                                            name="{% if line_item.properties['_id'] and line_item.properties['_id'] != '' %}remove_giftwrap{% else %}add_giftwrap{% endif %}"
+                                            value="39651226812525"
+                                            data-parentVariantId="{{ line_item.variant_id }}"
+                                            data-item-key="{{ line_item.key }}"
+                                            data-lineitem="{{ forloop.index }}"
+                                            data-title="{{ line_item.title }}"
+                                            data-qty="{{ line_item_quantity }}">
+                                          <span class="label-text">
+                                            {% if line_item.properties['_id'] and line_item.properties['_id'] != '' %}Remove Gift Wrap{% else %}Add Gift Wrap{% endif %}
+                                          </span>
+                                        </label>
+                                      </div>
+                                    {% endif %}
+                                {% endif %}
+                              {% endunless %}
+                            </div>
+                            <div class="item__applicable_discounts" data-test-product-id="{{ line_item.variant_id }}"></div>
+                            <div class="item_unavailable_message">
+                              Sorry, Product is out of stock.
+                            </div>
+                          </div>
+                          {%- unless isGift or offerProduct -%}
+                            <div class="one trash-remove">
+                              {% if section.settings.remove_enable %}
+                                <small>
+                                  <a href="javascript:void(0);" {% if isGift %}data-threshold="{{ threshold_limit }}"data-gift="true"{% endif %}{{ isGiftWrap }}{{ wrap_id }}class="remove_item_multi open_popup"aria-label="Subtract"title="{{ 'cart.general.remove' | t }}"field="updates_{{ line_item_id }}"><img
+                                      class="trash-icon"
+                                      area-label="Subtract"
+                                      src="{{ "delet-icon.svg" | file_url }}" /></a>
+                                </small>
+                              {% endif %}
+                            </div>
+                          {%- endunless -%}
+                        </span>
+                        {%- if section.settings.remove_enable -%}
+                          <div class="remove_item_popup">
+                            <div class="remove_item_popup_inner">
+                              <div class="remove-popup-close">{% render "svg-icons" icon: 'close-icon' %}</div>
+
+                              <div class="remove_item_popup_content">
+                                <div class="remove_item_popup_image">
+                                  <div class="relative">
+                                    <a
+                                      href="{{ line_item.variant.url | within: collections.all }}"
+                                      title="{{ line_item.title }}"
+                                      class="img-align">
+                                      {%- render 'image.load', id: line_item.id, img_src: line_item_featured_media, size: 260, alt: line_item.title -%}
+                                    </a>
+                                  </div>
+                                </div>
+                                <div class="remove_item_popup_text">
+                                  <p>
+                                    <strong>Remove item from bag?</strong>
+                                  </p>
+                                  {% if line_item.title contains 'Gift Wrap' or line_item.title contains 'Gift Card' %}
+                                    {% else %}
+                                      <p class="remove-text-wishlist">TIP: Add it to your Wishlist to purchase it later!</p>
+                                  {% endif %}
+                                </div>
+                              </div>
+                              <div class="remove_item_popup_btn_wrap {% if line_item.title contains 'Gift Wrap' or line_item.title contains 'Gift Card' %}remove_gift_item_wishlist{% endif %}" data-test-product-id="{{line_item.product_id}}">
+                                <a href="javascript:void(0);" {% if isGift %}data-threshold="{{ threshold_limit }}"data-gift="true"{% endif %}{{ isGiftWrap }}{{ wrap_id }}class="remove_item_multi btn"aria-label="Subtract"title="{{ 'cart.general.remove' | t }}"field="updates_{{ line_item_id }}">Remove</a>
+                                {%- capture the_snippet_fave_icon -%}
+                                  {%- render 'ssw-widget-faveicon' with line_item.product_id -%}{%- endcapture -%}
+                                {% if line_item.title contains 'Gift Wrap' or line_item.title contains 'Gift Card' %}
+                                  {% else %}
+                                    {% unless the_snippet_fave_icon contains 'Liquid error' %}
+                                      <div class="relative">{{ the_snippet_fave_icon }}</div>
+                                    {% endunless %}
+                                {% endif %}
+                              </div>
+                            </div>
+                          </div>
+                        {%- endif -%}
+                      </div>
+                    {%- else -%}
+                      {% assign bundle_check = '[' | append: bundle | append: ']' %}
+                      {% unless bundles contains bundle_check %}
+                        {% assign bundles = bundles | append: bundle_check %}
+
+                        {% for metafield in shop.metafields._bundle %}
+                          {% if metafield.first == bundle %}
+                            {% assign meta = metafield | last %}
+                          {% endif %}
+                        {% endfor %}
+                        <div
+                          id="product-id-{{ bundle }}"
+                          data-linekey="{{ line_item.key }}"
+                          class="item relative product-id item-row table-center clearfix{% unless line_item.variant.available %} item_unavailable{% endunless %}">
+                          <div class="cart-item-media two item-thumb title-align title-align-left">
+                            <div class="relative">
+                              <img
+                                class="lazywidth no-js-hide img-align square lazyautosizes ls-is-cached lazyloaded"
+                                src="{{ meta.image }}"
+                                height="260.0"
+                                width="260"
+                                data-aspectratio="1.0"
+                                data-sizes="auto"
+                                data-image=""
+                                alt="Abstract Pot - Grey M"
+                                style="max-width:260px">
+                            </div>
+                          </div>
+                          <span class="item-details half table-center">
+                            <div class="three">
+                              <div class="item-title">
+                                <h5>{{ meta.name }}</h5>
+                              </div>
+                              <h5 class="offers hidden">
+                                <span class="price-preview price price-field">
+                                  Rs. {{ meta.price | times: 100 | money_without_currency }} each
+                                </span>
+                              </h5>
+                              <h5 class="hidden total-item">
+                                total:
+                                <span class="total-item total-price-item">Rs. {{ meta.price | times: 100 | money_without_currency }}</span>
+                              </h5>
+                              <h6>
+                                <small>Includes<br><span class="variants">
+                                    {% for pro in meta.products %}
+                                      {% for var in pro.variants %}
+                                        {% for c in meta.connections %}
+                                          {% if var.id == c.original %}
+                                            {{ c.times }} × {{ pro.title }} {{ var.title }}<br/>
+                                          {% endif %}
+                                        {% endfor %}
+                                      {% endfor %}
+                                    {% endfor %}
+                                  </span>
+                                </small>
+                              </h6>
+                            </div>
+                            <div class="two price-preview-hidden">
+                              <h5 class="offers">
+                                <span class="price-preview price price-field">
+                                  Rs. {{ meta.price | times: 100 | money_without_currency }} each
+                                </span>
+                              </h5>
+                            </div>
+
+                            {% for pro in meta.products %}
+                              {% for c in meta.connections %}
+                                {% assign copy_id = c.copy | remove: 'gid://shopify/ProductVariant/' | times: 1 %}
+                                {% if copy_id == line_item.variant.id %}
+                                  {% assign bundle_q = line_item_quantity | divided_by: c.times %}
+                                {% endif %}
+                              {% endfor %}
+                            {% endfor %}
+
+                            <div class="three text-center">
+                              <span
+                                class="quantity form alternative"
+                                data-bundle="{{ bundle }}"
+                                data-bundle-price="{{ meta.price | times: 100 }}"
+                                data-bundle-update="{% for pro in meta.products %}{% for c in meta.connections %}{{ c.copy | remove: 'gid://shopify/ProductVariant/' }}:{{ c.times }}{% unless forloop.last %}|{% endunless %}{% endfor %}{% endfor %}">
+                                <button class="icon icon-minus"></button>
+                                <input
+                                  type="number"
+                                  inputmode="numeric"
+                                  aria-label="Subtract"
+                                  pattern="[0-9]*"
+                                  value="{{ bundle_q }}"
+                                  min="0"
+                                  class="q"
+                                  readonly>
+                                <button class="icon icon-plus"></button>
+                              </span>
+                            </div>
+
+                            <div class="two total-item-hidden">
+                              <h5>
+                                <span class="total-item total-price-item">Rs. {{ meta.price | times: 100 | times: bundle_q | money_without_currency }}</span>
+                              </h5>
+                            </div>
+                          </span>
+                        </div>
+                      {% endunless %}
+                    {%- endif -%}
+                  {% endfor %}
+                </div>{% endcomment %}
+                <div class="my-cart__items" data-ajax-cart-section-scroll>
+        {% for line_item in cart.items %}
+          {% if line_item.properties._giftcard == 'true' %}
+            {% assign cartNoteCheck = true %}
+          {% endif %}
+
+          {% if line_item.variant.inventory_management == 'shopify'
+            and line_item.variant.inventory_quantity < line_item.quantity
+          %}
+            {% assign line_item_quantity = line_item.variant.inventory_quantity %}
+          {% else %}
+            {% assign line_item_quantity = line_item.quantity %}
+          {% endif %}
+          {%- assign line_item_id = line_item.key -%}
+          <div
+            class="my-cart__item"
+            data-lineitem="{{ forloop.index }}"
+            data-qty="{{ line_item_quantity }}"
+            data-variantid="{{ line_item.variant_id }}"
+            data-collectionId="{{ line_item.product.collections | map:'id' | join:',' }}"
+            data-itemprice="{{ line_item.price }}"
+            {% if isGift %}
+              data-threshold="{{ threshold_limit }}" data-gift="true"
+            {% endif %}
+            data-linekey="{{ line_item.key }}"
+            data-product-id="{{ line_item_id }}"
+            {% if product_type != '' and isGiftCard %}
+              data-prodprice="{{ line_item.line_price | money}}"
+              data-prodtype="{{product_type}}"
+              data-exclude="true"
+            {% endif %}
+          >
+            <div class="my-cart__item-inner">
+              {% assign line_item_index = forloop.index %}
+              {% assign compareAtPrice = line_item.variant.compare_at_price | times: line_item.quantity %}
+              {% assign actualPrice = line_item.final_line_price %}
+              {% assign totalmrp = totalmrp | plus: compareAtPrice %}
+              {% assign discoutmrp = discoutmrp | plus: compareAtPrice | minus: actualPrice %}
+              <a class="cp-cart_remove">
+                <img src="https://nestasia.in/cdn/shop/files/delet-icon.svg?v=6312592074158954561">
+              </a>
+              <a href="{{line_item.url}}">
+                <img
+                  src="{{line_item.image | img_url: '120x'}}"
+                  alt="{{line_item.image.alt}}"
+                  class="my-cart_img"
+                >
+              </a>
+              <div class="cp-cart_data">
+                <a href="{{line_item.url}}" class="my-cart_title">{{ line_item.title }}</a>
+                <span class="my-cart_properties">{{ line_item.properties.message }}</span>
+                <div class="my-cart_final-price">
+                  <div class="my-cart_atcprice">{{ line_item.final_line_price | money }}</div>
+                  {% if compareAtPrice > actualPrice %}
+                    <div class="my-cart_comprice">
+                      {{ compareAtPrice | money }}
+                    </div>
+                  {% endif %}
+                </div>
+                <div class="cp-cart_sub-data">
+                  <div class="my-cart_quantity">
+                    <ajax-cart-quantity>
+                      <a
+                        class="my-cart_qntbtn my-cart_qntbtn-minus {% if line_item.properties['_giftcard'] == 'true' or line_item.properties['_giftParentId']  %}cart-disabled{% endif %} {% if line_item.quantity <= 1 %}cart-btn_disabled{% endif %}"
+                        data-ajax-cart-quantity-minus
+                        href="{{ routes.cart_change_url }}?line={{ line_item_index }}&quantity={{ line_item.quantity | minus: 1 }}"
+                      >
+                        -
+                      </a>
+
+                      <!-- Item quantity input ajaxified by the "data-ajax-cart-quantity-input" attribute -->
+                      <input
+                        class="my-cart_qntbtn my-cart_qntbtn-input"
+                        data-ajax-cart-quantity-input="{{ line_item_index }}"
+                        name="updates[]"
+                        value="{{ line_item.quantity }}"
+                        type="number"
+                        form="my-ajax-cart-form"
+                      >
+
+                      <a
+                        class="my-cart_qntbtn my-cart_qntbtn-plus {% if line_item.properties['_giftcard'] == 'true' or line_item.properties['_giftParentId'] %}cart-disabled{% endif %}"
+                        data-ajax-cart-quantity-plus
+                        href="{{ routes.cart_change_url }}?line={{ line_item_index }}&quantity={{ item.quantity | plus: 1 }}"
+                      >
+                        +
+                      </a>
+                    </ajax-cart-quantity>
+                  </div>
+                  <div
+                    class="my-cart_gift {% if line_item.properties['_giftWrap'] == 'yes' or line_item.properties['_giftcard'] == 'true' or line_item.properties['_giftParentId']  %}cart-hide{% endif %}"
+                    data-id="{{line_item.id}}"
+                    data-name="{{line_item.title}}"
+                    data-lineitem="{{ forloop.index }}"
+                    data-parentid="{{ line_item.variant_id }}"
+                    data-key="{{ line_item.key }}"
+                    data-quantity="{{ line_item.quantity }}"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="15.2" viewBox="0 0 17 15.2">
+                      <g id="Group_9155" data-name="Group 9155" transform="translate(-1308.3 -179.8)">
+                          <g id="Layer_1_1_" transform="translate(1307.5 179)">
+                              <path id="Path_2126" data-name="Path 2126"
+                                  d="M12.948,2.838A1.84,1.84,0,0,0,11.11,1H9.884a1.838,1.838,0,0,0-1.532.824A1.837,1.837,0,0,0,6.821,1H5.6A1.835,1.835,0,0,0,4.229,4.064H1V7.74h.613v7.965h13.48V7.74h.613V4.064H12.476A1.829,1.829,0,0,0,12.948,2.838ZM9.884,1.613H11.11a1.225,1.225,0,1,1,0,2.451H8.659V2.838A1.227,1.227,0,0,1,9.884,1.613ZM4.37,2.838A1.227,1.227,0,0,1,5.6,1.613H6.821A1.227,1.227,0,0,1,8.046,2.838V4.064H5.6A1.227,1.227,0,0,1,4.37,2.838ZM1.613,4.676H6.821V7.127H1.613ZM6.821,15.092h-4.6V7.74h4.6Zm2.451,0H7.433V4.676H9.272V15.092Zm5.208,0h-4.6V7.74h4.6Zm.613-7.965H9.884V4.676h5.208Z"
+                                  fill="#96865d" stroke="#96865d" stroke-width="0.4"></path>
+                          </g>
+                      </g>
+                    </svg>
+                    Add Gift Wrap
+                  </div>
+                </div>
+              </div>
+              <div class="cp-remove_popup">
+                <div class="cp-remove_popup-child">
+                  <div class="remove-popup-close cursor-pointer" bis_skin_checked="1">
+                    <svg
+                      class="close-icon"
+                      version="1.2"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 13 13"
+                      width="13"
+                      height="13"
+                    >
+                      <path id="Shape 2" class="close-icon" d="m0 13l13-13"></path>
+                      <path id="Shape 1" class="close-icon" d="m0 0l13 13"></path>
+                    </svg>
+                  </div>
+                  <div class="cp-top">
+                    <img src="{{line_item.image | img_url: '96x'}}" alt="{{line_item.image.alt}}" class="cp-left">
+                    <div class="cp-right">
+                        <div class="cp-right_msg">Remove item from the bag?</div>
+                        {% unless line_item.properties._giftcard == 'true' or line_item.properties._giftParentId %}
+                          <div class="cp-right_tip">TIP: Add it to your Wishlist to purchase it later!</div>
+                        {% endunless %}
+                    </div>
+                  </div>
+                  <div class="cart-remove_button">
+                    <!-- live button -->
+                    <a
+                      class="cart-remove_left cart-remove_btn cp-remove_btn c-gold {% if line_item.properties['_giftParentId']  %}gift-remove{% endif %}"
+                      data-ajax-cart-request-button
+                      {% if line_item.properties['_giftParentId']  %}
+                        data-parentprod="{{ line_item.properties._giftParentId }}"
+                        data-message = "{{ line_item.properties.message }}"
+                      {% elsif line_item.properties['_giftWrap'] == 'yes' %}
+                        data-varid = "{{ line_item.variant_id }}"
+                        data-title = "{{ line_item.title }}"
+                      {% endif %}
+                      href="{{ line_item.url_to_remove }}"
+                      >Remove</a
+                    >
+                    <!-- testing button -->
+                    <!-- <a
+                      class="cart-remove_left cart-remove_btn c-gold {% if line_item.properties['_giftParentId']  %}gift-remove{% endif %}"
+                      data-parentprod="{{ line_item.properties._giftParentId }}"
+                      data-message = "{{ line_item.properties.message }}"
+                      >Remove</a
+                    > -->
+                    {% unless line_item.properties._giftcard == 'true' or line_item.properties._giftParentId %}
+                      <div class="cart-remove_right cart-remove_btn cp-remove_btn c-gold ssw-faveiticon sswfaveicon{{line_item.product_id}}"
+                        data-key="{{ line_item.key }}"
+                        >
+                          <i data-product-id="{{line_item.product_id}}" 
+                            data-count="196" 
+                            class="ssw-icon-heart-o ssw-fave-icon ssw-wishlist-element ssw-synchronized" 
+                            title="Add to wishlist" 
+                            data-params="{&quot;product_id&quot;:&quot;{{line_item.product_id}}&quot;,&quot;event&quot;:&quot;fave_button&quot;,&quot;page&quot;:&quot;product_profile&quot;,&quot;title&quot;:&quot;{{ line_item.title }}&quot;,&quot;handle&quot;:&quot;{{ line_item.handle }}&quot;,&quot;first_variant_id&quot;:{{ line_item.variant_id }}}" 
+                            tabindex="0" 
+                            role="button" 
+                            aria-label="Add to wishlist" 
+                            data-variant-id="{{ line_item.variant_id }}">
+                              Add to wishlist
+                            </i>
+                            <span class="faves-count" data-user-faves="{&quot;{{ line_item.variant_id }}&quot;:1}">196</span>
+                            <script defer>
+                              if(typeof isGwHelperLoaded !== "undefined") {
+                                  const initIcon = new CustomEvent("ssw.faveicon.init");
+                                  window.dispatchEvent(initIcon);
+                              }
+                            </script>
+                      </div>
+                    {% endunless %}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="item__applicable_discounts" data-test-product-id="{{line_item.id}}"></div>
+          </div>
+        {% endfor %}
+      </div>
+                <div class="clearfix gift-card-part{% if cart.item_count == 0 %} hidden{% endif %}">
+                  <div class="gift-card-container">
+                    <label>
+                      <input
+                        type="checkbox"
+                        name="giftcard_cart"
+                        value="{{ 39661643235437 }}" />
+                      Gift Card
+                      <span class="plus-minus-button"></span>
+                    </label>
+                    <div class="card-message-box-wrap">
+                      <div class="card-message-box six clearfix">
+                        <textarea
+                          class="card-prop"
+                          maxlength="150"
+                          name="properties[message]"
+                          placeholder="Enter your message"></textarea>
+                        <p class="giftcard_message">Please enter gift card message</p>
+                        <button
+                          disabled="disabled"
+                          type="button"
+                          style="display:none;"
+                          name="btn_giftcard"
+                          class="add-giftcard btn custom_loading"
+                          value="Add Gift Card">Add Gift Card<div class="custom-loader-wrap">
+                            <div class="custom-loader"></div>
+                          </div>
+                        </button>
+                        <button
+                          type="button"
+                          style="display:none;"
+                          name="btn_giftcard"
+                          class="remove-giftcard btn custom_loading"
+                          value="Remove Gift Card">Remove Gift Card<div class="custom-loader-wrap">
+                            <div class="custom-loader"></div>
+                          </div>
+                        </button>
+                      </div>
+                      <div class="six clearfix">
+                        {% if section.settings.cart_notes_enable %}
+                          <span class="form">
+                            <span>
+                              <cart-note>
+                                <textarea
+                                  name="note"
+                                  class="input-full"
+                                  id="CartSpecialInstructions"
+                                  placeholder="{{ 'cart.general.note' | t }}">{{ cart.note }}</textarea>
+                              </cart-note>
+                            </span>
+                          </span>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="cart_item_right">
+              <div class="price_details_inner">
+                <div class="cart_offer_form_wrap mobile-none">
+                  <div class="cart_offer_form_inner">
+                    <div class="cart_offer_form_heading">
+                      <h4>Check available offers</h4>
+                      <div class="view-all">
+                        <a href="javascript:void(0)" class="cart_offer_view_all">View All</a>
+
+                        <div
+                          class="snippet"
+                          data-title=".dot-flashing"
+                          style="display:none;">
+                          <div class="stage">
+                            <div class="dot-flashing"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="cp_offer_input_wrap">
+                      <input
+                        type="text"
+                        class="cart_offer_input"
+                        placeholder="Enter Coupon code" />
+                      <a href="javascript:void(0)" class="cart_offer_apply_btn">Apply</a>
+                      <div
+                        class="snippet"
+                        data-title=".dot-flashing"
+                        style="display:none;">
+                        <div class="stage">
+                          <div class="dot-flashing"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="cart-options">
+                  {% comment %}
+                  <div class="left-right-padding">
+                    <h3 class="cart-title">Price Details:</h3>
+                    {% assign total_savings = 0 %}
+                    {% for line_item in cart.items %}
+                      {% if line_item.variant.inventory_management == 'shopify' and line_item.variant.inventory_quantity < line_item.quantity %}
+                        {% assign line_item_quantity = line_item.variant.inventory_quantity %}
+                      {% else %}
+                        {% assign line_item_quantity = line_item.quantity %}
+                      {% endif %}
+                      {% if line_item.variant.compare_at_price > line_item.variant.price %}
+                        {% assign price_dif = line_item.variant.compare_at_price | minus: line_item.variant.price | times: line_item_quantity %}
+                        {% assign total_savings = total_savings | plus: price_dif %}
+                      {% endif %}
+                    {%- endfor -%}
+                    {% assign total_mrp = cart.original_total_price | plus: total_savings %}
+                      <table border="0"
+                      cellspacing="0"
+                      cellpadding="0">
+
+                      <tr>
+                        <td class="text-left">
+                          <h3>Total MRP</h3>
+                        </td>
+                        <td class="text-right price-preview price price-field">
+                          <h3>
+                            <span id="subtotal-cart-bottom">{{ total_mrp | money }}</span>
+                          </h3>
+                        </td>
+                      </tr>
+                    </table>
+                    <table
+                      id="total_product_savings_h3"
+                      border="0"
+                      cellspacing="0"
+                      cellpadding="0">
+                      <tr {% if total_savings == 0 %}class="hide"{% endif %}>
+                        <td class="text-left cart_total_savings">
+                          <h3>Discount on MRP</h3>
+                        </td>
+                        <td class="text-right price-preview price price-field">
+                          <h3>
+                            <span id="total_product_savings" data-total-product-savings="{{ total_savings }}">{{ total_savings | money }}</span>
+                          </h3>
+                        </td>
+                      </tr>
+                    </table>
+                    <table
+                      border="0"
+                      cellspacing="0"
+                      cellpadding="0"
+                      id="discount_application_check">
+                      {%- for discount_application in cart.discount_applications -%}
+                        <tr>
+                          <td class="text-left">
+                            <h3>
+                              <span class="code">{{ discount_application.title }}</span>
+                            </h3>
+                          </td>
+                          <td class="text-right">
+                            <h3>
+                              <span>- {{ discount_application.total_allocated_amount | money }}</span>
+                            </h3>
+                          </td>
+                        </tr>
+                      {%- endfor -%}
+                    </table>
+                    <table
+                      border="0"
+                      cellspacing="0"
+                      cellpadding="0">
+                      <tr class="hide">
+                        <td class="text-left discount-applied-code">
+                          <h3>Coupon Discount -
+                            <span class="code"></span>
+                          </h3>
+                        </td>
+                        <td class="text-right discount-minus-price">
+                          <h3>
+                            <span></span>
+                          </h3>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="text-left">
+                          <h3>Total Amount</h3>
+                        </td>
+                        <td class="text-right price-preview price price-field">
+                          <h3>
+                            <span id="total-cart-bottom" class="grand-amount-total">{{ cart.total_price | money }}</span>
+                          </h3>
+                        </td>
+                      </tr>
+                    </table>
+                    <input
+                      class="apiDiscount"
+                      name="discount"
+                      type="hidden"
+                      value="">
+                    <div class="applayed-coupen-code hide">
+                      <span class="applayed-code">{{ cart.discount_applications.first.title }}</span>
+                      <a href="#" class="remove-applayed-coupen">Remove</a>
+                      <div
+                        class="snippet"
+                        data-title=".dot-flashing"
+                        style="display: none;">
+                        <div class="stage">
+                          <div class="dot-flashing"></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="cart_offer_form_wrap mobile-show">
+                      <div class="cart_offer_form_inner">
+                        <div class="cart_offer_form_heading">
+                          <h4>Check available offers</h4>
+                          <div class="view-all">
+                            <a href="javascript:void(0)" class="cart_offer_view_all">View All</a>
+                            <div
+                              class="snippet"
+                              data-title=".dot-flashing"
+                              style="display:none;">
+                              <div class="stage">
+                                <div class="dot-flashing"></div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="tooltip-part">
+                      Shipping calculated at checkout
+                      <div class="tooltip-icon">!
+                        {% if settings.shipping_message != blank %}
+                          <span class="tooltip-content">{{ settings.shipping_message }}</span>
+                        {% endif %}
+                      </div>
+
+                    </div>
+                  </div>
+                  </div> {% endcomment %}
+        <div class="checkout-price">
+          <div class="checkout-price_title">Price Details:</div>
+          <div class="checkout-price_total checkout-price_child">
+            <div class="checkout-price_total-left">Total MRP</div>
+            <div class="checkout-price_total-right">{{ totalmrp | money_with_currency }}</div>
+          </div>
+          <div class="checkout-price_discount checkout-price_child">
+            <div class="checkout-price_discount-left">Discount on MRP</div>
+            <div class="checkout-price_discount-right">- {{ discoutmrp | money_with_currency }}</div>
+          </div>
+          <div class="checkout-price_discount checkout-price_child checkout-price_coupon">
+            <div class="checkout-price_discount-left">Coupon Discount - <span>code</span></div>
+            <div class="checkout-price_discount-right">- 11</div>
+          </div>
+          <div class="checkout-price_total-amt checkout-price_child">
+            <div class="checkout-price_total-amt-left">Total Amount</div>
+            <div data-total="{{ cart.total_price }}" class="checkout-price_total-amt-right">
+              {{ cart.total_price | money_with_currency }}
+            </div>
+          </div>
+          <div class="shipping-text"><span>!</span>Shipping calculated at checkout</div>
+        </div>
+                  <button type="button" id="checkout2" onclick="handleFloCheckoutBtn()" class="btn" name="checkout2">
+                    <span id="checkout-total-cart">{{ cart.total_price | money }}</span> <span class="dots"></span> Proceed To Checkout
+                  </button>
+                <div style="text-align:center;">
+                <a data-checkout-btn href="/checkout" style="color: #4d4d4d; text-decoration: underline; font-size: 14px; margin-top: 6px; text-align: center; display: inline-block;" class="bold_clone" data-event-queue-button="0">Have a gift card?</a>
+                </div>
+                  {% if additional_checkout_buttons %}
+                    <div class="additional-checkout-buttons clearfix bottompad-quarter">
+                      {{ content_for_additional_checkout_buttons }}
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+ 
+      </div>
+    </div>
+
+    <div class="cp-empty_cart_wrap{% if cart.items.size > 0 %} hidden{% endif %}">
+      <div class="empty_cart_wrap_inner">
+        <img
+          width="195px"
+          height="195px"
+          src="https://cdn.shopify.com/s/files/1/2690/0106/files/empty-cart-image_195x.png?v=1650020882"
+          alt="Empty cart">
+        <div class="empty_cart_text">Your Shopping Cart is Empty</div>
+        <div class="empty_cart_btn_wrap">
+          <a href="/collections/all-products" class="btn">Start Shopping {% render 'svg-icons' icon: 'right-arrow-icon' %}</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  {% if upsell_collection != blank %}
+    <div id="cart_upsell_collection" {% if cart.items.size == 0 %}class="hidden"{% endif %}>
+      <div class="container clearfix">
+        <div class="upsell-products">
+          <div class="twelve text-center">
+            <h2>{{ section.settings.upsell_collection_title | default: 'Frequently added' }}</h2>
+          </div>
+          <div class="swiper-container-wrapper">
+            <div class="upsell-products__inner swiper-container" id="upsell-slider">
+              <div class="swiper-wrapper">
+                {% for product in upsell_collection.products %}
+                  {%- assign class = 'swiper-slide' -%}
+                  {%- render 'product-loop', product: product, forloop_index0: forloop.index0, show_cta_button: true, class: class -%}
+                {% endfor %}
+              </div>
+              <div id="swiper-scrollbar-upsell" class="swiper-scrollbar"></div>
+            </div>
+            <div class="swiper-pagination relative">
+              <div class="swiper-button-prev icon-chevron-left icon svg-icon" id="swiper-button-prev-upsell">
+                <span class="arrow"></span>
+              </div>
+              <div class="swiper-button-next icon-chevron-right icon svg-icon" id="swiper-button-next-upsell">
+                <span class="arrow"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>
+{%- comment -%}
+  <div class="mobile-fix-checkout-button">
+  <a href="#" class="view-cart">View Cart</a>
+  <button type="submit" name="checkout"  class="btn" >{{ cart.total_price | money }} <span class="dots"></span> Proceed To Checkout</button>
+  </div>
+{%- endcomment -%}<style>
+  .label-giftcard {
+    display: inline-block;
+    align-items: center;
+    line-height: 15px;
+    position: relative;
+    margin-left: 10px;
+    margin-top: 10px;
+    padding-right: 10px;
+    font-size: 14px;
+  }
+  .btn-round-gift {
+    border-radius: 50%;
+    display: inline-block;
+    width: 15px;
+    min-height: 15px;
+    color: #fff;
+    padding: 2px;
+    text-align: center;
+    margin-right: 5px;
+    font-size: 14px !important;
+    font-weight: bold;
+    background: #96865d !important;
+  }
+  .btn-round-gift + .btn-adon {
+    opacity: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    left: 0;
+    cursor: pointer;
+  }
+  .btn-adon[disabled] {
+    cursor: none;
+  }
+  .btn-round-gift.icon-minus {
+    color: #fff !important;
+    background: #de8873 !important;
+  }
+  .label-giftcard input[type="checkbox"]:before {
+    top: 0 !important
+  }
+  .item-qty {
+    ;
+    /*pointer-events:none;*/
+  }
+  .gift-card-container {
+    padding: 0;
+    text-align: left;
+  }
+  .gift-card-container label {
+    position: relative;
+    display: flex;
+    font-size: var(--small);
+    letter-spacing: 0.24px;
+    line-height: 15px;
+    margin-bottom: 17px;
+    font-family: var(--body_font) !important;
+    cursor: pointer;
+  }
+  /* .gift-card-container label input[type=checkbox]:before,
+  .gift-card-container label input[type=radio]:before {
+    top: 0;
+  } */
+  .gift-card-container .card-message-box {
+    display: none;
+  }
+  .gift-card-container .card-message-box-wrap {
+    margin-left: calc((var(--master_spacing) / 2) - var(--master_spacing));
+    margin-right: calc((var(--master_spacing) / 2) - var(--master_spacing));
+  }
+  .gift-card-container .card-message-box [name="btn_giftcard"]:disabled {
+    opacity: 0.7;
+  }
+
+  .gift-card-container .card-message-box .add-giftcard {
+    border-radius: 4px;
+  }
+  .gift-card-container .card-message-box:not(.show-remove) .add-giftcard {
+    display: inline-block !important;
+    border-radius: 4px;
+  }
+  .gift-card-container .card-message-box.show-remove .remove-giftcard {
+    display: inline-block !important;
+    border-radius: 4px;
+  }
+  .gift-card-container .card-prop {
+    min-height: 82px;
+    margin-bottom: 10px;
+    resize: none;
+  }
+  .giftcard_message {
+    color: #de8873 !important;
+  }
+  .btn-red,
+  .remove-giftcard {
+    background-color: #de8873 !important;
+    border-color: #de8873 !important;
+    color: #fff !important;
+  }
+  #cart_upsell_collection h2 {
+    font-family: 'garamond-premr-pro' !important;
+    font-size: 26px;
+    text-transform: uppercase;
+    letter-spacing: 3.64px;
+    color: #343333 !important;
+  }
+  @media screen and (min-width:768px) {
+    .upsell-products__inner {
+      margin-left: -15px;
+      margin-right: -15px;
+    }
+    .upsell-products .product {
+      padding: 0 15px;
+    }
+  }
+  @media screen and (max-width:767px) {
+    .payment-buttons .only-mobile {
+      justify-content: center;
+    }
+    .purchase .btn-groups .sub-btn {
+      width: 100% !important;
+    }
+    .item-details .offers.mt-5,
+    .item-details .hidden.total-item {
+      margin-bottom: 0 !important;
+      display: inline-block !important;
+    }
+    .item-details .variant-options.mt-5 {
+      margin-bottom: 0 !important;
+    }
+    .item-details .variant-options.mt-5 + p {
+      margin-bottom: 0 !important;
+      margin-top: 0 !important;
+    }
+    .item-details .item-title h5 {
+      margin-bottom: 0 !important;
+    }
+    .item-details .quantity.form {
+      margin-bottom: 0 !important;
+      margin-top: 10px !important;
+    }
+    .cart-table .item .total-item del,
+    .cart-table .item .variants del {
+      padding-right: 5px;
+    }
+    .item-details .item-discount {
+      padding-right: 5px;
+    }
+    .upsell-products__inner {
+      margin-left: -7px;
+      margin-right: -7px;
+    }
+    .upsell-products .product {
+      padding: 0 5px;
+    }
+    #cart_upsell_collection h2 {
+      font-size: 21px;
+    }
+  }
+
+  .ajax-load #ajaxBusy {
+    display: block !important;
+  }
+  #ajaxBusy {
+    background: transparent !important;
+  }
+  #ajaxBusy .fancybox-loading {
+    display: none !important;
+  }
+  .delete-msg {
+    display: block;
+    font-size: 16px;
+    color: red;
+  }
+  .delete-msg.hide {
+    display: none;
+  }
+  .mt-5 {
+    margin-top: 5px !important;
+  }
+  .show-loader #ajaxBusy {
+    visibility: visible !important;
+    display: block !important;
+  }
+  .no-action {
+    pointer-events: none;
+  }
+  #product-id-product-template-quick .additional {
+    display: none;
+  }
+</style>
+
+
+{%- assign productCategory = '' -%}
+{%- assign productName = '' -%}
+{%- assign productPrice = '' -%}
+{%- assign itemCount = 0 -%}
+{%- for line in cart.items -%}
+  {%- assign itemCount = itemCount | plus: line.quantity -%}
+  {%- capture productCategory -%}
+    {%- if productCategory == blank -%}
+      {{- line.product.type -}}
+    {%- else -%}
+      {{- productCategory -}}, {{- line.product.type -}}
+    {%- endif -%}
+  {%- endcapture -%}
+  {%- capture productTitle -%}
+    {%- if productTitle == blank -%}
+      {{- line.title -}}
+    {%- else -%}
+      {{- productTitle -}}, {{- line.title -}}
+    {%- endif -%}
+  {%- endcapture -%}
+  {%- capture productPrice -%}
+    {%- if productPrice == blank -%}
+      {{- line.original_line_price | money -}}
+    {%- else -%}
+      {{- productPrice -}}, {{- line.original_line_price | money -}}
+    {%- endif -%}
+  {%- endcapture -%}
+{%- endfor -%}
+
+<script>
+  $(document).ready(function() {
+
+      if (
+        localStorage.getItem("discountCode") != null &&
+        localStorage.getItem("discountCode") != undefined &&
+        localStorage.getItem("discountCode").trim() != ""
+      ) {
+        let storedCoupon = localStorage.getItem("discountCode");
+        theme.applyCodes(storedCoupon);
+      } else {
+        console.log("Coupon code is not present on cart open");
+      }
+
+    $(document).on('click', '.cart_checkout_btn', function() {
+      gtag('event', 'conversion', {
+        'allow_custom_scripts': true,
+        'u1': {{productCategory | json}},
+        'u2': {{productTitle | json}},
+        'u3': {{productPrice | json}},
+        'u4': '{{cart.items | size}}',
+        'u5': '{{cart.total_price  | money_without_currency }}',
+        'send_to': 'DC-11868793/nes_disp/nesta004+unique'
+      });
+    });
+
+    updateConditions();
+
+    // remove giftwrap
+    //     $(document).on('click', '.addtocart-adon[name="remove_giftwrap"]', function(){
+    //       let thisEle = $(this);
+    //       let giftWrapId = $(this).closest('.item-row').data('wrapid');
+    //       let giftId = $('.item-row[data-giftwrap][data-wrapid="'+giftWrapId+'"]').data('variantid');
+    //       let check = false;
+    //       let isRemove = true;
+    //       giftMainProdUpdate(thisEle, giftId, check, isRemove, giftWrapId)
+    //     });
+
+    // add gift card
+    $(document)
+      .on('keyup', '.card-prop', function() {
+        if ($(this).val() != '') {
+          $('.add-giftcard').removeAttr('disabled');
+        } else {
+          $('.add-giftcard').attr('disabled', 'disabled');
+        }
+      })
+      $(document)
+      .on('change', '.gift-card-container [name="giftcard_cart"]', function() {
+        console.log('show hide giftCarBox');
+        $('.giftcard_message').hide();
+        if ($(this).prop('checked')) {
+          $('.card-message-box').show();
+        } else {
+          $('.card-message-box').hide();
+        }
+      })
+      $(document)
+      .on('click', '.gift-card-container .remove-giftcard[name="btn_giftcard"]', function() {
+        $(this).addClass('loading');
+        $(this).closest('.card-message-box').find('.card-prop').val('');
+        $('.item-row[data-giftcard="true"]').find('.remove_item_multi').trigger('click');
+      })
+      $(document)
+      .on('click', '.gift-card-container .add-giftcard', function() {
+        $('#ajaxBusy').show();
+        var $this = $(this);
+        $this.addClass('loading');
+        let id = $('[name="giftcard_cart"]').val();
+        let giftMessage = $('.card-prop').val();
+        if (giftMessage != '') {
+          $('.giftcard_message').hide();
+          // $.ajax({
+          //   url: '/cart/add.js',
+          //   type: 'POST',
+          //   data: {
+          //     id: id,
+          //     quantity: 1,
+          //     properties: {
+          //       _giftcard: true,
+          //       message: giftMessage
+          //     }
+          //   },
+          //   dataType: 'json',
+          //   success: function(result) {
+          //     document.dispatchEvent(new Event('cartUpdated'));
+          //     console.log("document.dispatchEvent(new Event('cartUpdated'));",document.dispatchEvent(new Event('cartUpdated')));
+          //     setTimeout(function() {
+
+          //       // check if giftcard added
+          //       $('#ajaxBusy').hide();
+          //       $this.removeClass('loading');
+          //       updateConditions();
+          //     }, 1000);
+          //   },
+          //   error: function(err) {
+          //     console.log('Error: ', err.message);
+          //     $('#ajaxBusy').hide();
+          //     $this.removeClass('loading');
+          //   }
+          // })
+          let giftbody = {
+            items: [
+              {
+                id: id,
+                quantity: 1
+              }
+            ]  
+          }
+          liquidAjaxCart.add(giftbody, options);
+        } else {
+          $('.giftcard_message').show();
+        }
+
+      })
+
+  });
+
+  function toggleGiftCard() {
+    setTimeout(function() {
+      if ($(document).find('.item-row[data-prodtype="gift-card"]').length > 0 && $(document).find('.item-row').length == 1) {
+        $('.gift-card-container').hide();
+      } else {
+        $('.gift-card-container').show();
+      }
+      if ($(document).find('.item-row[data-giftcard]').length > 0) {
+        $(document).find('[name="giftcard_cart"]').prop('checked', true).trigger('change');
+        let propMessage = $(document).find('.item-row[data-giftcard]').data('giftcardmeesage');
+        $(document).find('.card-prop').val(propMessage);
+        $('.card-message-box').addClass('show-remove');
+      } else {
+        $(document).find('[name="giftcard_cart"]').prop('checked', false).trigger('change');
+        $('.card-message-box').removeClass('show-remove');
+      }
+    }, 1000)
+  }
+
+  function giftMainProdUpdate(thisEle, giftId, check, isRemove, giftWrapId) {
+    let thisEleLineNumber = $('.item-row[data-giftwrap][data-wrapid="' + giftWrapId + '"]').data('lineitem');
+    let parentId = parseInt(thisEle.closest('.item-row').data('variantid'));
+    let parentQty = parseInt(thisEle.closest('.item-row').find('.quantity.item-qty').val());
+    let parentLineNumber = parseInt(thisEle.data('lineitem'));
+    let propId = parentId + ':' + giftId;
+    let data = {};
+    let url = '/cart/change.js';
+
+    // increase 1 bcz maine product's line item updated after added gift wrap
+    if (isRemove == true) {
+      data = {
+        "line": thisEleLineNumber,
+        "quantity": 0
+      }
+    } else {
+      parentLineNumber = parentLineNumber + 1;
+      if (! check) {
+        propId = "";
+      }
+      data = {
+        "line": parentLineNumber,
+        "quantity": parentQty,
+        "properties": {
+          "_id": propId
+        }
+      };
+    }
+
+    // update line items    
+    $('#ajaxBusy').show();
+    $.ajax({
+      url: url,
+      type: 'POST',
+      data: data,
+      dataType: 'json',
+      success: function(result) {
+        document.dispatchEvent(new Event('cartUpdated'));
+        $.getJSON('/cart.js', function(cart) {
+          $('#total-cart-top,#total-cart-bottom').html(Shopify.formatMoney(cart.total_price, theme.moneyFormat));
+          $('#cart-total').html(Shopify.formatMoney(cart.original_total_price, theme.moneyFormat));
+          $('.discount-cart').html('...');
+        })
+        setTimeout(function() {
+          $('#ajaxBusy').hide();
+          updateConditions();
+        }, 1000)
+      },
+      error: function(err) {
+        console.log('Error: ', err.message);
+      }
+    })
+  }
+
+  function updateConditions() {
+    toggleGiftCard();
+  }
+</script>
+
+{% schema %}
+  {
+    "name": "Cart",
+    "settings": [
+      {
+        "type": "text",
+        "id": "upsell_collection_title",
+        "label": "Upsell collection title",
+        "default": "Frequently added"
+      },
+      {
+        "type": "collection",
+        "id": "upsell_collection",
+        "label": "Upsell collection"
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_notes_enable",
+        "label": "Show cart notes",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "full_width",
+        "label": "Full width background",
+        "default": true
+      }, {
+        "type": "checkbox",
+        "id": "remove_enable",
+        "label": "Show remove item option",
+        "default": false
+      }, {
+        "type": "checkbox",
+        "id": "recently_viewed",
+        "label": "Show recently viewed products",
+        "default": true
+      }, {
+        "type": "number",
+        "id": "free_shipping_price",
+        "label": "Free Shipping",
+        "default": 500
+      }
+    ]
+  }
+{% endschema %}

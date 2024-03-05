@@ -1,0 +1,163 @@
+{% if block or color_block or size_block or color_size_block and swatch contains swatch_size or swatch contains swatch_color %}
+
+  {%- liquid
+    if p_sect == true
+      assign product = all_products[section.settings.product]
+    endif
+    assign is_color = false
+    assign is_swatch = false
+    assign option_index = 0
+    for option in product.options
+      if option contains swatch
+        assign opt_title = option
+        assign is_swatch = true
+        assign option_index = forloop.index0
+        assign downcased_option = swatch | handle
+        if downcased_option contains var_color
+          assign is_color = true
+        endif
+      endif
+    endfor
+  -%}
+
+  {% if is_swatch %}
+    {% if ignore %}
+      {%- assign values = '' -%}
+      {% for variant in product.variants %}
+        {%- assign value = variant.options[option_index] -%}
+        {% unless values contains value %}
+          {%- liquid
+            assign values = values | join: '^'
+            assign values = values | append: '^' | append: value
+            assign values = values | split: '^'
+          -%}
+          <a id="swatch-{{ value | handle }}-{{ option_index }}-{{ product.id }}{{ section.id }}"  
+             class="img-align product-thumb-var"
+             data-id="swatch-{{ value | handle }}-{{ option_index }}-{{ product.id }}{{ section.id }}" 
+             data-group="{{ product.id }}{{ section.id }}" 
+             href="{{ variant.url | within: collection }}" 
+             title="{{ 'layout.general.buy' | t | escape }} {{ value | handle }} {{ product.title | escape }}">
+            {%- liquid
+               if variant.image
+                  assign img_src = variant.featured_media.preview_image
+               else
+                  assign img_src = product.featured_media.preview_image
+               endif
+               if settings.title_align
+                 unless product.object_type != 'product'
+                    assign nopad = settings.title_align
+                 endunless
+               endif
+               capture alt
+                 if img_src.alt != blank
+                    echo img_src.alt
+                 else
+                    echo 'layout.general.buy' | t
+                    echo ' '
+                    echo value | handle
+                    echo ' '
+                    echo product.title | escape
+                 endif
+               endcapture
+               render 'image.load', img_src: img_src, size: img_size, alt: alt, nopad: nopad, lazy: lazy, sizes: sizes
+            -%}  
+          </a>
+        {% endunless %}
+      {% endfor %}
+
+    {% else %}
+
+      {% capture swatches %}
+        {%- liquid
+          assign count = '0'
+          assign values = ''
+        -%}
+
+        {% if is_color and grid %}
+        <div class="swatch-element-text color">
+          <span class="relative label swatch-label color nopad">{{ product.options_by_name[swatch_color].values.size }}</span>
+        </div>
+        {% endif %}
+
+        {% for variant in product.variants %}
+          {%- assign value = variant.options[option_index] -%}
+          {% unless values contains value %}
+            {%- liquid
+              assign values = values | join: '^'
+              assign values = values | append: '^' | append: value
+              assign values = values | split: '^'
+            -%}
+
+            <div class="swatch-element {% if is_color %}color {% endif %}{{ value | handle }}" data-group="{{ product.id }}{{ section.id }}" data-value="{{ value | escape }}">
+
+              {% if is_color %}
+
+              {%- liquid
+                assign img_src = false
+                if variant_color_enable != 'block'
+                  assign img_src = variant.featured_media.preview_image
+                  if variant_color_enable == 'img-block'
+                    assign newVal = value | handle | append: '.png'
+                    if images[newVal] != blank
+                      assign img_src = images[newVal]
+                    endif
+                  endif
+                endif
+              -%}
+
+              <span class="relative{% if img_src %} lazycontainer{% endif %} label{% if img_size == 100 or img_size == 140 %} magnify{% endif %} swatch-label color" style="background-color:{{ value | split: ' ' | last | handle }};">
+                {%- liquid
+                  render 'icons.theme', icon: 'times', size: 24
+                  if img_src
+                    capture alt
+                      if img_src.alt != blank
+                        echo img_src.alt
+                      else
+                        echo value
+                      endif
+                    endcapture
+                    assign sizes = img_size | append: 'px'
+                    render 'image.load', img_src: img_src, size: img_size, alt: alt, swatch: true, position: 'center-center', lazy: lazy, sizes: sizes
+                  else
+                   echo '&nbsp;'
+                  endif
+                -%}
+              </span>
+
+              {% else %}
+
+              <span class="swatch-label label">{{ value }}</span>
+
+              {% endif %}
+
+              <label for="{{ value | handle }}-{{ option_index }}-{{ product.id }}{{ section.id }}" class="error{% if is_color %} error_color{% endif %} swatch-label visually-hidden">{{ value | escape }}</label>
+              <input id="{{ value | handle }}-{{ option_index }}-{{ product.id }}{{ section.id }}" 
+                     class="selector{% if grid %} grid{% endif %}"
+                     type="radio" 
+                     data-loop="{{ forloop.index }}"
+                     name="{{ opt_title }}{{ product.id }}{{ section.id }}" 
+                     data-group="{{ product.id }}{{ section.id }}" 
+                     data-handle="{{ value | handle }}"
+                     aria-label="{{ value | escape }}"
+                     value="{{ value | escape }}"/>
+
+            </div>
+            {%- liquid
+              capture count
+                increment count
+              endcapture
+            -%}
+          {% endunless %}
+        {% endfor %}
+      {% endcapture %}
+
+      {% unless count == '0' and var_length_enable == false %}
+        <fieldset class="{{ block_width }}swatch selectors{% if grid %} grid{% endif %}" data-option-index="{{ option_index }}">
+          {% render 'product.labels', name: opt_title, hide: hide, dropdown: false, opt_val: product.selected_or_first_available_variant.options[option_index], grid: grid %}
+          {{ swatches }}
+        </fieldset>
+      {% endunless %}
+
+    {% endif %}
+  {% endif %}
+{% endif %}

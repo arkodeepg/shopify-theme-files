@@ -1,0 +1,170 @@
+{%- style -%}
+  .custom-fcol{
+    position: relative;
+  }
+  .custom-fcol_slider {
+    margin-bottom: 20px;
+    position: relative;
+    overflow-x: hidden;
+  }
+  #shopify-section-{{section.id}} svg.c-arrow_next {
+    right: 0;
+    position: absolute;
+    top: 40%;
+    z-index: 1;
+    transform: translateX(30px);
+  }
+  #shopify-section-{{section.id}} svg.c-arrow_prev {
+    left: 0;
+    position: absolute;
+    top: 40%;
+    z-index: 1;
+    transform: translateX(-30px);
+  }
+  .custom-fcol_outer {
+    position: relative;
+  }
+  .swiper-slide.see-all_slider {
+    height: auto;
+  }
+  .see-all_wrap {
+    text-align: center;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 40%;
+  }
+  a.see-all {
+    display: inline-block;
+    width: 150px;
+    max-width: 80%;
+    text-transform: capitalize;
+    min-height: auto;
+    font-family: var(--body_font);
+    font-size: 16px !important;
+    line-height: 1.2;
+    letter-spacing: 0.8px;
+    border: none;
+    border-radius: 30px;
+    padding: 11px 20px;
+    margin-top: -21px;
+    color: #000 !important;
+    background-color: #efefef;
+  }
+  a.see-all:hover {
+    background-color: #96865d !important;
+    border-color: #96865d !important;
+    color: #fff !important;
+  }
+  .custom-fcol_heading:hover{
+    color: #96865d!important;
+  }
+    @media screen and (max-width: 800px) {
+          #shopify-section-{{ section.id }}  .c-arrow {
+    display: none;
+    }
+    }
+{%- endstyle -%}
+
+<div class="custom-fcol_outer margins-section">
+  <div class="container custom-fcol">
+    <a href="{{ section.settings.collection.url }}" class="custom-fcol_heading mhead">
+      {{ section.settings.heading }}
+    </a>
+    <div class="custom-fcol_slider swiper">
+      <div class="swiper-wrapper">
+        {%- for product in section.settings.collection.products limit: 5 -%}
+          <div class="swiper-slide">
+              <div class="product_wishlist_add_to_cart">
+                {% capture the_snippet_fave_icon %}{% render 'ssw-widget-faveicon' with product.id %}{% endcapture %}
+                {% unless the_snippet_fave_icon contains 'Liquid error' %}
+                {{ the_snippet_fave_icon }}
+                {% endunless %}
+              </div>
+            {% render 'product-card', product: product %}
+          </div>
+        {%- endfor -%}
+        <div class="swiper-slide see-all_slider">
+          <div class="see-all_wrap"><a href="{{ section.settings.collection.url }}" class="see-all">See All</a></div>
+        </div>
+      </div>
+    </div>
+    <div class="c-arrow">
+      <svg
+        class="c-arrow_prev"
+        width="36"
+        height="38"
+        viewBox="0 0 36 36"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect width="36" height="36" rx="18" fill="#96865D"/><path d="M21 24L15 18L21 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <svg
+        class="c-arrow_next"
+        width="36"
+        height="38"
+        viewBox="0 0 36 36"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect x="0.226562" y="0.516113" width="36" height="36" rx="18" fill="#96865D"/><path d="M15.2266 24.5161L21.2266 18.5161L15.2266 12.5161" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="cswiper-scrollbar"></div>
+  </div>
+</div>
+
+<script defer>
+  var master_spacing = getComputedStyle(document.querySelector(':root')).getPropertyValue('--master_spacing');
+  const swiper{{section.index}} = new Swiper('.custom-fcol_slider', {
+    slidesPerView: 2.5,
+    spaceBetween: 10, // Default spacing value
+    scrollbar: {
+      el: '#shopify-section-{{ section.id }} .cswiper-scrollbar',
+      draggable: true,
+    },
+    navigation: {
+      nextEl: '#shopify-section-{{ section.id }} .c-arrow_next',
+      prevEl: '#shopify-section-{{ section.id }} .c-arrow_prev',
+    },
+    breakpoints: {
+      // When the window width is 800px or greater (desktop)
+      800: {
+        slidesPerView: 4,
+        spaceBetween: 20,
+      }
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "cus featured collection",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "label": "Heading",
+      "id": "heading",
+      "default": "Featured Collection"
+    },
+    {
+      "type": "collection",
+      "label": "Collection",
+      "id": "collection"
+    },
+    {
+      "type": "url",
+      "label": "heading link",
+      "id": "heading_link"
+    }
+  ],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "cus featured collection"
+    }
+  ]
+}
+{% endschema %}

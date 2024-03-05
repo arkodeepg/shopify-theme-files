@@ -1,0 +1,144 @@
+<style>
+    .product_best_offer {
+    border: 1px solid #bbb;
+    padding: 13px 18px;
+    margin: 0 0 20px;
+}
+.product_best_offer>h4 {
+    color: #c24352;
+    font-size: calc(var(--medium) + .25px);
+    font-weight: 600;
+    letter-spacing: .025em;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    font-family: var(--body_font);
+}
+.product_best_offer .product_best_offer_row {
+    font-size: calc(var(--medium) + 0px);
+    color: #505050;
+}
+.product_best_offer_item {
+    border-top: 1px solid rgba(112, 112, 112, .35);
+    padding-top: 10px;
+    margin-top: 10px;
+}
+.product_best_offer .product_best_offer_row .product_best_offer_info {
+    font-weight: 400;
+    margin-bottom: 6px;
+    font-size: 15px;
+}
+.product_best_offer .product_best_offer_code .code_info {
+    font-size: 14px;
+    color: #868686;
+}
+.product_best_offer .product_best_offer_code .offer_code {
+    color: #96865d;
+    font-size: 16px;
+    font-weight: 600;
+    background-color: #f7f4ed;
+    border: 1px dashed #96865d;
+    padding: 4px 12px;
+    display: inline-block;
+    margin-left: 10px;
+    cursor: pointer;
+}
+.offer_code .tooltip-content {
+    width: 67px;
+    padding: 4px;
+    text-align: center;
+    background-color: green;
+    left: 50%;
+    font-size: 14px;
+    top: -35px;
+    border-radius: 3px;
+}
+.tooltip-content {
+    background-color: #343333;
+    position: absolute;
+    color: #fff;
+    font-size: calc(var(--small) + 3px);
+    line-height: 18px;
+    letter-spacing: .36px;
+    padding: 8px 33px;
+    font-style: italic;
+    font-family: var(--body_font) !important;
+    font-weight: 500;
+    opacity: 1;
+    top: -42px;
+    display: none;
+    width: 315px;
+    left: 50%;
+    transform: translatex(-19%);
+}
+.ctooltip.copied .tooltip-content {
+    display: block;
+}
+.ctooltip {
+    position: relative;
+}
+.offer_code .tooltip-content:after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 9px solid transparent;
+    border-right: 9px solid transparent;
+    border-top: 7px solid green;
+    right: calc(50% - 14px);
+    bottom: -7px;
+}
+  @media screen and (max-width: 800px){
+    .product_best_offer>h4 {
+        font-size: 15px;
+        line-height: 23px;
+        letter-spacing: .38px;
+        margin-bottom: 0;
+        text-transform: unset;
+    }
+    .product_best_offer .product_best_offer_row .product_best_offer_info {
+        margin-bottom: 2px;
+        font-size: 14.5px;
+    }
+    .product_best_offer .product_best_offer_code .offer_code {
+    font-size: 10px;
+    line-height: 18px;
+    padding: 0 8px;
+    border: dashed;
+    border-width: 1px;
+}
+  }
+</style>
+
+{%- for i in (1..5) -%}
+{%- capture offerHtml -%}
+{{offerHtml}}
+{%- assign offer = 'best_offers_' | append: i -%}
+{%- if product.metafields.my_fields[offer] != blank -%}
+{%- assign offerMeta = product.metafields.my_fields[offer] | replace: ' |','|' | replace: '| ','|' | split: '|' -%}
+<div class="product_best_offer_item">
+  <div class="product_best_offer_info">{{offerMeta[1]}}</div>
+  <div class="product_best_offer_code"><span class="code_info">Use Code:</span><span class="offer_code ctooltip"><span class="tooltip-content">Copied</span><span class="copy_cope">{{offerMeta[0]}}</span></span></div>
+</div>
+{%- endif -%}
+{%- endcapture -%}
+{%- endfor -%}
+{%- if offerHtml != blank -%}
+<div class="product_best_offer">
+  <h4>Best offers for you!</h4>
+  <div class="product_best_offer_row">
+    {{offerHtml}}
+  </div>
+</div>
+<script defer>
+  $(document).on('click', '.product_best_offer_code .offer_code', function(e){
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    var $this = $(this);
+    theme.copyToClipboard($this.find('.copy_cope').text());
+    $this.addClass('copied');
+    setTimeout(function(){
+      $this.removeClass('copied');
+    },1000);
+  });
+</script>
+{%- endif -%}

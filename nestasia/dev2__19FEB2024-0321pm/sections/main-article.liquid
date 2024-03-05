@@ -1,0 +1,553 @@
+{%- liquid
+  if article.image != blank
+    capture alt
+      if article.image.alt != blank
+        echo article.image.alt
+      else
+        echo article.title
+      endif
+    endcapture  
+  endif
+  assign text_color = false
+  if section.settings.section_color != 'rgba(0,0,0,0)' and section.settings.section_color != blank
+    assign text_color = true
+    assign text_color_section = section.settings.section_color
+  endif
+  assign background_color = false
+  if section.settings.background != 'rgba(0,0,0,0)' and section.settings.background != blank
+    assign background_color = true
+    assign background_color_section = section.settings.background
+  endif    
+  if section.settings.background_gradient != 'rgba(0,0,0,0)' and section.settings.background_gradient != blank
+    assign background_color = true
+    assign background_color_section = section.settings.background_gradient
+  endif
+  capture classes
+    echo 'dynamic-section dynamic-section-'
+    echo section.id 
+    echo ' section-padding-top section-padding-bottom section-margin-bottom '
+    if section.settings.padding_border
+      echo 'section-border '
+    endif
+  endcapture
+  if section.settings.enable_lazy
+    assign lazy = 'lazy'
+  else
+    assign lazy = 'eager'
+  endif
+-%}
+
+{% style %}
+  .dynamic-section-{{ section.id }} { 
+    {%- if background_color -%}
+    --background:{{ background_color_section }};
+    --button_primary_text:{{ section.settings.background }};
+    --button_secondary_hover:{{ section.settings.background }};
+    {%- endif -%}
+    --section-padding-top-mobile: {{ section.settings.padding_top_mobile }}px;
+    --section-padding-top-desktop: {{ section.settings.padding_top_desktop }}px;
+    --section-padding-bottom-mobile: {{ section.settings.padding_bottom_mobile }}px;
+    --section-padding-bottom-desktop: {{ section.settings.padding_bottom_desktop }}px;
+    --section-margin-bottom-mobile: {{ section.settings.margin_bottom_mobile }}px;
+    --section-margin-bottom-desktop: {{ section.settings.margin_bottom_desktop }}px;
+  }
+{% endstyle %}
+
+<section data-section-id="{{ section.id }}" 
+         data-section-type="blog_page" 
+         role="article"
+         class="{{ classes }}{% if settings.animation_enable %}animate-section-div {% endif %}clearfix">
+
+  <div class="container half-pad {% if settings.animation_enable %}animate-section animate-section-margin load {% endif %}clearfix">
+    
+    <nav class="twelve breadcrumbs breadcrumb_text bottompad" aria-label="{{ 'general.breadcrumbs.breadcrumbs' | t | escape }}">
+      <span><a href="{{ routes.root_url }}" title="{{ 'general.breadcrumbs.home_link_title' | t | escape }}">{{ 'general.breadcrumbs.home' | t }}</a></span> 
+      <span class="separator" aria-hidden="true"></span>
+      <span><a href="{{ blog.url }}" title="{{ blog.title | escape }}">{{ blog.title }}</a></span>       
+      <span class="separator" aria-hidden="true"></span>
+      <span class="active" aria-current="page">{{ article.title }}</span>     
+    </nav>
+  
+    {% if article.image and section.settings.include_image %}
+    <div class="twelve">
+      <div class="bottompad-half relative lazycontainer lazyignore center">{%- render 'image.load', img_src: article.image, size: 1180, alt: alt, screen: 'full-width ', lazy: lazy, sizes: '(min-width: 1220px) 1180px, calc(100vw - 40px)' -%}</div>
+    </div>
+    {% endif %}
+  
+    <div class="{% if section.settings.include_newsletter or section.settings.include_articles or blog.all_tags.size > 0 and section.settings.include_tags %}twelve{% else %}nine center text-left{% endif %}">
+      <div class="tab-body blog-header">
+        {%- liquid
+          if section.settings.title_h1
+            assign title = 1
+          else
+            assign title = 2
+          endif
+        -%}
+        {% if section.settings.title_enable %}<h{{ title }} class="section-title-{{ section.settings.title_size }} blog-title">{{ article.title }}</h{{ title }}>{% endif %}
+        {% if section.settings.include_author or section.settings.include_date or blog.comments_enabled? and article.comments.size > 0 %}
+        <h6 class="blog-data bottompad-half">{% if section.settings.include_author %}{{ article.author }}{% endif %}{% if section.settings.include_author and section.settings.include_date %}<span class="separator" aria-hidden="true"></span>{% endif %}{% if section.settings.include_date %}{{ article.published_at | time_tag: format: settings.month_day_year }}{% endif %}{% if blog.comments_enabled? and article.comments.size > 0 %}{% if section.settings.include_author or section.settings.include_date %}<span class="separator" aria-hidden="true"></span>{% endif %}<a href="#comments" title="{{ 'blogs.comments.comments' | t }}">{{ article.comments_count }} {{ article.comments_count | pluralize: 'comment','comments' }}</a>{% endif %}</h6>
+        {% endif %}
+      </div>
+    </div>
+    
+    <div class="{% if section.settings.include_newsletter or section.settings.include_articles or blog.all_tags.size > 0 and section.settings.include_tags %}seven left{% else %}nine center text-left{% endif %}">
+      <div class="blog-article single-article">
+        <div class="blog-content">
+          {{ article.content }}
+        </div>
+  
+        {% if article.tags.size > 0 and section.settings.include_tags %}
+        <div class="bottompad">
+          <h6 class="blog-data blog-tags">
+            {{ 'blogs.article.tags' | t }}
+            {% for tag in article.tags %} 
+            <a href="{{ blog.url }}/tagged/{{ tag | handle }}" title="{{ blog.title | escape }}: {{ tag | escape }}">{{ tag }}</a>{% unless forloop.last %}, {% endunless %}
+            {% endfor %}
+          </h6>  
+        </div>
+        {% endif %}
+  
+        {%- liquid
+          if section.settings.include_social
+            render 'social.share', share_title: article.title, share_permalink: article.url, share_image: article.image
+          endif
+        -%}
+  
+      </div>
+  
+      {% if blog.comments_enabled? %}
+      <div id="comments" class="clearfix bottompad">
+        {% if article.comments.size > 0 %}
+        <div class="comments cart-table">
+          <h4>{{ 'blogs.comments.comments' | t }} ({{ article.comments_count }})</h4>
+          {% paginate article.comments by 10 %}
+          {% for comment in article.comments %}
+          <div class="comment item{% if forloop.last %} last{% endif %}">
+            <div class="comment-data bottompad-quarter"><small><strong>{{ comment.author }}</strong> {{ comment.created_at | time_tag: format: 'date_at_time' }}</small></div>
+            <div class="comment-content">
+              {{ comment.content }}
+            </div>
+          </div>
+          {% endfor %}
+          {% if paginate.pages > 1 %}
+            <div class="pagination">
+              {%- render 'pagination', paginate: paginate -%}
+            </div>
+          {% endif %}
+          {% endpaginate %}
+        </div>
+        {% endif %}
+  
+        <div class="comments comments-form">
+          {% form 'new_comment', article, class: 'form-validation' %}
+  
+          {% if form.errors %}
+          <div class="errors feedback">
+            <p>{{ settings.comments_error_message }}</p>
+            {% for field in form.errors %}
+            {% if field == 'form' %}
+            <p>{{ form.errors.messages[field] }}</p>
+            {% else %}
+            <p>{{ form.errors.translated_fields[field] }} - {{ form.errors.messages[field] }}</p>
+            {% endif %}
+            {% endfor %}
+          </div>
+          {% endif %}
+          {% if form.posted_successfully? %}
+          <div class="success feedback">
+            <p>
+              {% if blog.moderated? %}
+              {{ 'blogs.comments.success_moderated' | t }}
+              {% else %}
+              {{ 'blogs.comments.success' | t }}
+              {% endif %}
+            </p>
+          </div>
+          {% endif %}
+  
+          <h4>{{ 'blogs.comments.title' | t }}</h4>
+  
+          <div class="comment-entries">
+            <span class="form">
+              <label for="commentFormName">{{ 'blogs.comments.name' | t }}</label>
+              <input required id="commentFormName" {% if form.errors contains "author" %} class="error"{% endif %} type="text" name="comment[author]" placeholder="{{ 'blogs.comments.name_placeholder' | t }}" value="{{ form.author }}" required />
+            </span>
+  
+            <span class="form">
+              <label for="commentFormEmail">{{ 'blogs.comments.email' | t }}</label>
+              <input required id="commentFormEmail" {% if form.errors contains "email" %} class="error"{% endif %} type="email" name="comment[email]" placeholder="{{ 'blogs.comments.email_placeholder' | t }}" value="{{ form.email }}" required />
+            </span>
+  
+            <span class="form">
+              <label for="commentFormMessage">{{ 'blogs.comments.message' | t }}</label>
+              <textarea required id="commentFormMessage" {% if form.errors contains "body" %} class="error"{% endif %} name="comment[body]" placeholder="{{ 'blogs.comments.message_placeholder' | t }}" required>{{ form.body }}</textarea>
+            </span>
+  
+          </div>
+  
+          {% if blog.moderated? %}
+          <p>{{ 'blogs.comments.moderated' | t }}</p>
+          {% endif %}
+  
+          <input type="submit" value="{{ 'blogs.comments.post' | t }}" class="btn outline auto-width"/> 
+  
+          {% endform %}
+        </div>
+      </div>
+      {% endif %}
+      
+      {%- liquid
+        assign current_found = false
+        assign done = false
+        for a in blog.articles
+          if current_found and done == false
+            assign next_article = a
+            assign done = true
+          endif
+          unless done
+            if a.id == article.id
+            	assign current_found = true
+            else
+            	assign prev_article = a
+            endif
+          endunless
+        endfor
+      -%}
+  
+      {% if prev_article or next_article %}
+      <div class="pagination relative clearfix">
+        {% if prev_article %}
+        <div class="{% if next_article %}six{% else %}twelve{% endif %} mobile left text-left negative-left"><span class="prev">{%- render 'icons.theme', icon: 'left', size: '12', icon_class: 'prev' -%}</span><a href="{{ prev_article.url }}" title="{{ 'blogs.article.older_post' | t | escape }} {{ prev_article.title | escape }}" class="keyed">{{ 'blogs.article.older_post' | t }} {{ prev_article.title | escape }}</a></div>
+        {% endif %}
+        {% if next_article %}
+        <div class="{% if prev_article %}six{% else %}twelve{% endif %} mobile right text-right negative-right"><a href="{{ next_article.url }}" title="{{ 'blogs.article.newer_post' | t | escape }} {{ next_article.title | escape }}" class="keyed">{{ 'blogs.article.newer_post' | t }} {{ next_article.title | escape }}</a><span class="next">{%- render 'icons.theme', icon: 'right', size: '12', icon_class: 'next' -%}</span></div>
+        {% endif %}
+      </div>
+      {% endif %}
+  
+    </div>  
+  
+    {% if section.settings.include_newsletter or section.settings.include_articles or blog.all_tags.size > 0 and section.settings.include_tags %}
+    <div class="four right">
+      <div class="sidebar" role="complementary">
+  
+        {% if section.settings.include_newsletter %}
+        <div class="bottompad">
+          <h5>{{ 'blogs.sidebar.subscribe' | t }}</h5>
+          {%- render 'newsletter' -%}
+        </div>
+        {% endif %}
+  
+        {% if section.settings.include_articles %}
+        <div class="recent-articles bottompad">
+          <h5 class="bottompad">{{ 'blogs.sidebar.recent_articles' | t }}</h5>
+  
+          {%- liquid
+            assign current_article = article
+            assign counter = 0
+            assign break_at = section.settings.number_of_articles
+          -%}
+  
+          {% for article in blog.articles %}
+          {% unless article.handle == current_article.handle %}
+          <div class="article bottompad relative">
+            {% if article.image and section.settings.include_image %}
+            <div class="bottompad-quarter relative lazycontainer center clearfix">
+              <a href="{{ article.url }}" title="{{ article.title | escape }}" tabindex="-1">
+                {%- liquid
+                  capture alt
+                    if article.image.alt != blank
+                        echo article.image.alt
+                    else
+                        echo article.title
+                    endif
+                  endcapture                  
+                  render 'image.load', img_src: article.image, size: 580, alt: alt, lazy: lazy, sizes: '(min-width: 1220px) 380px, calc(100vw - 40px)'
+                -%}
+              </a>
+            </div>
+            {% endif %}
+            <h6><a href="{{ article.url }}" title="{{ article.title | escape }}" class="keyed">{{ article.title }}</a></h6>
+            {% if section.settings.include_author or section.settings.include_date %}
+            <h6 class="blog-data"><small>{% if section.settings.include_author %}{{ article.author }}{% endif %}{% if section.settings.include_author and section.settings.include_date %}<span class="separator" aria-hidden="true"></span>{% endif %}{% if section.settings.include_date %}{{ article.published_at | time_tag: format: settings.month_day_year }}{% endif %}</small></h6>
+            {% endif %}
+          </div>
+  
+          {%- liquid
+            assign counter = counter | plus: 1
+            if counter == break_at
+              break
+            endif
+          -%}
+  
+          {% endunless %}  
+          {% endfor %}
+          {% if counter < 1 %}
+          <p>{{ 'blogs.sidebar.empty' | t }}</p>  
+          {% endif %}
+        </div>
+        {% endif %}
+  
+        {% if blog.all_tags.size > 0 and section.settings.include_tags %}
+        <div class="tags bottompad">
+          <h5>{{ 'blogs.article.tags' | t | replace:':','' }}</h5>
+          <h6 class="blog-data blog-tags">{% for tag in blog.all_tags %}<a href="{{ blog.url }}/tagged/{{ tag | handle }}" title="{{ blog.title | escape }}: {{ tag | escape }}">{{ tag }}</a>{% unless forloop.last %}, {% endunless %}{% endfor %}</h6>
+        </div>
+        {% endif %}
+  
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+
+</section>
+
+<script type="application/ld+json">
+  {%- liquid
+    capture article_description
+      if article.excerpt != blank
+        echo article.excerpt | strip_html
+      else
+        echo article.content | truncatewords: 100 | strip_html
+      endif
+    endcapture
+  -%}
+  {
+   "@context": "http://schema.org",
+   "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "item": {
+              "@id": {{ shop.url | json }},
+              "name": {{ shop.name | json }}
+            }
+          },{
+            "@type": "ListItem",
+            "position": 2,
+            "item": {
+              "@id": {{ shop.url | append: blog.url | json }},
+              "name": {{ blog.title | json }}
+            }
+          },{
+            "@type": "ListItem",
+            "position": 3,
+            "item": {
+              "@id": {{ shop.url | append: article.url | json }},
+              "name": {{ article.title | json }}{% if article.image %},        
+              "image": {{ article.image | image_url: width: article.image.width | prepend: 'https:' | json }}{% endif %}
+            }
+          }
+        ]
+      },
+      {
+        "@type": "Article",
+        "articleBody": {{ article.content | strip_html | json }},
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": {{ shop.url | append: article.url | json }}
+        },
+        "headline": {{ article.title | json }},
+        "description": {{ article_description | json }},
+        {% if article.image %}
+        "image": {
+          "@type": "ImageObject",
+          "url": {{ article.image | image_url: width: 800 | prepend: 'https:' | json }},
+          "height": 800,
+          "width": 800
+        },
+        {% endif %}
+        "datePublished": {{ article.published_at | date: '%Y-%m-%dT%H:%M:%SZ' | json }},
+        "dateCreated": {{ article.created_at | date: '%Y-%m-%dT%H:%M:%SZ' | json }},
+      	"dateModified": {{ article.updated_at | date: '%Y-%m-%dT%H:%M:%SZ' | json }},
+        "author": {
+          "@type": "Person",
+          "name": {{ article.author | json }}
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": {{ shop.name | json }}
+        }
+      }
+    ]
+  }
+</script>
+
+{% schema %}
+  {
+    "name": "t:sections.blog_posts.name",
+    "settings": [
+      {
+        "id": "title_enable",
+        "type": "checkbox",
+        "label": "t:sections.heading.show_heading",
+        "default": true
+      },
+      {
+        "id": "title_h1",
+        "type": "checkbox",
+        "label": "t:sections.heading.heading_one",
+        "default": true
+      },
+      {
+        "id": "title_size",
+        "type": "range",
+        "label": "t:sections.heading.heading_size",
+        "min": 12,
+        "max": 96,
+        "step": 6,
+        "unit": "px",
+        "default": 48
+      },
+      {
+        "type": "checkbox",
+        "id": "include_image",
+        "label": "t:sections.show_image.label",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "include_author",
+        "label": "t:sections.show_author.label",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "include_date",
+        "label": "t:sections.show_date.label",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "include_newsletter",
+        "label": "t:sections.show_newsletter.label",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "include_articles",
+        "label": "t:sections.show_recent.label",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "number_of_articles",
+        "min": 1,
+        "max": 4,
+        "step": 1,
+        "label": "t:sections.recent_posts.label",
+        "default": 3
+      }, 
+      {
+        "type": "checkbox",
+        "id": "include_tags",
+        "label": "t:sections.show_tags.label",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "include_social",
+        "label": "t:sections.show_social_sharing.label",
+        "default": true
+      },      
+      {
+        "type": "header",
+        "content": "t:sections.section.name.content"
+      },
+      {
+        "id": "enable_lazy",
+        "type": "checkbox",
+        "label": "t:sections.section.settings.lazy.multiple.label",
+        "default": false
+      },
+      {
+        "id": "background",
+        "type": "color",
+        "label": "t:sections.section.settings.background_color.label"
+      },
+      {
+        "id": "background_gradient",
+        "type": "color_background",
+        "label": "t:sections.section.settings.background_gradient.label"
+      },
+      {
+        "type": "paragraph",
+        "content": "t:sections.section.settings.mobile.content"
+      },
+      {
+        "id": "padding_top_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.top_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 30
+      },
+      {
+        "id": "padding_bottom_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "margin_bottom_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_margin.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "type": "paragraph",
+        "content": "t:sections.section.settings.desktop.content"
+      },
+      {
+        "id": "padding_top_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.top_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 30
+      },
+      {
+        "id": "padding_bottom_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "margin_bottom_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_margin.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "id": "padding_border",
+        "type": "checkbox",
+        "label": "t:sections.section.settings.border.label",
+        "default": false
+      }
+    ]
+  }
+{% endschema %}

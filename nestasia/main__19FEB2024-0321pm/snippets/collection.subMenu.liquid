@@ -1,0 +1,149 @@
+{%- liquid
+  for link in linklists[settings.menu].links  
+    assign current = false
+    assign link_handle = link.url | split: '/' | last | url_decode
+    if link_handle == collection.handle
+      assign current = true
+    endif 
+    if current
+      capture sub_links
+        for link in link.links
+          if b_s_type == false
+            echo '<li>'
+            echo link.title | link_to: link.url, link.title
+            echo '</li>'
+            unless forloop.last
+              echo ',,'
+            endunless
+          else
+            echo '<option value="'
+            echo link.url | downcase | replace: ' ', '-'
+            echo '">'
+            echo link.title
+            echo '</option>'
+            unless forloop.last
+              echo ',,'
+            endunless
+          endif
+        endfor
+      endcapture
+    endif
+    if link.links != blank
+      for link in link.links
+        assign current = false
+        assign link_handle = link.url | split: '/' | last | url_decode
+        if link_handle == collection.handle
+          assign current = true
+        endif
+        if current
+          capture sub_links
+            for link in link.links
+              if b_s_type == false
+                echo '<li>'
+                echo link.title | link_to: link.url, link.title
+                echo '</li>'
+                unless forloop.last
+                  echo ',,'
+                endunless
+              else
+                echo '<option value="'
+                echo link.url | downcase | replace: ' ', '-'
+                echo '">'
+                echo link.title
+                echo '</option>'
+                unless forloop.last
+                  echo ',,'
+                endunless
+              endif
+            endfor
+          endcapture
+        endif
+      endfor
+    endif    
+  endfor
+-%}
+
+{% if b_s_type == false %}
+
+  {% if sub_links != blank %}
+    <div class="filter sub-menu clearfix" {{ block.shopify_attributes }}>
+      <div class="relative open-container open-container-filter desktop">
+        <details open>
+          <summary class="open open-btn open-filter open-{{ section.id }}" title="{{ 'collections.general.open' | t | escape }}" role="button" aria-label="{{ 'collections.general.open' | t | escape }}">{%- render 'icons.theme', icon: 'plus', size: 18 -%}<span class="h5">{% if b_s_title != blank %}{{ b_s_title | escape }}{% else %}{{ collection.title }}{% endif %}</span></summary>
+        </details>
+        <div id="sub-menu" class="open-slide open-slide-filter">        
+          <ul class="advanced-filters unformatted">
+            {%- liquid
+              assign sub_links_array = sub_links | split: ',,' | uniq
+              for line_item in sub_links_array limit: 5
+                echo line_item
+              endfor
+            -%}
+          </ul>
+          {% if sub_links_array.size > 5 %}
+            <details>
+              <summary><span class="open-more" title="{{ 'collections.general.open' | t | escape }}" role="button" aria-label="{{ 'collections.general.open' | t | escape }}"><span class="more">{{ 'collections.sidebar.more' | t }}</span><span class="less hidden">{{ 'collections.sidebar.less' | t }}</span></span></summary>
+            </details>
+            <div class="open-slide">
+              <ul class="advanced-filters unformatted open-slide">
+                {%- liquid
+                  assign sub_links_array = sub_links | split: ',,' | uniq
+                  for line_item in sub_links_array offset: 5
+                    echo line_item
+                  endfor
+                -%}
+              </ul>
+            </div>
+          {% endif %}
+        </div>
+      </div>   
+    </div>
+  {% endif %}
+
+{% else %}
+
+  {% if sub_links != blank %}
+    <div class="filter sub-menu dropdown clearfix" {{ block.shopify_attributes }}>
+      <span class="form">
+        {%- liquid
+          if b_s_label == 'above'
+            echo '<h5>'
+            if b_s_title != blank
+              echo b_s_title | escape
+            else
+              echo collection.title | escape
+            endif
+            echo '</h5>'
+          endif      
+          echo '<label for="subCollection" class="visually-hidden">'
+          if b_s_title != blank
+            echo b_s_title | escape
+          else
+            echo collection.title | escape
+          endif
+          echo '</label><span class="form select"><select id="subCollection"><option value="'
+          echo collection.url
+          echo '">'
+          if b_s_label == 'inside'
+            if b_s_title != blank
+              echo b_s_title | escape
+            else
+              echo collection.title | escape
+            endif
+          else
+          	echo 'layout.general.please_select' | t
+          endif
+          echo '...</option>'
+          assign sub_links_array = sub_links | split: ',,' | uniq
+          for line_item in sub_links_array
+          	echo line_item
+          endfor
+          echo '</select>'
+          render 'icons.theme', icon: 'arrow-down', size: 14
+          echo '</span>'
+    	-%}
+      </span>
+    </div>
+  {% endif %}
+
+{% endif %}

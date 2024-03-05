@@ -1,0 +1,901 @@
+{%- liquid
+  assign rtl = false
+  assign rtl_list = 'ae,ar,arc,bcc,bqi,ckb,dv,fa,glk,ha,he,kwh,ks,ku,mzn,nqo,pnb,ps,sd,ug,ur,yi'
+  assign iso_code = localization.language.iso_code | split: '-' | first
+  if rtl_list contains iso_code
+    assign rtl = true
+  endif
+  assign product_variants = false
+  assign background_color = false
+  if section.settings.background != 'rgba(0,0,0,0)' and section.settings.background != blank
+    assign background_color = true
+    assign background_color_section = section.settings.background
+  endif    
+  if section.settings.background_gradient != 'rgba(0,0,0,0)' and section.settings.background_gradient != blank
+    assign background_color = true
+    assign background_color_section = section.settings.background_gradient
+  endif
+-%}
+
+{% style %}
+  .dynamic-section-{{ section.id }} { 
+    {%- if background_color -%}
+    --background:{{ background_color_section }};
+    --button_primary_text:{{ section.settings.background }};
+    --button_secondary_hover:{{ section.settings.background }};
+    {%- endif -%}
+  }
+{% endstyle %}
+
+<div class="modal is-open loaded">
+  <div class="modal-overlay quick-view" tabindex="-1">
+    <div class="modal-container shopify-section loaded">
+      <div class="modal-content dynamic-section-{{ section.id }}">
+
+        <section id="product-id-{{ section.id }}" 
+                 data-product-id="{{ product.id }}" 
+                 data-section-id="{{ section.id }}" 
+                 data-section-type="product-alt" 
+                 data-product-type="quick" 
+                 data-href="{{ product.url | within: collection }}"
+                 data-url="{{ 'script.product.js' | asset_url }}"
+                 data-atc="{% if product.tags contains settings.preorder %}{{ settings.preorder }}{% else %}{{ 'products.product.add_to_cart' | t }}{% endif %}"
+                 data-cart="{{ section.settings.go_to_cart_enable }}"
+                 data-zoom="{% unless rtl %}{{ section.settings.zoom_enable }}{% else %}false{% endunless %}"
+                 data-mobile-zoom="{{ section.settings.zoom_mobile_enable }}"
+                 data-image="{{ product.featured_image | image_url: width: 260 }}"
+                 data-history="false"
+                 class="product-id product-{{ section.id }} clearfix">
+            
+            {% if product.media.size > 0 %}
+            <div class="product-images six left bottompad">
+              {%- render 'product.images', rtl: rtl, section_id: section.id, lazy: 'eager', sizes_main: '490,490,,100', sizes_thumb: '110,110' -%}
+            </div>
+            {% endif %}       
+
+            <div id="product-details-{{ section.id }}" class="product-details {% if product.media.size > 0 %}five right{% else %}eight center{% endif %}{% unless product.media.size > 0 %}{% endunless %} {% if section.settings.centered %}text-center{% else %}text-left{% endif %} bottompad-quarter"> 
+              
+              {%- liquid 
+                capture form_id
+                  echo 'add-item-form-'
+                  echo section.id
+                endcapture
+                capture form_class
+                  if section.settings.go_to_cart_enable
+                    echo 'go-to-cart-'
+                    echo section.id
+                    echo ' '
+                  endif
+                  echo 'product-form-'
+                  echo section.id
+                  echo ' variants clearfix'
+                endcapture
+				assign variant = product.selected_or_first_available_variant
+              -%}
+              
+              {% form 'product', product, id:form_id, class:form_class, data-product-form: '' %}
+              
+              <div class="tab-body{% if section.settings.centered %} center clearfix{% endif %}">
+                
+                {%- liquid
+                  for block in section.blocks                  
+                    case block.type
+                  
+                      when 'title'
+                        if block.settings.title_h1
+                          assign title = 1
+                        else
+                          assign title = 2
+                        endif
+                        echo '<div class="product-header '
+                        if block.settings.divider
+                          echo 'form-blocks meta '
+                        endif
+                        echo 'clearfix"'
+                        echo block.shopify_attributes
+                        echo '><h'
+                        echo title
+                        echo '><a href="'
+                        echo product.url | within: collection
+                        echo '" class="section-title-'
+                        echo block.settings.title_size
+                        echo '" title="'
+                        echo products.general.full_details | t | escape
+                        echo '">'
+                        echo product.title
+                        echo '</a></h'
+                        echo title
+                        echo '></div>'
+                      
+                      when 'skuvendor'
+                        render 'product.SkuVendor', product: product, block: block, vendor_enable: block.settings.vendor_enable, sku_enable: block.settings.sku_enable, bar_enable: block.settings.bar_enable, divider: block.settings.divider
+                      
+                      when 'rating'
+                        render 'product.rating', product: product, block: block, product_page: true, divider: block.settings.divider
+                      
+                      when 'price'
+                        echo '<div class="'
+                        if block.settings.divider
+                          echo 'form-blocks '
+                        endif
+                        echo 'clearfix"'
+                        echo block.shopify_attributes
+                        echo '>'
+                        render 'product.price', price_size: block.settings.price_size, price_msg: block.settings.price_msg
+                        echo '</div>'
+                        
+                      when 'payments'
+                        render 'product.payments', form: form, block: block, divider: block.settings.divider
+                      
+                      when 'availability'
+                        render 'product.availability', variant: variant, block: block, product_availability_total: block.settings.product_availability_total, divider: block.settings.divider, banner: false
+                      
+                      when 'properties'                        
+                        capture all_properties
+                          render 'product.properties', block: block, text: block.settings.text, text_label: block.settings.text_label, select_title: block.settings.select_title, select_body: block.settings.select_body, select_label: block.settings.select_label, checkbox: block.settings.checkbox, radio_body: block.settings.radio_body, radio_label: block.settings.radio_label, divider: block.settings.divider
+                        endcapture                      
+                        if block.settings.tag != blank
+                          if product.tags contains block.settings.tag
+                            echo all_properties
+                          endif
+                        else
+                          echo all_properties
+                        endif
+                        
+                      when 'variants'
+                        assign product_variants = true
+                        echo '<div class="'
+                          if block.settings.divider
+                            echo 'form-blocks no-pad '
+                          endif
+                          echo 'clearfix"'
+                          echo block.shopify_attributes
+                          echo '>'
+                          render 'product.variants', variant: variant, variant_enable: block.settings.variant_enable, variant_color_enable: block.settings.variant_color_enable, var_length_enable: block.settings.var_length_enable, lazy: 'eager'
+                        echo '</div>'
+                      
+                      when 'quantity'
+                        echo '<div class="'
+                          if block.settings.divider
+                            echo 'form-blocks no-pad '
+                          endif
+                          echo 'clearfix"'
+                          echo block.shopify_attributes
+                          echo '>'
+                          render 'product.quantity', variant: variant
+                        echo '</div>'
+                      
+                      when 'form'
+                        echo '<div class="'
+                          if block.settings.divider
+                            echo 'form-blocks no-pad '
+                          endif
+                          echo 'clearfix"'
+                          echo block.shopify_attributes
+                          echo '>'
+                          if block.settings.gift_enable and product.gift_card?
+                            render 'product.gift', product: product, block: block, form: form
+                          endif
+                          render 'product.buttons', form: form, variant: variant, block: block, smart_enable: block.settings.smart_enable, banner: false, alt: true
+                        echo '</div>'
+            
+                      when 'shipping'
+                        echo '<div class="shipping_msg bottompad-quarter '
+                          if block.settings.divider
+                            echo 'form-blocks '
+                          endif
+                          echo 'clearfix"'
+                          echo block.shopify_attributes
+                          echo '>'
+                          render 'shipping', size: 26
+                        echo '</div>'
+                      
+                      when '@app'
+                        echo '<div class="bottompad-quarter clearfix"'
+                        echo block.shopify_attributes
+                        echo '>'
+                        render block
+                        echo '</div>'
+                        
+                      when 'description'                      
+                        capture desc
+                          echo product.description | split: '<h6>' | first
+                        endcapture                      
+                        if desc != blank
+                          echo '<div class="'
+                          if block.settings.divider
+                            echo 'form-blocks meta '
+                          endif
+                          echo 'clearfix"'
+                          echo block.shopify_attributes
+                          echo '>'
+                          echo desc
+                          echo '</div>'
+                        endif
+                        
+                      when 'button'
+                        if block.settings.link != blank and block.settings.text != blank
+                          echo '<div class="'
+                          if block.settings.divider
+                            echo 'form-blocks '
+                          endif
+                          echo 'clearfix"'
+                          echo block.shopify_attributes
+                          echo '>'
+                          echo '<a href="'
+                          echo block.settings.link
+                          echo '" class="btn'
+                          if block.settings.outline_button
+                            echo ' outline'
+                          endif
+                          unless block.settings.divider
+                            echo ' bottompad-half'
+                          endunless
+                          echo '" title="'
+                          echo block.settings.text
+                          echo '">'
+                          echo block.settings.text
+                          echo '</a>'
+                          echo '</div>'
+                        endif
+                        
+                      when 'meta' 
+                        assign meta_size = block.settings.meta | strip_html
+                        capture all_meta
+                          if block.settings.meta != blank and meta_size.size > 0
+                            assign meta_size = block.settings.meta | strip_html
+                            echo '<div class="'
+                            if block.settings.divider
+                              echo 'form-blocks meta '
+                            endif
+                            echo 'clearfix"'
+                            echo block.shopify_attributes
+                            echo '>'
+                            echo block.settings.meta
+                            echo '</div>'
+                          endif
+                        endcapture                      
+                        if block.settings.tag != blank
+                          if product.tags contains block.settings.tag
+                            echo all_meta
+                          endif
+                        else
+                          echo all_meta
+                        endif
+                        
+                      when 'liquid'
+                        assign liquid_size = block.settings.liquid | strip_html
+                        capture all_liquid
+                          echo '<div id="liquid-'
+                          echo block.id
+                          echo '" class="'
+                          if block.settings.enable_metafields
+                            echo 'variant_metafields '
+                          endif
+                          echo 'clearfix"'
+                          echo block.shopify_attributes
+                          echo '>'
+                            if block.settings.liquid != blank and liquid_size.size > 0
+                              echo '<div class="'
+                              if block.settings.divider
+                                echo 'form-blocks meta'
+                              else
+                                echo 'bottompad-quarter'
+                              endif
+                              echo '">'
+                              echo block.settings.liquid
+                              echo '</div>'
+                            endif
+                          echo '</div>'
+                        endcapture
+                        if block.settings.tag != blank
+                          if product.tags contains block.settings.tag
+                            echo all_liquid
+                          endif
+                        else
+                          echo all_liquid
+                        endif
+                      
+                      when 'image'                      
+                        capture all_imgs
+                          echo '<div class="'
+                          if block.settings.divider
+                          echo 'form-blocks '
+                          else
+                          echo 'bottompad-quarter '
+                          endif
+                          echo 'clearfix"'
+                          echo block.shopify_attributes
+                          echo '><div class="relative lazycontainer table icon-text-table'
+                          if section.settings.centered
+                          echo ' center'
+                          endif
+                          echo '">'
+                          capture alt
+                            if block.settings.block_img.alt != blank
+                              echo block.settings.block_img.alt
+                            elsif block.settings.caption != blank
+                              echo block.settings.caption
+                            else
+                              echo block.settings.block_img | split: '/' | last | replace: '-', ' ' | replace: '_', ' ' | split: '.' | first | capitalize
+                            endif
+                          endcapture
+                          if block.settings.block_img != blank
+                            render 'image.load', img_src: block.settings.block_img, size: 490, alt: alt, lazy: 'eager', sizes: '(min-width: 600px) 490px, calc(100vw - 60px)'
+                          else
+                            echo 'image' | placeholder_svg_tag: 'placeholder-svg'
+                          endif
+                          echo '</div></div>'
+                        endcapture                      
+                        if block.settings.tag != blank
+                          if product.tags contains block.settings.tag
+                            echo all_imgs
+                          endif
+                        else
+                          echo all_imgs
+                        endif
+                  
+                      when 'divider'
+                        echo '<div class="form-blocks no-pad clearfix"'
+                        echo block.shopify_attributes
+                        echo '></div>'
+                        
+                    endcase
+                  endfor
+                  
+                  unless product_variants
+                    echo '<div class="hidden">'
+                      render 'product.variants', variant: variant
+                    echo '</div>'
+                  endunless
+                  
+                -%}
+
+              </div>
+
+              {%- render 'product.json' -%}
+              
+              {% endform %}
+            
+              <p class="additional{% if settings.centered %} text-center{% endif %}"><a href="{{ product.url | within: collection }}" title="{{ 'products.general.full_details' | t | escape }}">{{ 'products.general.full_details' | t }}</a></p>
+          </div>
+        </section>
+
+        <button class="modal-close">{%- render 'icons.theme', icon: 'times', size: 18 -%}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "t:sections.product_quick_view.name",
+    "settings": [
+      {
+        "type": "header",
+        "content": "t:sections.media.label"
+      },
+	  {
+        "type": "paragraph",
+        "content": "t:sections.media.info"
+      },
+      {
+        "type": "checkbox",
+        "id": "img_align",
+        "label": "t:settings_schema.products.settings.options_ratio.label",
+        "info": "t:settings_schema.products.settings.options_ratio.info_2",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "zoom_enable",
+        "label": "t:sections.enable_zoom.label",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "zoom_mobile_enable",
+        "label": "t:sections.enable_mobile_zoom.label",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "loop_enable",
+        "label": "t:sections.enable_video_looping.label",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "t:sections.options.label"
+      },
+      {
+        "type": "checkbox",
+        "id": "centered",
+        "label": "t:sections.center_text.label",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "go_to_cart_enable",
+        "label": "t:sections.product_redirection.label",
+        "info": "t:sections.product_redirection.info",
+        "default": true
+      },
+      {
+        "id": "background",
+        "type": "color",
+        "label": "t:sections.section.settings.background_color.label"
+      },
+      {
+        "id": "background_gradient",
+        "type": "color_background",
+        "label": "t:sections.section.settings.background_gradient.label"
+      }
+    ],
+	"blocks": [
+      {
+        "type": "title",
+        "name": "t:sections.title.label",
+		"settings": [
+          {
+            "id": "title_h1",
+            "type": "checkbox",
+            "label": "t:sections.heading.heading_one",
+            "default": false
+          },
+          {
+            "id": "title_size",
+            "type": "range",
+            "label": "t:sections.heading.heading_size",
+            "min": 12,
+            "max": 96,
+            "step": 6,
+            "unit": "px",
+            "default": 48
+          },
+          {
+            "type": "checkbox",
+            "id": "divider",
+            "label": "t:sections.show_divider.label",
+            "default": false
+          }
+		],
+        "limit": 1
+      },
+      {
+        "type": "skuvendor",
+        "name": "t:sections.show_sku_vendor.name",
+		"settings": [
+          {
+            "type": "checkbox",
+            "id": "vendor_enable",
+            "label": "t:settings_schema.products.settings.options_vendor.label",
+            "default": true
+          },
+          {
+            "type": "checkbox",
+            "id": "sku_enable",
+            "label": "t:settings_schema.products.settings.options_sku.label",
+            "default": true
+          },
+          {
+            "type": "checkbox",
+            "id": "bar_enable",
+            "label": "t:settings_schema.products.settings.options_bar.label",
+            "default": true
+          },
+          {
+            "type": "checkbox",
+            "id": "divider",
+            "label": "t:sections.show_divider.label",
+            "default": false
+          }
+		],
+
+        "limit": 1
+      },
+      {
+        "type": "rating",
+        "name": "t:sections.product_rating.label",
+		"settings": [
+		  {
+            "type": "paragraph",
+            "content": "t:sections.show_reviews.info"
+		  },
+          {
+            "type": "checkbox",
+            "id": "divider",
+            "label": "t:sections.show_divider.label",
+            "default": false
+          }
+		],
+        "limit": 1
+      },
+      {
+        "type": "price",
+        "name": "t:sections.price.name",
+		"settings": [
+          {
+            "id": "price_size",
+            "type": "range",
+            "label": "t:sections.price.price_size",
+            "min": 12,
+            "max": 96,
+            "step": 6,
+            "unit": "px",
+            "default": 24
+          },
+          {
+            "type": "checkbox",
+            "id": "price_msg",
+            "label": "t:sections.price.price_msg",
+            "default": true
+          },
+          {
+            "type": "checkbox",
+            "id": "divider",
+            "label": "t:sections.show_divider.label",
+            "default": false
+          }
+		],
+        "limit": 1
+      },
+      {
+        "type": "payments",
+        "name": "t:sections.shoppay.name",
+		"settings": [
+          {
+            "type": "checkbox",
+            "id": "divider",
+            "label": "t:sections.show_divider.label",
+            "default": true
+          }
+		],
+        "limit": 1
+      },
+      {
+        "type": "availability",
+        "name": "t:sections.availability.label",
+		"settings": [
+          {
+            "type": "range",
+            "id": "product_availability_total",
+            "min": 2,
+            "max": 100,
+            "step": 1,
+            "label": "t:sections.availability.info",
+            "default": 15
+          },
+          {
+            "type": "checkbox",
+            "id": "divider",
+            "label": "t:sections.show_divider.label",
+            "default": true
+          }
+		],
+        "limit": 1
+      },
+      {
+        "type": "properties",
+        "name": "t:sections.line_item.name",
+        "settings": [ 
+          {
+            "type": "checkbox",
+            "id": "divider",
+            "label": "t:sections.show_divider.label",
+            "default": false
+          },
+          {
+            "type": "text",
+            "id": "checkbox",
+            "label": "t:sections.checkbox.label",
+            "default": "Checkbox"
+          },
+          {
+            "type": "text",
+            "id": "radio_label",
+            "label": "t:sections.radio_label.label",
+			"default": "Radio label"
+          },
+          {
+            "type": "textarea",
+            "id": "radio_body",
+            "label": "t:sections.radio_options.label",
+			"default": "Option 1, Option 2, Option 3",
+        	"info": "t:sections.seperate.info"
+          }, 
+          {
+            "type": "text",
+            "id": "text_label",
+            "label": "t:sections.text_label.name",
+			"default": "Text label"
+          },
+          {
+            "type": "text",
+            "id": "text",
+            "label":"t:sections.text_placeholder.label",
+            "default": "Text..."
+          },
+          {
+            "type": "text",
+            "id": "select_label",
+            "label": "t:sections.select.dropdown_label",
+			"default": "Select dropdown label"
+          },
+          {
+            "type": "text",
+            "id": "select_title",
+            "label": "t:sections.select.dropdown_placeholder",
+            "default": "Please choose..."
+          },
+          {
+            "type": "textarea",
+            "id": "select_body",
+            "label": "t:sections.select.dropdown_options",
+			"default": "Option 1, Option 2, Option 3",
+        	"info": "t:sections.seperate.info"
+          },
+          {
+            "type": "text",
+            "id": "tag",
+            "label": "t:sections.tag_filter.label"
+          }
+        ]
+      },
+      {
+        "type": "variants",
+        "name": "t:sections.variants.label",
+		"settings": [
+          {
+            "type": "checkbox",
+            "id": "var_length_enable",
+            "label": "t:sections.show_single.label",
+            "default": false
+          },
+          {
+            "type": "select",
+            "id": "variant_enable",
+            "label": "t:sections.variant_options.label",
+            "default": "color-size-block",
+            "options": [
+              {
+                "value": "block",
+                "label": "t:sections.variant_options.all"
+              },
+              {
+                "value": "color-block",
+                "label": "t:sections.variant_options.color"
+              },
+              {
+                "value": "size-block",
+                "label": "t:sections.variant_options.size"
+              },
+              {
+                "value": "color-size-block",
+                "label": "t:sections.variant_options.color_size"
+              },
+              {
+                "value": "dropdown",
+                "label": "t:sections.variant_options.all_dropdowns"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "variant_color_enable",
+            "label": "t:sections.variant_options.color",
+            "default": "var-img-block",
+            "options": [
+              {
+                "value": "block",
+                "label": "t:settings_schema.products.settings.options_swatches.color.label"
+              },
+              {
+                "value": "var-img-block",
+                "label": "t:settings_schema.products.settings.options_swatches.variant.label"
+              },
+              {
+                "value": "var-img-zoom-block",
+                "label": "t:settings_schema.products.settings.options_swatches.magnified.label"
+              },
+              {
+                "value": "img-block",
+                "label": "t:settings_schema.products.settings.options_swatches.custom.label"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "divider",
+            "label": "t:sections.show_divider.label",
+            "default": false
+          }
+		],
+        "limit": 1
+      },
+      {
+        "type": "quantity",
+        "name": "t:sections.quantity.label",
+		"settings": [
+          {
+            "type": "checkbox",
+            "id": "divider",
+            "label": "t:sections.show_divider.label",
+            "default": false
+          }
+		],
+        "limit": 1
+      },
+      {
+        "type": "form",
+        "name": "t:sections.form.label",
+		"settings": [
+          {
+            "type": "checkbox",
+            "id": "smart_enable",
+            "label": "t:sections.show_dynamic.label",
+            "info": "t:sections.show_dynamic.info",
+            "default": true
+          },
+          {
+            "type": "checkbox",
+            "id": "gift_enable",
+            "default": true,
+            "label": "t:sections.product_gift.label",
+            "info": "t:sections.product_gift.info"
+          },
+          {
+            "type": "checkbox",
+            "id": "divider",
+            "label": "t:sections.show_divider.label",
+            "default": false
+          }
+		],
+        "limit": 1
+      },
+      {
+        "type": "shipping",
+        "name": "t:settings_schema.general.settings.shipping.content",
+		"settings": [
+          {
+            "type": "checkbox",
+            "id": "divider",
+            "label": "t:sections.show_divider.label",
+            "default": false
+          }
+		],
+        "limit": 1
+      },
+      {
+        "type": "@app"
+      },
+      {
+        "type": "description",
+        "name": "t:sections.product_description.name",
+		"settings": [
+		  {
+            "type": "paragraph",
+            "content": "t:sections.product_description.info"
+		  },
+          {
+            "type": "checkbox",
+            "id": "divider",
+            "label": "t:sections.show_divider.label",
+            "default": false
+          }
+		],
+        "limit": 1
+      },
+      {
+        "type": "button",
+        "name": "t:sections.button.name",
+		"settings": [
+          {
+            "type": "text",
+            "id": "text",
+            "label":"t:sections.text.name",
+            "default": "Text"
+          },
+          {
+            "type": "checkbox",
+            "id": "outline_button",
+            "label": "t:sections.outline.label",
+            "default": false
+          },
+          {
+            "type": "url",
+            "id": "link",
+            "label": "t:sections.link.label",
+            "default": "\/"
+          },
+          {
+            "type": "checkbox",
+            "id": "divider",
+            "label": "t:sections.show_divider.label",
+            "default": false
+          }
+		]
+      },
+      {
+        "type": "meta",
+        "name": "t:sections.text.name",
+        "settings": [
+          {
+            "type": "richtext",
+            "id": "meta",
+            "label": "t:sections.text.label",
+			"default": "<p><strong>Text Block:</strong> Show custom content to provide more product information</p>"
+          },
+          {
+            "type": "checkbox",
+            "id": "divider",
+            "label": "t:sections.show_divider.label",
+            "default": false
+          },
+          {
+            "type": "text",
+            "id": "tag",
+            "label": "t:sections.tag_filter.label"
+          }
+		]
+      },
+      {
+        "type": "liquid",
+        "name": "t:sections.custom_liquid.label",
+        "settings": [
+          {
+            "type": "liquid",
+            "id": "liquid",
+            "label": "t:sections.liquid.label",
+            "info": "t:sections.custom_liquid.info",
+         	"default": "<strong>Custom liquid Block:</strong> {{ shop.name }}<br/><br/>{% if product.selected_or_first_available_variant.metafields.custom.size > 0 %}<ul>{% for definition in product.selected_or_first_available_variant.metafields.custom %}<li><strong>{{ definition.first | replace: '_', ' ' | capitalize }}:</strong> {{ definition.last.value }}</li>{% endfor %}</ul>{% endif %}{% if product.metafields.custom.size > 0 %}<ul>{% for definition in product.metafields.custom %}<li><strong>{{ definition.first | replace: '_', ' ' | capitalize }}:</strong> {{ definition.last.value }}</li>{% endfor %}</ul>{% endif %}"
+          },
+          {
+            "type": "checkbox",
+            "id": "enable_metafields",
+            "label": "t:sections.enable_metafields.label",
+            "info": "t:sections.enable_metafields.info",
+            "default": true
+          },
+          {
+            "type": "checkbox",
+            "id": "divider",
+            "label": "t:sections.show_divider.label",
+            "default": false
+          },
+          {
+            "type": "text",
+            "id": "tag",
+            "label": "t:sections.tag_filter.label"
+          }
+        ]
+      },
+      {
+        "type": "image",
+        "name": "t:sections.image.name",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "block_img",
+            "label": "t:sections.image.label"
+          },
+          {
+            "type": "checkbox",
+            "id": "divider",
+            "label": "t:sections.show_divider.label",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "tag",
+            "label": "t:sections.tag_filter.label"
+          }
+      	]
+      },
+      {
+        "type": "divider",
+        "name": "t:sections.divider.name"
+      }
+    ]
+  }
+{% endschema %}

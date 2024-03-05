@@ -1,0 +1,48 @@
+<div class="clearfix{% if divider %} form-blocks no-pad{% endif %}" {{ block.shopify_attributes }}>
+  
+  {% if checkbox != blank %}
+  <span class="form radiobox">
+    <input type="hidden" name="properties[{{ checkbox | escape }}]" value="{{ 'layout.general.no' | t | escape }}">
+    <span>
+      <input id="propCheckbox-{{ block.id }}-{{ forloop.index }}" type="checkbox" name="properties[{{ checkbox | escape }}]" title="{{ checkbox | escape }}" value="{{ 'layout.general.yes' | t | escape }}">
+      <label for="propCheckbox-{{ block.id }}-{{ forloop.index }}">{{ checkbox }}</label>
+    </span>
+  </span>
+  {% endif %}
+  
+  {% if radio_body != blank %}
+  <span class="form radiobox">
+    <fieldset>
+      {% if radio_label != blank %}<legend>{{ radio_label }}</legend>{% endif %}  
+      {%- assign list = radio_body | split: ',' -%}
+      {%- for l in list -%}
+      <span>
+        <input type="radio" id="Radio-{{ block.id }}-{{ forloop.index }}" name="properties[{% if radio_label != blank %}{{ radio_label | escape }}{% else %}{{ radio_body | escape }}{% endif %}]" title="{{ l | escape | lstrip | rstrip }}" value="{{ l | escape | lstrip | rstrip }}"> <label for="Radio-{{ block.id }}-{{ forloop.index }}">{{ l | lstrip | rstrip }}</label>{% unless forloop.last %}<br/>{% endunless %}
+      </span>
+      {%- endfor -%}
+    </fieldset>
+  </span>
+  {% endif %}
+
+  {% if text != blank %}
+  <div class="selector-wrapper selectors">
+    <label for="propText-{{ block.id }}"{% unless text_label != blank %} class="visually-hidden"{% endunless %}>{% if text_label != blank %}{{ text_label }}{% else %}{{ text }}{% endif %}</label>
+    <input type="text" id="propText-{{ block.id }}" name="properties[{% if text_label != blank %}{{ text_label | escape }}{% else %}{{ text | escape }}{% endif %}]" placeholder="{{ text | escape }}" />
+  </div>
+  {% endif %}
+
+  {% if select_title != blank and select_body != blank %}
+  <div class="selector-wrapper skip select selectors">
+    <label for="propSelect-{{ block.id }}"{% unless select_label != blank %} class="visually-hidden"{% endunless %}>{% if select_label != blank %}{{ select_label }}{% else %}{{ select_title }}{% endif %}</label>
+    <select id="propSelect-{{ block.id }}" class="no-select" name="properties[{% if select_label != blank %}{{ select_label | escape }}{% else %}{{ select_title | escape }}{% endif %}]">          
+      <option value="">{{ select_title }}</option>
+      {%- assign list = select_body | split: ',' -%}
+      {%- for l in list -%}
+      <option value="{{ l | escape | lstrip | rstrip  }}">{{ l | lstrip | rstrip }}</option>
+      {%- endfor -%}
+    </select>
+    {%- render 'icons.theme', icon: 'arrow-down', size: 14 -%}
+  </div>
+  {% endif %}
+  
+</div>

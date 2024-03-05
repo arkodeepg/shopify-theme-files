@@ -1,0 +1,423 @@
+<!doctype html>
+{%- liquid
+  assign rtl = false
+  assign rtl_list = 'ae,ar,arc,bcc,bqi,ckb,dv,fa,glk,ha,he,kwh,ks,ku,mzn,nqo,pnb,ps,sd,ug,ur,yi'
+  assign iso_code = localization.language.iso_code | split: '-' | first
+  if rtl_list contains iso_code
+    assign rtl = true
+  endif
+-%}
+<html
+  class="no-js"
+  lang="{{ request.locale.iso_code }}"
+  class="fonts-loading"
+  {% if rtl %}
+    dir="rtl"
+  {% endif %}
+>
+
+  <head>
+
+
+    {%- liquid
+      render 'head'
+      echo content_for_header
+      render 'javascript'
+    -%}
+
+
+
+    {% comment %}
+    {% render 'head' %}
+    {% capture CFH %}
+    {{ content_for_header }}
+    {% endcapture %}
+    {% render 'javascript' %}
+    {% endcomment %}
+
+
+
+    
+    {% render 'content_for_header' %}
+
+    <style>
+      {%- if template.name == 'product' -%}
+      @font-face {
+      font-family: 'glacialIndifference-regular';
+      src:
+      url({{ 'glacialIndifference-regular.otf' | asset_url }}) format('woff2');
+      font-display: swap;
+      font-weight: normal;
+      font-style: normal;
+      }
+      {% else %}
+      @font-face {
+      font-family: 'garamond-premr-pro';
+      src: url('{{ 'GaramondPremrPro.woff2' | asset_url }}') format('woff2');
+      font-display: swap;
+      font-weight: normal;
+      font-style: normal;
+      }
+      {% endif %}
+
+      @font-face {
+      font-family: 'glacialIndifference-bold';
+      src:
+      url({{ 'GlacialIndifference-Bold.woff2' | asset_url }}) format('woff2');
+      font-display: swap;
+      font-weight: bold;
+      font-style: normal;
+      }
+      @font-face {
+      font-family: 'glacialIndifference-italic';
+      src:
+      url({{ 'glacialIndifference-italic.otf' | asset_url }}) format('woff2');
+      font-display: swap;
+      font-weight: normal;
+      font-style: italic;
+      }
+      @font-face {
+      font-family: 'glacialIndifference-regular';
+      src:
+      url({{ 'glacialIndifference-regular.otf' | asset_url }}) format('woff2');
+      font-display: swap;
+      font-weight: normal;
+      font-style: normal;
+      }
+
+      /* css lato font family start */
+          @font-face {
+          font-family: 'Lato Hairline';
+          src: url('https://cdn.shopify.com/s/files/1/2690/0106/files/Lato-Hairline.woff2?v=1695302389') format('woff2'),
+              url('https://cdn.shopify.com/s/files/1/2690/0106/files/Lato-Hairline.woff?v=1695302390') format('woff');
+          font-weight: 300;
+          font-style: normal;
+          font-display: swap;
+      }
+
+      @font-face {
+          font-family: 'Lato';
+          src: url('https://cdn.shopify.com/s/files/1/2690/0106/files/Lato-BoldItalic.woff2?v=1695302389') format('woff2'),
+              url('https://cdn.shopify.com/s/files/1/2690/0106/files/Lato-BoldItalic.woff?v=1695302389') format('woff');
+          font-weight: bold;
+          font-style: italic;
+          font-display: swap;
+      }
+
+      @font-face {
+          font-family: 'Lato';
+          src: url('https://cdn.shopify.com/s/files/1/2690/0106/files/Lato-LightItalic.woff2?v=1695302389') format('woff2'),
+              url('https://cdn.shopify.com/s/files/1/2690/0106/files/Lato-LightItalic.woff?v=1695302389') format('woff');
+          font-weight: 300;
+          font-style: italic;
+          font-display: swap;
+      }
+
+      @font-face {
+          font-family: 'Lato';
+          src: url('https://cdn.shopify.com/s/files/1/2690/0106/files/Lato-Regular.woff2?v=1695302389') format('woff2'),
+              url('https://cdn.shopify.com/s/files/1/2690/0106/files/Lato-Regular.woff?v=1695302389') format('woff');
+          font-weight: normal;
+          font-style: normal;
+          font-display: swap;
+      }
+
+      @font-face {
+          font-family: 'Lato Hairline';
+          src: url('https://cdn.shopify.com/s/files/1/2690/0106/files/Lato-HairlineItalic.woff2?v=1695302389') format('woff2'),
+              url('https://cdn.shopify.com/s/files/1/2690/0106/files/Lato-HairlineItalic.woff?v=1695302389') format('woff');
+          font-weight: 300;
+          font-style: italic;
+          font-display: swap;
+      }
+
+      @font-face {
+          font-family: 'Lato';
+          src: url('https://cdn.shopify.com/s/files/1/2690/0106/files/Lato-Light.woff2?v=1695302389') format('woff2'),
+              url('https://cdn.shopify.com/s/files/1/2690/0106/files/Lato-Light.woff?v=1695302389') format('woff');
+          font-weight: 300;
+          font-style: normal;
+          font-display: swap;
+      }
+
+      @font-face {
+          font-family: 'Lato';
+          src: url('https://cdn.shopify.com/s/files/1/2690/0106/files/Lato-LightItalic.woff2?v=1695302389') format('woff2'),
+              url('https://cdn.shopify.com/s/files/1/2690/0106/files/Lato-LightItalic.woff?v=1695302389') format('woff');
+          font-weight: normal;
+          font-style: italic;
+          font-display: swap;
+      }
+
+      @font-face {
+          font-family: 'Lato';
+          src: url('https://cdn.shopify.com/s/files/1/2690/0106/files/Lato-BlackItalic.woff2?v=1695302389') format('woff2'),
+              url('https://cdn.shopify.com/s/files/1/2690/0106/files/Lato-BlackItalic.woff?v=1695302389') format('woff');
+          font-weight: 900;
+          font-style: italic;
+          font-display: swap;
+      }
+
+      @font-face {
+          font-family: 'Lato';
+          src: url('https://cdn.shopify.com/s/files/1/2690/0106/files/Lato-Bold.woff2?v=1695302390') format('woff2'),
+              url('https://cdn.shopify.com/s/files/1/2690/0106/files/Lato-Bold.woff?v=1695302390') format('woff');
+          font-weight: bold;
+          font-style: normal;
+          font-display: swap;
+      }
+
+      @font-face {
+          font-family: 'Lato';
+          src: url('https://cdn.shopify.com/s/files/1/2690/0106/files/Lato-Black.woff2?v=1695302389') format('woff2'),
+              url('https://cdn.shopify.com/s/files/1/2690/0106/files/Lato-Black_e476c0c8-5847-47a2-bbc7-51e092a8ef97.woff?v=1695302390') format('woff');
+          font-weight: 900;
+          font-style: normal;
+          font-display: swap;
+      }
+      /* css lato font family end */
+            @media only screen and (max-width: 640px) {
+                  .wizzy-search-wrapper .wizzy-search-results-wrapper .wizzy-search-results-container .wizzy-search-filters-top .search-filters-top-wrapper .wizzy-search-sort-wrapper {
+          z-index: 5;
+      }
+            }
+      #ajaxBusy{
+        background:#fff;
+        content:'';
+        height:100%;
+        margin:0px;
+        padding:0px;
+        position:fixed;
+        right:0;
+        top:0;
+        width:100%;
+        z-index: 999999;
+      }
+
+    </style>
+    <script>
+      // const x = {{ CFH | json }};
+      // const { children } = document
+      //   .createRange()
+      //   .createContextualFragment(x);
+      
+      // for (const node of children)  {
+      //    document
+      //    .head
+      //    .appendChild(node);
+      // }
+      
+      // Add a global variable *before* yett is loaded.
+      var YETT_BLACKLIST = [
+        /www\.google\-analytics\.com/,
+        /https:\/\/www\.googletagmanager\.com/,
+        /https:\/\/connect\.facebook\.net/,
+        /https:\/\/www\.gstatic\.com/,
+        /https:\/\/www\.youtube\.com/,
+        /https:\/\/s3\.amazonaws\.com/,
+        /https:\/\/api\.shopflo\.co/,
+        /https:\/\/static\.socialshopwave\.com/,
+        /https:\/\/forms\.soundestlink\.com/,
+        /https:\/\/omnisnippet1\.com/,
+        /https:\/\/cdn1\.judge\.me/,
+        /https:\/\/bridge\.shopflo\.com/,	
+        /https\:\/\/satcb\.azureedge\.net/,	
+        /https:\/\/m\.facebook.com/ ,	
+        /https:\/\/facebook\.com/ ,	 	
+        /https:\/\/logisy\.s3\.amazonaws\.com/,	
+        /https:\/\/www\.facebook\.com/,	
+        /https:\/\/cache\-essential\-apps\.cc/,	
+        /https:\/\/dev\.visualwebsiteoptimizer\.com/,	
+        /https:\/\/searchserverapi\.com/,	
+        /https:\/\/searchanise-ef84.kxcdn\.com/,	
+        /https:\/\/ajax\.aspnetcdn\.com/,	
+        /https:\/\/kit\.fontawesome\.com\/2640aa91b4\.js/,	
+        /https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/glider-js\/1\.7\.7\/glider-compat\.min\.js/,
+        /{{shop.url | replace: '.', '\.' | replace: '/', '\/'}}\/apps\/ssw/,
+        /https:\/\/img0\.socialshopwave\.com/
+      ];
+      console.log('/{{shop.url | replace: '.', '\.' | replace: '/', '\/'}}\/apps\/ssw/');
+    </script>
+    <script src="{{ 'block-unblock.js' | asset_url }}"></script>
+    {%- if template contains '404' or template contains 'cart' or template contains 'search' or template contains 'customers/account' or template contains 'customers/order' -%}
+      <meta name="robots" content="noindex, nofollow">
+    {%- endif -%}
+    {% render 'country-blocker' %}
+    
+  </head>
+  {%- assign customClassAccountPage = '' -%}
+  {%- assign customClassAccountPageInner = '' -%}
+  {%- if request.path contains '/pages/wishlist'
+    or request.path contains '/pages/reward'
+    or request.path contains '/account'
+    or request.path contains '/account/orders'
+    or request.path contains '/pages/profile'
+    or request.path contains '/pages/my-profile'
+    or request.path contains '/pages/my-addresses'
+  -%}
+    {%- assign customClassAccountPage = 'account-page-main-wrapper' -%}
+    {%- assign customClassAccountPageInner = 'customers-page-wrapper' -%}
+  {%- endif -%}
+  <body
+    id="main-body"
+    class="template-name-{{ template.name | split : '.' | last }} {{ customClassAccountPage }}{% unless customer %} not_customer{% endunless %} loading{% if rtl %} rtl{% endif %}"
+  >
+    <script>
+
+      let userlogincheck = {% if customer %}true{% else %}false{% endif %};
+    
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <!-- <script src="{{ 'swiper-bundle.min.js' | asset_url }}"></script> -->
+    
+
+    <div id="ajaxBusy"><div class="loader"></div></div>
+    <a href="#content" title="{{ 'layout.general.skipto' | t | escape }}" class="skip-to text-center visually-hidden">
+      {{- 'layout.general.skipto' | t -}}
+    </a>
+    {%- liquid
+      render 'noScript'
+      sections 'header-group'
+      sections 'overlay-group'
+    -%}
+    <main
+      id="content"
+      class="content {{ customClassAccountPageInner }} {% if request.page_type != blank %}{{ request.page_type | split: '/' | first | replace: '404', 'error' }}{% else %}default{% endif %}-page{% if template.suffix != blank %} {{ template.suffix | replace: 'quick', 'quick-view' }}{% endif %}{% if request.page_type == 'gift_card' %} wrap{% endif %}"
+      role="main"
+    >
+      {%- liquid
+        echo content_for_layout
+      -%}
+    </main>
+    {%- sections 'footer-group' -%}
+
+    <div id="quick-modal" class="modal" aria-hidden="true">
+      <div class="modal-overlay" tabindex="-1" data-micromodal-close>
+        <div class="modal-container shopify-section" role="dialog" aria-modal="true" aria-labelledby="modal">
+          <div id="modal" class="modal-content"></div>
+          <button class="modal-close" aria-label="{{ 'layout.general.close' | t | escape }}" data-micromodal-close>
+            {%- render 'icons.theme', icon: 'times', size: 18 -%}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    {% render 'wizzy.search.filters.styles' %}
+    {% render 'wizzy.search.filters.scripts' %}
+
+    {% section 'cart-drawer' %}
+    {%- section 'coupen-code-popup' -%}
+    {% render 'login-with-phone' %}
+
+    <script defer type="application/json" data-ajax-cart-initial-state>
+      {{ cart | json }}
+    </script>
+    <script src="https://bridge.shopflo.com/js/shopflo.bundle.js" async></script>
+    {% comment %}<script src="quinn-vendor.bundle.js" async></script>{% endcomment %}
+    <script defer type="module">
+      import '{{ "liquid-ajax-cart-v2.1.0-min.js" | asset_url }}';
+    </script>
+    <script defer>
+      window.liquidAjaxCart.conf("mutations", myMutation);
+    </script>
+    <!-- for prod -->
+    <script src="{{ 'global-custom.min.js' | asset_url }}" async rel="preload" as="script"></script>
+    <!-- for dev -->
+    <!-- <script src="{{ 'global-custom.js' | asset_url }}" async rel="preload" as="script"></script> -->
+    
+    {% render 'gw-custom' %}
+    {% render 'mobile-app-js' %}
+    {% render 'limechat' %}
+    <style>
+    {% if request.path == '/pages/shipping' %}
+     .content ul li {
+          list-style: inherit !important;
+      }
+    {% endif %}
+    </style>
+    <script defer>
+      //customer is logged in 
+      {% if customer %}
+        $('.cart-remove_right.cart-remove_btn.c-gold.ssw-faveiticon').on('click', function(){
+          let key = $(this).attr('data-key');
+          // console.log(`key - ${key}`)
+          let remprod = {
+            id: key,
+            quantity: 0
+          }
+          liquidAjaxCart.change(remprod, options);
+        })
+      {% else %}
+      console.log('customer not logged in')
+
+      var elements = document.querySelectorAll('.ssw-faveiticon');
+      // console.log('elements ',elements)
+      
+      // Define the function to run when the event occurs
+      function handleIconClick() {
+        // Run the theme.loginWithPhoneOpen() function
+        theme.loginWithPhoneOpen();
+      }
+      
+      // Add an event listener to each element
+      elements.forEach(function(element) {
+        element.addEventListener('click', handleIconClick);
+      });
+      {% endif %}
+
+
+
+    {% if template.name == 'product' %}
+    if(userlogincheck == false){
+      // Target node to observe
+        const targetNode = document.querySelector('.mainProductImage .swiper-slide.swiper-slide-active');
+        
+        // Options for the observer (specify what mutations to observe)
+        const config = { childList: true, subtree: false };
+        
+        // Callback function to execute when mutations are observed
+        const callback = function(mutationsList, observer) {
+            for (const mutation of mutationsList) {
+                if (mutation.type === 'childList') {
+                    // Check if the widget-fave-html div is added
+                    const addedNodes = Array.from(mutation.addedNodes);
+                    const widgetFaveHtmlAdded = addedNodes.some(node => {
+                        return node.id === 'widget-fave-html';
+                    });
+        
+                    if (widgetFaveHtmlAdded) {
+                        // console.log('hi');
+                      setTimeout(() => {
+                        // console.log("Delayed for 1 second.");
+                        var elements = document.querySelectorAll('#widget-fave-html');
+                        
+                        elements.forEach(function(element) {
+                          element.addEventListener('click', handleIconClick);
+                        });
+                      }, 200);
+                        observerwish.disconnect();
+                    }
+                }
+            }
+        };
+        
+        // Create a MutationObserver instance with the callback function and options
+        const observerwish = new MutationObserver(callback);
+        
+        // Start observing the target node for specified mutations
+        observerwish.observe(targetNode, config);
+      }
+    {% endif %}
+    //wishlistAttach();
+    </script>
+    {%- if request.path contains '/pages/my-profile' -%}
+      {%- render 'mobile-email-validate' -%}
+    {%- endif -%}
+    {% render 'toast-message' %}
+    {% render 'moe' %}
+    {% render 'analytics' %}
+  </body>
+  {% render 'breadcurmSession' %}
+  {% render 'content_for_footer' %}
+</html>

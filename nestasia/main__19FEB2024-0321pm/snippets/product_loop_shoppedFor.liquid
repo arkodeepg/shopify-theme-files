@@ -1,0 +1,51 @@
+<div class="loopWrapershoppedfor">
+  <div class="checkboxshoppedfor {% if product.title == currentTitle %}visibleHidden{% endif %} {% if product.title != currentTitle %}FetchDataShoppedFor{% endif %}"><input checked type="checkbox" id="checkboxshoppedFor{{ product.selected_or_first_available_variant.id }}" name="{{ product.title }}" value="{{ product.selected_or_first_available_variant.id }}" data-price="{{ product.selected_or_first_available_variant.price }}" data-title="{{ product.title }}"></div>
+  <div class="loopWrapershoppedforsvgtotal">
+  <div class="loopWrapershoppedforsvgtotalUnder">
+    <a class="aTagShoppedFor" href="{{ product.url }}">
+      <div class="shoppedForImgwrapper">
+        {%- capture id -%}{{ product.featured_media.id }}{{ section.id }}{{ content.id }}{%- endcapture -%}
+        <!-- {%- render 'image-load', img_src: product.featured_image, size: 'master', id: id, available: product.available, alt: product.title -%} -->
+        <img loading="lazy" class="lazy" data-src="{{ product.featured_image | image_url: width: master }}">
+      </div>
+      <div class="shoppedForPriceTitle">
+        <p class="shoppedForPtitle">{{ product.title }}</p>
+        <div class="product-price">
+        {% if product.price_min > 0 %}
+        {%- assign variant = product.variants | sort: 'price' | first -%}
+          {% if product.compare_at_price > product.price %}
+            <p style="{% if settings.collection_product_price_font_size != blank %} font-size: {{settings.collection_product_price_font_size}}px; {% endif %}{% if settings.collection_product_price_font_color_with_sale != blank %} color: {{settings.collection_product_price_font_color_with_sale}}; {% endif %} {% if settings.collection_product_price_font_family != blank %} font-family: {{settings.collection_product_price_font_family}};{% endif %}">
+              {% if product.price_varies %}{{ 'products.product.from' | t }} {% endif %}
+              <span class="price-with-discount">{{ product.price | money }}</span>
+              <del>{{ product.compare_at_price | money }}</del>
+              {%- render 'product-unit-price', variant: variant, variant_free: false, variant_slash: 'true' -%}
+              
+              <span class="percentage-tag-custom">({%- if settings.badge_percentage_enable -%}
+              {{ product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round  | append: '%' }}
+              {%- else -%}
+              {{ product.compare_at_price | minus: product.price | money_without_trailing_zeros }}
+                {%- endif -%} Off)</span>
+            </p>
+          {% else %}
+            <p style="{% if settings.collection_product_price_font_size != blank %} font-size: {{settings.collection_product_price_font_size}}px; {% endif %}{% if settings.collection_product_price_font_color != blank %} color: {{settings.collection_product_price_font_color}}; {% endif %} {% if settings.collection_product_price_font_family != blank %} font-family: {{settings.collection_product_price_font_family}};{% endif %}">
+              {% if product.price_varies %}{{ 'products.product.from' | t }} {% endif %}
+              {{ product.price | money }}
+            </p>
+          {% endif %}
+        {% else %}
+        {% if product.price_varies %}    
+        {%- assign variant = product.variants | sort: 'price' | last -%}
+        <h6 style="{% if settings.collection_product_price_font_size != blank %} font-size: {{settings.collection_product_price_font_size}}px; {% endif %}{% if settings.collection_product_price_font_color != blank %} color: {{settings.collection_product_price_font_color}}; {% endif %} {% if settings.collection_product_price_font_family != blank %} font-family: {{settings.collection_product_price_font_family}};{% endif %}">{{ 'products.product.from' | t }} {{ 'products.product.free' | t }} - {{ product.price_max | money }}{%- assign variant_free = true -%}{%- render 'product-unit-price', variant: variant, variant_free: false, variant_slash: 'true' -%}</h6>
+        {% else %}
+        <h6 style="display:none">{{ product.price | money }}</h6><h6>{{ 'products.product.free' | t }}</h6>
+        {% endif %}
+        {% endif %}
+      </div>
+      </div>
+    </a>
+  </div>
+    <div class="{% if productCountShopped>1 %}visibleHidden{% endif %}  onlydesktop">
+      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25" fill="none"><path d="M25 13.4084H13.525V25H11.4483V13.4084H0V11.5404H11.4483V0H13.525V11.5404H25V13.4084Z" fill="#343332"/></svg>
+    </div>
+  </div>
+</div>

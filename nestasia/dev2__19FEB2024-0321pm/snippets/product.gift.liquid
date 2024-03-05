@@ -1,0 +1,63 @@
+<div class="product-gift-{{ section.id }} product-gift open-container clearfix">
+  {%- liquid
+    if form.errors
+      echo '<div class="errors errorForm feedback"><ul class="unformatted">'
+        for field in form.errors
+          echo '<li>'
+            if field == 'form'
+              echo form.errors.messages[field]
+            else
+              echo form.errors.translated_fields[field] | capitalize
+              echo ' '
+              echo form.errors.messages[field]
+            endif
+          echo '</li>'
+        endfor
+      echo '</ul></div>'
+    endif
+  -%}
+  <span class="form radiobox">
+    <span>
+      <input id="gift-{{ block.id }}" 
+             type="checkbox" 
+             name="properties[__shopify_send_gift_card_to_recipient]"
+             title="{{ 'products.general.gift' | t | escape }}">
+      <label for="gift-{{ block.id }}">{{ 'products.general.gift' | t }}</label>
+    </span>
+  </span>
+  <details>
+    <summary type="hidden"></summary>
+  </details>
+  <div class="open-slide">
+    <span class="form">
+      <label for="gift-name-{{ product.id }}">{{ 'contact.form.name' | t | escape }}</label>
+      <input id="gift-name-{{ product.id }}" 
+             type="text" 
+             value="{{ form.name | escape }}" 
+             name="properties[Recipient name]"
+             placeholder="{{ 'contact.form.name_placeholder' | t | escape }}" />
+    </span>
+    
+    <span class="form">
+      <label for="gift-email-{{ product.id }}">{{ 'contact.form.email' | t | escape }}</label>
+      <input id="gift-email-{{ product.id }}" 
+             type="email" 
+             value="{{ form.email | escape }}" 
+             name="properties[Recipient email]"
+             placeholder="{{ 'contact.form.email_placeholder' | t | escape }}"/>
+    </span>
+    
+    <span class="form">
+        <label for="gift-message-{{ product.id }}">{{ 'contact.form.message' | t }}</label>
+        <textarea id="gift-message-{{ product.id }}" 
+                  name="properties[Message]"
+                  maxlength="200"
+                  placeholder="{{ 'contact.form.message_placeholder' | t | escape }}">{{ form.comments }}</textarea>
+    </span>
+        
+    <input type="hidden"
+           name="properties[__shopify_send_gift_card_to_recipient]"
+           value="if_present"
+           disabled>
+  </div>
+</div>

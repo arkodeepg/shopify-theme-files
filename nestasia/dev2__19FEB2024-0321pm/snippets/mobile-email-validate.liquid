@@ -1,0 +1,610 @@
+<div id="login_with_phone_wrap_validate">
+  <div class="login_with_phone_content">
+    <div class="login_with_phone_content_wrap">
+      <a href="javascript:void(0)" class="login_width_phone_popup_validate_close">×</a>
+      <div class="login_with_phone_verify_code login_width_phone_step active">
+        <h3>Verification</h3>
+        <form id="login_with_phone_verification_form_validate">
+          <input type="hidden" class="verification_send_width">
+          <div class="phone_verify_code_message"></div>
+          <div class="verification_input_wrap">
+            <input class="verification_input code_no_1" type="number" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}"/>
+            <input class="verification_input code_no_2" type="number" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}"/>
+            <input class="verification_input code_no_3" type="number" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}"/>
+            <input class="verification_input code_no_4" type="number" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}"/>
+            <div>
+              <span class="form_error"></span>
+            </div>
+            <div>
+              <span class="form_success"></span>
+            </div>
+          </div>
+          <div class="form-submit-wrap">
+            <button type="submit" class="btn custom_loading" value="Verify">Verify
+              <div class="custom-loader-wrap">
+                <div class="custom-loader"></div>
+              </div>
+            </button>
+          </div>
+          <div class="verification_link_wrap">
+            Didn't receive the code?
+            <div class="resend_call_me_wrap">
+              <a href="javascript:void(0)" class="btn send_code_again_validate counting">Resend OTP
+                <span></span>
+              </a>
+              <a href="javascript:void(0)" class="btn call_me_btn_validate counting" data-count="1">Call Me
+                <span></span>
+              </a>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+  theme.ValidatePopupOpen = function(value) {
+    $("#login_with_phone_wrap_validate").fadeIn();
+    $("#login_with_phone_wrap_validate .login_with_phone_content").addClass("open");
+    $('#login_with_phone_wrap_validate input:not([type="submit"])').val("");
+    if ($("#login_with_phone_wrap_validate form[onsubmit]").length > 0) {
+      $("#login_with_phone_wrap_validate form").removeAttr("onsubmit");
+    }
+    if (value == 'phone') {
+      $('.call_me_btn_validate').css('display', 'inline-block');
+    } else {
+      $('.call_me_btn_validate').css('display', 'none');
+    }
+  };
+  theme.ValidatePopupClose = function() {
+    $("#login_with_phone_wrap_validate").fadeOut();
+    $("#login_with_phone_wrap_validate .login_with_phone_content").removeClass("open");
+  };
+  theme.ValidatecallMeCount = function() {
+    let callMeCount = 30;
+    $(".call_me_btn_validate span").removeClass("hidden").text("(30)");
+    $(".call_me_btn_validate").addClass("counting");
+    let callMeCountInterval = setInterval(function() {
+      callMeCount--;
+      if (callMeCount == 0 || $(".login_with_phone_verify_code.active").length == 0) {
+        $("#login_with_phone_verification_form_validate").removeClass("removeInterval");
+        clearInterval(callMeCountInterval);
+        $(".call_me_btn_validate").removeClass("counting");
+        $(".call_me_btn_validate span").addClass("hidden");
+      }
+      $(".call_me_btn_validate span").text("(" + callMeCount + ")");
+    }, 1000);
+  };
+  theme.ValidateresendMeCount = function() {
+    let resendMeCount = 30;
+    $(".send_code_again_validate span").removeClass("hidden").text("(30)");
+    $(".send_code_again_validate").addClass("counting");
+    let resendMeCountInterval = setInterval(function() {
+      resendMeCount--;
+      if (resendMeCount == 0 || $(".login_with_phone_verify_code.active").length == 0) {
+        $("#login_with_phone_verification_form_validate").removeClass("removeInterval");
+        clearInterval(resendMeCountInterval);
+        $(".send_code_again_validate").removeClass("counting");
+        $(".send_code_again_validate span").addClass("hidden");
+      }
+      $(".send_code_again_validate span").text("(" + resendMeCount + ")");
+    }, 1000);
+  };
+  $(document).on("click", "#profileupdateForm #ValidNumber", function(e) {
+    e.preventDefault();
+    var error_count = 0;
+    let $this = $(this);
+    error_count = error_count + theme.phoneValidation($('#profileupdateForm [name="phone"]'));
+    if (error_count == 0) {
+      $this.addClass("loading");
+      $.ajax({
+        type: "POST",
+        url: "https://support.nestasia.in/api/send-otp",
+        data: {
+          mobile_no: $('#profileupdateForm [name="phone"]').val()
+        },
+        dataType: "json",
+        success: function(data) {
+          $this.removeClass("loading");
+          if (data.status) {
+            $("#login_with_phone_verification_form_validate .phone_verify_code_message").text(`OTP Successfully sent to ${
+              $('#profileupdateForm [name="phone"]').val()
+            }.`);
+            theme.ValidatePopupOpen('phone');
+            localStorage.setItem("verify_type", "sms");
+            customTheme.verify_type = "sms";
+            theme.ValidatecallMeCount();
+            theme.ValidateresendMeCount();
+          }
+        },
+        error: function(error) {
+          $this.removeClass("loading");
+          console.log("error", error);
+        }
+      });
+    }
+    return false;
+  });
+  $(document).on("click", "#profileupdateForm #ValidEmail", function() {
+    let $this = $(this);
+    let $form = $(this).closest("#profileupdateForm");
+    $this.prop("disabled", true);
+    $form.find("#ValidEmail").addClass("loading");
+    $('#login_with_phone_verification_form_validate').addClass("removeInterval");
+    $.ajax({
+      type: "POST",
+      url: "https://support.nestasia.in/api/send-otp-email",
+      data: {
+        email: $('#profileupdateForm [name="email"]').val()
+      },
+      dataType: "json",
+      success: function(data) {
+        $form.find("#ValidEmail").removeClass("loading");
+        $this.prop("disabled", false);
+        $("#login_with_phone_verification_form_validate .phone_verify_code_message").text(`OTP Successfully sent to ${
+          $('#profileupdateForm [name="email"]').val()
+        }, Please Check your Inbox.`);
+        if (data.status) {
+          theme.ValidatePopupOpen('email');
+          localStorage.setItem("verify_type", "email");
+          customTheme.verify_type = "email";
+          theme.ValidateresendMeCount();
+        }
+      },
+      $form: function(error) {
+        $form.find("#ValidEmail").removeClass("loading");
+        $this.prop("disabled", false);
+        console.log("error", error);
+      }
+    });
+  });
+  $(document).on("click", ".send_code_again_validate", function() {
+    let $this = $(this);
+    let $form = $(this).closest("form");
+    let apiUrl,
+      dataForm,
+      otpSendTo;
+    if (localStorage.getItem("verify_type") == "email") {
+      otpSendTo = $('#profileupdateForm [name="email"]').val();
+      apiUrl = "https://support.nestasia.in/api/send-otp-email";
+      dataForm = {
+        email: otpSendTo
+      };
+      localStorage.setItem("verify_type", "email");
+    } else {
+      otpSendTo = $('#profileupdateForm [name="phone"]').val();
+      apiUrl = "https://support.nestasia.in/api/retry-otp";
+      dataForm = {
+        mobile_no: otpSendTo,
+        retry_type: "sms"
+      };
+      localStorage.setItem("verify_type", "sms");
+    } $this.prop("disabled", true);
+    $form.find(".custom_loading").addClass("loading");
+    $form.addClass("removeInterval");
+    $.ajax({
+      type: "POST",
+      url: apiUrl,
+      data: dataForm,
+      dataType: "json",
+      success: function(data) {
+        $form.find(".custom_loading").removeClass("loading");
+        $this.prop("disabled", false);
+        if (data.status) {
+          theme.ValidatecallMeCount();
+          theme.ValidateresendMeCount();
+          if (localStorage.getItem("verify_type") == "email") {
+            $form.find(".phone_verify_code_message").text(`OTP Successfully resent to ${otpSendTo}, Please Check your Inbox.`);
+          } else {
+            $form.find(".phone_verify_code_message").text(`OTP Successfully resent to ${otpSendTo}.`);
+          }
+        }
+      },
+      $form: function(error) {
+        $form.find(".custom_loading").removeClass("loading");
+        $this.prop("disabled", false);
+        console.log("error", error);
+      }
+    });
+  });
+  $(document).on("click", ".call_me_btn_validate", function() {
+    let $this = $(this);
+    let $form = $(this).closest("form");
+    let otpSendTo;
+    otpSendTo = $('#profileupdateForm [name="phone"]').val();
+    $this.prop("disabled", true);
+    $form.find(".custom_loading").addClass("loading");
+    $form.addClass("removeInterval");
+    $.ajax({
+      type: "POST",
+      url: "https://support.nestasia.in/api/retry-otp",
+      data: {
+        mobile_no: otpSendTo,
+        retry_type: "call"
+      },
+      dataType: "json",
+      success: function(data) {
+        $form.find(".custom_loading").removeClass("loading");
+        $this.prop("disabled", false);
+        if (data.status) {
+          localStorage.setItem("verify_type", "call");
+          customTheme.verify_type = "call";
+          theme.ValidatecallMeCount();
+          theme.ValidateresendMeCount();
+          $form.find(".phone_verify_code_message").text("You should be receiving a call with OTP.");
+        }
+      },
+      $form: function(error) {
+        $form.find(".custom_loading").removeClass("loading");
+        $this.prop("disabled", false);
+        console.log("error", error);
+      }
+    });
+  });
+  $(document).on("submit", "#login_with_phone_verification_form_validate", function(e) {
+    let $this = $(this);
+    var error_count = 0;
+    $this.find(".custom_loading").addClass("loading");
+    console.log("class is called")
+    if ($("#login_with_phone_verification_form_validate input.verification_input.code_no_1").val() == "" || 
+        $("#login_with_phone_verification_form_validate input.verification_input.code_no_2").val() == "" || 
+        $("#login_with_phone_verification_form_validate input.verification_input.code_no_3").val() == "" || 
+        $("#login_with_phone_verification_form_validate input.verification_input.code_no_4").val() == "") {
+      $("#login_with_phone_verification_form_validate .form_error").text("Please enter a valid OTP.").addClass("active");
+      error_count = error_count + 1;
+      $this.find(".custom_loading").removeClass("loading");
+    } else {
+      $("#login_with_phone_verification_form_validate .form_error").removeClass("active");
+    }
+    console.log('error count ',error_count)
+    if (error_count == 0) {
+      $this.find(".custom_loading").addClass("loading");
+      let formData;
+      if (localStorage.getItem("verify_type") == "email") {
+        formData = {
+          email: $('#profileupdateForm [name="email"]').val(),
+          otp: $this.find(".code_no_1").val() + $this.find(".code_no_2").val() + $this.find(".code_no_3").val() + $this.find(".code_no_4").val(),
+          verify_type: localStorage.getItem("verify_type"),
+          return_to: ''
+        };
+      } else {
+        formData = {
+          mobile_no: $('#profileupdateForm [name="phone"]').val(),
+          otp: $this.find(".code_no_1").val() + $this.find(".code_no_2").val() + $this.find(".code_no_3").val() + $this.find(".code_no_4").val(),
+          verify_type: localStorage.getItem("verify_type"),
+          return_to: ''
+        };
+      }
+      $.ajax({
+        type: "POST",
+        url: "https://support.nestasia.in/api/verify-otp",
+        data: formData,
+        dataType: "json",
+        success: function(data) {
+          console.log(data);
+          if (data.status) {
+            if (localStorage.getItem("verify_type") == "email") {
+              $('.emailKey').addClass('valid_input');
+              $('.validateNowEmail').text("Validated").addClass("disabled");
+              if ($('.numberValid').hasClass('valid_input')) {
+                $('.profile_sbmitBtn').removeClass("disabled");
+              }
+            } else {
+              $('.numberValid').addClass('valid_input');
+              $('#ValidNumber').text("Validated").addClass("disabled");
+              if ($('.emailKey').hasClass('valid_input')) {
+                $('.profile_sbmitBtn').removeClass("disabled");
+              }
+            }
+            theme.ValidatePopupClose();
+          } else if (! data.status) {
+            $("#login_with_phone_verification_form_validate .form_error").text("Invalid OTP, Please enter the correct OTP.").addClass("active");
+          }
+          $(".verification_input_wrap input.verification_input").val("");
+          $this.find(".custom_loading").removeClass("loading");
+          return false;
+        },
+        error: function(error) {
+          $(".verification_input_wrap input.verification_input").val("");
+          $this.find(".custom_loading").removeClass("loading");
+          console.log("error", error);
+          $("#login_with_phone_verification_form_validate .form_error").text(error.responseText)
+        }
+      });
+    }
+    e.preventDefault();
+    return false;
+  });
+  $(document).on("click", ".login_width_phone_popup_validate_close", function() {
+    theme.ValidatePopupClose();
+  });
+
+</script>
+{%- style -%}
+  #login_with_phone_wrap_validate {
+    display: none;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 999999;
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+  #login_with_phone_wrap_validate h3 {
+    text-align: center;
+    font-size: 23px;
+    line-height: 1.3;
+    border-bottom: 1px solid #dedede;
+    padding-bottom: 10px;
+  }
+  #login_with_phone_wrap_validate .login_width_phone_step {
+    display: none;
+  }
+  #login_with_phone_wrap_validate .login_width_phone_step.active {
+    display: block;
+  }
+  #login_with_phone_wrap_validate .login_email {
+    padding: 20px;
+  }
+  .login_with_phone_content {
+    width: 400px;
+    max-width: 90%;
+    background-color: #fff;
+    border: 1px solid #dedede;
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 5px;
+    -webkit-transition: top 300ms ease-in;
+    -moz-transition: top 300ms ease-in;
+    -o-transition: top 300ms ease-in;
+    transition: top 300ms ease-in;
+  }
+  .login_with_phone_content_wrap {
+    padding: 20px;
+    min-height: 300px;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+  @media only screen and (max-width: 600px) {
+    .login_with_phone_content_wrap {
+      padding: 25px;
+    }
+  }
+  .login_with_phone_content.open {
+    top: 50%;
+    -webkit-transition: top 300ms ease-in;
+    -moz-transition: top 300ms ease-in;
+    -o-transition: top 300ms ease-in;
+    transition: top 300ms ease-in;
+  }
+  .login_width_phone_popup_validate_close {
+    position: absolute;
+    top: -14px;
+    right: -13px;
+    color: #fff;
+    background-color: #4d4d4d;
+    z-index: 99;
+    line-height: 33px;
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    font-size: 27px;
+    text-align: center;
+  }
+  @media only screen and (max-width: 600px) {
+    .login_width_phone_popup_validate_close {
+      top: -11px;
+      right: -10px;
+      line-height: 26px;
+      width: 28px;
+      height: 28px;
+      font-size: 23px;
+    }
+  }
+  .login_width_phone_popup_validate_close:hover,
+  .login_width_phone_popup_validate_close:focus {
+    color: #cfcfcf;
+    text-decoration: none;
+  }
+  #login_with_phone_wrap_validate .form-group {
+    margin-bottom: 20px;
+  }
+  #login_with_phone_wrap_validate .form-submit-wrap,
+  .login_email .form-button {
+    text-align: center;
+    display: block;
+  }
+  input.verification_input {
+    margin: 0 5px;
+    text-align: center;
+    line-height: normal;
+    font-size: 33px;
+    border: solid 1px #ccc;
+    box-shadow: 0 0 5px #ccc inset;
+    outline: none;
+    width: 50px;
+    transition: all 0.2s ease-in-out;
+    border-radius: 3px;
+    height: 55px;
+    display: inline-block;
+    vertical-align: top;
+  }
+  input.verification_input:focus {
+    border-color: #96865d;
+    box-shadow: 0 0 5px #96865d inset;
+  }
+  input.verification_input::selection {
+    background: transparent;
+  }
+  .verification_input_wrap {
+    text-align: center;
+    margin-bottom: 25px;
+  }
+  .verification_input_wrap .form_error,
+  .verification_input_wrap .form_success {
+    text-align: center;
+  }
+  .verification_link_wrap {
+    text-align: center;
+    font-size: 16px;
+    margin-top: 15px;
+  }
+  .verification_link_wrap a {
+    margin-top: 5px;
+    display: inline-block;
+    color: #96865d;
+  }
+  input[type="date"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: var(--white);
+    border: 1px solid var(--line_color);
+    -webkit-box-sizing: border-box;
+    -khtml-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -o-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+    color: var(--body_font_color);
+    font-weight: var(--body_font_weight_medium);
+    font-size: var(--x_small);
+    line-height: calc(var(--x_small) * 1.25);
+    font-family: var(--body_font);
+    min-height: 40px;
+    padding: 11px var(--xx_small) 10px;
+    position: relative;
+    width: 100%;
+  }
+  .resend_call_me_wrap {
+    margin-bottom: 7px;
+  }
+  #login_with_phone_verification_form_validate .resend_call_me_wrap a {
+    margin-right: 4px;
+    margin-left: 4px;
+    width: 120px;
+    border: 1px solid #96865d;
+    background-color: transparent;
+    color: #96865d !important;
+    padding: 8px 10px;
+    min-height: auto;
+    line-height: 1;
+  }
+  #login_with_phone_verification_form_validate .resend_call_me_wrap a.send_code_again_validate {
+    width: auto;
+    display: inline-block;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  #login_with_phone_verification_form_validate .resend_call_me_wrap a.btn:hover {
+    background-color: #96865d !important;
+    color: #fff !important;
+  }
+  /*   #login_with_phone_verification_form .call_me_btn{
+        display: none !important;
+    } */
+  #login_with_phone_verification_form_validate .call_me_btn_validate.counting {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.8;
+    cursor: default;
+    background-color: #b7b5b1 !important;
+    color: #ffffff !important;
+    border-color: #b7b5b1;
+  }
+  #login_with_phone_verification_form_validate .call_me_btn_validate.counting:hover {
+    background-color: #b7b5b1 !important;
+  }
+  #login_with_phone_verification_form_validate .send_code_again_validate.counting {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.8;
+    cursor: default;
+    background-color: #b7b5b1 !important;
+    color: #ffffff !important;
+    border-color: #b7b5b1;
+  }
+  #login_with_phone_verification_form_validate .send_code_again_validate.counting:hover {
+    background-color: #b7b5b1 !important;
+  }
+  #login_with_phone_wrap_validate #customer_login {
+    text-align: center;
+  }
+  #login_with_phone_wrap_validate #customer_login input {
+    text-align: center;
+  }
+  #login_with_phone_wrap_validate #customer_login .errors.note.form-error {
+    display: none !important;
+  }
+  #login_with_phone_wrap_validate #recover_password_btn {
+    margin-top: 20px;
+    display: inline-block;
+  }
+  .login_with_phone_recover_customer_password form {
+    margin-top: 30px;
+    padding: 20px;
+  }
+  .login_with_phone_recover_customer_password {
+    text-align: center;
+  }
+  .login_with_phone_recover_customer_password input {
+    text-align: center;
+  }
+  #login_with_phone_wrap_validate label#recover-email-error {
+    display: none !important;
+  }
+  #login_with_phone_verification_form_validate input[name="email_id"] {
+    text-align: center;
+    max-width: 270px;
+  }
+  #login_with_phone_verification_form_validate .form {
+    text-align: center;
+  }
+  #login_with_phone_verification_form_validate .form .form_error {
+    text-align: center;
+  }
+  #login_with_phone_verification_form_validate .form-submit-wrap {
+    margin-top: 15px;
+  }
+  #login_with_phone_wrap_validate label#email_id-error {
+    display: none !important;
+  }
+  .login_with_phone_shopify_login .form_error,
+  .login_with_phone_recover_customer_password .form_error,
+  #login_with_phone_email_form .form_error {
+    text-align: center;
+  }
+  #login_with_phone_email_form {
+    padding: 20px;
+  }
+  #login_with_phone_email_form input {
+    text-align: center;
+  }
+  .login_with_phone_verify_code .change_phone_number_validate {
+    margin-left: 7px;
+    margin-right: 7px;
+  }
+  #login_with_phone_wrap_validate .information_form_message {
+    text-align: left;
+    margin-bottom: 15px;
+    margin-top: -15px;
+  }
+  #login_with_phone_wrap_validate #customer_login .form_success {
+    text-align: center;
+  }
+  .phone_verify_code_message {
+    margin-bottom: 20px;
+    color: green;
+    text-align: center;
+  }
+{%- endstyle -%}

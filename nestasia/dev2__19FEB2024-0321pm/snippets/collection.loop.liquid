@@ -1,0 +1,48 @@
+<div class="product {{ block_width }} brands animate animate-loop-{{ forloop_index0 }}">
+  <div class="product-border">
+    {% if images_enable %}        
+      {% if collection == empty %}
+        <div class="product-thumb{% if section.settings.image_fit == 'cover' and collection != empty %} title-align{% endif %}">
+        <div class="relative">
+          <a href="{{ routes.all_products_collection_url }}" title="{{ 'homepage.onboarding.collection_title' | t | escape }}" tabindex="-1">{{ 'collection-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}</a>
+        </div>
+      </div>
+      {% else %}
+        {% if img_src %}
+        <div class="product-thumb{% if section.settings.image_fit and collection != empty %} title-align{% endif %}">
+          <div class="center relative lazycontainer">
+            <a href="{{ collection.url }}" title="{{ collection.title | escape }}"{% if section.settings.image_fit %} class="img-align"{% endif %} tabindex="-1">
+              {%- liquid
+                if lazy_total != blank
+                  if forloop_index0 <= lazy_total
+                    assign lazy = lazy
+                  else
+                    assign lazy = 'lazy'
+                  endif
+                endif
+                capture alt
+                  if img_src.alt != blank
+                    echo img_src.alt
+                  else
+                    echo collection.title
+                  endif
+                endcapture
+                render 'image.load', img_src: img_src, size: size, alt: alt, nopad: section.settings.image_fit, lazy: lazy, sizes: sizes
+              -%}
+            </a>
+          </div>
+        </div>
+        {% endif %}
+      {% endif %}
+    {% endif %}
+    <div class="product-details{% if images_enable %} text-center{% endif %}">
+      <div class="product-title collection">
+        <h5{% if collection_title_size %} class="section-title-{{ collection_title_size }}"{% endif %}>
+          <a href="{% if collection == empty %}{{ routes.all_products_collection_url }}{% else %}{{ collection_url }}{% endif %}" 
+             title="{% if collection == empty %}{{ 'homepage.onboarding.collection_title' | t | escape }}{% else %}{{ collection.title | escape }}{% endif %}" 
+             class="keyed">{% if collection == empty %}{{ 'homepage.onboarding.collection_title' | t }}{% else %}{{ collection.title }}{% endif %}</a>
+        </h5>
+      </div>
+    </div>
+  </div>
+</div>

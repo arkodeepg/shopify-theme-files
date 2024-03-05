@@ -1,0 +1,485 @@
+{%- liquid
+  assign blog = blogs[section.settings.blog]
+  if blog == blank or blog.articles_count == 0
+  	assign section_onboarding = true
+  else
+  	assign section_onboarding = false
+  endif
+  if section.settings.post_limit > blog.articles_count
+  	assign list_count = blog.articles_count
+  else
+  	assign list_count = section.settings.post_limit
+  endif
+  if section.settings.use_slider and section.settings.post_limit > 1
+  	assign slider = true
+  else
+  	assign slider = false
+  endif
+  assign text_color = false
+  if section.settings.section_color != 'rgba(0,0,0,0)' and section.settings.section_color != blank
+    assign text_color = true
+    assign text_color_section = section.settings.section_color
+  endif
+  assign background_color = false
+  if section.settings.background != 'rgba(0,0,0,0)' and section.settings.background != blank
+    assign background_color = true
+    assign background_color_section = section.settings.background
+  endif    
+  if section.settings.background_gradient != 'rgba(0,0,0,0)' and section.settings.background_gradient != blank
+    assign background_color = true
+    assign background_color_section = section.settings.background_gradient
+  endif
+  capture classes
+    echo 'dynamic-section dynamic-section-'
+    echo section.id 
+    echo ' section-padding-top section-padding-bottom section-margin-bottom '
+    if section.settings.padding_border
+      echo 'section-border '
+    endif
+  endcapture
+  assign slider_color = false
+  if section.settings.use_slider_color != 'rgba(0,0,0,0)' and section.settings.use_slider_color != blank
+    assign slider_color = true
+    assign slider_color_section = section.settings.use_slider_color
+  endif
+  if section.settings.enable_lazy
+    assign lazy = 'lazy'
+  else
+    assign lazy = 'eager'
+  endif
+-%}
+
+{% style %}
+  .dynamic-section-{{ section.id }} { 
+    {%- if background_color -%}
+    --background:{{ background_color_section }};
+    --button_primary_text:{{ section.settings.background }};
+    --button_secondary_hover:{{ section.settings.background }};
+    {%- endif -%}
+    {% if slider_color %}
+    --arrow_color:{{ slider_color_section }};
+    {% endif %}
+    --section-padding-top-mobile: {{ section.settings.padding_top_mobile }}px;
+    --section-padding-top-desktop: {{ section.settings.padding_top_desktop }}px;
+    --section-padding-bottom-mobile: {{ section.settings.padding_bottom_mobile }}px;
+    --section-padding-bottom-desktop: {{ section.settings.padding_bottom_desktop }}px;
+    --section-margin-bottom-mobile: {{ section.settings.margin_bottom_mobile }}px;
+    --section-margin-bottom-desktop: {{ section.settings.margin_bottom_desktop }}px;
+  }
+  .dynamic-section-{{ section.id }} .banner-container { 
+    {%- if text_color -%}
+    --headline_font_color:{{ text_color_section }};
+    {%- endif -%}
+  }
+{% endstyle %}
+
+<section data-section-id="{{ section.id }}" 
+         data-section-type="carousel" 
+         data-carousel-type="section"
+         data-url="{{ 'script.carousel.js' | asset_url }}"
+         class="{{ classes }}{% if settings.animation_enable %}animate-section-div {% endif %}clearfix">
+
+  {% if section_onboarding or section.settings.title != blank or section.settings.sub_title != blank %}
+  <div class="banner-container bottompad{% if slider %}-quarter {% else %}-half {% endif %}clearfix">
+    <div class="relative container half-pad{% if settings.animation_enable %} animate-section load{% endif %} clearfix">
+      <div class="twelve animate {{ section.settings.text_alignment }}">
+        {%- liquid
+          if section.settings.title_h1
+            assign title = 1
+          else
+            assign title = 2
+          endif
+        -%}
+        {% unless section_onboarding and section.settings.title == blank and section.settings.sub_title == blank %}
+        {% if section.settings.title != blank%}<h{{ title }} class="section-title-{{ section.settings.title_size }}">{{ section.settings.title | escape }}</h{{ title }}>{% endif %}
+        {% if section.settings.sub_title != blank %}<h3 class="section-title-{{ section.settings.title_sub_size }}">{{ section.settings.sub_title | escape }}</h3>{% endif %}
+        {% else %}
+        <h{{ title }} class="section-title-{{ section.settings.title_size }}">{{ 'homepage.onboarding.no_title' | t }}</h{{ title }}>
+        <h3 class="section-title-{{ section.settings.title_sub_size }}">{{ 'homepage.onboarding.no_body' | t }}</h3>
+        {% endunless %}
+      </div>
+    </div>
+  </div>  
+  {% endif %}
+  
+  <div class="container {% if slider %}no-pad{% else %}half-pad{% endif %}{% if settings.animation_enable %} animate-section animate-section-margin load{% endif %} clearfix">
+    <div class="{% if slider %}glider-contain {% endif %}tab-body">
+      <div{% if slider %} id="glider-carousel-{{ section.id }}" data-limit="{{ section.settings.post_limit | minus: 0.5 }}" {% endif %} class="{% if slider %}glider {% unless section_onboarding %}{% if list_count < 5 %}no-drag {% endif %}{% endunless %}{% endif %}table-center text-center clearfix">
+        <div class="product-loop{% if list_count < 5 %} center{% endif %}{% if slider %} glider-track{% endif %}">
+          {%- liquid
+            if slider
+              case section.settings.post_limit
+                when 2
+                  assign block_width = 'six'
+                  assign size = 880
+                  assign sizes = 'calc(66.66vw - 30px)'
+                when 3
+                  assign block_width = 'four'
+                  assign size = 460
+                  assign sizes = '(min-width: 600px) calc(40vw - 30px), calc(66.66vw - 30px)'
+                when 4
+                  assign block_width = 'three'
+                  assign size = 400
+                  assign sizes = '(min-width: 600px) calc(40vw - 30px), (min-width: 768px) calc(28.57vw - 30px), calc(66.66vw - 30px)'
+              endcase
+            else
+              case section.settings.post_limit
+                when 1
+                  assign block_width = 'twelve'
+                  assign size = 1280
+                  assign sizes = '(min-width: 600px) calc(100vw - 40px), (min-width: 1220px) 1280px, calc(100vw - 40px)'
+                when 2
+                  assign block_width = 'six'
+                  assign size = 580
+                  assign sizes = '(min-width: 600px) calc(50vw - 40px), (min-width: 1220px) 580px, calc(100vw - 40px)'
+                when 3
+                  assign block_width = 'four'
+                  assign size = 580
+                  assign sizes = '(min-width: 600px) calc(33.33vw - 40px), (min-width: 1220px) 380px, calc(100vw - 40px)'
+                when 4
+                  assign block_width = 'three'
+                  assign size = 580
+                  assign sizes = '(min-width: 600px) calc(25vw - 40px), (min-width: 1220px) 280px, calc(100vw - 40px)'
+              endcase
+            endif
+          -%}
+          {% unless blog == blank or blog.articles_count == 0 %}
+            {% for article in blog.articles limit: section.settings.post_limit %}
+              <div class="product {{ block_width }} relative animate animate-loop-{{ forloop.index0 }}">                
+                {% if article.image and section.settings.include_image %}                
+                {%- liquid
+                  capture alt
+                    if article.image.alt != blank
+                      echo article.image.alt
+                    else
+                      echo article.title
+                    endif
+                  endcapture
+                -%}
+                <div class="product-thumb">
+                  <span class="center relative lazycontainer">
+                    <a href="{{ article.url }}" title="{{ article.title | escape }}" class="no-deco" tabindex="-1">
+                      {%- render 'image.load', img_src: article.image, size: size, alt: alt, lazy: lazy, sizes: sizes -%}
+                    </a>
+                  </span>
+                </div>
+                {% endif %}
+                <div class="{{ section.settings.text_alignment_post }}">
+                  <h5 class="blog-title"><a href="{{ article.url }}" title="{{ article.title | escape }}" class="keyed">{{ article.title }}</a></h5>
+                  {% if section.settings.include_date %}<h6 class="blog-data">{{ article.published_at | time_tag: format: settings.month_day_year }}</h6>{% endif %}
+                  {% if section.settings.include_author %}<p class="blog-data">{{ article.author }}</p>{% endif %}
+                  {% if section.settings.excerpt_limit > 0 %}
+                  <p>
+                    {%- liquid
+                      if article.excerpt != blank
+                        echo article.excerpt | strip_html | truncatewords: section.settings.excerpt_limit
+                      else
+                        echo article.content | strip_html | truncatewords: section.settings.excerpt_limit
+                      endif
+                    -%}
+                  </p>
+                  {% endif %}
+                  <a href="{{ article.url }}" title="{{ article.title | escape }}" class="btn auto-width" tabindex="-1">{{ 'blogs.article.read_more' | t }}</a>
+                </div>
+              </div>
+            {% endfor %}
+          {% else %}
+            {% for i in (1..section.settings.post_limit) %}
+              <div class="product {{ block_width }} animate animate-loop-{{ forloop.index0 }}">
+                {% if section.settings.include_image %}
+                <div class="product-thumb">
+                  <a href="/" title="{{ 'homepage.onboarding.blog_title' | t | escape }}" tabindex="-1">{{ 'image' | placeholder_svg_tag: 'placeholder-svg half' }}</a>
+                </div>
+                {% endif %}
+                <div class="{{ section.settings.text_alignment_post }}">
+                  <h5 class="blog-title">      
+                    <a href="/" title="{{ 'homepage.onboarding.blog_title' | t | escape }}" class="keyed">{{ 'homepage.onboarding.blog_title' | t }}</a>
+                  </h5>
+                  {% if section.settings.include_date %}<h6 class="blog-data">{{ 'now' | time_tag: format: settings.month_day_year }}</h6>{% endif %}
+                  {% if section.settings.include_author %}<p class="blog-data">{{ 'homepage.onboarding.blog_author' | t }}</p>{% endif %}
+                  <p>{{ 'homepage.onboarding.blog_excerpt' | t | truncatewords: section.settings.excerpt_limit }}</p>
+                  <a href="/" title="{{ 'blogs.article.read_more' | t }}" class="btn auto-width" tabindex="-1">{{ 'blogs.article.read_more' | t }}</a>
+                </div>
+              </div>
+            {% endfor %}
+          {% endunless %}
+        </div>
+      </div>
+      {% if section.settings.include_all %}
+        <div class="toppad clearfix text-center">
+          <a class="btn outline additional" href="{{ blog.url }}"  title="{{ 'blogs.article.read_all' | t | escape }} {{ blog.title | escape }}">{{ 'blogs.article.read_all' | t }}</a>
+        </div>
+      {% endif %}
+    </div>
+    {% if slider %}
+      <div id="glider-pagination-{{ section.id }}" class="glider-pagination {% if section.settings.post_limit > list_count %}hidden {% endif %}tab-body relative">
+        <button id="glider-button-prev-{{ section.id }}" class="glider-button-prev" type="button" aria-label="{{ 'products.general.previous' | t | escape }}">{%- render 'icons.theme', icon: 'left', size: '16' -%}</button>
+        <button id="glider-button-next-{{ section.id }}" class="glider-button-next" type="button" aria-label="{{ 'products.general.next' | t | escape }}">{%- render 'icons.theme', icon: 'right', size: '16' -%}</button>
+      </div>
+    {% endif %}
+  </div>
+
+</section>
+
+{% schema %}
+  {
+    "name": "t:sections.blog_posts.name",
+    "settings": [
+      {
+        "type": "header",
+        "content": "t:sections.banner.label"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "t:sections.heading.label",
+		"default": "Blog posts"
+      },
+      {
+        "id": "title_h1",
+        "type": "checkbox",
+        "label": "t:sections.heading.heading_one",
+        "default": false
+      },
+      {
+        "id": "title_size",
+        "type": "range",
+        "label": "t:sections.heading.heading_size",
+        "min": 12,
+        "max": 96,
+        "step": 6,
+        "unit": "px",
+        "default": 48
+      },
+      {
+        "type": "text",
+        "id": "sub_title",
+        "label": "t:sections.subheading.label",
+		"default": "Add your latest news to the theme"
+      },
+      {
+        "id": "title_sub_size",
+        "type": "range",
+        "label": "t:sections.subheading.subheading_size",
+        "min": 12,
+        "max": 96,
+        "step": 6,
+        "unit": "px",
+        "default": 24
+      },
+      {
+        "id": "section_color",
+        "type": "color",
+        "label": "t:sections.text.color"
+      },
+      {
+        "type": "select",
+        "id": "text_alignment",
+        "label": "t:sections.text_alignment.label",
+        "default": "text-center",
+        "options": [
+          {
+            "value": "text-left",
+            "label": "t:sections.alignment.left"
+          },
+          {
+            "value": "text-center",
+            "label": "t:sections.alignment.center"
+          },
+          {
+            "value": "text-right",
+            "label": "t:sections.alignment.right"
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "t:sections.options.label"
+      },
+      {
+        "id": "blog",
+        "type": "blog",
+        "label": "t:sections.category.label"
+      },
+      {
+        "type": "range",
+        "id": "post_limit",
+        "min": 1,
+        "max": 4,
+        "step": 1,
+        "label": "t:sections.number_articles.label",
+        "default": 2
+      },
+      {
+        "type": "checkbox",
+        "id": "include_image",
+        "label": "t:sections.show_image.label",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "include_author",
+        "label": "t:sections.show_author.label",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "include_date",
+        "label": "t:sections.show_date.label",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "excerpt_limit",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "label": "t:sections.excerpt_limit.label",
+        "default": 20
+      },
+      {
+        "type": "select",
+        "id": "text_alignment_post",
+        "label": "t:sections.text_alignment.label",
+        "default": "text-left",
+        "options": [
+          {
+            "value": "text-left",
+            "label": "t:sections.alignment.left"
+          },
+          {
+            "value": "text-center",
+            "label": "t:sections.alignment.center"
+          },
+          {
+            "value": "text-right",
+           "label": "t:sections.alignment.right"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "include_all",
+        "label": "t:sections.show_all.label"
+      },
+      {
+        "type": "checkbox",
+        "id": "use_slider",
+        "label": "t:sections.use_slider_posts.label",
+        "default": true
+      },
+      {
+        "id": "use_slider_color",
+        "type": "color",
+        "label": "t:sections.multi_slide_color.label"
+      },
+      {
+        "type": "header",
+        "content": "t:sections.section.name.content"
+      },
+      {
+        "id": "enable_lazy",
+        "type": "checkbox",
+        "label": "t:sections.section.settings.lazy.multiple.label",
+        "default": true
+      },
+      {
+        "id": "background",
+        "type": "color",
+        "label": "t:sections.section.settings.background_color.label"
+      },
+      {
+        "id": "background_gradient",
+        "type": "color_background",
+        "label": "t:sections.section.settings.background_gradient.label"
+      },
+      {
+        "type": "paragraph",
+        "content": "t:sections.section.settings.mobile.content"
+      },
+      {
+        "id": "padding_top_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.top_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 20
+      },
+      {
+        "id": "padding_bottom_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 20
+      },
+      {
+        "id": "margin_bottom_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_margin.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 20
+      },
+      {
+        "type": "paragraph",
+        "content": "t:sections.section.settings.desktop.content"
+      },
+      {
+        "id": "padding_top_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.top_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "padding_bottom_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "margin_bottom_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_margin.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "padding_border",
+        "type": "checkbox",
+        "label": "t:sections.section.settings.border.label",
+        "default": true
+      }
+    ],
+    "presets": [
+      {
+        "name": "t:sections.blog_posts.name",
+        "settings": {
+          "blog": "News",
+          "post_limit": 4
+        }
+      }
+    ],
+    "disabled_on": {
+  	"templates": ["password"],
+      "groups": ["custom.overlay"]
+    }
+  }
+{% endschema %}

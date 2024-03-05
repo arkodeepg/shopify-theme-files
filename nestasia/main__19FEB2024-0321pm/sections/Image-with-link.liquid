@@ -1,0 +1,95 @@
+{% stylesheet %}
+  .image-with-link_image-cont {
+    display: flex;
+  }
+  a.image-with-link_imgchild img {
+    padding: 0 calc(var(--master_spacing)/2);
+    width: -webkit-fill-available;
+  }
+  .image-with-link_outer {
+    padding: 20px 0;
+    margin: 20px 0;
+  }
+  a.image-with-link_heading:hover{
+    color: #96865d !important;
+  }
+  @media screen and (max-width: 640px) {
+    .image-with-link_outer {
+      padding: 10px 0;
+      margin: 10px 0;
+    }
+    a.image-with-link_imgchild {
+      width: 50%;
+    }
+    a.image-with-link_imgchild img{
+      padding: 0 7px;
+    }
+    .image-with-link_image-cont{
+          flex-wrap: wrap;
+    }
+  }
+{% endstylesheet %}
+
+<div class="image-with-link_outer">
+    <div class="container">
+        <a href="{{ section.settings.link }}" class="image-with-link_heading mhead">
+            {{section.settings.heading}}
+        </a>
+        <div class="image-with-link_image-cont">
+            {%for block in section.blocks %}
+                <a href="{{block.settings.link}}" class="image-with-link_imgchild">
+                    <img 
+                      loading="lazy" 
+                      width="{{ block.settings.image.width }}"
+                      height="{{ block.settings.image.height }}"
+                      class="lazy" data-src="{{block.settings.image | img_url: '580x'}}" alt="">
+                </a>
+            {%endfor%}
+        </div>
+    </div>
+</div>
+
+{% schema %}
+{
+  "name": "image with link",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "label": "heading",
+      "id": "heading"
+    },
+    {
+      "type": "url",
+      "label": "link",
+      "id": "link"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "slide",
+      "settings": [
+        {
+          "type": "url",
+          "label": "link",
+          "id": "link"
+        },
+        {
+          "type": "image_picker",
+          "label": "image",
+          "id": "image"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "image with link"
+    }
+  ]
+}
+{% endschema %}
+
+{% javascript %}
+{% endjavascript %}

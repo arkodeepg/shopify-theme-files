@@ -1,0 +1,42 @@
+<!-- lime chat -->
+ <script type="text/lazyload">
+  var url =
+    "https://s3.ap-south-1.amazonaws.com/cdn.limechat.ai/packs/js/whatsapp_widget/LC_whatsapp_widget.js";
+  var s = document.createElement("script");
+  s.type = "text/javascript";
+  s.defer = true;
+  s.src = url;
+  s.onload = function () {
+  var whatsAppBtn = new LimeChatWhatsapp({
+    phone: "919903504754",
+    prefill_text: "Hi Nestasia",
+    button_message_mobile: "Chat with us",
+    button_message_desktop: "Chat with us",
+    display_on: "both",
+    widget_type_desktop: "icon",
+    widget_type_mobile: "icon",
+    display_size_desktop: 44,
+    position_desktop: "right",
+    bottom_margin_desktop: 48,
+    left_margin_desktop: 48,
+    right_margin_desktop: 25,
+    display_size_mobile: 44,
+    position_mobile: "right",
+    bottom_margin_mobile: 55,
+    left_margin_mobile: 24,
+    right_margin_mobile: 24,
+    show_pop_up: false,
+    pop_up_message_position: "side",
+    pop_up_message_text: "Hey, Let's chat!",
+    pop_up_image: " ",
+    pop_up_delay: 3,
+    pdp_prefill_text: "Hey! I would like to know about ",
+    pages_to_display:["homepage","cart","blogs","products","collections","checkout","pages"],
+    includeVariant: false,
+    isShopify: false  
+  });
+    whatsAppBtn.renderButton();
+  };
+  var x = document.getElementsByTagName("script")[0];
+  x.parentNode.insertBefore(s, x);
+ </script>

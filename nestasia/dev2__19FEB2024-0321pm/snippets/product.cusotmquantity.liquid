@@ -1,0 +1,139 @@
+
+<style>
+  input#quantity:focus-visible{
+    outline-color: #0060df;
+  }
+  .cbuyquantity-error {
+    display: none;
+    top: -30px;
+    color: var(--white);
+    background: var(--error_color);
+    font-size: 12px;
+    line-height: 12px;
+    left: 50%;
+    padding: calc(var(--xx_small)/2) var(--xx_small);
+    position: absolute;
+    text-align: center;
+    white-space: nowrap;
+    transform: translateX(-50%);
+}
+
+.cbuyquantity-cont {
+    position: relative;
+    display: inline-flex;
+}
+
+.cbuyquantity-error:after {
+    content: " ";
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 7px solid var(--error_color);
+    clear: both;
+    position: absolute;
+    bottom: 0;
+    transform: translate(0%,100%);
+    left: 50%;
+}
+.cbuyquantity input {
+    height: 30px !important;
+    min-height: 100%;
+    border-top: medium none;
+    border-bottom: medium none;
+    width: 58px;
+    font-family: var(--body_font) !important;
+    color: #343333;
+    /* height: unset !important; */
+    padding: 0;
+    text-align: center;
+    border: 1px solid lightgrey;
+}
+.cbuyquantity .cbuybtn{
+    margin: 0;
+    height: 30px;
+    border-radius: 0;
+    background-color: transparent;
+    width: 30px;
+    font-size: 21px;
+    border: 1px solid lightgrey;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+.cbuyquantity {
+    display: flex;
+    align-items: center;
+    /* border: 1px solid lightgrey; */
+    width: fit-content;
+    margin-bottom: var(--master_spacing);
+}
+.cbuyquantity .cbuybtn:hover{
+  background: #96865d;
+}
+  @media screen and (max-width: 800px){
+    .cbuy-cont {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        left: 0;
+        gap: 0 !important;
+    }
+    .cbuy-cont .cbuybtn{
+        margin-bottom: 0 !important;
+    }
+  }
+</style>
+{% if product.selected_or_first_available_variant.inventory_quantity < 1 %}
+  {% assign maxval = 1000 %}
+  {% assign infinity = true %}
+{% else %}
+  {% assign maxval = product.selected_or_first_available_variant.inventory_quantity %}
+  {% assign infinity = false %}
+{% endif %}
+<div class="cbuyquantity-cont">
+  <div class="cbuyquantity-error">Only {{ maxval }} left!</div>
+  <div class="cbuyquantity" data-ajax-cart-static-element>
+    <div class="cbuybtn cbuyplus" onclick="cbuysub()">-</div>
+    <input min="1" {% if infinity == false %}max="{{ maxval }}"{% endif %} type="number" id="quantity" name="quantity" value="1"/>
+    <div class="cbuybtn cbuyminus" onclick="cbuyadd()">+</div>
+  </div>
+</div>
+<script defer>
+  let cbq = $('.cbuyquantity input');
+  let maxqunt = {{ maxval }};
+  function cbuyadd(){
+    $('.cbuyquantity-error').hide()
+    if(parseInt($('.cbuyquantity input').val())<maxqunt) $('.cbuyquantity input').val(parseInt( $('.cbuyquantity input').val()) + 1)
+    else console.log("request exceeded maximum quantity")
+  } 
+  function cbuysub(){
+    $('.cbuyquantity-error').hide()
+    if(parseInt($('.cbuyquantity input').val())>1) $('.cbuyquantity input').val(parseInt( $('.cbuyquantity input').val()) - 1)
+    else console.log("0 is not allowed")
+  } 
+  
+$('#quantity').on("input", function () {
+    const valinf = {{infinity}}
+    $('.cbuyquantity-error').hide()
+    let qua = parseInt($(this).val())  
+    let min=1,
+        max=parseInt(maxqunt);
+    if(qua<min){
+        console.log("value cannot be less than  ",min)
+        $(this).val(min)
+    }
+    else if(qua>max){
+        if(valinf == false){
+          $('.cbuyquantity-error').show()
+          console.log("value cannot be greater than ",max)
+          $(this).val(max)
+        }
+    }
+    else if($(this).val() == ""){
+        console.log("value cannot be empty ")
+        $(this).val(min)
+    }
+})
+</script>

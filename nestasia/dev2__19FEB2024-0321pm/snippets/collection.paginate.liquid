@@ -1,0 +1,27 @@
+<div id="paginateBy" class="table-cell">
+  <span class="form">
+    <h5>      
+      {%- liquid
+        echo 'collections.general.paginate' | t
+        assign paginationAmounts = '12,24,36,48' | split:','
+        for i in paginationAmounts
+          assign x = i | prepend:'collection.'
+          echo '<button type="button" class="paginateBy'
+          if forloop.first
+          	echo ' first'
+          endif
+          if paginationAmount == i or template == x
+          	echo ' active-filter active'
+          endif
+          echo '" title="'
+          echo 'collections.general.paginate' | t | escape
+          echo ' '
+          echo i
+          echo '">'
+          echo i
+          echo '</button>'
+        endfor
+	  -%}
+    </h5>    
+  </span>
+</div>

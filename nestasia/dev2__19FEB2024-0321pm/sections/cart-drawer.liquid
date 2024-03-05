@@ -1,0 +1,1405 @@
+<style>
+/*
+* Prefixed by https://autoprefixer.github.io
+* PostCSS: v8.4.14,
+* Autoprefixer: v10.4.7
+* Browsers: last 4 version
+*/
+
+  /* .cart-open-btn {
+        position: fixed;
+        z-index: 9;
+        top: 100px;
+        right: 100px;
+        background-color: orange;
+        padding: 20px;
+    } */
+  .cart-remove_left:hover{
+    background: #786b4a !important;
+  }
+
+  .cart-remove_right:hover{
+    background: #de8873 !important;
+  }
+
+  #cart_drawer {
+    position: fixed;
+    top: 0;
+    /* right: 0; */
+    /* float: right; */
+    bottom: 0;
+    right: -428px;
+    max-width: 100%;
+    width: 428px;
+    z-index: 999999;
+    -webkit-transition: all 0.2s;
+    -o-transition: all 0.2s;
+    transition: all 0.2s;
+    height: calc(100% - 50px);
+    background-color: #f4f4f4;
+  }
+
+  html.js-ajax-cart-empty .checkout-btn,
+  html.js-ajax-cart-empty .cart-drawer_body {
+    display: none;
+  }
+  html.js-ajax-cart-empty #cart_drawer {
+    height: 100%;
+  }
+  .empty_cart_wrap {
+    display: none;
+  }
+  html.js-ajax-cart-empty .empty_cart_wrap {
+    display: block;
+  }
+
+  .empty_cart_wrap {
+    background: var(--white);
+    padding-top: 76px;
+    height: 100vh;
+  }
+  .empty_cart_wrap img {
+    margin-bottom: calc(var(--master_spacing) / 1.1);
+  }
+  .empty_cart_btn_wrap > a.btn {
+    font-size: var(--small) !important;
+    font-family: var(--body_font);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    border-radius: 25px;
+    width: 197px !important;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    gap: 4px;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+  }
+  .empty_cart_btn_wrap > a.btn:hover {
+    background: #786b4a;
+    color: white;
+  }
+  .empty_cart_text {
+    font-size: var(--small);
+    letter-spacing: 0.18px;
+    line-height: 18px;
+    color: var(--black);
+    font-family: var(--body_font);
+    font-weight: 500;
+    text-align: center;
+  }
+  #cart_drawer .empty_cart_btn_wrap {
+    margin-top: 87px;
+    /* text-align: center; */
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    /* align-items: center; */
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+  }
+  .my-cart {
+    height: 100%;
+  }
+
+  .cart_drawer_header {
+    border-bottom: 1px solid #f1ece3;
+    width: 100%;
+    padding: 10px 20px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: reverse;
+        -ms-flex-direction: row-reverse;
+            flex-direction: row-reverse;
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    background-color: white;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+  }
+
+  .apply-coupon-btn_left.remove-applied-coupen {
+    cursor: pointer;
+  }
+
+  .cart_drawer_header .cart_drawer_heading {
+    font-family: var(--body_font) !important;
+    font-size: calc(var(--large) - 2.7px);
+    letter-spacing: 0.005em;
+    color: #000;
+    margin-bottom: 0;
+    line-height: calc(var(--x_large) * 1.25);
+  }
+
+  .cart_drawer_close img {
+    margin: 0;
+  }
+
+  .my-cart__items {
+    min-height: calc(100% - 292px);
+    padding-bottom: 15px;
+  }
+
+  .my-cart__item-inner {
+    margin-top: 15px;
+    background: #fff;
+    position: relative;
+    padding-right: 12px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+  }
+
+  a.my-cart_remove {
+    position: absolute;
+    right: 20px;
+    top: 12px;
+    height: 13px;
+    cursor: pointer;
+  }
+
+  .my-cart_remove img {
+    height: 100%;
+  }
+
+  .my-cart_data {
+    width: calc(100% - 120px) !important;
+    margin-top: 8px;
+    padding: 0 calc(var(--master_spacing) / 2);
+  }
+
+  .my-cart_title {
+    font-family: var(--body_font) !important;
+    font-weight: 400;
+    color: #000;
+    display: block;
+    font-size: 14px;
+    padding-right: 5px;
+    width: 90%;
+    text-shadow: 0 0 #000;
+    line-height: calc(var(--small) * 1.25);
+  }
+
+  .my-cart_final-price {
+    font-family: var(--body_font) !important;
+    font-weight: 500;
+    color: #000;
+    margin-bottom: 8px;
+    font-size: 14px;
+    margin: 5px 0;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    gap: 8px;
+  }
+
+  .my-cart_final-price .my-cart_comprice {
+    text-decoration: line-through;
+    color: #4c4c4c;
+  }
+
+  .my-cart_quantity ajax-cart-quantity {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+  }
+
+  .my-cart_qntbtn {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    width: 26px !important;
+    padding: 0 !important;
+    min-height: auto !important;
+    line-height: normal !important;
+    margin: 0;
+    height: 23px !important;
+    border-radius: 0 !important;
+    font-weight: 400 !important;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+  }
+
+  .my-cart_sub-data {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    margin-top: 12px;
+  }
+
+  .my-cart_qntbtn.my-cart_qntbtn-plus {
+    background: #96865d !important;
+    color: white;
+  }
+
+  .my-cart_qntbtn-input {
+    border: none !important;
+    font-weight: 700;
+  }
+
+  .my-cart_qntbtn-minus {
+    border: 1px solid #d9d9d9;
+  }
+
+  a.my-cart_qntbtn:hover,
+  a.my-cart_qntbtn:active,
+  a.my-cart_qntbtn:focus {
+    text-decoration: none;
+  }
+
+  .my-cart_gift {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: start;
+        -ms-flex-align: start;
+            align-items: flex-start;
+    font-size: 10px;
+    font-family: var(--body_font) !important;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: #96865d;
+    gap: 4px;
+    cursor: pointer;
+  }
+
+  .my-cart_atcprice {
+    font-weight: 700;
+  }
+
+  .checkout-bottom-div {
+    background-color: white;
+  }
+
+  .checkout-btn {
+    width: 428px;
+    background-color: #96865d;
+    color: white;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    height: 50px;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-transition: all 0.5s;
+    -o-transition: all 0.5s;
+    transition: all 0.5s;
+    font-family: var(--body_font) !important;
+    text-decoration: none;
+    border-radius: 0 !important;
+    font-size: 16px !important;
+    text-transform: capitalize;
+    cursor: pointer;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    transform: translateY(100%);
+  }
+
+  .checkout-btn:hover {
+    background-color: #786b4a;
+  }
+
+  .checkout-btn .dot {
+    width: 4px;
+    height: 4px;
+    background-color: #fff;
+    border-radius: 50%;
+    display: inline-block;
+    margin: 0 3px;
+    position: relative;
+    top: 0;
+    -webkit-transform: translate(0px, 50%);
+        -ms-transform: translate(0px, 50%);
+            transform: translate(0px, 50%);
+  }
+
+  .gift-card_checkout {
+    text-align: center;
+    padding: 12px 0;
+    display: inline-block;
+    width: 100%;
+  }
+
+  .shipping-text {
+    padding: 7px 0;
+    font-size: 14px;
+    text-align: center;
+    background: #faf6f7;
+  }
+
+  .shipping-text span {
+    width: 13px;
+    height: 13px;
+    border: 1px solid #837681;
+    display: inline-block;
+    border-radius: 50%;
+    text-align: center;
+    font-size: calc(var(--small) - 2px);
+    line-height: 14px;
+    margin-right: 6px;
+    position: relative;
+    cursor: pointer;
+    vertical-align: middle;
+  }
+
+  .checkout-price {
+    padding: 0 20px;
+    border-top: 1px solid #4c4c4c1a;
+    padding-top: 20px;
+    background-color: white;
+  }
+
+  .checkout-price_title {
+    font-family: Lato !important;
+    font-weight: 600;
+    margin-bottom: 20px;
+    font-size: 18px;
+    color: black;
+  }
+
+  .checkout-price_child {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
+    padding-bottom: 14px;
+    margin-bottom: 0;
+    font-family: var(--body_font) !important;
+    font-weight: 500;
+    letter-spacing: 0.28px;
+    color: #444;
+    line-height: calc(var(--small) + 2px);
+    font-size: var(--small);
+  }
+
+  .checkout-price_total-amt.checkout-price_child {
+    font-size: 16px;
+    color: #1e1e1e;
+  }
+
+  .checkout-price_total-amt-right {
+    font-size: var(--medium);
+    font-weight: 600;
+  }
+
+  .my-cart_img {
+    margin: 0;
+    aspect-ratio: 1;
+    -o-object-fit: contain;
+       object-fit: contain;
+  }
+
+  .cart-drawer_body::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  .cart-drawer_body::-webkit-scrollbar-thumb {
+    background-color: #96865d;
+  }
+
+  .cart-drawer_body::-webkit-scrollbar-track {
+    background-color: #f3f3f3;
+  }
+
+  .cart-drawer_body {
+    height: calc(100% - 60px);
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+
+  .checkout-price_discount-right {
+    color: #c24352;
+  }
+
+  .checkout-personal-msg {
+    margin: 0 20px 20px;
+    max-width: calc(100% - 40px);
+    cursor: pointer;
+    font-size: var(--small);
+    line-height: 15px;
+    border-top: 1px solid #dedede;
+    border-bottom: 1px solid #dedede;
+    color: #b39d6f;
+  }
+
+  .checkout-personal-msg.checkout-personal-active {
+    border-bottom: none;
+  }
+
+  .checkout-personal_top {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
+    padding: 10px;
+  }
+
+  .checkout-personal_inner {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    gap: 4px;
+  }
+
+  .checkout-personal_img {
+    display: block;
+    margin: 0;
+  }
+
+  .apply-coupon-btn {
+    /* position: relative; */
+    padding: 22px;
+    -webkit-box-shadow: 0 0 8px 0px #96865d66;
+            box-shadow: 0 0 8px 0px #96865d66;
+    border-radius: 4px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
+    cursor: pointer;
+    -webkit-transition: all ease 12s;
+    -o-transition: all ease 12s;
+    transition: all ease 12s;
+    position: relative;
+    overflow: hidden;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+  }
+  .apply-coupon-btn.coupon-present::after {
+    content: none;
+  }
+
+  .apply-coupon-btn::after {
+    content: '';
+    width: 60px;
+    height: 200px;
+    position: absolute;
+    left: -20px;
+    top: 0;
+    margin-top: -20px;
+    background: #fff5e0c2;
+    -webkit-filter: blur(15px);
+            filter: blur(15px);
+    -webkit-animation: login-blur 3s infinite;
+            animation: login-blur 3s infinite;
+    -webkit-animation-delay: 0s;
+            animation-delay: 0s;
+    -webkit-transform-origin: top;
+        -ms-transform-origin: top;
+            transform-origin: top;
+  }
+
+  .cart-btn_disabled {
+    cursor: not-allowed;
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  .cart-disabled {
+    cursor: not-allowed;
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  @-webkit-keyframes login-blur {
+    from {
+      -webkit-transform: translateX(-100px) rotate(20deg);
+              transform: translateX(-100px) rotate(20deg);
+    }
+
+    to {
+      -webkit-transform: translateX(580px) rotate(20deg);
+              transform: translateX(580px) rotate(20deg);
+    }
+  }
+
+  @keyframes login-blur {
+    from {
+      -webkit-transform: translateX(-100px) rotate(20deg);
+              transform: translateX(-100px) rotate(20deg);
+    }
+
+    to {
+      -webkit-transform: translateX(580px) rotate(20deg);
+              transform: translateX(580px) rotate(20deg);
+    }
+  }
+
+  .apply-coupon-btn_right {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    gap: 10px;
+  }
+
+  .apply-coupon-btn_cont {
+    padding: 20px;
+  }
+
+  .checkout-personal_cart-btn {
+    margin-top: 15px;
+    /* background-color: var(--button_color) !important; */
+    color: var(--white) !important;
+    padding: 10px !important;
+    min-height: 30px !important;
+    min-width: 180px;
+    border-radius: 25px !important;
+  }
+
+  .checkout-personal_cart-msg:focus-visible {
+    -webkit-box-shadow: none;
+            box-shadow: none;
+  }
+
+  .checkout-personal_bot {
+    display: none;
+  }
+
+  span.my-cart_properties {
+    font-size: 11px;
+  }
+
+  .cart-hide {
+    display: none;
+  }
+  .cart-remove_popup {
+    display: none;
+    position: absolute;
+    width: 100%;
+    z-index: 99;
+    background-color: #fff;
+    left: 0;
+    border: 1px solid rgba(150, 134, 93);
+    top: 100%;
+  }
+  .cart-remove_popup-child {
+    padding: 20px 4px;
+    position: relative;
+  }
+  .cart-remove_text {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    margin-bottom: 30px;
+    font-family: var(--body_font);
+    color: #000;
+    letter-spacing: 0.28px;
+    line-height: 18px;
+    font-weight: 500;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    font-weight: 700;
+    letter-spacing: 0.28px;
+    line-height: 18px;
+  }
+  .cart-remove_button {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+  }
+  .cart-remove_btn {
+    font-size: var(--x_small);
+    width: 49%;
+    /* background-color: red; */
+    /* background: #96865d; */
+    color: #fff !important;
+    height: 30px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    /* padding: 7px 10px; */
+    border-radius: 25px;
+    cursor: pointer;
+    margin: 0 2px;
+    position: unset !important;
+    background-color: #96865d !important;
+  }
+  .cart-remove_btn i {
+      font-family: unset !important;
+  }
+  .cart-remove_btn i:before {
+      display: none;
+  }
+  .remove-popup-close {
+    fill: none;
+    stroke: #000000;
+    position: absolute;
+    right: 15px;
+  }
+  .cart_overlay {
+    display: none;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    top: 0;
+    z-index: 99999;
+    -webkit-transition: all 0.5s;
+    -o-transition: all 0.5s;
+    transition: all 0.5s;
+  }
+  .item__applicable_discounts {
+    display: inline-block;
+    background-color: #feeee7;
+    padding: 5px;
+    font-size: 10px;
+    color: #171717;
+    width: -webkit-fill-available;
+    text-align: center;
+  }
+  .item__applicable_discounts:empty {
+    opacity: 0;
+    min-height: 13px;
+    display: none;
+  }
+  .coupon-present {
+    display: none;
+  }
+  #cart_drawer.couponCodeApplied .coupon-present {
+    display: -webkit-box !important;
+    display: -ms-flexbox !important;
+    display: flex !important;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    padding: 10px;
+  }
+  #cart_drawer.couponCodeApplied .nocoupon {
+    display: none;
+  }
+  .apply-coupen_rc-top {
+    font-size: 14px;
+    color: #96865d;
+    font-weight: 600;
+    text-wrap: nowrap;
+    white-space: nowrap;
+  }
+  .apply-coupon_rc-bot {
+    font-size: 10px;
+  }
+  .remove-applied-coupen {
+    color: #c24352;
+    font-family: var(--body_font) !important;
+    font-weight: 500;
+    font-size: 11px;
+  }
+  .coupon-present_top {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
+    width: 100%;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+  }
+  .coupon-present_bot {
+    color: #5c5c5c;
+    text-align: center;
+    border-top: 1px dashed #9c9c9c;
+    margin-top: 10px;
+    padding-top: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+  }
+  .checkout-price_coupon {
+    display: none;
+  }
+  .checkout-price_coupon .checkout-price_discount-left > span {
+    padding: 3px 5px;
+    font-size: 10px;
+    background-color: #fbf3ef;
+  }
+  .open-dash{
+    display: none;
+    padding: 1.5px 7px;
+    background: rgb(150, 134, 93);
+    margin: auto 0px auto auto;
+    border-radius: 2px;
+  }
+  .checkout-personal-msg.checkout-personal-active .open-dash{
+    display: inline;
+  }
+  .checkout-personal-msg.checkout-personal-active .checkout-personal_img{
+    display: none;
+  }
+    .checkout-personal-msg:not(.checkout-personal-active) .open-dash{
+    display: none;
+  }
+  .checkout-personal-msg:not(.checkout-personal-active) .checkout-personal_img{
+    display: inline;
+  }
+</style>
+<script defer>
+  const options = {
+    firstCallback: function (requestState) {},
+    lastCallback: function (requestState) {},
+    info: {
+      myParameter: 'value',
+    },
+    important: false,
+  };
+  const giftid = '39651226812525';
+  let cartNoteCheck = false;
+</script>
+
+{% comment %} contains the id's of all the gift cards parent {% endcomment %}
+{% comment %}
+  {% assign lineItemGift = '' %}
+  {% for line_item in cart.items %}
+  {% assign lineItemGift = lineItemGift |append: line_item.properties['_giftParentId'] |  append: ' ' %}
+  {% endfor %}
+  {% assign lineItemGift = lineItemGift | strip | split: ' ' %}
+  <script defer>
+      // console.log(`{{lineItemGift}}`)
+  </script>
+{% endcomment %}
+
+<div class="cart_overlay"></div>
+<div id="cart_drawer">
+  <div class="my-cart">
+    {% comment %} <h2>Cart ({{ cart.item_count }})</h2> {% endcomment %}
+    <div class="cart_drawer_header" bis_skin_checked="1">
+      <a href="javascript:void(0)" class="cart_drawer_close"
+        ><img
+          width="12px"
+          class="lazy"
+           width="12px"
+          height="12px"
+          src="https://cdn.shopify.com/s/files/1/2690/0106/files/Group_11846_1.png?v=1687867709"
+      ></a>
+      <div class="cart_drawer_heading">Shopping Cart</div>
+    </div>
+    <div class="cart-drawer_body" data-ajax-cart-section>
+      {% assign totalmrp = 0 %}
+      {% assign discoutmrp = 0 %}
+      {% comment %} Checks if the cart note is present or not {% endcomment %}
+      {% assign cartNoteCheck = false %}
+
+      <div class="my-cart__items" data-ajax-cart-section-scroll>
+        {% for line_item in cart.items %}
+          {% if line_item.properties._giftcard == 'true' %}
+            {% assign cartNoteCheck = true %}
+          {% endif %}
+
+          {% if line_item.variant.inventory_management == 'shopify'
+            and line_item.variant.inventory_quantity < line_item.quantity
+          %}
+            {% assign line_item_quantity = line_item.variant.inventory_quantity %}
+          {% else %}
+            {% assign line_item_quantity = line_item.quantity %}
+          {% endif %}
+          {%- assign line_item_id = line_item.key -%}
+          <div
+            class="my-cart__item"
+            data-lineitem="{{ forloop.index }}"
+            data-qty="{{ line_item_quantity }}"
+            data-variantid="{{ line_item.variant_id }}"
+            data-collectionId="{{ line_item.product.collections | map:'id' | join:',' }}"
+            data-itemprice="{{ line_item.price }}"
+            {% if isGift %}
+              data-threshold="{{ threshold_limit }}" data-gift="true"
+            {% endif %}
+            data-linekey="{{ line_item.key }}"
+            data-product-id="{{ line_item_id }}"
+            {% if product_type != '' and isGiftCard %}
+              data-prodprice="{{ line_item.line_price | money}}"
+              data-prodtype="{{product_type}}"
+              data-exclude="true"
+            {% endif %}
+          >
+            <div class="my-cart__item-inner">
+              {% assign line_item_index = forloop.index %}
+              {% assign compareAtPrice = line_item.variant.compare_at_price | times: line_item.quantity %}
+              {% assign actualPrice = line_item.final_line_price %}
+              {% assign totalmrp = totalmrp | plus: compareAtPrice %}
+              {% assign discoutmrp = discoutmrp | plus: compareAtPrice | minus: actualPrice %}
+              <a class="my-cart_remove">
+                <img src="https://cdn.shopify.com/s/files/1/2690/0106/files/Group_11902.png?v=1687932941">
+              </a>
+              <a href="{{line_item.url}}">
+                <img
+                  src="{{line_item.image | img_url: '120x'}}"
+                  alt="{{line_item.image.alt}}"
+                  class="my-cart_img"
+                >
+              </a>
+              <div class="my-cart_data">
+                <a href="{{line_item.url}}" class="my-cart_title">{{ line_item.title }}</a>
+                <span class="my-cart_properties">{{ line_item.properties.message }}</span>
+                <div class="my-cart_final-price">
+                  <div class="my-cart_atcprice">{{ line_item.final_line_price | money }}</div>
+                  {% if compareAtPrice > actualPrice %}
+                    <div class="my-cart_comprice">
+                      {{ compareAtPrice | money }}
+                    </div>
+                  {% endif %}
+                </div>
+                <div class="my-cart_sub-data">
+                  <div class="my-cart_quantity">
+                    <ajax-cart-quantity>
+                      <a
+                        class="my-cart_qntbtn my-cart_qntbtn-minus {% if line_item.properties['_giftcard'] == 'true' or line_item.properties['_giftParentId']  %}cart-disabled{% endif %} {% if line_item.quantity <= 1 %}cart-btn_disabled{% endif %}"
+                        data-ajax-cart-quantity-minus
+                        href="{{ routes.cart_change_url }}?line={{ line_item_index }}&quantity={{ line_item.quantity | minus: 1 }}"
+                      >
+                        -
+                      </a>
+
+                      <!-- Item quantity input ajaxified by the "data-ajax-cart-quantity-input" attribute -->
+                      <input
+                        class="my-cart_qntbtn my-cart_qntbtn-input"
+                        data-ajax-cart-quantity-input="{{ line_item_index }}"
+                        name="updates[]"
+                        value="{{ line_item.quantity }}"
+                        type="number"
+                        form="my-ajax-cart-form"
+                      >
+
+                      <a
+                        class="my-cart_qntbtn my-cart_qntbtn-plus {% if line_item.properties['_giftcard'] == 'true' or line_item.properties['_giftParentId'] %}cart-disabled{% endif %}"
+                        data-ajax-cart-quantity-plus
+                        href="{{ routes.cart_change_url }}?line={{ line_item_index }}&quantity={{ item.quantity | plus: 1 }}"
+                      >
+                        +
+                      </a>
+                    </ajax-cart-quantity>
+                  </div>
+                  <div
+                    class="my-cart_gift {% if line_item.properties['_giftWrap'] == 'yes' or line_item.properties['_giftcard'] == 'true' or line_item.properties['_giftParentId']  %}cart-hide{% endif %}"
+                    data-id="{{line_item.id}}"
+                    data-name="{{line_item.title}}"
+                    data-lineitem="{{ forloop.index }}"
+                    data-parentid="{{ line_item.variant_id }}"
+                    data-key="{{ line_item.key }}"
+                    data-quantity="{{ line_item.quantity }}"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="15.2" viewBox="0 0 17 15.2">
+                      <g id="Group_9155" data-name="Group 9155" transform="translate(-1308.3 -179.8)">
+                          <g id="Layer_1_1_" transform="translate(1307.5 179)">
+                              <path id="Path_2126" data-name="Path 2126"
+                                  d="M12.948,2.838A1.84,1.84,0,0,0,11.11,1H9.884a1.838,1.838,0,0,0-1.532.824A1.837,1.837,0,0,0,6.821,1H5.6A1.835,1.835,0,0,0,4.229,4.064H1V7.74h.613v7.965h13.48V7.74h.613V4.064H12.476A1.829,1.829,0,0,0,12.948,2.838ZM9.884,1.613H11.11a1.225,1.225,0,1,1,0,2.451H8.659V2.838A1.227,1.227,0,0,1,9.884,1.613ZM4.37,2.838A1.227,1.227,0,0,1,5.6,1.613H6.821A1.227,1.227,0,0,1,8.046,2.838V4.064H5.6A1.227,1.227,0,0,1,4.37,2.838ZM1.613,4.676H6.821V7.127H1.613ZM6.821,15.092h-4.6V7.74h4.6Zm2.451,0H7.433V4.676H9.272V15.092Zm5.208,0h-4.6V7.74h4.6Zm.613-7.965H9.884V4.676h5.208Z"
+                                  fill="#96865d" stroke="#96865d" stroke-width="0.4"></path>
+                          </g>
+                      </g>
+                    </svg>
+                    Add Gift Wrap
+                  </div>
+                </div>
+              </div>
+              <div class="cart-remove_popup">
+                <div class="cart-remove_popup-child">
+                  <div class="remove-popup-close cursor-pointer" bis_skin_checked="1">
+                    <svg
+                      class="close-icon"
+                      version="1.2"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 13 13"
+                      width="13"
+                      height="13"
+                    >
+                      <path id="Shape 2" class="close-icon" d="m0 13l13-13"></path>
+                      <path id="Shape 1" class="close-icon" d="m0 0l13 13"></path>
+                    </svg>
+                  </div>
+                  <div class="cart-remove_text">Remove item from the bag?</div>
+                  <div class="cart-remove_button">
+                    <!-- live button -->
+                    <a
+                      class="cart-remove_left cart-remove_btn c-gold {% if line_item.properties['_giftParentId']  %}gift-remove{% endif %}"
+                      data-ajax-cart-request-button
+                      {% if line_item.properties['_giftParentId']  %}
+                        data-parentprod="{{ line_item.properties._giftParentId }}"
+                        data-message = "{{ line_item.properties.message }}"
+                      {% elsif line_item.properties['_giftWrap'] == 'yes' %}
+                        data-varid = "{{ line_item.variant_id }}"
+                        data-title = "{{ line_item.title }}"
+                      {% endif %}
+                      href="{{ line_item.url_to_remove }}"
+                      >Remove</a
+                    >
+                    <!-- testing button -->
+                    <!-- <a
+                      class="cart-remove_left cart-remove_btn c-gold {% if line_item.properties['_giftParentId']  %}gift-remove{% endif %}"
+                      data-parentprod="{{ line_item.properties._giftParentId }}"
+                      data-message = "{{ line_item.properties.message }}"
+                      >Remove</a
+                    > -->
+                    {% unless line_item.properties._giftcard == 'true' or line_item.properties._giftParentId %}
+                      <div class="cart-remove_right cart-remove_btn c-gold ssw-faveiticon sswfaveicon{{line_item.product_id}}"
+                        data-key="{{ line_item.key }}"
+                        >
+                          <i data-product-id="{{line_item.product_id}}" 
+                            data-count="196" 
+                            class="ssw-icon-heart-o ssw-fave-icon ssw-wishlist-element ssw-synchronized" 
+                            title="Add to wishlist" 
+                            data-params="{&quot;product_id&quot;:&quot;{{line_item.product_id}}&quot;,&quot;event&quot;:&quot;fave_button&quot;,&quot;page&quot;:&quot;product_profile&quot;,&quot;title&quot;:&quot;{{ line_item.title }}&quot;,&quot;handle&quot;:&quot;{{ line_item.handle }}&quot;,&quot;first_variant_id&quot;:{{ line_item.variant_id }}}" 
+                            tabindex="0" 
+                            role="button" 
+                            aria-label="Add to wishlist" 
+                            data-variant-id="{{ line_item.variant_id }}">
+                              Add to wishlist
+                            </i>
+                            <span class="faves-count" data-user-faves="{&quot;{{ line_item.variant_id }}&quot;:1}">196</span>
+                            <script defer>
+                              if(typeof isGwHelperLoaded !== "undefined") {
+                                  const initIcon = new CustomEvent("ssw.faveicon.init");
+                                  window.dispatchEvent(initIcon);
+                              }
+                            </script>
+                      </div>
+                    {% endunless %}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="item__applicable_discounts" data-test-product-id="{{line_item.id}}"></div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="checkout-bottom-div">
+        <div class="apply-coupon-btn_cont" data-ajax-cart-static-element>
+          <div class="apply-coupon-btn coupon-present">
+            <div class="coupon-present_top">
+              <div class="apply-coupon-btn_right">
+                <svg
+                  class="apply-coupon_right-img"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <path d="M16.8345 21.9377C15.4091 21.2685 14.2087 22.0865 13.0834 23.2763C12.1832 24.1687 11.2079 24.0943 10.2326 23.3507C10.1576 23.2763 10.0826 23.2763 10.0076 23.202C9.03231 21.8634 7.83198 21.6403 6.25655 22.0121C4.90617 22.3096 4.00592 21.6403 3.70584 20.3017C3.70584 20.2273 3.70584 20.153 3.70584 20.0042C3.70584 18.5169 2.95564 17.6246 1.53024 17.0296C0.0298287 16.3604 -0.345275 15.3192 0.479953 13.8319C1.23016 12.5677 1.23016 11.4522 0.479953 10.188C-0.420295 8.62637 -0.0451919 7.80835 1.53024 6.91597C1.83032 6.76724 2.13041 6.54414 2.50551 6.39541C3.10568 6.09795 3.48078 5.65176 3.5558 4.98247C3.63082 4.38755 3.70584 3.79263 3.9309 3.27207C4.23099 2.23096 5.20626 1.78477 6.25655 1.9335C6.78169 2.00786 7.30683 2.15659 7.83198 2.15659C8.20708 2.15659 8.73223 2.00786 9.03231 1.78477C9.48243 1.4873 9.78252 1.04111 10.2326 0.669287C11.2079 -0.223096 12.2582 -0.223096 13.2335 0.669287C13.2335 0.743652 13.3085 0.743653 13.3085 0.818018C14.2087 2.23096 15.5591 2.30532 17.0595 1.9335C18.1098 1.63604 19.0851 2.23096 19.3852 3.27207C19.5352 3.79263 19.6852 4.31318 19.6852 4.83374C19.7603 5.65176 20.1354 6.17231 20.8856 6.46978C20.8856 6.46978 20.9606 6.46978 20.9606 6.54414C23.4363 7.80835 23.6613 8.40327 22.386 10.8573C21.9359 11.6753 21.9359 12.419 22.386 13.1626C22.6111 13.4601 22.7611 13.8319 22.9111 14.2038C23.3613 15.2449 23.1362 16.3604 22.0859 16.7322C20.3604 17.4015 19.5352 18.5169 19.3852 20.3761C19.3852 21.5659 18.5599 22.0121 16.8345 21.9377ZM16.1593 21.1941C17.9598 21.2685 18.71 20.8223 18.86 19.2606C19.0101 17.922 19.6102 17.1784 20.8106 16.6578C22.0109 16.0629 22.461 14.873 21.7858 13.6832C21.1106 12.4934 21.1106 11.5266 21.7858 10.3368C22.461 9.14692 22.0859 8.03145 20.8856 7.36216C20.6605 7.21343 20.3604 6.99033 20.1354 6.91597C19.3852 6.69287 19.1601 6.17232 19.0101 5.42866C19.0101 5.1312 18.935 4.83374 18.86 4.53628C18.4849 3.04897 17.5847 2.52842 16.0843 2.75151C15.034 2.90024 14.1337 2.90024 13.3085 1.9335C12.1082 0.520557 10.8328 0.520557 9.55745 1.9335C8.73223 2.82588 7.98202 2.90024 6.85671 2.75151C5.05621 2.45405 4.15597 3.12334 3.9309 4.98247C3.9309 5.94922 3.5558 6.61851 2.58053 7.0647C0.705015 7.95708 0.404932 8.92383 1.3802 10.783C1.83032 11.6753 1.83032 12.3446 1.3802 13.237C0.404932 15.0218 0.705015 15.9142 2.50551 16.8065C3.5558 17.3271 4.00592 17.9964 4.08095 19.1119C4.23099 20.5992 5.13123 21.3428 6.40659 21.2685C6.78169 21.2685 7.23181 21.2685 7.5319 21.1197C8.20708 20.8966 8.65721 21.1197 9.10733 21.5659C9.33239 21.789 9.55746 22.0121 9.78252 22.2352C10.7578 23.202 11.8831 23.2763 12.8584 22.3096C13.9837 21.3428 14.9589 20.5992 16.1593 21.1941Z" fill="#96865D"></path>
+                  <path d="M6.78181 3.49497C6.85683 3.49497 7.15691 3.49497 7.38198 3.56934C8.35724 3.8668 9.03243 3.56934 9.78264 2.82568C11.208 1.33838 11.7332 1.33838 13.2336 2.82568C13.9088 3.56934 14.659 3.79243 15.6342 3.56934C17.2847 3.19751 18.0349 3.6437 18.26 5.42847C18.41 6.54395 18.9352 7.13887 19.9104 7.65942C21.4859 8.40308 21.7109 9.07236 20.8857 10.5597C20.2855 11.6008 20.3605 12.4932 20.8857 13.4599C21.6359 14.8729 21.4108 15.5421 19.9854 16.2114C18.8601 16.732 18.335 17.4013 18.185 18.6655C18.0349 20.2271 17.2847 20.6733 15.7843 20.3759C14.734 20.1528 13.9088 20.3759 13.0835 21.1939C11.7332 22.5325 11.208 22.5325 9.85766 21.1195C9.03243 20.3015 8.2072 20.1528 7.15691 20.3759C5.6565 20.6733 4.90629 20.1528 4.75625 18.7398C4.60621 17.55 4.15609 16.8063 3.03078 16.2858C1.45534 15.5421 1.3053 14.8729 2.13053 13.3855C2.65567 12.4188 2.65567 11.6008 2.13053 10.634C1.3053 9.07236 1.45534 8.47744 3.03078 7.73379C4.15609 7.21323 4.60621 6.39522 4.75625 5.27974C4.90629 3.8668 5.43144 3.49497 6.78181 3.49497ZM6.70679 17.9962C6.93185 17.8475 7.30695 17.55 7.68206 17.2525C10.7579 14.2036 13.8338 11.1546 16.9096 8.17998C17.1347 7.95689 17.4347 7.73379 17.5098 7.43633C17.5848 7.0645 17.6598 6.46958 17.5098 6.24648C17.2847 6.02339 16.6845 6.09775 16.3094 6.17212C16.0094 6.17212 15.7843 6.46958 15.5592 6.69268C12.4834 9.74165 9.40753 12.7906 6.33169 15.8396C6.10662 16.0627 5.80654 16.3602 5.6565 16.6576C5.35642 17.2525 5.80654 17.9962 6.70679 17.9962ZM8.43226 10.7828C10.1577 10.7828 11.5081 9.51856 11.5081 7.80815C11.5081 6.17212 10.1577 4.75918 8.50729 4.75918C6.85683 4.75918 5.43144 6.09775 5.43144 7.73379C5.35642 9.36982 6.78181 10.7828 8.43226 10.7828ZM14.809 13.1625C13.0835 13.1625 11.7332 14.4267 11.7332 16.0627C11.7332 17.7731 13.0085 19.0373 14.734 19.0373C16.4595 19.0373 17.8098 17.7731 17.8098 16.1371C17.8849 14.501 16.4595 13.1625 14.809 13.1625Z" fill="#96865D"></path>
+                  <path d="M8.50718 6.02368C9.55747 6.02368 10.3077 6.8417 10.3077 7.80845C10.3077 8.84956 9.40743 9.66758 8.35714 9.59321C7.45689 9.59321 6.55664 8.70083 6.55664 7.80845C6.55664 6.76733 7.45689 6.02368 8.50718 6.02368Z" fill="#96865D"></path>
+                  <path d="M16.5334 16.1373C16.5334 17.1784 15.7832 17.9221 14.7329 17.9221C13.6826 17.9221 12.8574 17.1041 12.8574 16.0629C12.8574 15.0962 13.6826 14.3525 14.7329 14.3525C15.8582 14.3525 16.5334 15.0962 16.5334 16.1373Z" fill="#96865D"></path>
+                </svg>
+                <div class="apply-coupon_right-cont">
+                  <div class="apply-coupon_rc-top">Saved <span>price</span> on this order</div>
+                  <div class="apply-coupon_rc-bot">Coupon Applied: <span>code</span></div>
+                </div>
+              </div>
+              <span
+                class="apply-coupon-btn_left remove-applied-coupen"
+              >
+                Remove
+              </span>
+            </div>
+            {% include 'dots-loading', custom_class: 'applyCouponCart' %}
+            <div class="coupon-present_bot">View All Coupons</div>
+          </div>
+          <div class="apply-coupon-btn nocoupon">
+            <div class="apply-coupon-btn_right">
+              <svg
+                class="apply-coupon_right-img"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <path
+                    d="M16.8345 21.9377C15.4091 21.2685 14.2087 22.0865 13.0834 23.2763C12.1832 24.1687 11.2079 24.0943 10.2326 23.3507C10.1576 23.2763 10.0826 23.2763 10.0076 23.202C9.03231 21.8634 7.83198 21.6403 6.25655 22.0121C4.90617 22.3096 4.00592 21.6403 3.70584 20.3017C3.70584 20.2273 3.70584 20.153 3.70584 20.0042C3.70584 18.5169 2.95564 17.6246 1.53024 17.0296C0.0298287 16.3604 -0.345275 15.3192 0.479953 13.8319C1.23016 12.5677 1.23016 11.4522 0.479953 10.188C-0.420295 8.62637 -0.0451919 7.80835 1.53024 6.91597C1.83032 6.76724 2.13041 6.54414 2.50551 6.39541C3.10568 6.09795 3.48078 5.65176 3.5558 4.98247C3.63082 4.38755 3.70584 3.79263 3.9309 3.27207C4.23099 2.23096 5.20626 1.78477 6.25655 1.9335C6.78169 2.00786 7.30683 2.15659 7.83198 2.15659C8.20708 2.15659 8.73223 2.00786 9.03231 1.78477C9.48243 1.4873 9.78252 1.04111 10.2326 0.669287C11.2079 -0.223096 12.2582 -0.223096 13.2335 0.669287C13.2335 0.743652 13.3085 0.743653 13.3085 0.818018C14.2087 2.23096 15.5591 2.30532 17.0595 1.9335C18.1098 1.63604 19.0851 2.23096 19.3852 3.27207C19.5352 3.79263 19.6852 4.31318 19.6852 4.83374C19.7603 5.65176 20.1354 6.17231 20.8856 6.46978C20.8856 6.46978 20.9606 6.46978 20.9606 6.54414C23.4363 7.80835 23.6613 8.40327 22.386 10.8573C21.9359 11.6753 21.9359 12.419 22.386 13.1626C22.6111 13.4601 22.7611 13.8319 22.9111 14.2038C23.3613 15.2449 23.1362 16.3604 22.0859 16.7322C20.3604 17.4015 19.5352 18.5169 19.3852 20.3761C19.3852 21.5659 18.5599 22.0121 16.8345 21.9377ZM16.1593 21.1941C17.9598 21.2685 18.71 20.8223 18.86 19.2606C19.0101 17.922 19.6102 17.1784 20.8106 16.6578C22.0109 16.0629 22.461 14.873 21.7858 13.6832C21.1106 12.4934 21.1106 11.5266 21.7858 10.3368C22.461 9.14692 22.0859 8.03145 20.8856 7.36216C20.6605 7.21343 20.3604 6.99033 20.1354 6.91597C19.3852 6.69287 19.1601 6.17232 19.0101 5.42866C19.0101 5.1312 18.935 4.83374 18.86 4.53628C18.4849 3.04897 17.5847 2.52842 16.0843 2.75151C15.034 2.90024 14.1337 2.90024 13.3085 1.9335C12.1082 0.520557 10.8328 0.520557 9.55745 1.9335C8.73223 2.82588 7.98202 2.90024 6.85671 2.75151C5.05621 2.45405 4.15597 3.12334 3.9309 4.98247C3.9309 5.94922 3.5558 6.61851 2.58053 7.0647C0.705015 7.95708 0.404932 8.92383 1.3802 10.783C1.83032 11.6753 1.83032 12.3446 1.3802 13.237C0.404932 15.0218 0.705015 15.9142 2.50551 16.8065C3.5558 17.3271 4.00592 17.9964 4.08095 19.1119C4.23099 20.5992 5.13123 21.3428 6.40659 21.2685C6.78169 21.2685 7.23181 21.2685 7.5319 21.1197C8.20708 20.8966 8.65721 21.1197 9.10733 21.5659C9.33239 21.789 9.55746 22.0121 9.78252 22.2352C10.7578 23.202 11.8831 23.2763 12.8584 22.3096C13.9837 21.3428 14.9589 20.5992 16.1593 21.1941Z"
+                    fill="#96865D"></path>
+                <path
+                    d="M6.78181 3.49497C6.85683 3.49497 7.15691 3.49497 7.38198 3.56934C8.35724 3.8668 9.03243 3.56934 9.78264 2.82568C11.208 1.33838 11.7332 1.33838 13.2336 2.82568C13.9088 3.56934 14.659 3.79243 15.6342 3.56934C17.2847 3.19751 18.0349 3.6437 18.26 5.42847C18.41 6.54395 18.9352 7.13887 19.9104 7.65942C21.4859 8.40308 21.7109 9.07236 20.8857 10.5597C20.2855 11.6008 20.3605 12.4932 20.8857 13.4599C21.6359 14.8729 21.4108 15.5421 19.9854 16.2114C18.8601 16.732 18.335 17.4013 18.185 18.6655C18.0349 20.2271 17.2847 20.6733 15.7843 20.3759C14.734 20.1528 13.9088 20.3759 13.0835 21.1939C11.7332 22.5325 11.208 22.5325 9.85766 21.1195C9.03243 20.3015 8.2072 20.1528 7.15691 20.3759C5.6565 20.6733 4.90629 20.1528 4.75625 18.7398C4.60621 17.55 4.15609 16.8063 3.03078 16.2858C1.45534 15.5421 1.3053 14.8729 2.13053 13.3855C2.65567 12.4188 2.65567 11.6008 2.13053 10.634C1.3053 9.07236 1.45534 8.47744 3.03078 7.73379C4.15609 7.21323 4.60621 6.39522 4.75625 5.27974C4.90629 3.8668 5.43144 3.49497 6.78181 3.49497ZM6.70679 17.9962C6.93185 17.8475 7.30695 17.55 7.68206 17.2525C10.7579 14.2036 13.8338 11.1546 16.9096 8.17998C17.1347 7.95689 17.4347 7.73379 17.5098 7.43633C17.5848 7.0645 17.6598 6.46958 17.5098 6.24648C17.2847 6.02339 16.6845 6.09775 16.3094 6.17212C16.0094 6.17212 15.7843 6.46958 15.5592 6.69268C12.4834 9.74165 9.40753 12.7906 6.33169 15.8396C6.10662 16.0627 5.80654 16.3602 5.6565 16.6576C5.35642 17.2525 5.80654 17.9962 6.70679 17.9962ZM8.43226 10.7828C10.1577 10.7828 11.5081 9.51856 11.5081 7.80815C11.5081 6.17212 10.1577 4.75918 8.50729 4.75918C6.85683 4.75918 5.43144 6.09775 5.43144 7.73379C5.35642 9.36982 6.78181 10.7828 8.43226 10.7828ZM14.809 13.1625C13.0835 13.1625 11.7332 14.4267 11.7332 16.0627C11.7332 17.7731 13.0085 19.0373 14.734 19.0373C16.4595 19.0373 17.8098 17.7731 17.8098 16.1371C17.8849 14.501 16.4595 13.1625 14.809 13.1625Z"
+                    fill="#96865D"></path>
+                <path
+                    d="M8.50718 6.02368C9.55747 6.02368 10.3077 6.8417 10.3077 7.80845C10.3077 8.84956 9.40743 9.66758 8.35714 9.59321C7.45689 9.59321 6.55664 8.70083 6.55664 7.80845C6.55664 6.76733 7.45689 6.02368 8.50718 6.02368Z"
+                    fill="#96865D"></path>
+                <path
+                    d="M16.5334 16.1373C16.5334 17.1784 15.7832 17.9221 14.7329 17.9221C13.6826 17.9221 12.8574 17.1041 12.8574 16.0629C12.8574 15.0962 13.6826 14.3525 14.7329 14.3525C15.8582 14.3525 16.5334 15.0962 16.5334 16.1373Z"
+                    fill="#96865D"></path>
+              </svg>
+              <div class="apply-coupon_right-text">Apply Coupon</div>
+            </div>
+            <svg
+              class="apply-coupon-btn_left"
+              xmlns="http://www.w3.org/2000/svg"
+              width="12"
+              height="21"
+              viewBox="0 0 12 21"
+              fill="none"
+            >
+              <path d="M1.83868 1L11 10.1613L1.83868 19.3226" stroke="#96865D" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+            {% include 'dots-loading', custom_class: 'applyCouponCart' %}
+          </div>
+        </div>
+        <div class="checkout-personal-msg" data-ajax-cart-static-element>
+          <div class="checkout-personal_top">
+            <div class="checkout-personal_inner">
+              <div class="checkout-personal_main">Add Personalized Message</div>
+              <div class="checkout-personal_price">(₹ 20)</div>
+            </div>
+            <img
+              width="18px"
+              height="18px"
+              class="checkout-personal_img lazy"
+              loading="lazy"
+              data-src="https://cdn.shopify.com/s/files/1/2690/0106/files/pencil-svgrepo-com_1.png?v=1687936046"
+            >
+            <span class="open-dash"></span>
+          </div>
+          <div class="checkout-personal_bot">
+            <textarea
+              class="checkout-personal_cart-msg"
+              maxlength="150"
+              name="properties[message]"
+              placeholder="Enter your message"
+              aria-invalid="false"
+            ></textarea>
+            <button
+              class="checkout-personal_cart-btn c-gold {% unless cartNoteCheck %}cart-disabled{% endunless %}"
+              onclick="giftCardAdded()"
+            >
+              Add Gift Card
+            </button>
+          </div>
+        </div>
+        <div class="checkout-price">
+          <div class="checkout-price_title">Price Details:</div>
+          <div class="checkout-price_total checkout-price_child">
+            <div class="checkout-price_total-left">Total MRP</div>
+            <div class="checkout-price_total-right">{{ totalmrp | money_with_currency }}</div>
+          </div>
+          <div class="checkout-price_discount checkout-price_child">
+            <div class="checkout-price_discount-left">Discount on MRP</div>
+            <div class="checkout-price_discount-right">- {{ discoutmrp | money_with_currency }}</div>
+          </div>
+          <div class="checkout-price_discount checkout-price_child checkout-price_coupon">
+            <div class="checkout-price_discount-left">Coupon Discount - <span>code</span></div>
+            <div class="checkout-price_discount-right">- 11</div>
+          </div>
+          <div class="checkout-price_total-amt checkout-price_child">
+            <div class="checkout-price_total-amt-left">Total Amount</div>
+            <div data-total="{{ cart.total_price }}" class="checkout-price_total-amt-right">
+              {{ cart.total_price | money_with_currency }}
+            </div>
+          </div>
+        </div>
+        <div class="shipping-text"><span>!</span>Shipping calculated at checkout</div>
+        <a href="/checkout" class="gift-card_checkout"> Have a gift card? </a>
+      </div>
+      <script defer>
+        cartNoteCheck={{cartNoteCheck}};
+        // console.log("cartNoteCheck::",cartNoteCheck);
+      </script>
+    </div>
+    <div class="empty_cart_wrap{% if cart.items.size > 0 %} hidden{% endif %}">
+      <div class="empty_cart_wrap_inner">
+        <img
+          class="empty_cart_img"
+      	  src="https://cdn.shopify.com/s/files/1/2690/0106/files/empty-cart-image_195x.png?v=1650020882"
+          alt="Empty cart"
+          width="195px"
+          height="195px"
+        >
+        <div class="empty_cart_text">Your Shopping Cart is Empty</div>
+        <div class="empty_cart_btn_wrap">
+          <a href="/collections/all-products" class="btn"
+            >Start Shopping {% render 'svg-icons', icon: 'right-arrow-icon-white' -%}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="checkout-btn" onclick="handleFloCheckoutBtn()" data-ajax-cart-section>
+    <span>{{ cart.total_price | money_with_currency }}</span>
+    <div class="dot"></div>
+    <div class="span">proceed to checkout</div>
+  </div>
+</div>
+<script defer>
+  // Get references to the input field and the submit button
+  var $inputField = $('.checkout-personal_cart-msg');
+  var $submitButton = $('.checkout-personal_cart-btn');
+
+  function giftCardCheck() {
+    let cartNoteLineItem = 0;
+    let cartNoteLineCheck = false;
+    let cartState = window.liquidAjaxCart.cart;
+    // console.log('cartState::', cartState);
+    for (let i = 0; i < cartState.items.length; i++) {
+      if (cartState.items[i].properties) {
+        if (cartState.items[i].properties._giftcard == 'true') {
+          // console.log('true');
+          cartNoteLineItem = i + 1;
+          cartNoteLineCheck = true;
+        }
+      }
+    }
+
+    return cartNoteLineItem;
+  }
+
+  // Add an input event listener to the input field
+  $inputField.on('input', function () {
+    // console.log('input is called');
+    // Check if the input field is not empty
+    if ($inputField.val().trim() !== '' || giftCardCheck() == 0) {
+      // Enable the submit button
+      $submitButton.removeClass('cart-disabled');
+    } else {
+      // Disable the submit button
+      $submitButton.addClass('cart-disabled');
+    }
+  });
+
+  $(document).on('click', '.coupon-present_bot', function () {
+    try {
+      popupLoad();
+      // $('.gift-coupen-popup').css('right','0px');
+    } catch (error) {
+      // console.log('include coupon-code-popup.liquid snippent in theme.liquid');
+      // The function does not exist.
+    }
+  });
+
+  $(document).on('click', '.apply-coupon-btn:not(.coupon-present)', function () {
+    try {
+      popupLoad();
+      // $('.gift-coupen-popup').css('right','0px');
+    } catch (error) {
+      // console.log('include coupon-code-popup.liquid snippent in theme.liquid');
+      // The function does not exist.
+    }
+  });
+
+  $(document).on('click', '.cp-remove_popup', function(){
+    console.log('cp-remove_popup - clicked')
+    $(this).hide();
+  })
+
+
+  $($($('.remove-popup-close')[0]).parent()).parent();
+
+  // hide the remove modal once clicked
+  $(document).on('click', '.remove-popup-close', function () {
+    $($(this).parent()).parent().slideToggle();
+  });
+
+  //open the modal once clicked
+  $(document).on('click', '.my-cart_remove', function () {
+    $($(this).parent()).children('.cart-remove_popup').slideToggle();
+  });
+  //open modal for cart page
+  $(document).on('click', '.cp-cart_remove', function () {
+    $($(this).parent()).children('.cp-remove_popup').css('display', 'flex');
+  });
+
+  // when add gift wrap button is pressed
+  $(document).on('click', '.my-cart_gift', function () {
+    let gatcLine, parLine;
+    let lineid = $(this).data('id');
+    let linename = $(this).data('name');
+    let lineitem = $(this).data('lineitem');
+    let parentid = $(this).data('parentid');
+    let key = $(this).data('key');
+    let quant = parseInt($(this).data('quantity'));
+    // console.log('lineid::', lineid);
+    // json for the gift wrap
+    gatcLine = {
+      items: [
+        {
+          id: `${giftid}`,
+          quantity: quant,
+          properties: {
+            _id: `${lineid}:${giftid}`,
+            _giftParentId: `${lineid}`,
+            message: `for ${linename}`,
+            key: `${key}`
+          },
+        },
+      ],
+    };
+    parLine = {
+      line: lineitem,
+      quantity: quant,
+      properties: { 
+            _id:`${parentid}:${giftid}`,
+            giftWrap:`${giftid}`,
+            _giftWrap:"yes"
+      }
+    }
+
+    // json for change.js to update the product
+
+    {% comment %} console.log('lineid=>', lineid); {% endcomment %}
+    liquidAjaxCart.change(parLine, options);
+    liquidAjaxCart.add(gatcLine, options);
+  });
+
+  // this fucntion add and remove the gift card as required
+  function giftCardAdded() {
+    const gift = {
+      items: [
+        {
+          id: 39661643235437,
+          quantity: 1,
+          properties: {
+            _giftcard: 'true',
+            message: $inputField.val().trim(),
+          },
+        },
+      ],
+    };
+
+    $('.checkout-personal_bot').toggle();
+    $('.checkout-personal-msg').toggleClass('checkout-personal-active');
+    $inputField.empty();
+
+    // console.log('cart->', giftCardCheck());
+
+    const cartNoteBody = {
+      line: giftCardCheck(),
+      quantity: 0,
+    };
+
+    if (giftCardCheck() > 0) {
+      // console.log('gift card removed');
+      liquidAjaxCart.change(cartNoteBody, options);
+    } else {
+      liquidAjaxCart.add(gift, options);
+    }
+  }
+
+  // button clicked to open cart
+  document.querySelector('.cart-open-btn').addEventListener('click', () => {
+    theme.openCart();
+  });
+
+  // add personal message modal
+  const cartMessage = document.querySelector('.checkout-personal_top');
+  cartMessage.addEventListener('click', () => {
+    // Request body data you want to send to Shopify
+
+    // console.log('cart1->', giftCardCheck());
+
+    if (giftCardCheck() > 0) {
+      $('.checkout-personal_cart-btn').text('Remove Gift Card');
+    } else {
+      $('.checkout-personal_cart-btn').text('Add Gift Card');
+    }
+
+    $('.checkout-personal_bot').toggle();
+    $('.checkout-personal-msg').toggleClass('checkout-personal-active');
+  });
+
+  // button click to close the cart drawer
+  $(document).on('click', '.cart_drawer_close', function () {
+    {% comment %} document.querySelector('#cart_drawer').style.right = '-100%';
+    $('.cart_overlay').hide();
+    $('body').css({ overflow: 'scroll' });
+    // console.log("close") {% endcomment %}
+    theme.closeCart();
+  });
+
+  // when clicked on overaly closing the cart drawer & side cart
+  $(document).on('click', '.cart_overlay', function () {
+    theme.closeCart();
+  });
+  
+// required to load the ajax add to cart
+function runWhenInit() {
+  //console.log('The current cart state is: ', window.liquidAjaxCart.cart);
+  liquidAjaxCart.conf('updateOnWindowFocus', false);
+}
+
+
+  if (window.liquidAjaxCart?.init) {
+    // if Liquid Ajax Cart is already initialized
+    runWhenInit();
+  } else {
+    // wait for Liquid Ajax Cart to be initialized
+    document.addEventListener('liquid-ajax-cart:init', runWhenInit);
+  }
+
+  // coupon box remove button clicked 
+  $(document).on('click', '.apply-coupon-btn_left.remove-applied-coupen', function () {
+    let couponStore = localStorage.getItem('discountCode');
+    if(couponStore != null){
+      theme.removeCoupon(couponStore);
+    }
+    else{
+      // console.log("coupon is not present in local storage");
+    }
+    
+  })
+</script>
+
+{% schema %}
+{
+  "name": "cart drawer",
+  "tag": "section",
+  "settings": [],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "cart drawer"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

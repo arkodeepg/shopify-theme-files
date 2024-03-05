@@ -1,0 +1,975 @@
+{% if section.blocks.size > 0 %}
+
+  {%- liquid
+    assign list_count = section.blocks.size
+    if section.settings.use_slider and list_count > 1
+      assign slider = true
+    else
+      assign slider = false
+    endif
+    assign background_color = false
+    if section.settings.background != 'rgba(0,0,0,0)' and section.settings.background != blank
+      assign background_color = true
+      assign background_color_section = section.settings.background
+    endif    
+    if section.settings.background_gradient != 'rgba(0,0,0,0)' and section.settings.background_gradient != blank
+      assign background_color = true
+      assign background_color_section = section.settings.background_gradient
+    endif
+    capture classes
+      echo 'dynamic-section dynamic-section-'
+      echo section.id 
+      echo ' section-padding-top section-padding-bottom section-margin-bottom '
+      if section.settings.padding_border
+        echo 'section-border '
+      endif
+    endcapture
+    assign overlay_color = false
+    if section.settings.background_img_overlay != 'rgba(0,0,0,0)' and section.settings.background_img_overlay != blank
+      assign overlay_color = true
+      assign overlay_color_section = section.settings.background_img_overlay
+    endif
+    if section.settings.background_img_overlay_gradient != 'rgba(0,0,0,0)' and section.settings.background_img_overlay_gradient != blank
+      assign overlay_color = true
+      assign overlay_color_section = section.settings.background_img_overlay_gradient
+    endif
+    assign slider_color = false
+    if section.settings.use_slider_color != 'rgba(0,0,0,0)' and section.settings.use_slider_color != blank
+      assign slider_color = true
+      assign slider_color_section = section.settings.use_slider_color
+    endif
+    if slider
+      if section.settings.product_row_mobile == 2
+        assign size_mobile = 510
+      elsif section.settings.product_row_mobile == 3
+        assign size_mobile = 300
+      elsif section.settings.product_row_mobile == 4
+        assign size_mobile = 210
+      else 5
+        assign size_mobile = 160
+      endif
+      if section.settings.product_row == 2
+        assign block_width = 'six'
+        assign size = 880
+        capture sizes
+          echo '(min-width: 768px) 880px, '
+          echo size_mobile| append: 'px'
+        endcapture
+      elsif section.settings.product_row ==  3
+        assign block_width = 'four'
+        assign size = 460
+        capture sizes
+          echo '(min-width: 768px) 460px, '
+          echo size_mobile| append: 'px'
+        endcapture
+      elsif section.settings.product_row ==  4
+        assign block_width = 'three'
+        assign size = 330
+        capture sizes
+          echo '(min-width: 768px) 330px, '
+          echo size_mobile| append: 'px'
+        endcapture
+      else
+        assign block_width = 'two-half'
+        assign size = 250
+        capture sizes
+          echo '(min-width: 768px) 250px, '
+          echo size_mobile| append: 'px'
+        endcapture
+      endif
+    endif
+  -%}
+  
+  {% style %}
+    .dynamic-section-{{ section.id }} {
+      --margin_padding_desktop: {{ section.settings.padding_desktop }}vh;
+      --margin_padding_mobile: {{ section.settings.padding_mobile }}vh;
+      {%- if background_color -%}
+      --background:{{ background_color_section }};
+      --button_primary_text:{{ section.settings.background }};
+      --button_secondary_hover:{{ section.settings.background }};
+      {%- endif -%}
+      {% if slider_color %}
+      --arrow_color:{{ slider_color_section }};
+      {% endif %}
+      --section-padding-top-mobile: {{ section.settings.padding_top_mobile }}px;
+      --section-padding-top-desktop: {{ section.settings.padding_top_desktop }}px;
+      --section-padding-bottom-mobile: {{ section.settings.padding_bottom_mobile }}px;
+      --section-padding-bottom-desktop: {{ section.settings.padding_bottom_desktop }}px;
+      --section-margin-bottom-mobile: {{ section.settings.margin_bottom_mobile }}px;
+      --section-margin-bottom-desktop: {{ section.settings.margin_bottom_desktop }}px;
+    }
+  {% endstyle %}
+  
+  <section data-section-id="{{ section.id }}" 
+           data-section-type="carousel" 
+           data-carousel-type="section"
+           data-url="{{ 'script.carousel.js' | asset_url }}"
+           class="{{ classes }}{% if settings.animation_enable %}animate-section-div {% endif %}clearfix">
+    
+    <div class="container {% if slider %}no-pad{% else %}half-pad{% endif %}{% if settings.animation_enable %} animate-section animate-section-margin load{% endif %} clearfix">
+      <div class="{% if slider %}glider-contain {% endif %}tab-body">
+        <div{% if slider %} id="glider-carousel-{{ section.id }}"{% unless list_count < 3 %} data-slides="{% if section.settings.product_row_mobile > list_count %}{{ list_count | minus: 0.5 }}{% else %}{{ section.settings.product_row_mobile | minus: 0.5 }}{% endif %}"{% endunless %} data-limit="{{ section.settings.product_row | minus: 0.5 }}" {% endif %} class="{% if slider %}glider {% if list_count < 5 %}no-drag {% endif %}{% endif %}clearfix">
+          <div class="product-loop{% if list_count < 5 %} {{ section.settings.horizontal_content_alignment }}{% endif %}{% if slider %} glider-track{% endif %}">
+      
+            {% for block in section.blocks %}
+            
+              {%- liquid
+                unless slider
+                  assign block_width = block.settings.block_width
+                  case block_width
+                    when '2'
+                      assign block_width = 'two'
+                      assign sizes = '(min-width: 600px) calc(16.66vw - 40px), (min-width: 1220px) 180px, calc(100vw - 40px)'
+                    when '3'
+                      assign block_width = 'three'
+                      assign sizes = '(min-width: 600px) calc(25vw - 40px), (min-width: 1220px) 280px, calc(100vw - 40px)'
+                    when '4'
+                      assign block_width = 'four'
+                      assign sizes = '(min-width: 600px) calc(33.33vw - 40px), (min-width: 1220px) 380px, calc(100vw - 40px)'
+                    when '6'
+                      assign block_width = 'six'
+                      assign sizes = '(min-width: 600px) calc(50vw - 40px), (min-width: 1220px) 580px, calc(100vw - 40px)'
+                    when '8'
+                      assign block_width = 'eight'
+                      assign sizes = '(min-width: 600px) calc(66.66vw - 40px), (min-width: 1220px) 780px, calc(100vw - 40px)'
+                    when '9'
+                      assign block_width = 'nine'
+                      assign sizes = '(min-width: 600px) calc(75vw - 40px), (min-width: 1220px) 880px, calc(100vw - 40px)'
+                    when '10'
+                      assign block_width = 'ten'
+                      assign sizes = '(min-width: 600px) calc(83.33vw - 40px), (min-width: 1220px) 980px, calc(100vw - 40px)'
+                    when '12'
+                      assign block_width = 'twelve'
+                      assign sizes = '(min-width: 600px) calc(100vw - 40px), (min-width: 1220px) 1180px, calc(100vw - 40px)'
+                  endcase
+                endunless
+              -%}
+      
+              {% case block.type %}
+              
+                {% when 'image' %}
+                
+                {%- liquid
+                  assign screen = ''
+                  if block.settings.background_img_d != blank or block.settings.background_img_m != blank
+                    assign background_img = true
+                  else
+                    assign background_img = false
+                  endif
+                  if background_img
+                    capture alt_d
+                      if block.settings.background_img_d.alt != blank
+                        echo block.settings.background_img_d.alt
+                      elsif block.settings.title != blank
+                        echo block.settings.title
+                      elsif block.settings.sub_title != blank
+                        echo block.settings.sub_title
+                      else
+                        echo block.settings.background_img_d | split: '/' | last | replace: '-', ' ' | replace: '_', ' ' | split: '.' | first | capitalize
+                      endif
+                    endcapture 
+                    capture alt_m
+                      if block.settings.background_img_m.alt != blank
+                        echo block.settings.background_img_m.alt
+                      elsif block.settings.title != blank
+                        echo block.settings.title
+                      elsif block.settings.sub_title != blank
+                        echo block.settings.sub_title
+                      else
+                        echo block.settings.background_img_m | split: '/' | last | replace: '-', ' ' | replace: '_', ' ' | split: '.' | first | capitalize
+                      endif
+                    endcapture 
+                  endif
+                  if slider
+                    assign block_width = 'three'
+                  endif
+                  assign text_color = false
+                  if block.settings.section_color != 'rgba(0,0,0,0)' and block.settings.section_color != blank
+                    assign text_color = true
+                    assign text_color_section = block.settings.section_color
+                  endif     
+                  assign text_color_hover = false
+                  if block.settings.section_color_hover != 'rgba(0,0,0,0)' and block.settings.section_color_hover != blank
+                    assign text_color_hover = true
+                    assign text_color_hover_section = block.settings.section_color_hover
+                  endif 
+                  assign overlay_color = false
+                  if block.settings.background_img_overlay != 'rgba(0,0,0,0)' and block.settings.background_img_overlay != blank
+                    assign overlay_color = true
+                    assign overlay_color_section = block.settings.background_img_overlay
+                  endif
+                  if block.settings.background_img_overlay_gradient != 'rgba(0,0,0,0)' and block.settings.background_img_overlay_gradient != blank
+                    assign overlay_color = true
+                    assign overlay_color_section = block.settings.background_img_overlay_gradient
+                  endif
+                  if block.settings.enable_lazy
+                    assign lazy = 'lazy'
+                  else
+                    assign lazy = 'eager'
+                  endif
+                -%}
+                  
+                <div class="dynamic-section-{{ block.id }} product half-pad {{ block_width }} animate animate-loop-{{ forloop.index0 }} {{ section.settings.vertical_content_alignment }}" {{ block.shopify_attributes }}>
+                  
+                  {% style %}
+                    .dynamic-section-{{ block.id }} { 
+                      {%- if text_color -%}
+                      --accent_color:{{ text_color_section }};
+                      --headline_font_color:{{ text_color_section }};
+                      --body_font_color:{{ text_color_section }};
+                      --line_color:{{ text_color_section }};
+                      --button_primary_background:{{ text_color_section }};
+                      --button_primary_border:{{ text_color_section }};
+                      --button_secondary_background:{{ text_color_section }};
+                      --button_secondary_border:{{ text_color_section }};
+                      --button_secondary_text:{{ text_color_section }};
+                      {%- endif -%}
+                      {%- if text_color_hover -%}
+                      --body_font_hover_color:{{ text_color_hover_section }};
+                      {%- endif -%}            
+                      {%- if overlay_color -%}
+                        {%- if text_color -%}  
+                        --button_primary_text:{{ block.settings.background_img_overlay }};
+                        --button_secondary_hover:{{ block.settings.background_img_overlay }};
+                        {%- endif -%}
+                        --overlay_background: {{ overlay_color_section }};
+                        --overlay_opacity: {{ block.settings.background_img_overlay_opacity | times: 0.01 }};
+                      {%- endif -%}
+                    }
+                  {% endstyle %}
+        
+                  <div class="table content-height content-height-options content-height-block{% if overlay_color %} background-overlay{% endif %} lazycontainer{% unless background_img %} placeholder-svg-background{% endunless %} relative clearfix">
+                    {% if block.settings.link != blank and block.settings.button == blank %}<a href="{{ block.settings.link | escape }}" title="{% if block.settings.background_img_d != blank %}{{ alt_d | escape }}{% else %}{{ alt_m | escape }}{% endif %}" class="absolute"></a>{% endif %}
+                    {%- liquid
+                      if block.settings.background_img_d != blank
+                        if block.settings.background_img_m != blank
+                          assign screen = 'desktop-image '
+                        endif
+                        render 'image.load', img_src: block.settings.background_img_d, size: block.settings.background_img_d.width, alt: alt_d, background: true, screen: screen, lazy: lazy, sizes: sizes
+                      endif
+                      if block.settings.background_img_m != blank
+                        if block.settings.background_img_d != blank
+                          assign screen = 'mobile-image '
+                        endif
+                        render 'image.load', img_src: block.settings.background_img_m, size: block.settings.background_img_m.width, alt: alt_m, background: true, screen: screen, lazy: lazy, sizes: sizes
+                      endif
+                    -%}
+                    <div class="relative table-cell {{ block.settings.vertical_content_alignment }} {{ block.settings.text_alignment }}">
+                      <div class="twelve doublepad bottompad-quarter no-height">
+                        {%- liquid
+                          if block.settings.title_h1
+                          assign title = 1
+                          else
+                          assign title = 2
+                          endif
+                        -%}
+                        {% if block.settings.title != blank%}<h{{ title }} class="section-title-{{ block.settings.title_size }}">{{ block.settings.title | escape }}</h{{ title }}>{% endif %}
+                        {% if block.settings.sub_title != blank %}<h3 class="section-title-{{ block.settings.title_sub_size }}">{{ block.settings.sub_title | escape }}</h3>{% endif %}
+                        {% if block.settings.body != blank %}{{ block.settings.body | replace: '<p>', '<p class="half-pad">' }}{% endif %}
+                        {% if block.settings.link != blank and block.settings.button != blank %}<a href="{{ block.settings.link | escape }}" title="{% if block.settings.button != blank %}{{ block.settings.button | escape }}{% else %}{{ 'homepage.onboarding.no_more' | t | escape }}{% endif %}" class="btn{% if block.settings.outline_button %} outline{% endif %} bottompad-quarter">{% if block.settings.button != blank %}{{ block.settings.button | escape }}{% else %}{{ 'homepage.onboarding.no_more' | t }}{% endif %}</a>{% endif %}                 
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                {% when 'video' %}
+        
+                {%- liquid
+                  assign media = false
+                  if block.settings.video_link != blank or block.settings.background_img != blank
+                    assign media = true
+                  endif
+                  capture alt
+                    if block.settings.background_img.alt != blank
+                      echo block.settings.background_img.alt
+                    elsif block.settings.title != blank
+                      echo block.settings.title
+                    elsif block.settings.sub_title != blank
+                      echo block.settings.sub_title
+                    else
+                      echo block.settings.background_img | split: '/' | last | replace: '-', ' ' | replace: '_', ' ' | split: '.' | first | capitalize
+                    endif
+                  endcapture 
+                  if slider
+                    assign block_width = 'nine'
+                  endif
+                  assign text_color = false
+                  if block.settings.section_color != 'rgba(0,0,0,0)' and block.settings.section_color != blank
+                    assign text_color = true
+                    assign text_color_section = block.settings.section_color
+                  endif     
+                  assign text_color_hover = false
+                  if block.settings.section_color_hover != 'rgba(0,0,0,0)' and block.settings.section_color_hover != blank
+                    assign text_color_hover = true
+                    assign text_color_hover_section = block.settings.section_color_hover
+                  endif 
+                  assign overlay_color = false
+                  if block.settings.background_img_overlay != 'rgba(0,0,0,0)' and block.settings.background_img_overlay != blank
+                    assign overlay_color = true
+                    assign overlay_color_section = block.settings.background_img_overlay
+                  endif
+                  if block.settings.background_img_overlay_gradient != 'rgba(0,0,0,0)' and block.settings.background_img_overlay_gradient != blank
+                    assign overlay_color = true
+                    assign overlay_color_section = block.settings.background_img_overlay_gradient
+                  endif
+                  if block.settings.enable_lazy
+                    assign lazy = 'lazy'
+                  else
+                    assign lazy = 'eager'
+                  endif
+                -%}
+                  
+                <div class="dynamic-section-{{ block.id }} product half-pad {{ block_width }} animate animate-loop-{{ forloop.index0 }} {{ section.settings.vertical_content_alignment }}" {{ block.shopify_attributes }}>
+                  
+                  {% style %}
+                    .dynamic-section-{{ block.id }} { 
+                      {%- if text_color -%}
+                      --accent_color:{{ text_color_section }};
+                      --headline_font_color:{{ text_color_section }};
+                      --body_font_color:{{ text_color_section }};
+                      --line_color:{{ text_color_section }};
+                      --button_primary_background:{{ text_color_section }};
+                      --button_primary_border:{{ text_color_section }};
+                      --button_secondary_background:{{ text_color_section }};
+                      --button_secondary_border:{{ text_color_section }};
+                      --button_secondary_text:{{ text_color_section }};
+                      {%- endif -%}            
+                      {%- if text_color_hover -%}
+                      --body_font_hover_color:{{ text_color_hover_section }};
+                      {%- endif -%}            
+                      {%- if overlay_color -%}
+                        {%- if text_color -%}  
+                        --button_primary_text:{{ block.settings.background_img_overlay }};
+                        --button_secondary_hover:{{ block.settings.background_img_overlay }};
+                        {% endif %}
+                      --overlay_background: {{ overlay_color_section }};
+                      --overlay_opacity: {{ block.settings.background_img_overlay_opacity | times: 0.01 }};
+                      {%- endif -%}
+                    }
+                  {% endstyle %}
+      
+                  <section data-section-id="{{ block.id }}" 
+                           data-section-type="video" 
+                           data-url="{{ 'script.video.js' | asset_url }}"
+                           id="video-{{ block.id }}"
+                           class="table content-height content-height-options content-height-block{% if overlay_color %} background-overlay{% endif %} lazycontainer{% unless media %} placeholder-svg-background{% endunless %} relative clearfix">
+                    {% if block.settings.link != blank and block.settings.button == blank %}<a href="{{ block.settings.link | escape }}" title="{{ alt | escape }}" class="absolute"></a>{% endif %}
+                    {% if media %}
+                      <div class="video">
+                        {%- liquid
+                          if block.settings.background_img != blank
+                            render 'image.load', img_src: block.settings.background_img, size: block.settings.background_img.width, alt: alt, background: true, lazy: lazy, sizes: sizes
+                          endif
+                          echo block.settings.video_link | video_tag: autoplay: true, loop: true, muted: true, controls: false, preload: auto
+                        -%}
+                      </div>
+                    {% endif %}
+                    <div class="relative table-cell {{ block.settings.vertical_content_alignment }} {{ block.settings.text_alignment }}">
+                      <div class="twelve doublepad bottompad-quarter no-height">
+                        {%- liquid
+                          if block.settings.title_h1
+                          assign title = 1
+                          else
+                          assign title = 2
+                          endif
+                        -%}
+                        {% if block.settings.title != blank%}<h{{ title }} class="section-title-{{ block.settings.title_size }}">{{ block.settings.title | escape }}</h{{ title }}>{% endif %}
+                        {% if block.settings.sub_title != blank %}<h3 class="section-title-{{ block.settings.title_sub_size }}">{{ block.settings.sub_title | escape }}</h3>{% endif %}
+                        {% if block.settings.body != blank %}{{ block.settings.body | replace: '<p>', '<p class="half-pad">' }}{% endif %}
+                        {% if block.settings.link != blank and block.settings.button != blank %}<a href="{{ block.settings.link | escape }}" title="{% if block.settings.button != blank %}{{ block.settings.button | escape }}{% else %}{{ 'homepage.onboarding.no_more' | t | escape }}{% endif %}" class="btn{% if block.settings.outline_button %} outline{% endif %} bottompad-quarter">{% if block.settings.button != blank %}{{ block.settings.button | escape }}{% else %}{{ 'homepage.onboarding.no_more' | t }}{% endif %}</a>{% endif %}                 
+                      </div>
+                    </div>
+                  </section>
+                </div>
+              
+              {% endcase %}
+            {% endfor %}
+  
+          </div>
+        </div>
+      </div>
+      {% if slider %}
+        <div id="glider-pagination-{{ section.id }}" class="glider-pagination {% if section.settings.product_row > list_count %}hidden {% endif %}tab-body relative">
+          <button id="glider-button-prev-{{ section.id }}" class="glider-button-prev" type="button" aria-label="{{ 'products.general.previous' | t | escape }}">{%- render 'icons.theme', icon: 'left', size: '16' -%}</button>
+          <button id="glider-button-next-{{ section.id }}" class="glider-button-next" type="button" aria-label="{{ 'products.general.next' | t | escape }}">{%- render 'icons.theme', icon: 'right', size: '16' -%}</button>
+        </div>
+      {% endif %}
+    </div>
+    
+  </section>
+
+{% endif %}
+
+{% schema %}
+  {
+    "name": "t:sections.image_text_overlay.name",
+    "settings": [
+      {
+        "type": "range",
+        "id": "padding_desktop",
+        "min": 5,
+        "max": 100,
+        "step": 5,
+        "unit": "%",
+        "label": "t:sections.height.desktop.label",
+        "default": 40
+      },
+      {
+        "type": "range",
+        "id": "padding_mobile",
+        "min": 5,
+        "max": 100,
+        "step": 5,
+        "unit": "%",
+        "label": "t:sections.height.mobile.label",
+        "default": 40
+      },
+      {
+        "type": "select",
+        "id": "horizontal_content_alignment",
+        "label": "t:sections.horizontal_position.label",
+        "default": "center",
+        "options": [
+          {
+            "value": "left",
+            "label": "t:sections.alignment.left"
+          },
+          {
+            "value": "center",
+            "label": "t:sections.alignment.center"
+          },
+          {
+            "value": "right",
+            "label": "t:sections.alignment.right"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "use_slider",
+        "label": "t:sections.use_slider_blocks.label",
+        "info": "t:sections.use_slider_blocks.info",
+        "default": false
+      },
+      {
+        "type": "range",
+        "id": "product_row",
+        "min": 2,
+        "max": 5,
+        "step": 1,
+        "label": "t:sections.use_slider_blocks.desktop",
+        "default": 5
+      },
+      {
+        "type": "range",
+        "id": "product_row_mobile",
+        "min": 2,
+        "max": 5,
+        "step": 1,
+        "label": "t:sections.use_slider_blocks.mobile",
+        "default": 3
+      },
+      {
+        "id": "use_slider_color",
+        "type": "color",
+        "label": "t:sections.multi_slide_color.label"
+      },
+      {
+        "type": "header",
+        "content": "t:sections.section.name.content"
+      },
+      {
+        "id": "background",
+        "type": "color",
+        "label": "t:sections.section.settings.background_color.label"
+      },
+      {
+        "id": "background_gradient",
+        "type": "color_background",
+        "label": "t:sections.section.settings.background_gradient.label"
+      },
+      {
+        "type": "paragraph",
+        "content": "t:sections.section.settings.mobile.content"
+      },
+      {
+        "id": "padding_top_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.top_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 20
+      },
+      {
+        "id": "padding_bottom_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 20
+      },
+      {
+        "id": "margin_bottom_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_margin.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 20
+      },
+      {
+        "type": "paragraph",
+        "content": "t:sections.section.settings.desktop.content"
+      },
+      {
+        "id": "padding_top_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.top_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "padding_bottom_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "margin_bottom_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_margin.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "padding_border",
+        "type": "checkbox",
+        "label": "t:sections.section.settings.border.label",
+        "default": true
+      }
+    ],
+    "blocks": [
+      {
+        "type": "image",
+        "name": "t:sections.image.name",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "t:sections.heading.label",
+    		"default": "Image with text overlay"
+          },
+          {
+            "id": "title_h1",
+            "type": "checkbox",
+            "label": "t:sections.heading.heading_one",
+            "default": false
+          },
+          {
+            "id": "title_size",
+            "type": "range",
+            "label": "t:sections.heading.heading_size",
+            "min": 12,
+            "max": 96,
+            "step": 6,
+            "unit": "px",
+            "default": 48
+          },
+          {
+            "type": "text",
+            "id": "sub_title",
+            "label": "t:sections.subheading.label",
+    		"default": "Show custom content to provide an overview of the image and heading"
+          },
+          {
+            "id": "title_sub_size",
+            "type": "range",
+            "label": "t:sections.subheading.subheading_size",
+            "min": 12,
+            "max": 96,
+            "step": 6,
+            "unit": "px",
+            "default": 24
+          },
+          {
+            "type": "richtext",
+            "id": "body",
+            "label": "t:sections.text.label"
+          },
+          {
+            "type": "url",
+            "id": "link",
+            "label": "t:sections.link.label"
+          },
+          {
+            "type": "text",
+            "id": "button",
+            "label": "t:sections.button.label"
+          },
+          {
+            "type": "checkbox",
+            "id": "outline_button",
+            "label": "t:sections.outline.label",
+            "default": false
+          },
+          {
+            "id": "section_color",
+            "type": "color",
+            "label": "t:sections.text.color"
+          },
+          {
+            "id": "section_color_hover",
+            "type": "color",
+            "label": "t:sections.text.hover"
+          },
+          {
+            "type": "select",
+            "id": "text_alignment",
+            "label": "t:sections.text_alignment.label",
+            "default": "text-center",
+            "options": [
+              {
+                "value": "text-left",
+                "label": "t:sections.alignment.left"
+              },
+              {
+                "value": "text-center",
+                "label": "t:sections.alignment.center"
+              },
+              {
+                "value": "text-right",
+                "label": "t:sections.alignment.right"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "vertical_content_alignment",
+            "label": "t:sections.vertical_position.label",
+            "default": "middle",
+            "options": [
+              {
+                "value": "top",
+                "label": "t:sections.vertical_position.top"
+              },
+              {
+                "value": "middle",
+                "label": "t:sections.vertical_position.middle"
+              },
+              {
+                "value": "bottom",
+                "label": "t:sections.vertical_position.bottom"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "block_width",
+            "label": "t:sections.content_width.label",
+            "default": "6",
+            "options": [
+              {
+                "value": "3",
+                "label": "25%"
+              },
+              {
+                "value": "4",
+                "label": "33%"
+              },
+              {
+                "value": "6",
+                "label": "50%"
+              },
+              {
+                "value": "8",
+                "label": "66%"
+              },
+              {
+                "value": "9",
+                "label": "75%"
+              },
+              {
+                "value": "12",
+                "label": "100%"
+              }
+            ]
+          },
+          {
+            "type": "header",
+            "content": "t:sections.background.label"
+          },
+          {
+            "id": "enable_lazy",
+            "type": "checkbox",
+            "label": "t:sections.section.settings.lazy.multiple.label",
+            "default": true
+          },
+          {
+            "type": "image_picker",
+            "id": "background_img_d",
+            "label": "t:sections.image.desktop.label"
+          },
+          {
+            "type": "image_picker",
+            "id": "background_img_m",
+            "label": "t:sections.image.mobile.label"
+          },
+    	  {
+            "type": "color",
+            "id": "background_img_overlay",
+            "label": "t:sections.overlay.label"
+          },
+          {
+            "type": "color_background",
+            "id": "background_img_overlay_gradient",
+            "label": "t:sections.overlay.gradient"
+          },
+          {
+            "type": "range",
+            "id": "background_img_overlay_opacity",
+            "min": 0,
+            "max": 100,
+            "step": 5,
+            "unit": "%",
+            "label": "t:sections.opacity.label",
+            "default": 0
+          }
+        ]
+      },
+      {
+        "type": "video",
+        "name": "t:sections.video.name",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "t:sections.heading.label",
+    		"default": "Image with text overlay"
+          },
+          {
+            "id": "title_h1",
+            "type": "checkbox",
+            "label": "t:sections.heading.heading_one",
+            "default": false
+          },
+          {
+            "id": "title_size",
+            "type": "range",
+            "label": "t:sections.heading.heading_size",
+            "min": 12,
+            "max": 96,
+            "step": 6,
+            "unit": "px",
+            "default": 48
+          },
+          {
+            "type": "text",
+            "id": "sub_title",
+            "label": "t:sections.subheading.label",
+    		"default": "Show custom content to provide an overview of the image and heading"
+          },
+          {
+            "id": "title_sub_size",
+            "type": "range",
+            "label": "t:sections.subheading.subheading_size",
+            "min": 12,
+            "max": 96,
+            "step": 6,
+            "unit": "px",
+            "default": 24
+          },
+          {
+            "type": "richtext",
+            "id": "body",
+            "label": "t:sections.text.label"
+          },
+          {
+            "type": "url",
+            "id": "link",
+            "label": "t:sections.link.label"
+          },
+          {
+            "type": "text",
+            "id": "button",
+            "label": "t:sections.button.label"
+          },
+          {
+            "type": "checkbox",
+            "id": "outline_button",
+            "label": "t:sections.outline.label",
+            "default": false
+          },
+          {
+            "id": "section_color",
+            "type": "color",
+            "label": "t:sections.text.color"
+          },
+          {
+            "id": "section_color_hover",
+            "type": "color",
+            "label": "t:sections.text.hover"
+          },
+          {
+            "type": "select",
+            "id": "text_alignment",
+            "label": "t:sections.text_alignment.label",
+            "default": "text-center",
+            "options": [
+              {
+                "value": "text-left",
+                "label": "t:sections.alignment.left"
+              },
+              {
+                "value": "text-center",
+                "label": "t:sections.alignment.center"
+              },
+              {
+                "value": "text-right",
+                "label": "t:sections.alignment.right"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "vertical_content_alignment",
+            "label": "t:sections.vertical_position.label",
+            "default": "middle",
+            "options": [
+              {
+                "value": "top",
+                "label": "t:sections.vertical_position.top"
+              },
+              {
+                "value": "middle",
+                "label": "t:sections.vertical_position.middle"
+              },
+              {
+                "value": "bottom",
+                "label": "t:sections.vertical_position.bottom"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "block_width",
+            "label": "t:sections.content_width.label",
+            "default": "6",
+            "options": [
+              {
+                "value": "3",
+                "label": "25%"
+              },
+              {
+                "value": "4",
+                "label": "33%"
+              },
+              {
+                "value": "6",
+                "label": "50%"
+              },
+              {
+                "value": "8",
+                "label": "66%"
+              },
+              {
+                "value": "9",
+                "label": "75%"
+              },
+              {
+                "value": "12",
+                "label": "100%"
+              }
+            ]
+          },
+          {
+            "type": "header",
+            "content": "t:sections.background.label"
+          },
+          {
+            "type": "video",
+            "id": "video_link",
+            "label": "t:sections.video.link",
+    		"info": "t:sections.video.info"
+          },
+          {
+            "id": "enable_lazy",
+            "type": "checkbox",
+            "label": "t:sections.section.settings.lazy.multiple.label",
+            "default": true
+          },
+          {
+            "type": "image_picker",
+            "id": "background_img",
+            "label": "t:sections.image.label",
+            "info": "t:sections.image.desktop.info"
+          },
+          {
+            "type": "text",
+            "id": "link_title",
+            "label": "t:sections.title.label"
+          },
+    	  {
+            "type": "color",
+            "id": "background_img_overlay",
+            "label": "t:sections.overlay.label",
+            "default": "#000000"
+          },
+          {
+            "type": "color_background",
+            "id": "background_img_overlay_gradient",
+            "label": "t:sections.overlay.gradient"
+          },
+          {
+            "type": "range",
+            "id": "background_img_overlay_opacity",
+            "min": 0,
+            "max": 100,
+            "step": 5,
+            "unit": "%",
+            "label": "t:sections.opacity.label",
+            "default": 0
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "t:sections.image_text_overlay.name",
+        "blocks" : [
+          {
+            "type": "image",
+            "settings": {
+              "block_width": "6"
+            }
+          },
+          {
+            "type": "video",
+            "settings": {
+              "block_width": "6"
+            }
+          }
+        ]
+      }
+    ],
+    "disabled_on": {
+	  "templates": ["password"],
+      "groups": ["custom.overlay"]
+    }
+  }
+{% endschema %}

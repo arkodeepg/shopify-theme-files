@@ -1,0 +1,213 @@
+{%- assign releases = collection.metafields.custom.collectionslider1new -%}
+{% assign collectionMaincontainer = releases | split: '::' %}
+{% assign collectionMaincontainerSize = collectionMaincontainer | size %}
+
+<style>
+  /* .collection-circle_cont:not(.glider) {
+    display: none;
+  }
+
+  .collection-circle_cont svg:not([aria-disabled]) {
+    display: none;
+  }
+
+  .controlbtn.disabled {
+    opacity: 0.4;
+  } */
+  .collection-circle_cont:not(.swiper-initialized){
+    display:none;
+  }
+
+  .controlbtn {
+    cursor: pointer;
+  }
+  .swiper-button-disabled {
+    pointer-events: none !important;
+    cursor: none;
+  }
+  .collection-circle_outer {
+      position: relative;
+  }
+  svg.prevbtn {
+    position: absolute;
+    top: 50%;
+    transform: translate(0%, -100%);
+    z-index: 1;
+  }
+
+  svg.nextbtn {
+    position: absolute;
+    top: 50%;
+    transform: translate(0%, -100%);
+    right: 0;
+    z-index: 1;
+  }
+
+  .collection-circle_cont-outer {
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  .collection-circle_cont .slick-slide img {
+    margin: 0 8px;
+    display: block;
+  }
+
+  .collection-circle_cont .slick-arrow.slick-disabled {
+    opacity: 0.4;
+  }
+
+  .collection-circle_child {
+    padding: 0 4px;
+  }
+
+  /* .collection-circle_child div {
+    font-size: 14px;
+    line-height: 22px;
+    text-transform: capitalize;
+    color: #1e1e1e;
+    text-align: center;
+  } */
+
+  a.collection-circle_child:hover {
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .collection-circle_text {
+    font-family: var(--body_font);
+    font-size: 14px;
+    line-height: 22px;
+    text-transform: capitalize;
+    /* color: #1e1e1e; */
+    text-align: center;
+  }
+  .justifyClass{
+    {% if collectionMaincontainerSize < 8 %}
+      justify-content:center;
+    {% else %}
+      justify-content:unset;
+    {% endif %}   
+  }
+  @media screen and (max-width: 640px) {
+    .controlbtn {
+      display: none;
+    }
+    .collection-circle_text {
+      font-size: 12px;
+      line-height: 16px;
+    }
+    .justifyClass{
+      {% if collectionMaincontainerSize <= 3 %}
+        justify-content:center;
+      {% else %}
+        justify-content:unset;
+      {% endif %}
+    }
+  }
+</style>
+{% if collection.metafields.custom.collectionslider1new != blank %}
+<div class="collection-circle_outer container">
+  <div class="collection-circle_cont-outer container inner-container swiper">
+    <div class="collection-circle_cont">
+      <div class="swiper-wrapper justifyClass">
+
+        {%- for technical_details in collectionMaincontainer %}
+          {% assign collectionSubcontainer = technical_details | split: '|' %}
+          <a href="{{collectionSubcontainer[2]}}" class="swiper-slide collection-circle_child">
+            <img
+              src="{{collectionSubcontainer[0]}}"
+              alt="{{ collectionSubcontainer[1] | downcase }}"
+              class="img-fluid collection-circle_img"
+              width="222"
+              loading="lazy"
+              height="202"
+            >
+            <div class="collection-circle_text">{{ collectionSubcontainer[1] }}</div>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+      <div class="arrow-cont">
+      <svg
+        class="controlbtn nextbtn"
+        width="36"
+        height="36"
+        viewBox="0 0 36 36"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect x="0.226562" y="0.516113" width="36" height="36" rx="18" fill="#96865D" />
+        <path d="M15.2266 24.5161L21.2266 18.5161L15.2266 12.5161" stroke="white" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      <svg
+        class="controlbtn prevbtn"
+        width="36"
+        height="36"
+        viewBox="0 0 36 36"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect width="36" height="36" rx="18" fill="#96865D" />
+        <path d="M21 24L15 18L21 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      
+    </div>
+</div>
+{% endif %}
+
+<script defer>
+  $(document).ready(function () {
+    const collectionTile = new Swiper('.collection-circle_cont', {
+      slidesPerView: 3.5,
+      draggable: 'true',
+      navigation: {
+        nextEl: '#shopify-section-{{ section.id }} .nextbtn',
+        prevEl: '#shopify-section-{{ section.id }} .prevbtn',
+      },
+      breakpoints: {
+        // When the window width is 800px or greater (desktop)
+        800: {
+          slidesPerView: 8,
+        },
+      },
+    });
+
+    // const collectionTile = new Swiper('.collection-circle_cont', {
+    //   slidesPerView: 8,
+    //   loop: 'true',
+    //   draggable: 'true',
+    //     navigation: {
+    //       nextEl: '.nextbtn',
+    //       prevEl: '.prevbtn',
+    //     },
+    //   breakpoints: {
+    //     // When the window width is 800px or greater (desktop)
+    //     800: {
+    //       slidesPerView: 3,
+    //     }
+    //   }
+    // });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Custom Image Container",
+  "tag": "section",
+  "settings": [],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "Custom Image Container"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

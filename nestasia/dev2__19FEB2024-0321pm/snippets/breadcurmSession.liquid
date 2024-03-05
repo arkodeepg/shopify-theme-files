@@ -1,0 +1,158 @@
+<script>
+let ppage = [],
+  pcol = [],
+  main = ['dining','decor','bath','kitchen','bags+accessories','soft furnishing','stationery'];
+  // $.inArray(val, arr)
+
+{% for pc in product.collections %}
+  pcol.push(`{{ pc.title | downcase }}`)
+{% endfor %}
+  
+if(sessionStorage.prevPage){
+    ppage = JSON.parse(sessionStorage.prevPage); //storing the stringfy json in ppage and parsing it
+}
+let type, url, title;
+let curpage;
+{% if template.name == 'collection' %}
+curpage = {
+    type : 'collection',
+    html : $('.breadcrumb_text').html().replace('active',''),
+    url : window.location.href
+    }
+{% elsif template.name == 'product'  %}
+curpage = {
+    type : 'product',
+    title : '{{product.title}}',
+    url : window.location.href
+}
+{% elsif template.name == 'index'  %}
+curpage = {
+    type : 'index',
+    title : 'Home',
+    url : window.location.href
+}
+{% else %}
+curpage = {
+    type : 'page',
+    title : '{{page.title}}',
+    url : window.location.href
+}
+{% endif %}
+// console.log(curpage)
+
+// from there the breadcrum will be configured
+  let arr = {
+  "menu": [
+    {%- for link in linklists[settings.menu].links -%}
+      {
+        "title": "{{ link.title }}",
+        "url":"{{ link.url }}",
+        {% if link.links.size > 0 %}
+        "links": [
+          {%- for link1 in link.links %}
+            {
+              "title": "{{ link1.title }}",
+              "url":"{{ link1.url }}",
+              {% if link1.links.size >0 %}
+              "links": [
+                {%- for link2 in link1.links %}
+                  {"title": "{{ link2.title }}",
+                  "url":"{{ link2.url }}"}
+                  {% unless forloop.last %},{% endunless %}
+                {%- endfor -%}
+              ]
+              {% endif %}
+            }
+            {% unless forloop.last %},{% endunless %}
+          {%- endfor %}
+        ]
+        {% endif %}
+      }
+      {% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  ]
+}
+{% if template.name ==  'product' %}
+  let a;
+  // console.log("fucn called", ppage);
+  let len = ppage.length;
+  // for (let i = len - 1; i >= 0; i--) {
+  //   if (ppage[len-1].type == "collection") {
+  //     a = ppage[i];
+  //     break;
+  //   }
+  // }
+  // console.log("a", a);
+  if (ppage[len-1].type == "collection") {
+      a = ppage[len-1];
+      // $($('.product-breadcrum_sub')[1]).attr('href', a.url)  
+      // $($('.product-breadcrum_sub')[1]).text(a.title)  
+      
+      $('.produt-breadcrum_cont').html(a.html)
+      $('.produt-breadcrum_cont').append(`<span class="arrow">❯</span><a href="{{product.url}}" title="{{product.title}}" class="active">{{product.title}}</a>`)
+  }
+  if (ppage[len-1].type == "product") {
+    // console.log('product')
+    // console.log(`pcol - `,pcol)
+    let fcol='';
+    let fcolurl = '';
+    $('.produt-breadcrum_cont').html(`<a href="{{routes.root_url}}" title="home">Home</a>`)
+    for(let i=0;i<main.length;i++){
+      // main[i]
+      if($.inArray(main[i].toLowerCase(), pcol) != -1){
+        // console.log('match found')
+        fcol = main[i].toLowerCase();
+      }
+    }
+    if(fcol == '') fcol = 'gift'
+    // console.log('fcol-',fcol)
+    let l2check = -1 //link 2 check 
+    if(fcol){
+      
+      let l2l = arr.menu.length;
+      for(let i=0; i<l2l; i++){
+        // console.log(`${fcol} - ${arr.menu[i].title}`)
+        if(fcol == arr.menu[i].title.toLowerCase() && typeof(arr.menu[i].links) != 'undefined'){
+          l2check = i
+          break;
+        }
+      }
+      if(l2check != -1){
+        $('.produt-breadcrum_cont').append(`<span class="arrow">❯</span><a href="${arr.menu[l2check].link}" title="${arr.menu[l2check].title}">${arr.menu[l2check].title}</a>`)
+        // console.log(`${arr.menu[l2check].title} - l2check-`,l2check)
+        let l3l= pcol.length;
+        let l3check = -1;
+        // console.log(`l3l - ${arr.menu[l2check].links.length}`)
+        for(let j=0;j<l3l;j++){
+          // if($.isArray(pcol[j],arr.menu[l2check].links))
+          for(let k=0; k< arr.menu[l2check].links.length; k++){
+            
+            if(pcol[j] == arr.menu[l2check].links[k].title.toLowerCase()){
+              // console.log(`hi- ${pcol[j]} - ${arr.menu[l2check].links[k].title.toLowerCase()}`)
+              l3check = k;
+            }
+          }
+        }
+        if(l3check != -1){
+          $('.produt-breadcrum_cont').append(`<span class="arrow">❯</span><a href="${arr.menu[l2check].links[l3check].url}" title="${arr.menu[l2check].links[l3check].title}">${arr.menu[l2check].links[l3check].title}</a>`)
+        }
+        // console.log('l3check-',l3check)
+      }
+      else{
+        // console.log('link2 not present')
+      }
+    }
+    if(fcol == 'gift') $('.produt-breadcrum_cont').append(`<span class="arrow">❯</span><a href="/collections/gifts" title="gifts">gifts</a>`)
+    $('.produt-breadcrum_cont').append(`<span class="arrow">❯</span><a href="{{ product.url }}" title="{{product.title}}" class="active">{{product.title}}</a>`)
+  }
+  
+{% endif %}
+
+
+ppage.push(curpage)
+sessionStorage.prevPage = JSON.stringify(ppage)
+
+// console.log(sessionStorage.prevPage)
+
+
+</script>   

@@ -1,0 +1,259 @@
+<style>
+#pdpbundle_cont {
+    display: flex;
+    padding: 40px;
+    border: 1px solid #96865DCC;
+}
+
+.pdpbundle_prod-cont {
+    display: flex;
+    width: 70%;
+    gap: 10px;
+}
+
+.shoppedForcanculation {
+    width: 30%;
+}
+
+.loopWrapershoppedfor {
+    max-width: 33%;
+    /* display: flex; */
+    position: relative;
+}
+
+.loopWrapershoppedforsvgtotal {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.checkboxshoppedfor.FetchDataShoppedFor {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+  .visibleHidden {
+    visibility: hidden;
+}
+
+.checkboxshoppedfor input {
+    /* accent-color: #96865d; */
+    height: 24px;
+    width: 24px;
+    background: #736748;
+    display: inline-block;
+    color: white;
+    /* accent-color: red !important; */
+    border-radius: 4px;
+    border: none;
+}
+  .shoppedForcanculation {
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+  .shoppedForcalcTotal {
+    color: #4C4C4C;
+    font-weight: bold;
+    font-size: 16px;
+}
+  .shoppedForPtitle {
+    color: #000;
+    font-family: Lato;
+    font-size: 14px;
+}
+  .ShoppedForPDP p {
+    padding-bottom: 10px;
+}
+  #pdpbundle_cont .product-price p{
+    font-weight: 700;
+    font-size: 16px;
+    color: #171717;
+    font-family: var(--body_font);
+  }
+  #pdpbundle_cont .product-price p del{
+    font-size: 12px;
+    color: #4c4c4c;
+    padding-left: 5px;
+  }
+  .percentage-tag-custom {
+    padding-left: 4px;
+    color: #c24352;
+    font-size: 12px;
+}
+  .shoppedForAtc {
+    padding: 16px 0;
+    background: #96865D;
+    cursor: pointer;
+    color: white;
+    text-align: center;
+    word-spacing: 3px;
+}
+  .loopWrapershoppedfor:first-child input[type='checkbox'] {
+    display: none;
+}
+.checkboxshoppedfor input:after{
+  content: none !important;
+}
+@media screen and (max-width: 800px){
+
+#pdpbundle_cont {
+    padding: 10px;
+    margin-inline: 14px;
+    flex-direction: column;
+}
+
+div#pdpbundle_cont {}
+
+.shoppedForcanculation {
+    width: 100%;
+}
+
+.pdpbundle_prod-cont {
+    flex-direction: column;
+    width: 100%;
+}
+
+.loopWrapershoppedfor {
+    max-width: 100%;
+    display: flex;
+    /* flex-direction: row; */
+}
+
+.aTagShoppedFor {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.shoppedForImgwrapper {
+    max-width: 30%;
+}
+.loopWrapershoppedfor:first-child input[type='checkbox']{
+    display: block;
+    visibility: hidden;
+}
+
+.checkboxshoppedfor.FetchDataShoppedFor {
+    position: unset;
+}
+  .shoppedForcanculation {
+    width: 100%;
+    margin-left: 0px;
+    margin-top: 20px;
+}
+}
+</style>
+  {% if product.metafields.custom.people_also_shopped_for.value != blank  %}        
+    <div class="recent_heading recent_headingShoppedFor">
+      <h2 class="text-center"><a class="slider-collection_title" href="#">{{ section.settings.heading }}</a></h2>
+    </div>
+    
+    <div class="container " id="pdpbundle_cont">
+  
+          <div class="pdpbundle_prod-cont">
+            {%- assign productLoopClass = 'pdpbundle_item' -%}
+            {% assign productCountShopped = 0 %}
+            {% comment %} rendering the first product {% endcomment %}
+             {%- render 'product_loop_shoppedFor', product: product, show_cta_button: false, class:productLoopClass,productCountShopped:productCountShopped -%}
+            {% for product_r in product.metafields.custom.people_also_shopped_for.value  %}
+              {% if product_r.available %}
+                {% assign productCountShopped = productCountShopped | plus: 1 %}
+                {% comment %} rendering the 2 other products from the metafield {% endcomment %}
+              {%- render 'product_loop_shoppedFor', product: product_r, forloop: forloop, cycle: cycle, show_cta_button: false, class:productLoopClass, forloop.last:forloop.last, class:productLoopClass,currentTitle:currentTitle ,productCountShopped:productCountShopped-%}
+              {% endif %}
+                  {% if productCountShopped == 2 %}
+                    {% break %}
+                  {% endif %}
+            {% endfor %}
+          </div>
+            <div class="shoppedForcanculation">
+
+              <p class="shoppedForcalcTotal text-center">Total Price <span></span></p>
+              <div class="shoppedForAtc" onclick="priceAtc()">ADD TO CART</div>
+            </div>
+
+          <!-- <div id="swiper-scrollbar-shop-by-color" class="swiper-scrollbar"></div> -->
+
+        </div>
+
+<script defer>
+  // calculate the price and display it in respective inputs
+  let priceCal = function(){
+    let il = $('.loopWrapershoppedfor').length;
+    let count = 0; // total count of products
+    let tprice = 0; // total price of products
+    for(let i=0; i<il ; i++){
+      if ($($('.loopWrapershoppedfor input')[i]).is(':checked')){
+        count += 1;
+        tprice += parseInt($($('.loopWrapershoppedfor input')[i]).attr('data-price'))
+      }
+    }
+    // console.log('count - ', count)
+    // console.log('tprice - ', tprice)
+    if(count == 1)
+      $('.shoppedForAtc').text('ADD TO CART')
+    else
+      $('.shoppedForAtc').text(`ADD ALL ${count} TO CART`)
+    $('.shoppedForcalcTotal span').text(Shopify.formatMoney(tprice, theme.moneyFormat))
+
+  }
+
+  let priceAtc = function(){
+    let pricebody = {
+      items: [
+      ]  
+    }
+    let il = $('.loopWrapershoppedfor').length;
+    for(let i=0; i<il ; i++){
+      if ($($('.loopWrapershoppedfor input')[i]).is(':checked')){
+        let newItem = {
+          id: parseInt($($('.loopWrapershoppedfor input')[i]).attr('value')),
+          quantity: 1
+        };
+        console.log('newItem - ',newItem)
+        pricebody.items.push(newItem);
+      }
+    }
+    liquidAjaxCart.add(pricebody, options);
+  }
+
+
+  $(".loopWrapershoppedfor input").change(function(){
+    console.log("change")
+    priceCal();
+  });
+
+  $(document).ready(function(){
+    priceCal();
+  })
+</script>
+{% endif %}
+{% schema %}
+{
+  "name": "pdp bundle",
+  "tag": "section",
+    "settings": [
+      {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default":"People Also Shopped For"
+      }
+    ],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "pdp bundle"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

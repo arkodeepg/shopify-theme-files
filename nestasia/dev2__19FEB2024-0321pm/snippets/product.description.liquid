@@ -1,0 +1,331 @@
+{% comment %}Used with permission: https://gist.github.com/tairli/aecb41ffd3ffc0c08ba502636461fb97{%- endcomment -%}
+{%- liquid
+  assign product_description = false
+  if product.description.size > 0
+    assign description = product.description
+    unless product_desc == false
+    assign product_description = true
+    endunless
+    assign product_tabs_h6 = false
+    if product.description contains '<h6>'
+      assign product_tabs_h6 = true
+      assign tab_heads = ''
+      assign tab_texts = ''
+      assign chunks = description | strip | split: '<h6>'
+      for c in chunks
+        if c contains '</h6>'
+          assign chunk = c | split: '</h6>'
+          assign tab_heads = tab_heads | append: ',,' | append: chunk.first
+          assign tab_texts = tab_texts | append: ',,' | append: chunk.last
+        elsif forloop.first
+          if c == ''
+            assign product_description = false
+          endif
+        endif
+      endfor
+      assign tab_heads = tab_heads | remove_first: ',,' | split: ',,'
+      assign tab_texts = tab_texts | remove_first: ',,' | split: ',,'
+    endif
+  endif
+-%}
+
+<div class="{{ classes }}"{% if style != blank %} style="{{ style }}"{% endif %}>
+  <div class="{% if product_tabs or product_tabs_h6 %}product-description {% endif %}{{ block_width }} text-left clearfix">
+  
+    {% if product_tabs or product_tabs_h6 %}
+    <div class="tabs tabs-product-template tabs-id-{{ section.id }} relative">
+  
+      <div class="glider-contain">
+        <div id="tabs-carousel-{{ section.id }}" class="glider no-drag load table-center product-page clearfix">
+          <div class="glider-track product-tabs" role="tablist">
+  
+            {% if product_description %}
+            <a id="tab-description" 
+               title="{{ 'products.general.description' | t | escape }}" 
+               href="#description" 
+               class="glider-slide title first parent" 
+               role="tab" 
+               aria-controls="description"
+               tabindex="0" 
+               aria-selected="true">
+              <span class="h5 underline">{{ 'products.general.description' | t }}</span>
+            </a>
+            {% endif %}
+  
+            {% for head in tab_heads %}
+            <a id="tab-description-{{ forloop.index }}" 
+               title="{{ 'products.general.description' | t | escape }} {{ forloop.index }}" 
+               href="#description-{{ forloop.index }}" 
+               class="glider-slide title{% unless product_description %}{% if forloop.first %} first{% endif %}{% endunless %} parent"
+               role="tab" 
+               aria-controls="description-{{ forloop.index }}"
+               tabindex="{% if forloop.first %}0{% else %}-1{% endif %}" 
+               {% unless product_description %}{% if forloop.first %}aria-selected="true"{% endif %}{% endunless %}             
+               {{ block.shopify_attributes }}>
+              <span class="h5 underline">{{ head }}</span>
+            </a>
+            {% endfor %}
+            
+            {%- assign tab_blocks = 0 -%}
+            {% for block in section.blocks %}
+  
+              {% if block.type == 'page' %}                        
+              {%- liquid
+                assign product_tabs_page = false
+                if block.settings.tag != blank
+                  if product.tags contains block.settings.tag
+                    assign product_tabs_page = true
+                    capture tab_blocks
+                      echo tab_blocks | plus: 1
+                    endcapture
+                  endif
+                else
+                  assign product_tabs_page = true
+                  capture tab_blocks
+                    echo tab_blocks | plus: 1
+                  endcapture
+                endif
+                assign page = pages[block.settings.page]
+                capture block_title
+                  if block.settings.title != blank
+                    echo block.settings.title
+                  else
+                    unless page == blank
+                      echo page.title
+                    else
+                      echo block.type | capitalize
+                    endunless
+                  endif
+                endcapture
+              -%}
+  
+              {% if product_tabs_page %}
+              <a id="tab-page-{{ block.id }}" 
+                 title="{{ block_title | escape }}" 
+                 href="#block-{{ block.id }}" 
+                 class="glider-slide title{% unless product_description or product_tabs_h6 %}{% if tab_blocks == '1' %} first{% endif %}{% endunless %} parent" 
+                 role="tab" 
+                 aria-controls="page-{{ block.id }}"
+                 tabindex="{% if tab_blocks == '1' %}0{% else %}-1{% endif %}" 
+                 {% unless product_description or product_tabs_h6 %}{% if tab_blocks == '1' %}aria-selected="true"{% endif %}{% endunless %}
+                 {{ block.shopify_attributes }}>
+                <span class="h5 underline">{{ block_title }}</span>
+              </a>
+              {% endif %}
+  
+              {% endif %}
+  
+              {% if block.type == 'text' %}
+  
+              {%- liquid
+                assign product_tabs_text = false
+                if block.settings.tag != blank
+                  if product.tags contains block.settings.tag
+                    assign product_tabs_text = true                
+                    capture tab_blocks
+                      echo tab_blocks | plus: 1
+                    endcapture
+                  endif
+                else
+                  assign product_tabs_text = true              
+                  capture tab_blocks
+                    echo tab_blocks | plus: 1
+                  endcapture
+                endif
+                capture block_title
+                  if block.settings.title != blank
+                    echo block.settings.title
+                  else
+                    echo block.type | capitalize
+                  endif
+                endcapture
+              -%}
+              {% if product_tabs_text %}  
+              <a id="tab-text-{{ block.id }}" 
+                 title="{{ block_title | escape }}" 
+                 href="#block-{{ block.id }}" 
+                 class="glider-slide title{% unless product_description or product_tabs_h6 %}{% if tab_blocks == '1' %} first{% endif %}{% endunless %} parent" 
+                 role="tab" 
+                 aria-controls="text-{{ block.id }}"
+                 tabindex="{% if tab_blocks == '1' %}0{% else %}-1{% endif %}" 
+                 {% unless product_description or product_tabs_h6 %}{% if tab_blocks == '1' %}aria-selected="true"{% endif %}{% endunless %}
+                 {{ block.shopify_attributes }}>
+                <span class="h5 underline">{{ block_title }}</span>
+              </a>
+              {% endif %}
+  
+              {% endif %}
+  
+              {% if block.type == 'html' %}                        
+              {%- liquid
+                assign product_tabs_html = false
+                if block.settings.tag != blank
+                  if product.tags contains block.settings.tag
+                    assign product_tabs_html = true                
+                    capture tab_blocks
+                      echo tab_blocks | plus: 1
+                    endcapture
+                  endif
+                else
+                  assign product_tabs_html = true              
+                  capture tab_blocks
+                    echo tab_blocks | plus: 1
+                  endcapture
+                endif
+                capture block_title
+                  if block.settings.title != blank
+                    echo block.settings.title
+                  else
+                    echo block.type | capitalize
+                  endif
+                endcapture
+              -%}
+              {% if product_tabs_html %}
+              <a id="tab-html-{{ block.id }}" 
+                 title="{{ block_title | escape }}" 
+                 href="#block-{{ block.id }}" 
+                 class="glider-slide title{% unless product_description or product_tabs_h6 %}{% if tab_blocks == '1' %} first{% endif %}{% endunless %} parent" 
+                 role="tab" 
+                 aria-controls="html-{{ block.id }}"
+                 tabindex="{% if tab_blocks == '1' %}0{% else %}-1{% endif %}" 
+                 {% unless product_description or product_tabs_h6 %}{% if tab_blocks == '1' %}aria-selected="true"{% endif %}{% endunless %}
+                 {{ block.shopify_attributes }}>
+                <span class="h5 underline">{{ block_title }}</span>
+              </a>
+              {% endif %}
+  
+              {% endif %}
+  
+            {% endfor %}
+          </div>
+        </div>
+  
+        <button id="tabs-button-prev-{{ section.id }}" class="glider-button-prev disabled" type="button" aria-label="{{ 'products.general.previous' | t | escape }}">{%- render 'icons.theme', icon: 'left', size: '16' -%}</button>
+        <button id="tabs-button-next-{{ section.id }}" class="glider-button-next disabled" type="button" aria-label="{{ 'products.general.next' | t | escape }}">{%- render 'icons.theme', icon: 'right', size: '16' -%}</button>
+      </div>
+    </div>
+    {% endif %}
+  
+    {% if product_description %}
+    <div id="description" 
+         class="product-desc tab-body tab-body-content tab-body-id-{{ section.id }}" 
+         {% if tab_texts != blank or tab_blocks > '0' %}
+         role="tabpanel" 
+         tabindex="0"
+         aria-labelledby="tab-description"
+         {% endif %}>
+      <div class="tabindex">{{ product.description | split: '<h6>' | first }}</div>
+    </div>
+    {% endif %}
+  
+    {% for text in tab_texts %}
+    <div id="description-{{ forloop.index }}" 
+         class="tab-body tab-body-content tab-body-id-{{ section.id }}{% if product_description %} hide{% else %}{% unless forloop.first %} hide{% endunless %}{% endif %}" 
+         role="tabpanel" 
+         tabindex="{% if forloop.first %}0{% else %}-1{% endif %}"
+         aria-labelledby="tab-description-{{ forloop.index }}">
+      <div class="tabindex">{{ text }}</div>
+    </div>
+    {% endfor %}
+  
+    {%- assign tab_blocks = 0 -%}
+    {% for block in section.blocks %}
+  
+    {% if block.type == 'page' %}
+    {%- liquid
+      assign product_tabs_page = false
+      if block.settings.tag != blank
+        if product.tags contains block.settings.tag
+          assign product_tabs_page = true
+          capture tab_blocks
+            echo tab_blocks | plus: 1
+          endcapture
+        endif
+      else
+        assign product_tabs_page = true
+        capture tab_blocks
+          echo tab_blocks | plus: 1
+        endcapture
+      endif
+    -%}
+    {% if product_tabs_page %}                
+    <div id="page-{{ block.id }}" class="tab-body tab-body-content tab-body-id-{{ section.id }}{% if product_description or product_tabs_h6 %} hide{% else %}{% unless tab_blocks == '1' %} hide{% endunless %}{% endif %}" 
+         {% if product_description %}
+         role="tabpanel" 
+         tabindex="{% if tab_blocks == '1' %}0{% else %}-1{% endif %}"
+         aria-labelledby="tab-page-{{ block.id }}"
+         {% endif %}>
+      <div class="tabindex">
+        {% assign page = pages[block.settings.page] %}
+        {% if page != blank %}{{ page.content }}{% else %}<p>{{ 'homepage.onboarding.page_excerpt' | t }}</p>{% endif %}
+      </div>
+    </div>
+    {% endif %}
+    {% endif %}
+  
+    {% if block.type == 'text' %}
+    {%- liquid
+      assign product_tabs_text = false
+      if block.settings.tag != blank
+        if product.tags contains block.settings.tag
+          assign product_tabs_text = true
+          capture tab_blocks
+            echo tab_blocks | plus: 1
+          endcapture
+        endif
+      else
+        assign product_tabs_text = true
+        capture tab_blocks
+          echo tab_blocks | plus: 1
+        endcapture
+      endif
+    -%}
+    {% if product_tabs_text %}
+    <div id="text-{{ block.id }}" class="tab-body tab-body-content tab-body-id-{{ section.id }}{% if product_description or product_tabs_h6 %} hide{% else %}{% unless tab_blocks == '1' %} hide{% endunless %}{% endif %}" 
+         {% if product_description %}
+         role="tabpanel" 
+         tabindex="{% if tab_blocks == '1' %}0{% else %}-1{% endif %}"
+         aria-labelledby="tab-text-{{ block.id }}"
+         {% endif %}>
+      <div class="tabindex">
+        {% if block.settings.body != blank %}{{ block.settings.body }}{% else %}<p>{{ 'homepage.onboarding.product_text' | t }}</p>{% endif %}
+      </div>
+    </div>
+    {% endif %}
+    {% endif %}
+  
+    {% if block.type == 'html' %}
+    {%- liquid
+      assign product_tabs_html = false
+      if block.settings.tag != blank
+        if product.tags contains block.settings.tag
+          assign product_tabs_html = true
+          capture tab_blocks
+            echo tab_blocks | plus: 1
+          endcapture
+        endif
+      else
+        assign product_tabs_html = true
+        capture tab_blocks
+          echo tab_blocks | plus: 1
+        endcapture
+      endif
+    -%}
+    {% if product_tabs_html %}
+    <div id="html-{{ block.id }}" class="tab-body tab-body-content tab-body-id-{{ section.id }}{% if product_description or product_tabs_h6 %} hide{% else %}{% unless tab_blocks == '1' %} hide{% endunless %}{% endif %}" 
+         {% if product_description -%}
+         role="tabpanel" 
+         tabindex="{% if tab_blocks == '1' %}0{% else %}-1{% endif %}"
+         aria-labelledby="tab-html-{{ block.id }}"
+         {% endif %}>
+      <div class="tabindex">
+        {% if block.settings.html != blank %}{{ block.settings.html }}{% else %}<p>{{ 'homepage.onboarding.no_body' | t }}</p>{% endif %}
+      </div>
+    </div>
+    {% endif %}
+    {% endif %}
+  
+    {% endfor %}  
+  
+  </div>
+</div> 

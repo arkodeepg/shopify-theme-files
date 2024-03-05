@@ -1,0 +1,67 @@
+{%- liquid
+  assign hide_default_title = false
+  if product.variants.size == 1
+  	assign hide_default_title = true
+  endif
+  assign variant = product.selected_or_first_available_variant
+-%}
+
+<div class="{% if banner %}product-variants table-center {% endif %}clearfix">
+
+  {%- liquid
+    assign count = '0'
+      unless product.has_only_default_variant
+        for option in product.options_with_values
+          if section.settings.var_length_enable
+            capture count
+              increment count
+            endcapture
+          else
+            if option.values.size > 1
+              capture count
+                increment count
+              endcapture
+            endif
+          endif
+        endfor
+      assign count = count | plus:1
+    endunless
+    if banner
+      capture block_width
+      	echo count
+      endcapture
+      case block_width
+        when '0','1'
+        	assign block_width = 'four '
+        when '2'
+        	assign block_width = 'three '
+        when '3'
+        	assign block_width = 'two-half '
+        endcase
+    endif    
+    if section.settings.product_availability_enable
+      render 'product.availability', variant: variant, product_availability_total: section.settings.product_availability_total, banner: banner, block_width: block_width
+    endif
+  -%}  
+  
+  <div class="purchase-section{% if product.variants.size > 1 %} multiple{% endif %}{% if banner %} banner{% endif %}">
+    
+    {%- liquid
+      render 'product.variants', variant: variant, variant_enable: section.settings.variant_enable, variant_color_enable: section.settings.variant_color_enable, var_length_enable: section.settings.var_length_enable, block_width: block_width, lazy: lazy
+      if section.settings.qty_enable
+        render 'product.quantity', variant: variant, block_width: block_width
+      endif
+    -%}
+    
+    <div class="{{ block_width }}{% if banner == false %}negative-left negative-right{% endif %}">
+      <span class="purchase">
+        {%- render 'product.buttons', form: form, variant: variant, smart_enable: section.settings.smart_enable, banner: banner, alt: true -%}
+        {% if banner == false %}<div class="shopify-payment-terms">{{ form | payment_terms }}</div>{% endif %}        
+      </span>
+    </div>
+
+  </div>
+
+</div>
+
+{%- render 'product.json' -%}

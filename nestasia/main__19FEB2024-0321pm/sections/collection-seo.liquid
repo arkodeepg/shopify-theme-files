@@ -1,0 +1,173 @@
+<style>
+.collection-desc-content-outer {
+    background: #F7F4ED80;
+    padding-top: 40px;
+    margin-top: 40px;
+}
+.collection-desc-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    margin-top: 20px;
+    padding-bottom: 40px;
+    margin-bottom: 0;
+}
+  .collection-desc-content-outer h1 {
+    color: #96865d;
+    font-weight: 400;
+    font-family: var(--headline_font);
+    font-size: var(--x_large);
+    line-height: calc(var(--x_large)*1.25);
+    text-transform: unset;
+}
+  .collection-desc-content-outer h2{
+    font-size: var(--x_large);
+    line-height: calc(var(--x_large)*1.25);
+    /* text-transform: capitalize; */
+    font-weight: normal;
+    color: #96865d;
+  }
+  .collection-desc-content-outer p span {
+    line-height: 1.6;
+}
+  .collection-desc-content-outer h3 {
+    color: #96865d;
+    font-family: var(--headline_font);
+    line-height: calc(var(--large)*1.25);
+    font-size: var(--large);
+    margin-bottom: 0;
+}
+  .collection-desc-content-outer ul li{
+    list-style-type: disc;
+  }
+  .collection-desc-content-outer ul li::before{
+    content:""
+  }
+.table-scroll {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+  h2.smSEOProductBestSTitle {
+    color: #96865d;
+    text-align: left;
+    font-family: var(--headline_font);
+}
+  .smSEOProductBestS table {
+    width: inherit;
+    margin-bottom: 0;
+}
+  .smSEOProductBestS th {
+    border: 1px solid #0000001A;
+    font-size: 16px;
+    padding: 10px 20px;
+    text-align: left;
+    color: #fff;
+    font-weight: 400;
+    background: #96865d;
+}
+  .smSEOProductBestS td {
+    text-align: left;
+    border: 1px solid #0000001A;
+    color: #000;
+    font-size: 16px;
+    padding: 10px 20px;
+    min-width: 200px;
+}
+.smSEOProductBestS {
+    padding-bottom: 80px;
+}
+  .collection-desc-content h1, 
+  .collection-desc-content h2, 
+  .collection-desc-content h3, 
+  .collection-desc-content h1 b, 
+  .collection-desc-content h2 b, 
+  .collection-desc-content h3 b {
+    {% comment %} color: #96865d; {% endcomment %}
+    font-weight: 400;
+    margin: 0 0 var(--master_spacing);
+    font-family: var(--headline_font);
+  }
+  
+  @media screen and (max-width: 640px) {
+    .collection-desc-content-outer {
+    padding: 0 10px;
+    }
+    .collection-desc-content-outer h1,
+    .collection-desc-content-outer h2{
+      font-size: var(--large);
+      line-height: calc(var(--large)*1.25);
+    }
+    .collection-desc-content-outer h3{
+      font-size: var(--medium);
+      line-height: calc(var(--medium)*1.25);
+    }
+    .smSEOProductBestS td {
+    font-size: 14px;
+    padding: 10px;
+    min-width: 100px;
+    }
+    .smSEOProductBestS th {
+    font-size: 14px;
+    padding: 10px;
+}
+  }
+</style>
+
+<div class="collection-desc-content-outer">
+  <div class="collection-desc-content">
+    {{ collection.description }} 
+    {{ collection.metafields.custom.seotext_1 | metafield_tag }}
+    {{ collection.metafields.custom.seotext_2 | metafield_tag }}
+  </div>
+
+  <div class="smSEOProductBestS">
+      {%- paginate collection.products by 9999 -%}
+      <h2 class="smSEOProductBestSTitle">Pricing</h2>
+    <table>
+      <tr>
+        <th>Product Name</th>
+        <th>Price</th>
+      </tr>
+      {% assign productCount = 0 %}
+      {% assign products = collection.products | sort: "best-selling" %}
+      {% for product in products %}
+      {% if product.available %}
+        {% assign productCount = productCount | plus: 1 %}
+      <tr>
+        <td>{{ product.title }}</td>
+        <td ><b style="margin-left:2px;"> Rs.{{ product.price | divided_by:100 }}</b></td>
+      </tr>
+      {% endif %}
+        {% if productCount == 7 %}
+          {% break %}
+        {% endif %}
+    {% endfor %}
+    </table>
+        {% endpaginate %}
+    </div>
+    
+    {% if collection.metafields.custom.seo_schema %}
+    <script type="application/ld+json">
+      {{ collection.metafields.custom.seo_schema }}
+    </script>
+    {% endif %}
+    
+</div>
+{% schema %}
+{
+  "name": "collection seo",
+  "tag": "section",
+  "settings": [],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "collection seo"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

@@ -1,0 +1,523 @@
+<style>
+  .profilepage_padd{
+    background: white;
+    padding: 0 0px 50px 30px;
+  }
+  .EditForm{
+        max-width: 470px;
+  }
+  .account-page-main-wrapper .content.customers-page-wrapper {
+    padding-top: calc(var(--master_spacing)*3);
+    padding-bottom: calc(var(--master_spacing)*3);
+    margin: 0;
+    background-color: #f3f3f3;
+}
+.account-page-main-wrapper .main-content-wrapper .order-history-wrapper .order-empty-wraper {
+    border-radius: 3px;
+    background-color: #fff;
+    padding: 20px;
+}
+.profile-head {
+    display: flex;
+    max-width: 80%;
+    flex-wrap: wrap;
+}
+.profile_sm_nameDiv {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+.profile_sm_nameDivText {
+    display: flex;
+    align-items: center;
+}
+.profile_sm_nameDivText img {
+    width: 150px;
+}
+.profile-head h1 {
+    font-family: var(--body_font);
+    font-size: 24px;
+    line-height: 25px;
+    text-transform: capitalize;
+    padding-right: 120px;
+    margin: 0;
+    margin-left: 20px;
+    color: #96865d;
+    text-wrap: nowrap;
+}
+.profile-head .edit-btn {
+    background: #96865d;
+    font-weight: 700;
+    font-size: 14px;
+    text-align: center;
+    text-transform: uppercase;
+    color: #fff;
+    line-height: 38px;
+    padding: 10px;
+}
+.profile-head .edit-btn:hover{
+    background: #de8873;
+}
+.Profilesocials {
+    width: 100%;
+}
+
+.Profilesocials ul {
+    padding: 0;
+}
+.Profilesocials ul li {
+    font-size: 16px;
+    line-height: 25px;
+    text-align: left;
+    text-transform: capitalize;
+    color: #575757;
+    margin-top: 10px;
+}
+.Profilesocials ul li span {
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 25px;
+    text-align: right;
+    text-transform: lowercase;
+    color: #000;
+}
+.profileSmMainDiv {
+    margin-top: 80px;
+    margin-bottom: 20px;
+}
+.profileSmMainDiv a {
+    color: #96928a;
+    font-size: 16px;
+}
+.profileSmMainDiv svg {
+    margin-right: 6px;
+    vertical-align: middle;
+}
+.account-page-main-wrapper .main-content-wrapper .order-history-wrapper {
+    padding: 0;
+    margin-bottom: 0;
+}
+.EditForm .form-group {
+    margin-bottom: 30px;
+    position: relative;
+}
+.EditForm input {
+    font-family: var(--body_font) !important;
+    font-size: 16px !important;
+    line-height: 25px !important;
+    color: #000 !important;
+    height: 45px;
+    padding: .375rem .75rem;
+    font-weight: 400;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+.validateNow {
+    padding: 8px;
+    background: rgba(153, 153, 153, .4);
+    border-radius: 3px;
+    color: #fff;
+    position: absolute;
+    right: -42px;
+    top: 22px;
+    transform: translate(-50%, -50%);
+}
+.custom-loader-wrap {
+    text-align: center;
+    margin: 50px 0;
+}
+.custom_loading .custom-loader-wrap {
+    margin: 0;
+}
+.form-group .validateNow {
+    background: #96865D;
+    right: 5px;
+    transform: translateY(-50%);
+}
+.form-group .validateNow.disabled {
+    background: #d9d2c1;
+    pointer-events: none !important;
+}
+.EditForm .form-group input.numberValid, .EditForm .form-group input.emailKey {
+    padding-right: 105px;
+}
+.custom-loader {
+    border-image: none;
+    border-style: solid;
+    display: inline-block;
+    border-color: #677e87 #677e87 #677e87 rgba(103, 126, 135, .2);
+    border-radius: 25px;
+    border-width: 2px;
+    height: 32px;
+    width: 32px;
+    -moz-transform: rotate(360deg);
+    -moz-animation-name: ssw-spin;
+    -moz-animation-duration: .75s;
+    -moz-animation-iteration-count: infinite;
+    -moz-animation-timing-function: linear;
+    -webkit-transform: rotate(360deg);
+    -webkit-animation-name: ssw-spin;
+    -webkit-animation-duration: .75s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+}
+.custom_loading .custom-loader {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -12px;
+    margin-top: -12px;
+}
+.EditForm .sbmitBtn {
+    width: 216px;
+    height: 54px;
+    border: 1px solid #96865D !important;
+    margin-left: 2px;
+    background: 0 0;
+    font-weight: 700;
+    color: #96865D !important;
+    vertical-align: middle;
+    border-radius: 0;
+}
+.EditForm .sbmitBtn2 {
+    background: #96865d;
+    color: #fff !important;
+    border-color: #96865D !important;
+}
+.EditForm .sbmitBtn:hover {
+    color: #fff !important;
+}
+.EditForm .sbmitBtn2:hover {
+    background: #de8873;
+    border-color: #de8873 !important;
+}
+#disCardBtn:hover{
+  background: #de8873 !important;
+}
+  @media (max-width:640px){
+.account-page-main-wrapper .content.customers-page-wrapper {
+    padding: 15px;
+    padding-right: 0;
+    padding-left: 0;
+}
+    .account-page-main-wrapper .content.customers-page-wrapper {
+    background: 0 0;
+}
+.profile_sm_nameDivText img {
+    width: 130px;
+    min-width: 130px;
+    margin: revert;
+    margin-bottom: 15px;
+}
+.profile-head {
+    flex-direction: column;
+    max-width: 100%;
+}
+.profile_sm_nameDivText {
+    flex-flow: wrap;
+    width: min-content;
+}
+.profile-head .edit-btn {
+    font-size: 10px;
+    letter-spacing: 1.4px;
+}
+.edit-btn svg {
+    margin-top: 0;
+    width: 10px;
+    height: 10px;
+    margin-right: 5px;
+}
+.profile-head h1 {
+    font-size: 16px;
+    margin: 0;
+    margin-left: 0;
+    padding: 0;
+}
+.Profilesocials {
+    margin-bottom: 15px;
+}
+.Profilesocials ul li {
+    font-size: 14px;
+    margin-top: 5px;
+}
+.Profilesocials ul li span {
+    font-size: 14px;
+}
+      .profilepage_padd{
+    background: white;
+    padding: 0;
+    }
+  }
+</style>
+<h1 style="display: none">My Profile</h1>
+<div class="container clearfix">
+  <div class="three account-sidebar-wrap">
+    {%- render 'account-sidebar' -%}
+  </div>
+  <div class="nine main-content-wrapper">
+  {% comment %}
+    <div class="twelve header-top-wrap">
+      <button type="button" class="back-btn">
+        <a href="/"><svg width="19" height="15" viewBox="0 0 19 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.07031 0L8.57031 1.5L4 6.07031H18.0703V8.07031H4L8.57031 12.6406L7.07031 14.1406L0 7.07031L7.07031 0Z" fill="#001325" fill-opacity="0.92"></path></svg></a>
+      </button>
+      <h1 class="title">My Profile </h1>
+    </div>
+  {% endcomment %}
+  
+    <div class="five account-user bottompad-section" style="display: none;">  
+      <div class="user-name">
+        <h3>{{ customer.name }}</h3>
+        <div class="clearfix">{% form 'recover_customer_password' %}{%- render 'form-errors-custom', errors: form.errors -%}<a href="{{ routes.account_logout_url }}" class="btn auto-width bottompad-half">{{ 'layout.customer.log_out' | t }}</a>&nbsp;&nbsp;<input type="email" name="email" id="recover-email" class="hidden" value="{{ customer.email }}" /><button class="btn outline auto-width bottompad-half" type="submit">{{ 'customer.recover_password.title' | t }}</button>{% endform %}</div>
+        <p>{{ customer.email }}<span class="separator" aria-hidden="true"></span><small class="emailupdate"><a href="mailto:{{ shop.email }}?Subject=E-Mail%20Update" target="_blank">{{ 'customer.account.email_update' | t }}</a></small></p>
+      </div>
+  
+      {% if customer.default_address != blank %}
+      <div class="user-name">
+        {{ customer.default_address | format_address }}
+      </div>
+      {% endif %}
+  
+      <a class="btn outline auto-width" href="{{ routes.account_addresses_url }}" title="{{ 'customer.account.view_addresses' | t }}">{{ 'customer.account.view_addresses' | t }} ({{ customer.addresses_count }})</a>
+  
+    </div>
+  
+    <div class="twelve right account-table bottompad-section order-history-wrapper profilepage_padd">
+     
+        <div class="order-empty-wraper">
+        <div id="profileHead">
+          
+        <div class="profile-head">
+
+          <div class="profile_sm_nameDiv">
+        <div class="profile_sm_nameDivText">
+        <img src="https://cdn.shopify.com/s/files/1/2690/0106/files/Hey_there.png?v=1690965952"/>
+        <h1>{{customer.name}}</h1></div>
+        <div>        
+          <a href="#" class="edit-btn"><svg width="12" height="13" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M8.8688 1.46206C9.0164 1.30925 9.19295 1.18736 9.38815 1.1035C9.58336 1.01965 9.79331 0.975509 10.0058 0.973663C10.2182 0.971817 10.4289 1.0123 10.6255 1.09275C10.8222 1.1732 11.0008 1.292 11.151 1.44223C11.3013 1.59246 11.4201 1.7711 11.5005 1.96774C11.581 2.16437 11.6214 2.37506 11.6196 2.58751C11.6178 2.79995 11.5736 3.0099 11.4898 3.20511C11.4059 3.40032 11.284 3.57687 11.1312 3.72446L10.4968 4.35886L8.2344 2.09646L8.8688 1.46206ZM7.1032 3.22766L0.4 9.93086V12.1933H2.6624L9.3664 5.49006L7.1032 3.22766Z" fill="white"/>
+          </svg> Edit Profile</a></div>
+        </div>
+          </div>
+
+        
+          <div class="Profilesocials">
+            <ul>
+            {% if customer.email != blank %}
+            <li>Email : <span>{{ customer.email }} </span></li>
+            {% endif %}
+            {% if customer.phone != blank %}
+            <li>Phone number : <span>{{ customer.phone | replace: '+91', '+91 ' }}</span></li>
+            {% endif %}
+            {% if customer.metafields.details.dob != blank %}
+            {% assign dob = customer.metafields.details.dob | split: "-" %}
+            <li>Date of Birth : <span>{{ dob | reverse | join: "/" }}</span></li>
+            {% endif %}
+            </ul>
+         </div>
+
+        </div>
+
+          <div class="profileSmMainDiv"><a href="/account/logout"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 13 13" fill="none">
+<path d="M1.44445 13C1.04722 13 0.707057 12.8584 0.423946 12.5753C0.140834 12.2922 -0.000480255 11.9523 1.22618e-06 11.5556V1.44445C1.22618e-06 1.04722 0.141557 0.707057 0.424668 0.423946C0.707779 0.140834 1.0477 -0.000480255 1.44445 1.22618e-06H6.5V1.44445H1.44445V11.5556H6.5V13H1.44445ZM9.38889 10.1111L8.39583 9.06389L10.2375 7.22222H4.33333V5.77778H10.2375L8.39583 3.93611L9.38889 2.88889L13 6.5L9.38889 10.1111Z" fill="#96928A"/>
+</svg>Logout</a></div>
+        </div>
+
+          
+  <div class="EditForm profilepage_padd" style="display:none;">
+    {%- comment -%} <h2>Edit Profile</h2> {%- endcomment -%}
+
+    <form id="profileupdateForm">
+
+      <div class="form-group form-wrap">
+        <input type="text" class="form-input" placeholder="First Name" name="first_name" value="{{ customer.first_name }}">
+        <label for="fname" class="form-label">First Name</label>
+        <span class="form_error"></span>
+      </div>
+
+      <div class="form-group form-wrap">
+        <input type="text" class="form-input" placeholder="Last Name" name="last_name" value="{{ customer.last_name }}">
+        <label for="lname" class="form-label">Last Name</label>
+        <span class="form_error"></span>
+      </div>
+
+      <div class="form-group form-wrap">
+        <input type="text" class="form-input numberValid{% if customer.phone %} valid_input{% endif %}" placeholder="Mobile No." name="phone"  pattern="/^-?\d+\.?\d*$/" maxlength="10" onkeyup="if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,'')" value="{{ customer.phone | remove: '+91'  }}"/>
+        <label for="lname" class="form-label">Mobile No.</label>
+        <a href="#" class="custom_loading validateNow{% if customer.phone %} disabled{% endif %}" id="ValidNumber">Validated Now
+          <div class="custom-loader-wrap">
+            <div class="custom-loader"></div>
+          </div>
+        </a>
+        <span class="form_error"></span>
+      </div>
+
+      <div class="form-group form-wrap">
+        <input type="email" class="form-input emailKey{% if customer.email %} valid_input{% endif %}" placeholder="E-mail" name="email" value="{{ customer.email }}">
+        <label for="lname" class="form-label">E-mail</label>
+        <!-- <a href="#" class="custom_loading validateNow validateNowEmail{% if customer.email %} disabled{% endif %}" id="ValidEmail">Validated
+          <div class="custom-loader-wrap">
+            <div class="custom-loader"></div>
+          </div>
+        </a> -->
+        <span class="form_error"></span>
+      </div>
+
+      <div class="form-group form-wrap">
+        <input type="date" pattern="\d{4}-\d{2}-\d{2}" class="form-input" placeholder="Birthday" name="dob" value="{{ customer.metafields.details.dob  }}">
+        <label for="lname" class="form-label">Birthday</label>
+        <span class="form_error"></span>
+      </div>
+
+    <div class="disCardBtn">
+      <input type="button" value="DISCARD CHANGES" class="sbmitBtn" id="disCardBtn">
+      <input type="submit" value="SAVE CHANGES" class="sbmitBtn sbmitBtn2 profile_sbmitBtn">
+    </div>
+    <span class="form_submit_error form_error"></span>
+    </form>
+  </div>
+        </div>
+    </div> 
+  </div>
+</div>
+
+
+<style>
+.form-group .validateNow:hover {
+color: #fff;
+}
+.form-group .validateNow.disabled {
+  background: #d9d2c1;
+  pointer-events: none !important;
+}
+.form-group .validateNow{
+  background: #96865D;
+  right: 5px;
+  transform: translateY(-50%);
+}
+.EditForm .form-group input.numberValid,.EditForm .form-group input.emailKey {
+padding-right: 105px;
+}
+.EditForm .profile_sbmitBtn.disabled {
+pointer-events: none;
+background: #d6d6d6;
+border-color: #d6d6d6 !important;
+}
+.form-group .validateNow .custom-loader {
+width: 24px;
+height: 24px;
+}
+.form_submit_error.form_error {
+  text-align: center;
+}
+</style>
+<script defer>
+{% unless customer %}window.location.href = '/account';{% endunless %}
+$(document).ready(function(){
+$(".edit-btn").click(function(){
+  $(".EditForm").toggle();
+  $("#profileHead").toggle();
+  $(".profileSmMainDiv").toggle();
+});
+
+$('.back-btn').click(function(e){
+  e.preventDefault();
+ $("#profileHead").show();
+ $(".EditForm").hide();
+});
+
+ $('#disCardBtn').click(function(e){
+ $("#profileHead").show();
+ $(".EditForm").hide();
+  $(".profileSmMainDiv").show();
+});
+$(document).on('keyup', '.numberValid', function() {
+  var number =  $('.numberValid').val();
+  $('#ValidNumber').removeClass("disabled");
+  $('#ValidNumber').text("Validate Now");
+  $('.numberValid').removeClass('valid_input');
+  $('.profile_sbmitBtn').addClass("disabled");
+});
+
+$(function(){
+  var regExp = /^([\w\.\+]{1,})([^\W])(@)([\w]{1,})(\.[\w]{1,})+$/;
+  $('.emailKey').on('keyup', function() {
+    regExp.test( $(this).val() ) ? $('.validateNowEmail').removeClass("disabled") : $('.validateNowEmail').addClass("disabled");
+    $('.validateNowEmail').text("Validate Now");
+    $('.profile_sbmitBtn').addClass("disabled");
+    $('.emailKey').removeClass('valid_input');
+  });
+});  
+});
+
+$(document).on('submit','#profileupdateForm',function(e){
+e.preventDefault();
+var error_count = 0;
+let $this = $(this);
+//error_count = error_count + theme.nameValidation($this.find('[name="first_name"]'));
+//error_count = error_count + theme.nameValidation($this.find('[name="last_name"]'));
+error_count = error_count + theme.fieldValidation($this.find('[name="dob"]'));
+if(!$this.find('[name="phone"]').hasClass('valid_input')){
+  error_count = error_count + 1;
+}
+if(!$this.find('[name="email"]').hasClass('valid_input')){
+  error_count = error_count + 1;
+}
+console.log(error_count);
+if (error_count != 0) {
+  return false;
+} else {
+  var itemsdata = {
+    customer_id: {{customer.id}},
+    phone: $this.find('[name="phone"]').val(),
+    customer_dob: $this.find('[name="dob"]').val(),
+    first_name: $this.find('[name="first_name"]').val(),
+    last_name: $this.find('[name="last_name"]').val(),
+    email: $this.find('[name="email"]').val()
+  };
+  console.log('check-code data',itemsdata);
+  $.ajax({
+    type: "POST",
+    url: "https://support.nestasia.in/api/update-profile",
+    data: itemsdata,
+    dataType: "json",
+    success: function (data) {
+      console.log(data);
+      if(data.status){
+        location.reload();
+      }else{
+        $('#profileupdateForm .form_submit_error').html(data.message).css('display','block');
+        setTimeout(function(){
+          $('#profileupdateForm .form_submit_error').hide();
+        },6000);
+      }
+    },
+    error: function (error) {
+      console.log('error',error);
+    }
+  });
+}
+});
+</script>
+
+{% schema %}
+{
+  "name": "custom profile",
+  "tag": "section",
+  "settings": [],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "custom profile"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

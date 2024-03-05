@@ -1,0 +1,179 @@
+<style>
+  .customblog-bottom {
+    padding: 0 15px 15px;
+    display: flex;
+    flex-direction: column;
+  }
+  a.customblog-date {
+    color: #c1c1c1;
+    font-family: var(--body_font);
+    font-size: 16px;
+    line-height: 1.4;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  a.customblog-title {
+    word-break: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    /* line-height: 1.3em; */
+    max-height: 3.9em;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    text-align: center;
+    font-family: var(--body_font);
+    font-size: 18px;
+    line-height: 1.4;
+    color: #030303;
+    letter-spacing: 0.4px;
+  }
+  .customblog-box {
+    margin-bottom: var(--master_spacing);
+  }
+  .customblog-heading:hover {
+    color: #96865d!important;
+}
+    #shopify-section-{{section.id}} svg.c-arrow_next {
+    right: 0;
+    position: absolute;
+    top: 40%;
+    z-index: 1;
+    transform: translateX(30px);
+  }
+  #shopify-section-{{section.id}} svg.c-arrow_prev {
+    left: 0;
+    position: absolute;
+    top: 40%;
+    z-index: 1;
+    transform: translateX(-30px);
+  }
+  .customblog{
+    position: relative;
+  }
+  @media screen and (max-width: 800px) {
+    a.customblog-date {
+      font-size: 14px;
+      letter-spacing: 1.3px;
+    }
+    a.customblog-title {
+      font-size: 16px;
+    }
+    #shopify-section-{{ section.id }}  .c-arrow {
+    display: none;
+    }
+    .customblog{
+      padding: 0 !important;
+    }
+  }
+</style>
+<div class="customblog container">
+  <a href="{{ section.settings.select_blog.url }}" class="customblog-heading mhead">
+    {{ section.settings.heading }}
+  </a>
+  <div class="swiper customblog-cont">
+    <!-- Additional required wrapper -->
+    <div class="swiper-wrapper">
+      <!-- Slides -->
+
+      {% for blog in section.settings.select_blog.articles limit: 6 %}
+        <div class="swiper-slide customblog-box">
+          <a href="{{ blog.url }}">
+            <img loading="lazy" 
+              width="{{ blog.image.width }}"
+              height="{{ blog.image.height }}"
+              class="lazy" data-src="{{ blog.image.src | image_url: width: 1000 }}" alt="{{ blog.title }}">
+          </a>
+          <div class="customblog-bottom text-center">
+            <a href="{{blog.url}}" class="customblog-date">{{ blog.published_at | date: '%B %d, %Y' }}</a>
+            <a href="{{ blog.url }}" class="customblog-title">{{ blog.title }}</a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- If we need scrollbar -->
+    <div class="cswiper-scrollbar"></div>
+  </div>
+      <div class="c-arrow">
+      <svg
+        class="c-arrow_prev"
+        width="36"
+        height="36"
+        viewBox="0 0 36 36"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect width="36" height="36" rx="18" fill="#96865D"/><path d="M21 24L15 18L21 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <svg
+        class="c-arrow_next"
+        width="36"
+        height="36"
+        viewBox="0 0 36 36"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect x="0.226562" y="0.516113" width="36" height="36" rx="18" fill="#96865D"/><path d="M15.2266 24.5161L21.2266 18.5161L15.2266 12.5161" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+</div>
+<script defer>
+    const blog{{ section.index }} = new Swiper('.customblog-cont', {
+    slidesPerView:1.2,
+    spaceBetween: 10,
+    navigation: {
+      nextEl: '#shopify-section-{{ section.id }} .c-arrow_next',
+      prevEl: '#shopify-section-{{ section.id }} .c-arrow_prev',
+    },
+    scrollbar: {
+    el: '#shopify-section-{{ section.id }} .cswiper-scrollbar',
+    draggable: true,
+  },
+    breakpoints: {
+        // When the window width is 800px or greater (desktop)
+        800: {
+        spaceBetween: 20,
+        slidesPerView: 3,
+        }
+    }
+  });
+</script>
+{% schema %}
+{
+  "name": "custom blog",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "label": "heading",
+      "id": "heading",
+      "default": "Blog"
+    },
+    {
+      "type": "blog",
+      "label": "Select blog",
+      "id": "select_blog"
+    },
+    {
+      "type": "number",
+      "label": "blogs to show",
+      "id": "blogs_to_show",
+      "default": 6
+    }
+  ],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "custom blog"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

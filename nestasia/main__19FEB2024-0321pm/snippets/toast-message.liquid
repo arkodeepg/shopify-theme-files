@@ -1,0 +1,267 @@
+<!--snippet name toast-message--> 
+
+<style>
+
+#atctoast {
+    visibility: hidden;
+    /* min-width: 250px; */
+    /* margin-left: -125px; */
+    background-color: #96865D;
+    border-radius: 4px;
+    color: #fff;
+    text-align: center;
+    border-radius: 2px;
+    padding: 8px 16px;
+    position: fixed;
+    z-index: 1;
+    right: 10%;
+    /* bottom: 30px; */
+    font-size: 16px;
+    top: 15%;
+    display: inline-flex;
+    /* height: 42px; */
+    padding: 8px 8px 8px 16px;
+    align-items: center;
+    gap: 12px;
+}
+
+@keyframes faderin {
+  from {right: 0; opacity: 0;}
+  to {right: 10%; opacity: 1;}
+}
+
+@keyframes faderout {
+  from {right: 10%; opacity: 1;}
+  to {right: 0; opacity: 0;}
+}
+
+#atctoast.show {
+  visibility: visible;
+  -webkit-animation: faderin 0.5s, faderout 0.5s 2.5s;
+  animation: faderin 0.5s, faderout 0.5s 2.5s;
+}
+  
+@media screen and (max-width: 600px) {
+#atctoast {
+    /* display: flex; */
+    visibility: hidden;
+    /* min-width: 250px; */
+    /* margin-left: -125px; */
+    background-color: #96865D;
+    border-radius: 4px;
+    color: #fff;
+    text-align: center;
+    border-radius: 2px;
+    position: fixed;
+    z-index: 1;
+    right: 50%;
+    /* bottom: 30px; */
+    font-size: 17px;
+    bottom: 10%;
+    transform: translate(50%,0);
+    white-space: nowrap;
+    top: unset;
+    display: inline-flex;
+    /* height: 42px; */
+    padding: 8px 8px 8px 16px;
+    align-items: center;
+    gap: 12px;
+}
+#atctoast.show {
+  visibility: visible;
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@keyframes fadein {
+  from {bottom: 0; opacity: 0;}
+  to {bottom: 10%; opacity: 1;}
+}
+
+
+@keyframes fadeout {
+  from {bottom: 10%; opacity: 1;}
+  to {bottom: 0; opacity: 0;}
+}
+}
+
+
+#wishlisttoast {
+    visibility: hidden;
+    /* min-width: 250px; */
+    /* margin-left: -125px; */
+    background-color: #96865D;
+    border-radius: 4px;
+    color: #fff;
+    text-align: center;
+    border-radius: 2px;
+    padding: 8px 16px;
+    position: fixed;
+    z-index: 1;
+    right: 10%;
+    /* bottom: 30px; */
+    font-size: 16px;
+    top: 15%;
+    display: inline-flex;
+    /* height: 42px; */
+    padding: 8px 8px 8px 16px;
+    align-items: center;
+    gap: 12px;
+}
+
+@keyframes faderin {
+  from {right: 0; opacity: 0;}
+  to {right: 10%; opacity: 1;}
+}
+
+@keyframes faderout {
+  from {right: 10%; opacity: 1;}
+  to {right: 0; opacity: 0;}
+}
+
+#wishlisttoast.show {
+  visibility: visible;
+  -webkit-animation: faderin 0.5s, faderout 0.5s 2.5s;
+  animation: faderin 0.5s, faderout 0.5s 2.5s;
+}
+  
+@media screen and (max-width: 600px) {
+#wishlisttoast {
+    /* display: flex; */
+    visibility: hidden;
+    /* min-width: 250px; */
+    /* margin-left: -125px; */
+    background-color: #96865D;
+    border-radius: 4px;
+    color: #fff;
+    text-align: center;
+    border-radius: 2px;
+    position: fixed;
+    z-index: 1;
+    right: 50%;
+    /* bottom: 30px; */
+    font-size: 17px;
+    bottom: 10%;
+    transform: translate(50%,0);
+    white-space: nowrap;
+    top: unset;
+    display: inline-flex;
+    /* height: 42px; */
+    padding: 8px 8px 8px 16px;
+    align-items: center;
+    gap: 12px;
+}
+#wishlisttoast.show {
+  visibility: visible;
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@keyframes fadein {
+  from {bottom: 0; opacity: 0;}
+  to {bottom: 10%; opacity: 1;}
+}
+
+
+@keyframes fadeout {
+  from {bottom: 10%; opacity: 1;}
+  to {bottom: 0; opacity: 0;}
+}
+}
+
+
+
+
+
+</style>
+<div id="wishlisttoast">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+  <g clip-path="url(#clip0_341_107)">
+    <path d="M22.5 8.8125C22.5 15.375 12.7697 20.6869 12.3553 20.9062C12.2461 20.965 12.124 20.9958 12 20.9958C11.876 20.9958 11.7539 20.965 11.6447 20.9062C11.2303 20.6869 1.5 15.375 1.5 8.8125C1.50174 7.27146 2.11468 5.79404 3.20436 4.70436C4.29404 3.61468 5.77146 3.00174 7.3125 3C9.24844 3 10.9434 3.8325 12 5.23969C13.0566 3.8325 14.7516 3 16.6875 3C18.2285 3.00174 19.706 3.61468 20.7956 4.70436C21.8853 5.79404 22.4983 7.27146 22.5 8.8125Z" fill="white"/>
+  </g>
+  <defs>
+    <clipPath id="clip0_341_107">
+      <rect width="24" height="24" fill="white"/>
+    </clipPath>
+  </defs>
+</svg>
+Product added to favourites
+<svg onclick="toastclose(wishlisttoast)" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+  <g clip-path="url(#clip0_264_1589)">
+    <path d="M15 9L9 15" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M9 9L15 15" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <defs>
+    <clipPath id="clip0_264_1589">
+      <rect width="24" height="24" fill="white"/>
+    </clipPath>
+  </defs>
+</svg>
+</div>
+
+<div id="atctoast">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+  <g clip-path="url(#clip0_350_101)">
+    <path d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z" fill="white"/>
+    <path d="M8.25 12.75L10.5 15L15.75 9.75" stroke="#96865D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <defs>
+    <clipPath id="clip0_350_101">
+      <rect width="24" height="24" fill="white"/>
+    </clipPath>
+  </defs>
+</svg>
+Product added to cart
+<svg onclick="toastclose(atctoast)" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+  <g clip-path="url(#clip0_296_1663)">
+    <path d="M15 9L9 15" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M9 9L15 15" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <defs>
+    <clipPath id="clip0_296_1663">
+      <rect width="24" height="24" fill="white"/>
+    </clipPath>
+  </defs>
+</svg>
+</div>
+<script async>
+function toastclose(cid){
+  // console.log("toastclose", this)
+  cid.classList.remove("show");
+}
+$(document).ready(function() {
+  $(".ssw-faveiticon").on("click", function() {
+    // Find the inner i tag and get its class
+    var innerIconClass = $(this).find("i").attr("class");
+    console.log('innerIconClass',innerIconClass)
+    
+    let a = innerIconClass.split(" ")
+     if(a.includes("ssw-icon-heart-o")){
+       $("#wishlisttoast").addClass("show")
+        console.log("unchecked")
+       }
+      setTimeout(function(){ 
+        $("#wishlisttoast").removeClass("show") 
+      }, 3000);
+  });
+  
+  {% if template.name == 'product' %}
+  $(".cbuy-act:not(.cthank)").on("click", function() {
+    console.log("atctoast clicked")
+    if(window.matchMedia("(max-width: 749px)").matches){
+    console.log("mob identified")
+    // Find the inner i tag and get its class
+       $("#atctoast").addClass("show")
+      setTimeout(function(){ 
+        $("#atctoast").removeClass("show") 
+      }, 2500);
+    }
+  });
+  {% endif %}
+
+
+
+  
+});
+
+</script>

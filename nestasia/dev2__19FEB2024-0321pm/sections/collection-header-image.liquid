@@ -1,0 +1,74 @@
+<!-- section/collection-banner -->
+{%- if section.settings.enable_banner_image_block-%}
+  <section class="collection-banner-wrapper container">
+    {%- for block in section.blocks -%}
+        {%- assign collection_heandle = block.settings.collection-handle | downcase -%}
+        {%- assign current_collection_heandle = collection.handle | downcase -%}
+        {%- if current_collection_heandle == collection_heandle -%}
+          <div class="collection-banner-image">
+
+              <div class="banner-image {% if block.settings.banner-image-mobile != blank %}xs-hide{% endif %}">
+                {%- assign img_url = block.settings.banner-image | img_url: '2000x' -%}
+                <!-- {{ block.settings.banner-image | image_url: width: '2000' | image_tag }} -->
+                <picture>
+                  {%- unless block.settings.banner-image-mobile == blank -%}<source media="(max-width:800px)" srcset="{{ block.settings.banner-image-mobile | image_url: width: 800 }}">{% endunless %}
+                  <img 
+                    height="{{ block.settings.banner-image-mobile.height }}"
+                    width="{{ block.settings.banner-image-mobile.width }}"
+                    src="{{ block.settings.banner-image-mobile | image_url: width: '2000' }}" >
+                </picture>
+              </div>
+
+          </div>
+        {%- endif -%}
+    {%- endfor -%}
+  </section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Collection banner image",
+  "tag": "section",
+    "settings": [ 
+      {
+        "type": "checkbox",
+        "id": "enable_banner_image_block",
+        "label": "Enable Banner"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "collection-banner",
+        "name": "Image",
+        "settings": [
+          {
+            "type": "collection",
+            "id": "collection-handle",
+            "label": "Select Collection"
+          },
+          {
+            "type": "image_picker",
+            "id": "banner-image",
+            "label": "Banner Image for Desktop"
+          },
+          {
+            "type": "image_picker",
+            "id": "banner-image-mobile",
+            "label": "Banner Image for Mobile"
+          }
+        ]
+      }
+    ],
+  "presets": [
+    {
+      "name": "Collection banner image"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

@@ -1,0 +1,228 @@
+{%- liquid
+  if settings.swatch_color != blank
+    assign var_color = settings.swatch_color | handleize
+    assign swatch_color = settings.swatch_color
+  else
+    assign var_color = 'products.general.color' | t | handleize
+    assign swatch_color = 'products.general.color' | t
+  endif
+  assign prod_opt_1 = product.options[0] | handleize
+  assign prod_opt_2 = product.options[1] | handleize
+  assign prod_opt_3 = product.options[2] | handleize
+-%}
+
+{%- for variant in product.variants -%}        
+
+{%- liquid
+  if prod_opt_1 contains var_color and canon contains prod_opt_1
+  	assign var_opt_group = variant.option1 | handleize
+  elsif prod_opt_2 contains var_color and canon contains prod_opt_2
+  	assign var_opt_group = variant.option2 | handleize
+  elsif prod_opt_3 contains var_color and canon contains prod_opt_3
+  	assign var_opt_group = variant.option3 | handleize
+  else
+  	assign var_opt = canon_last
+  endif
+-%}
+
+{%- if canon contains var_opt_group or var_opt == canon_last -%}
+
+{%- liquid
+  if variant.featured_media or product.featured_media
+  assign images_enable = true
+  else
+  assign images_enable = false
+  endif
+-%}
+
+<div id="variant_{{ variant.id }}" class="item{% if formforloop.last == true and forloop.last == true %} last{% endif %} relative product-id item-row table-center clearfix" data-product-id="{{ variant.id }}" field="{{ variant.id }}">
+
+  {% if images_enable or settings.badge_enable and product.compare_at_price > product.price %}
+  <div class="product-thumb item-thumb title-align title-align-left two negative-left"> 
+    <div class="relative ignore">
+      {%- render 'product.saleBadge', product: variant -%}      
+      {% if images_enable %}
+        <div class="relative lazycontainer">  
+          <a href="{{ variant.url | within: collection }}" title="{{ product.title | escape }}" class="img-align">
+            {%- liquid
+              if variant.featured_media
+              	assign img_src = variant.featured_media.preview_image
+              else
+              	assign img_src = product.featured_media.preview_image
+              endif
+              capture alt
+                if img_src.alt != blank
+                  echo img_src.alt
+                else
+                  echo product.title
+                endif
+              endcapture
+              if forloop.index < 5 and formforloop.index < 5
+                assign lazy = lazy
+               else
+                assign lazy = 'lazy'
+              endif             
+              render 'image.load', img_src: img_src, size: 310, alt: alt, nopad: true, lazy: lazy, sizes: '(min-width: 320px) 310px, (min-width: 768px) 170px, calc(100vw - 100px)'
+    		-%}
+          </a>
+        </div>
+      {% endif %} 
+    </div>
+  </div>
+  {% endif %} 
+  <span class="item-details{% if images_enable or settings.badge_enable and product.compare_at_price > product.price %} half{% else %} full{% endif %}">
+    <div class="{% if images_enable or settings.badge_enable and product.compare_at_price > product.price %}four{% else %}six{% endif %}">
+      <div class="item-title"><h4><a href="{{ variant.url | within: collection }}" title="{{ product.title | escape }}">{{ product.title }}</a></h4></div>
+      
+      {%- liquid        
+        if variant.title contains 'Default'
+          assign variant_title = true
+        else
+          assign variant_title = false
+        endif        
+        if settings.vendor_enable and variant.sku != blank and settings.sku_enable
+          assign divider = true
+        else
+          assign divider = false
+        endif
+	  -%}
+      
+      {% if settings.vendor_enable or variant_title == false or variant.sku != blank and settings.sku_enable %}
+      
+      <p id="product-logistics-{{ product.id }}" class="product-logistics">
+        {% if settings.vendor_enable %}
+        <span class="vendors"><strong>         
+          {%- liquid
+            assign product_vendor_handle = product.vendor | handle
+            if collections[product_vendor_handle].handle == product_vendor_handle
+              assign vendor_url = collections[product_vendor_handle].url
+            else
+              assign vendor_url = product.vendor | url_for_vendor
+            endif
+            echo product.vendor | link_to: vendor_url, product.vendor
+		  -%}
+          </strong></span>
+        {% endif %}
+        
+        {% if divider %}<span class="separator" aria-hidden="true"></span>{% endif %}
+
+        {% if variant_title == false or variant.sku != blank and settings.sku_enable %}
+        <span class="item-logistics">
+          {%- liquid
+            if variant.sku != blank and settings.sku_enable
+              echo '<strong>'
+              echo 'products.product.sku' | t
+              echo '</strong> '
+              echo variant.sku
+            endif
+            unless variant.title contains 'Default'
+              echo '<span class="variants">'
+              echo variant.title
+              echo '</span>'
+            endunless
+		  -%}
+        </span>
+        {% endif %}
+        
+      </p>
+      {% endif %}
+
+      {%- liquid
+        if settings.reviews_enable
+          render 'product.rating', product: product
+        endif  
+        if settings.product_availability_enable and variant.inventory_quantity > 0 or variant.incoming
+        echo '<p class="error-text"><small>'
+        if variant.inventory_quantity > 0
+          echo '<span class="upper">'
+          echo variant.inventory_quantity
+          echo ' '
+          echo 'products.product.stock' | t
+          echo '</span>'
+          if variant.incoming
+            echo ': '
+          endif
+        endif
+        if variant.incoming
+          unless variant.inventory_quantity > 0
+          echo '<span class="icon icon-bell"></span>'
+          endunless
+          assign today_date = 'now' | date: '%s'
+          assign delivery_date = variant.next_incoming_date | date: '%s'
+          if variant.next_incoming_date != blank and delivery_date > today_date
+            if variant.available
+              echo 'products.product.stock_more' | t
+            else
+              echo 'products.product.stock_in' | t
+            endif
+            echo ' '
+            echo variant.next_incoming_date | date: '%b %e'
+          else
+            echo 'products.product.stock_soon' | t
+          endif
+        endif
+        echo '</small></p>'
+        endif     
+      -%}
+    </div>
+
+    <div class="three text-center">
+      <h5 class="offers">
+        {%- liquid
+          echo '<span class="price-preview price price-field">'
+          if variant.price > 0
+            if settings.currency_enable
+              echo variant.price | money_with_currency
+            else
+              echo variant.price | money
+            endif
+          else
+            echo '<span style="display:none">'
+            if settings.currency_enable
+              echo variant.price | money_with_currency
+            else
+              echo variant.price | money
+            endif
+            echo '</span><span>'
+            echo 'products.product.free' | t
+            echo '</span>'
+          endif
+          if variant.compare_at_price > variant.price
+            echo '<del>'
+            if settings.currency_enable
+              echo variant.compare_at_price | money_with_currency
+            else
+              echo variant.compare_at_price | money
+            endif            
+            echo '</del>'
+          endif
+          echo '</span>'
+          render 'product.unitPrice', variant: variant, variant_slash: 'true'
+		-%}
+      </h5>
+    </div>
+
+    <div class="three text-center">
+      {% if variant.available %}
+      <span class="quantity form">
+        <button type="button" class="icon icon-minus btn qtybtn ignore qtyminus_multi text-center" field="updates_{{ variant.id }}" price-field="price_{{ variant.id }}" aria-label="{{ 'products.general.minus' | t | escape }}">{%- render 'icons.theme', icon: 'minus', size: 28 -%}</button>
+        <label for="updates_{{ variant.id }}" class="visually-hidden">{{ 'products.general.quantity' | t }}</label>
+        <input name="updates[{{ variant.id }}]" onfocus="this.select()" type="number" inputmode="numeric" pattern="[0-9]*" value="0" min="0" class="quantity field item-qty text-center" field="error_{{ variant.id }}" id="updates_{{ variant.id }}"{% if variant.inventory_management and variant.inventory_policy != 'continue' %} max="{% if variant.inventory_quantity > 0 %}{{ variant.inventory_quantity }}{% else %}0{% endif %}"{% endif %} />                   
+        <input type="hidden" id="price_{{ variant.id }}" class="price-totals" price="{{ variant.price }}" value="0" aria-hidden="true" />  
+        <button type="button" class="icon icon-plus btn qtybtn ignore qtyplus_multi text-center" field="updates_{{ variant.id }}" price-field="price_{{ variant.id }}" aria-label="{{ 'products.general.plus' | t | escape }}">{%- render 'icons.theme', icon: 'plus', size: 28 -%}</button>
+        <label class="stock error hidden" id="error_{{ variant.id }}">.</label>
+      </span>
+      {% else %}
+      <h5 class="offers">
+        <span class="price-preview price price-field">
+          {{ 'products.product.sold_out' | t }}
+        </span>
+      </h5>
+      {% endif %}
+    </div>
+  </span>
+  <input type="hidden" name="id" value="{{ variant.id }}" aria-hidden="true" >
+</div>
+{%- endif -%}
+
+{%- endfor -%}

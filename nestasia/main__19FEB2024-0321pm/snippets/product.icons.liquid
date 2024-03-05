@@ -1,0 +1,76 @@
+{% if enable_number == 'enable_1' or enable %}
+  <div class="icon-text{% if pop_up and page != blank %} relative{% endif %}">
+  
+    {%- liquid
+      if pop_up and page != blank
+        echo '<button data-micromodal-trigger="quick-modal" type="button" data-src="'
+        echo page.url
+        echo '" data-container="tooltip-'
+        echo block_id
+        echo '-'
+        echo enable_number
+        echo '" name="'
+        echo page.title | escape
+        echo '" class="tooltip" aria-label="'
+        echo page.title | escape
+        echo '">'
+      endif
+    -%}
+   
+    <div class="table-cell{% if block_img != blank %} img{% endif %}"> 
+      {%- liquid
+        if block_img != blank
+          capture alt
+            if block_img.alt != blank
+              echo block_img.alt | escape
+            elsif text != blank
+              echo text
+            else
+              echo block_img | split: '/' | last | replace: '-', ' ' | replace: '_', ' ' | split: '.' | first | capitalize
+            endif
+          endcapture
+          render 'image.load', img_src: block_img, size: 30, alt: alt, logo: true, lazy: 'eager'
+        else        
+          if icon_color == 'rgba(0,0,0,0)' or icon_color == ''
+            assign icon_color = settings.headline_font_color
+          else
+            assign icon_color = icon_color
+          endif
+          if icon_color_h == 'rgba(0,0,0,0)' or icon_color_h == ''
+            assign icon_color_h = settings.accent_color
+          else
+            assign icon_color_h = icon_color_h
+          endif
+          if text != blank
+            assign icon_class = ''
+          else
+            assign icon_class = 'no-pad'
+          endif
+          render 'icons', icon: icon, size: '26', icon_class: icon_class, color: icon_color, color_h: icon_color_h
+        endif
+      -%}
+    </div>
+  
+    {% if text != blank %}
+      <div class="table-cell text-left no-pad">
+        {{ text }}
+      </div>
+    {% endif %}
+    
+    {%- liquid
+      if pop_up and page != blank
+        echo '</button>'
+        echo '<span class="hidden tooltip-'
+        echo block_id
+        echo '-'
+        echo enable_number
+        echo '">'
+        echo '<script type="application/json">'
+        echo pages[page].content | json
+        echo '</script>'
+        echo '</span>'
+      endif
+    -%}
+  
+  </div>
+{% endif %}

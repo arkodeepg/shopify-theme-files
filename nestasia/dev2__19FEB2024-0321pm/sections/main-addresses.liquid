@@ -1,0 +1,592 @@
+{%- liquid
+  assign full_width = section.settings.full_width
+  if section.settings.background_img != blank
+    capture alt
+      if section.settings.background_img.alt != blank
+        echo section.settings.background_img.alt
+      elsif section.settings.title != blank
+        echo section.settings.title
+      else
+        echo 'customer.addresses.title' | t
+      endif
+    endcapture  
+  endif
+  assign text_color = false
+  if section.settings.section_color != 'rgba(0,0,0,0)' and section.settings.section_color != blank
+    assign text_color = true
+    assign text_color_section = section.settings.section_color
+  endif
+  assign background_color = false
+  if section.settings.background != 'rgba(0,0,0,0)' and section.settings.background != blank
+    assign background_color = true
+    assign background_color_section = section.settings.background
+  endif    
+  if section.settings.background_gradient != 'rgba(0,0,0,0)' and section.settings.background_gradient != blank
+    assign background_color = true
+    assign background_color_section = section.settings.background_gradient
+  endif
+  capture classes
+    echo 'dynamic-section dynamic-section-'
+    echo section.id 
+    echo ' section-padding-top section-padding-bottom section-margin-bottom '
+    if section.settings.padding_border
+      echo 'section-border '
+    endif
+  endcapture
+  assign overlay_color = false
+  if section.settings.background_img_overlay != 'rgba(0,0,0,0)' and section.settings.background_img_overlay != blank
+    assign overlay_color = true
+    assign overlay_color_section = section.settings.background_img_overlay
+  endif
+  if section.settings.background_img_overlay_gradient != 'rgba(0,0,0,0)' and section.settings.background_img_overlay_gradient != blank
+    assign overlay_color = true
+    assign overlay_color_section = section.settings.background_img_overlay_gradient
+  endif
+  assign banner = false
+  if section.settings.enable_lazy
+    assign lazy = 'lazy'
+  else
+    assign lazy = 'eager'
+  endif
+-%}
+
+{% style %}
+  .dynamic-section-{{ section.id }} { 
+    --margin_padding: {{ section.settings.padding }}vh;
+    {%- if background_color -%}
+    --background:{{ background_color_section }};
+    --button_primary_text:{{ section.settings.background }};
+    --button_secondary_hover:{{ section.settings.background }};
+    {%- endif -%}
+    --section-padding-top-mobile: {{ section.settings.padding_top_mobile }}px;
+    --section-padding-top-desktop: {{ section.settings.padding_top_desktop }}px;
+    --section-padding-bottom-mobile: {{ section.settings.padding_bottom_mobile }}px;
+    --section-padding-bottom-desktop: {{ section.settings.padding_bottom_desktop }}px;
+    --section-margin-bottom-mobile: {{ section.settings.margin_bottom_mobile }}px;
+    --section-margin-bottom-desktop: {{ section.settings.margin_bottom_desktop }}px;
+  }
+  .dynamic-section-{{ section.id }} .banner-section { 
+    {%- if text_color -%}
+    --headline_font_color:{{ text_color_section }};
+    {%- endif -%}
+    {%- if overlay_color -%}
+    --overlay_background: {{ overlay_color_section }};
+    --overlay_opacity: {{ section.settings.background_img_overlay_opacity | times: 0.01 }};
+    {%- endif -%}
+  }
+{% endstyle %}
+
+<section data-section-id="{{ section.id }}" 
+         data-section-type="customer" 
+         class="{{ classes }}{% if settings.animation_enable %}animate-section-div {% endif %}clearfix">
+
+  {% if section.settings.title_enable or section.settings.sub_title != blank or section.settings.background_img != blank %}
+  {%- liquid
+    assign block_width = section.settings.block_width
+    case block_width
+      when '4'
+        assign block_width = 'four'
+      when '6'
+        assign block_width = 'six'
+      when '8'
+        assign block_width = 'eight'
+      when '9'
+        assign block_width = 'nine'
+    endcase
+  -%}
+  <div class="banner-section {% if full_width %}bottompad-half {% if section.settings.background_img != blank or overlay_color %}relative {% if section.settings.background_img != blank %}lazycontainer lazyignore {% endif %}{% if overlay_color %}background-overlay {% endif %}{% endif %}{% endif %}clearfix">
+    {%- liquid
+      if full_width and section.settings.background_img != blank
+        assign banner = true
+        render 'image.load', img_src: section.settings.background_img, size: section.settings.background_img.width, alt: alt, background: true, full_width: true, lazy: lazy, sizes: '100vw'
+      endif
+    -%}
+    <div class="relative container{% if full_width %} half-pad{% else %} {% if section.settings.background_img != blank or overlay_color %}inner-container{% else %}half-pad{% endif %}{% endif %}{% if settings.animation_enable %} animate-section load{% endif %} clearfix">
+      <div class="{% if full_width == false %}{% if section.settings.background_img != blank or overlay_color %}inner-container-pad relative {% if section.settings.background_img != blank %}lazycontainer lazyignore {% endif %}{% if overlay_color %}background-overlay {% endif %}{% endif %}{% endif %}clearfix">
+        {%- liquid
+          if full_width == false and section.settings.background_img != blank
+            assign banner = true
+            render 'image.load', img_src: section.settings.background_img, size: section.settings.background_img.width, alt: alt, background: true, lazy: lazy, sizes: '(min-width: 1220px) 1180px, calc(100vw - 40px)'
+          endif
+        -%}
+        <div class="relative table content-height">
+          <div class="table-cell {{ section.settings.vertical_content_alignment }}">
+            <div class="{{ block_width }} animate {{ section.settings.text_alignment }} {{ section.settings.horizontal_content_alignment }} bottompad-quarter section-height clearfix">
+              {%- liquid
+                if section.settings.title_h1
+                  assign title = 1
+                else
+                  assign title = 2
+                endif
+              -%}
+              {% if section.settings.title_enable %}<h{{ title }} class="section-title-{{ section.settings.title_size }}">{% if section.settings.title != blank%}{{ section.settings.title | escape }}{% else %}{{ 'customer.addresses.title' | t }}{% endif %}</h{{ title }}>{% if overlay_color %}{%- assign banner = true -%}{% endif %}{% endif %}
+              {% if section.settings.sub_title != blank %}<h3 class="section-title-{{ section.settings.title_sub_size }}">{{ section.settings.sub_title | escape }}</h3>{% if overlay_color %}{%- assign banner = true -%}{% endif %}{% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>  
+  {% endif %}
+
+  <div class="container {% if banner %}inner-container {% else %}half-pad {% endif %}{% if settings.animation_enable %}animate-section animate-section-margin load {% endif %}clearfix">
+    <div{% if banner %}{% unless full_width %} class="inner-container-grid"{% endunless %}{% endif %}>
+      <div id="addresses" class="{% if banner %}background-white {% endif %}clearfix">
+        <div class="twelve">
+          
+          <div class="return bottompad"><a class="btn outline auto-width" href="{{ routes.account_url }}" title="{{ 'customer.account.return' | t | escape }}">{{ 'customer.account.return' | t }}</a></div>
+  
+          {% paginate customer.addresses by 5 %}
+          {% for address in customer.addresses %}
+          <div class="row">
+            <div id="view_address_{{address.id}}" class="customer_address">
+              {% if address.street != blank %}
+                <div class="clearfix">
+                  <div class="user-name">
+                    <h3>
+                      {{ address.street }} {% if address == customer.default_address %}<span class="default_address note">{{ 'customer.addresses.default' | t }}</span>{% endif %}
+                    </h3>
+                  </div>
+                </div>
+              {% endif %}
+              {{ address | format_address  | class: view_address}}   
+              <span>
+                <button type="button"
+                        class="edit_address btn outline auto-width" 
+                        data-form-id="{{ address.id }}">{{ 'customer.addresses.edit' | t }}</button>          
+                <button type="button"
+                        class="edit_address_delete account-secondary" 
+                        data-target="{{ address.url }}"
+                        data-confirm="{{ 'customer.addresses.confirm' | t }}">{{ 'customer.addresses.delete' | t }}</button>
+              </span>
+            </div>    
+            <div id="edit_address_{{ address.id }}" class="customer-address-table hidden">          
+              <div class="user-name">
+                <h3>{{ 'customer.addresses.edit_address' | t }}</h3>
+              </div>
+              
+              {% form 'customer_address', address, class: 'form-validation' %}
+      
+              <span class="form">
+                <label for="address_first_name_{{form.id}}">{{ 'customer.addresses.first_name' | t }}</label>
+                <input type="text" id="address_first_name_{{form.id}}" class="address_form" name="address[first_name]" value="{{form.first_name}}" placeholder="{{ 'customer.addresses.first_name' | t }}" />
+              </span>
+              <span class="form">
+                <label for="address_last_name_{{form.id}}">{{ 'customer.addresses.last_name' | t }}</label>
+                <input type="text" id="address_last_name_{{form.id}}" class="address_form" name="address[last_name]" value="{{form.last_name}}" placeholder="{{ 'customer.addresses.last_name' | t }}" />
+              </span>
+              <span class="form">
+                <label for="address_company_{{form.id}}">{{ 'customer.addresses.company' | t }}</label>
+                <input type="text" id="address_company_{{form.id}}" class="address_form" name="address[company]" value="{{form.company}}" placeholder="{{ 'customer.addresses.company' | t }}" />
+              </span>
+              <span class="form">
+                <label for="address_address1_{{form.id}}">{{ 'customer.addresses.address1' | t }}</label>
+                <input type="text" id="address_address1_{{form.id}}" class="address_form" name="address[address1]" value="{{form.address1}}" placeholder="{{ 'customer.addresses.address1' | t }}"  />
+              </span>
+              <span class="form">
+                <label for="address_address2_{{form.id}}">{{ 'customer.addresses.address2' | t }}</label>
+                <input type="text" id="address_address2_{{form.id}}" class="address_form" name="address[address2]" value="{{form.address2}}" placeholder="{{ 'customer.addresses.address2' | t }}" />
+              </span>
+              <span class="form drop-down">
+                <label for="address_country_{{form.id}}">{{ 'customer.addresses.country' | t }}</label>
+                <span class="form select">
+                  <select id="address_country_{{form.id}}" class="address_country_option" data-form-id="{{ form.id }}" name="address[country]" data-default="{{form.country}}" >{{ all_country_option_tags }}</select>
+                  {%- render 'icons.theme', icon: 'arrow-down', size: 14 -%}
+                </span>
+              </span>
+              <span id="address_province_container_{{form.id}}" class="form drop-down" style="display:none">
+                <label for="address_province_{{form.id}}">{{ 'customer.addresses.province' | t }}</label>
+                <span class="form select">
+                  <select id="address_province_{{form.id}}" class="address_form" name="address[province]" data-default="{{form.province}}"></select>
+                  {%- render 'icons.theme', icon: 'arrow-down', size: 14 -%}
+                </span>
+              </span>
+              <span class="form">
+                <label for="address_city_{{form.id}}">{{ 'customer.addresses.city' | t }}</label>
+                <input type="text" id="address_city_{{form.id}}" class="address_form" name="address[city]" value="{{form.city}}" placeholder="{{ 'customer.addresses.city' | t }}" />
+              </span>
+              <span class="form">
+                <label for="address_zip_{{form.id}}">{{ 'customer.addresses.zip' | t }}</label>
+                <input type="text" id="address_zip_{{form.id}}" class="address_form" name="address[zip]" value="{{form.zip}}" placeholder="{{ 'customer.addresses.zip' | t }}" />
+              </span>
+              <span class="form">
+                <label for="address_phone_{{form.id}}">{{ 'customer.addresses.phone' | t }}</label>
+                <input type="text" id="address_phone_{{form.id}}" class="address_form" name="address[phone]" value="{{form.phone}}" placeholder="{{ 'customer.addresses.phone' | t }}" />
+              </span>
+              <span class="form radiobox"><span>{{ form.set_as_default_checkbox }} <label for="address_default_address_{{ form.id }}">{{ 'customer.addresses.set_default' | t }}</label></span></span>
+      
+              <span>
+                <button type="submit" 
+                        class="address_btn btn outline auto-width">{{ 'customer.addresses.update' | t }}</button>
+                <button type="button"
+                        class="edit_address account-secondary" 
+                        data-form-id="{{ address.id }}">{{ 'customer.addresses.cancel' | t }}</button>
+              </span> 
+              {% endform %}
+              
+            </div>
+          </div>
+          {% endfor %}
+      
+          {% if paginate.pages > 1 %}
+          <div class="pagination bottompad">
+            {%- render 'pagination', paginate: paginate, class: ' justify-left' -%}
+          </div>
+          {% endif %}
+          {% endpaginate %}
+      
+          <span>      
+            <button type="button"
+                    id="add_address_btn" 
+                    class="btn outline auto-width bottompad-half">{{ 'customer.addresses.add_new' | t }}</button>
+          </span>
+      
+          <div id="add_address" class="toppad hidden">
+            <div class="user-name">
+              <h3>{{ 'customer.addresses.add_new' | t }}</h3>
+            </div>
+            {% form 'customer_address', customer.new_address, class: 'form-validation' %}
+      
+            <span class="form">
+              <label for="address_first_name_new">{{ 'customer.addresses.first_name' | t }}</label>
+              <input type="text" id="address_first_name_new" class="address_form" name="address[first_name]" value="{{form.first_name}}" placeholder="{{ 'customer.addresses.first_name' | t }}" autocapitalize="words" />
+            </span>
+            <span class="form">
+              <label for="address_last_name_new">{{ 'customer.addresses.last_name' | t }}</label>
+              <input type="text" id="address_last_name_new" class="address_form" name="address[last_name]" value="{{form.last_name}}" placeholder="{{ 'customer.addresses.last_name' | t }}" autocapitalize="words" />
+            </span>
+            <span class="form">
+              <label for="address_company_new">{{ 'customer.addresses.company' | t }}</label>
+              <input type="text" for="address_company_new" class="address_form" name="address[company]" value="{{form.company}}" placeholder="{{ 'customer.addresses.company' | t }}" autocapitalize="words" />
+            </span>
+            <span class="form">
+              <label for="address_address1_new">{{ 'customer.addresses.address1' | t }}</label>
+              <input type="text" id="address_address1_new" class="address_form" name="address[address1]" value="{{form.address1}}" placeholder="{{ 'customer.addresses.address1' | t }}" autocapitalize="words" />
+            </span>
+            <span class="form">
+              <label for="address_address2_new">{{ 'customer.addresses.address2' | t }}</label>
+              <input type="text" id="address_address2_new" class="address_form" name="address[address2]" value="{{form.address2}}" placeholder="{{ 'customer.addresses.address2' | t }}" autocapitalize="words" />
+            </span>              
+            <span class="form drop-down">
+              <label for="address_country_new">{{ 'customer.addresses.country' | t }}</label>
+              <span class="form select">
+                <select id="address_country_new" class="address_form" name="address[country]" data-default="{{form.country}}">{{ all_country_option_tags }}</select>
+                {%- render 'icons.theme', icon: 'arrow-down', size: 14 -%}
+              </span>
+            </span>
+            <span id="address_province_container_new" class="form drop-down" style="display:none">
+              <label for="address_province_new">{{ 'customer.addresses.province' | t }}</label>
+              <span class="form select">
+                <select id="address_province_new" class="address_form" name="address[province]" data-default="{{form.province}}"></select>
+                {%- render 'icons.theme', icon: 'arrow-down', size: 14 -%}
+              </span>
+            </span>
+            <span class="form">
+              <label for="address_city_new">{{ 'customer.addresses.city' | t }}</label>
+              <input type="text" id="address_city_new" class="address_form" name="address[city]" value="{{form.city}}" placeholder="{{ 'customer.addresses.city' | t }}" autocapitalize="words" />
+            </span>
+            <span class="form">
+              <label for="address_zip_new">{{ 'customer.addresses.zip' | t }}</label>
+              <input type="text" id="address_zip_new" class="address_form" name="address[zip]" value="{{form.zip}}" placeholder="{{ 'customer.addresses.zip' | t }}" autocapitalize="characters" />
+            </span>
+            <span class="form">
+              <label for="address_phone_new">{{ 'customer.addresses.phone' | t }}</label>
+              <input type="text" id="address_phone_new" class="address_form" name="address[phone]" value="{{form.phone}}" placeholder="{{ 'customer.addresses.phone' | t }}" />
+            </span>
+            <span class="form radiobox"><span>{{ form.set_as_default_checkbox }} <label for="address_default_address_new">{{ 'customer.addresses.set_default' | t }}</label></span></span>
+      
+            <span>
+              <button type="submit" 
+                      class="address_btn btn outline auto-width">{{ 'customer.addresses.add' | t }}</button>        
+              <button type="button"
+                      id="add_address_cancel" 
+                      class="account-secondary">{{ 'customer.addresses.cancel' | t }}</button>
+            </span>
+            {% endform %}
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</section>
+
+{% schema %}
+  {
+    "name": "t:sections.customers.addresses.name",
+    "settings": [
+      {
+        "type": "header",
+        "content": "t:sections.banner.label"
+      },
+      {
+        "id": "title_enable",
+        "type": "checkbox",
+        "label": "t:sections.heading.show_heading",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "t:sections.heading.label"
+      },
+      {
+        "id": "title_h1",
+        "type": "checkbox",
+        "label": "t:sections.heading.heading_one",
+        "default": true
+      },
+      {
+        "id": "title_size",
+        "type": "range",
+        "label": "t:sections.heading.heading_size",
+        "min": 12,
+        "max": 96,
+        "step": 6,
+        "unit": "px",
+        "default": 48
+      },
+      {
+        "type": "text",
+        "id": "sub_title",
+        "label": "t:sections.subheading.label"
+      },
+      {
+        "id": "title_sub_size",
+        "type": "range",
+        "label": "t:sections.subheading.subheading_size",
+        "min": 12,
+        "max": 96,
+        "step": 6,
+        "unit": "px",
+        "default": 24
+      },
+      {
+        "id": "section_color",
+        "type": "color",
+        "label": "t:sections.text.color"
+      },
+      {
+        "type": "select",
+        "id": "text_alignment",
+        "label": "t:sections.text_alignment.label",
+        "default": "text-center",
+        "options": [
+          {
+            "value": "text-left",
+            "label": "t:sections.alignment.left"
+          },
+          {
+            "value": "text-center",
+            "label": "t:sections.alignment.center"
+          },
+          {
+            "value": "text-right",
+            "label": "t:sections.alignment.right"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "block_width",
+        "label": "t:sections.content_width.label",
+        "default": "9",
+        "options": [
+          {
+            "value": "4",
+            "label": "33%"
+          },
+          {
+            "value": "6",
+            "label": "50%"
+          },
+          {
+            "value": "8",
+            "label": "66%"
+          },
+          {
+            "value": "9",
+            "label": "75%"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "horizontal_content_alignment",
+        "label": "t:sections.horizontal_position.label",
+        "default": "center",
+        "options": [
+          {
+            "value": "left",
+            "label": "t:sections.alignment.left"
+          },
+          {
+            "value": "center",
+            "label": "t:sections.alignment.center"
+          },
+          {
+            "value": "right",
+            "label": "t:sections.alignment.right"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "vertical_content_alignment",
+        "label": "t:sections.vertical_position.label",
+        "default": "middle",
+        "options": [
+          {
+            "value": "top",
+            "label": "t:sections.vertical_position.top"
+          },
+          {
+            "value": "middle",
+            "label": "t:sections.vertical_position.middle"
+          },
+          {
+            "value": "bottom",
+            "label": "t:sections.vertical_position.bottom"
+          }
+        ]
+      },
+      {
+        "type": "image_picker",
+        "id": "background_img",
+        "label": "t:sections.image.label",
+        "info": "t:sections.image.desktop.info"
+      },
+	  {
+       "type": "checkbox",
+       "id": "full_width",
+       "label": "t:sections.full_width.label",
+       "default": true
+      },
+      {
+        "type": "range",
+        "id": "padding",
+        "min": 5,
+        "max": 100,
+        "step": 5,
+        "unit": "%",
+        "label": "t:sections.height.label",
+        "default": 25
+      },
+	  {
+        "type": "color",
+        "id": "background_img_overlay",
+        "label": "t:sections.overlay.label"
+      },
+      {
+        "type": "color_background",
+        "id": "background_img_overlay_gradient",
+        "label": "t:sections.overlay.gradient"
+      },
+      {
+        "type": "range",
+        "id": "background_img_overlay_opacity",
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "unit": "%",
+        "label": "t:sections.opacity.label",
+        "default": 0
+      },
+      {
+        "type": "header",
+        "content": "t:sections.section.name.content"
+      },
+      {
+        "id": "enable_lazy",
+        "type": "checkbox",
+        "label": "t:sections.section.settings.lazy.multiple.label",
+        "default": false
+      },
+      {
+        "id": "background",
+        "type": "color",
+        "label": "t:sections.section.settings.background_color.label"
+      },
+      {
+        "id": "background_gradient",
+        "type": "color_background",
+        "label": "t:sections.section.settings.background_gradient.label"
+      },
+      {
+        "type": "paragraph",
+        "content": "t:sections.section.settings.mobile.content"
+      },
+      {
+        "id": "padding_top_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.top_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "id": "padding_bottom_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "margin_bottom_mobile",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_margin.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "type": "paragraph",
+        "content": "t:sections.section.settings.desktop.content"
+      },
+      {
+        "id": "padding_top_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.top_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "id": "padding_bottom_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_pad.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "id": "margin_bottom_desktop",
+        "type": "range",
+        "label": "t:sections.section.settings.bottom_margin.label",
+        "min": 0,
+        "max": 60,
+        "step": 10,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "id": "padding_border",
+        "type": "checkbox",
+        "label": "t:sections.section.settings.border.label",
+        "default": false
+      }
+    ]
+  }
+{% endschema %}

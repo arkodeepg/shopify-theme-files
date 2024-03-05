@@ -1,0 +1,68 @@
+{%- liquid
+  capture tooltip  
+    for block in section.blocks
+      if block.type == 'tooltip' and block.settings.title == name
+        assign product_tip = false
+        if block.settings.tag != blank  
+          if product.tags contains block.settings.tag
+            assign product_tip = true
+          endif    
+        else
+          assign product_tip = true
+        endif
+        if product_tip
+          assign block_id = block.id
+          capture block_html
+            echo block.settings.html
+          endcapture
+          echo '<button data-micromodal-trigger="quick-modal" type="button" data-src="'
+          echo product.url
+          echo '" data-container="tooltip-'
+          echo block_id
+          echo '" name="'
+          echo name
+          echo '" class="tooltip" aria-label="'
+          echo name | escape
+          echo '">i</button>'
+          echo '<span class="hidden tooltip-'
+          echo block_id
+          echo '">'
+          echo '<script type="application/json">'
+          echo block_html | json
+          echo '</script>'
+          echo '</span>'
+        endif
+      endif
+    endfor  
+  endcapture
+  
+  if dropdown
+    echo '<label for="'
+    echo for
+    echo '">'
+    echo name
+    echo ':&nbsp;<span>'
+    echo opt_val
+    echo '</span>'
+    if tooltip
+      echo tooltip
+    endif
+    echo '</label>'
+  else
+    echo '<legend'
+    if hide
+      echo ' class="visually-hidden"'
+    endif
+    echo '>'
+    echo name      
+    unless grid
+      echo ':&nbsp;<span>'
+      echo opt_val
+      echo '</span>'
+    endunless
+    if tooltip
+    echo tooltip
+    endif
+    echo '</legend>'
+  endif
+-%}

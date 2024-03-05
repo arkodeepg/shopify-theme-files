@@ -1,0 +1,105 @@
+{% if b_s_type == false %}
+  <div class="filter clearfix" {{ block.shopify_attributes }}>
+    <div class="relative open-container open-container-filter desktop">
+      <details open>
+        <summary class="open open-btn open-filter open-{{ section.id }}" title="{{ 'collections.general.open' | t | escape }}" role="button" aria-label="{{ 'collections.general.open' | t | escape }}">{%- render 'icons.theme', icon: 'plus', size: 18 -%}<span class="h5">{% if b_s_title != blank  %}{{ b_s_title | escape }}{% else %}{{ 'collections.general.vendors' | t }}{% endif %}</span></summary>
+      </details>
+      <div id="vendors" class="open-slide open-slide-filter">
+        {%- liquid
+          capture vendors
+            for product_vendor in collection.all_vendors
+              assign vendor_handle = product_vendor | handleize
+              if collections[vendor_handle] != blank
+                echo '<li><a href="'
+                echo collections[vendor_handle].url
+                echo '" title="'
+                echo collections[vendor_handle].title | escape
+                echo '">'
+                echo collections[vendor_handle].title
+                echo '</a></li>,,'
+              else
+                echo '<li>'
+                echo product_vendor | link_to_vendor
+                echo '</li>,,'
+              endif
+            endfor
+          endcapture
+          assign vendors = vendors | split: ',,'
+        -%}        
+        <ul class="advanced-filters unformatted">
+          {%- liquid
+            for v in vendors limit: 5
+              echo v
+            endfor
+          -%}
+        </ul>
+        {% if vendors.size > 5 %}
+          <details>
+            <summary><span class="open-more" title="{{ 'collections.general.open' | t | escape }}" role="button" aria-label="{{ 'collections.general.open' | t | escape }}"><span class="more">{{ 'collections.sidebar.more' | t }}</span><span class="less hidden">{{ 'collections.sidebar.less' | t }}</span></span></summary>
+          </details>
+          <div class="open-slide">
+            <ul class="advanced-filters unformatted open-slide">
+              {%- liquid
+                for v in vendors offset: 5
+                  echo v
+                endfor
+              -%}
+            </ul>
+          </div>
+        {% endif %}        
+      </div>
+    </div>
+  </div>
+{% else %}
+  <div class="filter dropdown clearfix" {{ block.shopify_attributes }}>
+    <span class="form">
+      {%- liquid
+        if b_s_label == 'above'
+          echo '<h5>'
+          if b_s_title != blank
+            echo b_s_title | escape
+          else
+            echo 'collections.general.vendors' | t | escape
+          endif
+          echo '</h5>'
+        endif
+        echo '<label for="subVendors" class="visually-hidden">'
+        if b_s_title != blank
+            echo b_s_title | escape
+          else
+            echo 'collections.general.vendors' | t | escape
+        endif
+        echo '</label><span class="form select"><select id="subVendors"><option value="">'
+        if b_s_label == 'inside'
+        	if b_s_title != blank
+            echo b_s_title | escape
+          else
+            echo 'collections.general.vendors' | t | escape
+          endif
+        else
+        	echo 'layout.general.please_select' | t | escape
+        endif
+        echo '...</option>'
+        for product_vendor in collection.all_vendors
+          assign vendor_handle = product_vendor | handleize
+          if collections[vendor_handle] != blank
+            echo '<option value="'
+            echo collections[vendor_handle].url
+            echo '">'
+            echo collections[vendor_handle].title
+            echo '</option>'
+          else
+            echo '<option value ="'
+            echo product_vendor | url_for_vendor
+            echo '">'
+            echo product_vendor
+            echo '</option>'
+          endif
+        endfor
+        echo '</select>'
+        render 'icons.theme', icon: 'arrow-down', size: 14
+        echo '</span>'
+  	-%}
+    </span>
+  </div>
+{% endif %}

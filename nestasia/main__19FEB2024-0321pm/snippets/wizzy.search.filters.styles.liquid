@@ -1,0 +1,7 @@
+{% if template.name == 'collection' or template.name == 'search' %}
+{{ 'wizzyCustom.css' | asset_url | stylesheet_tag: preload: true }}
+{% else %}
+{{ 'wizzyCustom.css' | asset_url | stylesheet_tag: preload: false }}
+{% endif %}
+{% comment %} <link href="{{ 'wizzyCustom.css' | asset_url }}" as="style" /> {% endcomment %}
+
